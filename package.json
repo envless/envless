@@ -4,20 +4,30 @@
   "private": false,
   "license": "AGPL-3.0",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev & npx prisma studio",
+    "lint": "next lint",
     "start": "next start",
-    "lint": "next lint"
+    "db:migrate": "npx prisma migrate dev",
+    "db:reset": "npx prisma migrate reset",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.5",
+    "@prisma/client": "^4.6.1",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.8",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.3",
     "next": "13.0.3",
+    "next-auth": "^4.16.4",
+    "nodemailer": "^6.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.8.4"
+  },
+  "devDependencies": {
+    "prisma": "^4.6.1"
   }
 }
