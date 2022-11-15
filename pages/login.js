@@ -1,9 +1,10 @@
 import Input from "@/components/base/Input";
 import { PrimaryButton } from "@/components/base/Buttons";
+import { signIn, getSession, getCsrfToken } from "next-auth/react";
 import { useState } from "react";
-import Image from "next/image"
+import Image from "next/image";
 
-export default function Login() {
+export default function Login({ csrfToken }) {
   const [email, setEmail] = useState("");
 
   return (
@@ -22,7 +23,13 @@ export default function Login() {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="px-2 py-8 sm:px-8">
-            <form className="space-y-6" action="#" method="POST">
+            <form
+              className="space-y-6"
+              action="/api/auth/signin/email"
+              method="POST"
+            >
+              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+
               <Input
                 id="email"
                 name="email"
@@ -51,7 +58,10 @@ export default function Login() {
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-6">
-                <PrimaryButton sr="Sign in with Github">
+                <PrimaryButton
+                  sr="Sign in with Github"
+                  onClick={() => signIn("github")}
+                >
                   <svg
                     className="text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +74,10 @@ export default function Login() {
                   </svg>
                 </PrimaryButton>
 
-                <PrimaryButton sr="Sign in with Gitlab">
+                <PrimaryButton
+                  sr="Sign in with Gitlab"
+                  onClick={() => signIn("gitlab")}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -83,3 +96,23 @@ export default function Login() {
     </>
   );
 }
+
+Login.getInitialProps = async (context) => {
+  console.log('Getting initial props')
+  const { req, res } = context;
+  const session = await getSession({ req });
+
+  if (session && res && session.user) {
+    res.writeHead(302, {
+      Location: "/console",
+    });
+
+    res.end();
+    return;
+  }
+
+  return {
+    session,
+    csrfToken: await getCsrfToken(context),
+  };
+};
