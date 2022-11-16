@@ -55,6 +55,7 @@ model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
+  created_at        Int?
   provider          String
   providerAccountId String
   refresh_token     String? //@db.Text
