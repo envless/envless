@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "scripts": {
     "build": "next build",
-    "dev": "next dev & npx prisma studio",
+    "dev": "next dev & npx prisma studio & npx mailing",
     "lint": "next lint",
     "start": "next start",
     "db:migrate": "npx prisma migrate dev",
@@ -20,6 +20,7 @@
     "@types/react-dom": "18.0.8",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.3",
+    "mailing-core": "^0.8.18",
     "next": "13.0.3",
     "next-auth": "^4.16.4",
     "nodemailer": "^6.8.0",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
     "autoprefixer": "^10.4.13",
+    "mailing": "^0.8.18",
     "postcss": "^8.4.19",
     "prisma": "^4.6.1",
     "tailwindcss": "^3.2.4"

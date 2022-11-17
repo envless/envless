@@ -20,6 +20,6 @@
       "@/components/*": ["components/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "emails/index.js"],
   "exclude": ["node_modules"]
 }
