@@ -86,8 +86,6 @@ export default function Login({ csrfToken }) {
                   sr="Sign in with Github"
                   onClick={() =>
                     signIn("github")
-                      .then((res) => console.log("Login successful", res))
-                      .catch((err) => console.log("Login error", err))
                   }
                 >
                   <svg
@@ -107,8 +105,6 @@ export default function Login({ csrfToken }) {
                   sr="Sign in with Gitlab"
                   onClick={() =>
                     signIn("gitlab")
-                      .then((res) => console.log("Login successful", res))
-                      .catch((err) => console.log("Login error", err))
                   }
                 >
                   <svg
@@ -152,8 +148,6 @@ Login.getInitialProps = async (context) => {
     res.writeHead(302, {
       Location: "/console",
     });
-
-    console.log("req", req);
 
     res.end();
     return;

@@ -11,7 +11,7 @@ const sendMail = buildSendMail({
     },
   }),
   defaultFrom: process.env.EMAIL_FROM,
-  configPath: "./mailing.config.json",
+  configPath: "../mailing.config.json",
 });
 
 export default sendMail;

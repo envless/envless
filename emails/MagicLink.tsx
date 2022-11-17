@@ -21,7 +21,7 @@ import {
   MjmlDivider,
 } from "mjml-react";
 
-type ReservationProps = {
+type MagicLinkProps = {
   headline: string;
   body: ReactElement;
   greeting: string;
@@ -30,7 +30,7 @@ type ReservationProps = {
   buttonLink?: string;
 };
 
-const Reservation: React.FC<ReservationProps> = ({
+const MagicLink: React.FC<MagicLinkProps> = ({
   headline,
   body,
   greeting,
@@ -110,4 +110,4 @@ const Reservation: React.FC<ReservationProps> = ({
   );
 };
 
-export default Reservation;
+export default MagicLink;

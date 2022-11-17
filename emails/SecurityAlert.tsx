@@ -19,14 +19,14 @@ import {
   MjmlDivider,
 } from "mjml-react";
 
-type NewSignInProps = {
+type SecurityAlertProps = {
   name: string;
   headline: string;
   body: ReactElement;
   bulletedList: ReactElement;
 };
 
-const NewSignIn: React.FC<NewSignInProps> = ({
+const SecurityAlert: React.FC<SecurityAlertProps> = ({
   name,
   headline,
   body,
@@ -95,4 +95,4 @@ const NewSignIn: React.FC<NewSignInProps> = ({
   );
 };
 
-export default NewSignIn;
+export default SecurityAlert;
