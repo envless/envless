@@ -21,6 +21,6 @@
       "@/components/*": ["components/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "emails/index.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "emails/index.ts", "pages/auth.js"],
   "exclude": ["node_modules"]
 }

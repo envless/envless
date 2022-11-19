@@ -7,7 +7,7 @@ import Input from "@/components/base/Input";
 import { PrimaryButton } from "@/components/base/Buttons";
 import { signIn, getSession, getCsrfToken } from "next-auth/react";
 
-export default function Login({ csrfToken }) {
+const Login = ({ csrfToken }) => {
   const { query } = useRouter();
   const [email, setEmail] = useState("");
 
@@ -144,7 +144,7 @@ Login.getInitialProps = async (context) => {
   const { req, res } = context;
   const session = await getSession({ req });
 
-  if (session && res && session.user) {
+  if (session) {
     res.writeHead(302, {
       Location: "/console",
     });
@@ -158,3 +158,5 @@ Login.getInitialProps = async (context) => {
     csrfToken: await getCsrfToken(context),
   };
 };
+
+export default Login
