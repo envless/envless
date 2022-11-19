@@ -39,8 +39,8 @@ const Login = ({ csrfToken }) => {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="px-2 py-8 sm:px-8">
             {query?.error === "OAuthAccountNotLinked" && (
-              <div class="rounded-md bg-red-100 bg-opacity-10 p-4">
-                <h3 class="ml-3 text-sm font-medium text-red-300">
+              <div className="p-4 bg-red-100 rounded-md bg-opacity-10">
+                <h3 className="ml-3 text-sm font-medium text-red-300">
                   To confirm your identify, continue with the same account you
                   used originally.
                 </h3>
