@@ -1,16 +1,37 @@
+import sendMail from "emails";
 import NextAuth from "next-auth";
+import prisma from "@/lib/prisma";
+import MagicLink from "@/emails/MagicLink";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "../../../lib/prisma";
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
+      sendVerificationRequest({ identifier, url }) {
+        sendMail({
+          subject: "Your Envless login link",
+          to: identifier,
+          component: (
+            <MagicLink
+              headline="Login to Envless"
+              greeting="Hi there,"
+              body={
+                <>
+                  We have received a login attempt. If this was you, please
+                  click the button below to complete the login process.
+                </>
+              }
+              subText="If you did not request this email you can safely ignore it."
+              buttonText={"Login to Envless"}
+              buttonLink={url}
+            />
+          ),
+        });
+      },
     }),
 
     GithubProvider({
@@ -23,6 +44,10 @@ export default NextAuth({
       clientSecret: process.env.GITLAB_CLIENT_SECRET,
     }),
   ],
+
+  theme: {
+    colorScheme: "dark",
+  },
 
   pages: {
     signIn: "/auth",
