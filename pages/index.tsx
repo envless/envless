@@ -1,30 +1,16 @@
 import Link from "next/link";
-import Image from "next/image";
 import { sample } from "lodash";
 import { getSession } from "next-auth/react";
-import { PrimaryButton } from "@/components/base/Buttons";
-
+import Navigation from "@/components/Navigation";
+import Features from "@/components/home/Features";
 export default function Home({ loggedIn, header }) {
   return (
-    <main className="max-w-screen-xl px-10 py-2 mx-auto">
-      <nav className="relative flex flex-wrap items-center justify-between py-6 mx-auto lg:justify-between">
-        <div className="flex flex-wrap items-center justify-between w-auto">
-          <Logo />
-        </div>
-
-        <div className="flex items-center text-center">
-          <PrimaryButton
-            sr="Signup or Login"
-            href={loggedIn ? "/console" : "/auth"}
-          >
-            {loggedIn ? "Console" : "Get started"}
-          </PrimaryButton>
-        </div>
-      </nav>
+    <main className="max-w-screen-xl px-10 py-6 mx-auto">
+      <Navigation loggedIn={loggedIn} />
 
       {/* Hero section */}
-      <section className="mx-3 my-32">
-        <div className="relative text-center">
+      <section className="bg-no-repeat bg-center bg-cover bg-[url('/world.png')] h-[500px]">
+        <div className="relative px-2 py-32 text-center">
           <p className="inline text-6xl font-semibold tracking-tight text-transparent md:text-8xl bg-gradient-to-r via-green-300 from-teal-400 to-cyan-500 bg-clip-text font-display">
             {header}
           </p>
@@ -32,8 +18,8 @@ export default function Home({ loggedIn, header }) {
             An open-source, frictionless and secure way to share and manage app
             secrets across teams.
           </p>
-          <div className="flex justify-center gap-4 mt-8">
-            <button className="px-6 py-2 font-mono font-medium text-white rounded-full bg-slate-800 hover:bg-slate-700 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 active:text-slate-400" onClick={ () => { alert('Copied') } }>
+          <div className="flex justify-center gap-6 mt-8">
+            {/* <button className="px-6 font-mono font-medium text-white rounded-full md:py-2 bg-slate-800 hover:bg-slate-700 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 active:text-slate-400" onClick={ () => { alert('Copied') } }>
               npm i -g envless
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -59,21 +45,22 @@ export default function Home({ loggedIn, header }) {
               href="/"
             >
               Documentation
+            </Link> */}
+            <Link
+              className="px-6 py-2 font-semibold bg-teal-200 rounded-full text-slate-900 hover:bg-teal-200 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300/50 active:bg-sky-500"
+              href="/"
+            >
+              SIGN UP FOR FREE
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Features section */}
+      {/* <Features /> */}
     </main>
   );
 }
-
-const Logo = () => {
-  return (
-    <Link href="/" className="flex items-center">
-      <Image src="/logo.png" alt="logo" height={40} width={40} />
-    </Link>
-  );
-};
 
 Home.getInitialProps = async (context) => {
   const { req } = context;
@@ -81,9 +68,10 @@ Home.getInitialProps = async (context) => {
   const user = session?.user;
   const headers = [
     "Go .envless",
-    "Branch your .env",
     "Delete your .env",
     "e2e encrypt your .env",
+    "Sync your app secrets",
+    "Branch your app secrets",
     "Secure your app secrets",
     "Manage & share app secrets",
     "Never leak your .env again",
