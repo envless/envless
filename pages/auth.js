@@ -140,7 +140,7 @@ const Login = ({ csrfToken }) => {
   );
 }
 
-Login.getInitialProps = async (context) => {
+export async function getServerSideProps(context) {
   const { req, res } = context;
   const session = await getSession({ req });
 
@@ -154,8 +154,10 @@ Login.getInitialProps = async (context) => {
   }
 
   return {
-    session,
-    csrfToken: await getCsrfToken(context),
+    props: {
+      session,
+      csrfToken: await getCsrfToken(context),
+    }
   };
 };
 

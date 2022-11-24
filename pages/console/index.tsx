@@ -1,7 +1,11 @@
 import { PrimaryButton } from "@/components/base/Buttons"
 import { signOut, getSession } from "next-auth/react";
 
-const ConsoleHome = ( { user } ) => {
+type Props = {
+  user: any;
+};
+
+const ConsoleHome: React.FC<Props> = ({ user }) => {
   return (
     <>
       <div className="">Console home for { user?.email }</div>
@@ -9,19 +13,18 @@ const ConsoleHome = ( { user } ) => {
       <PrimaryButton sr="Sign out" onClick={() => signOut()}>
         Sign out
       </PrimaryButton>
-
     </>
 
   )
 }
 
-ConsoleHome.getInitialProps = async (context) => {
+export async function getServerSideProps(context: { req: any; }) {
   const { req } = context;
   const session = await getSession({ req });
   const user = session?.user;
 
   return {
-    user,
+    props: { user}
   };
 };
 
