@@ -16,6 +16,7 @@
     "@headlessui/react": "^1.7.4",
     "@heroicons/react": "^2.0.13",
     "@next-auth/prisma-adapter": "^1.0.5",
+    "@next/font": "^13.0.5",
     "@prisma/client": "^4.6.1",
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",

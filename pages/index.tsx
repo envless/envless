@@ -12,12 +12,12 @@ type HomeProps = {
 
 const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
   return (
-    <main className="max-w-screen-xl px-10 mx-auto xl:px-16">
+    <div className="max-w-screen-xl px-10 mx-auto xl:px-16">
       <Navigation loggedIn={loggedIn} />
       <Hero header={header} />
       <Features />
       <Pricing />
-    </main>
+    </div>
   );
 }
 

@@ -12,12 +12,12 @@ const Features = () => {
           By developers, for developers
         </h2>
         <p className="max-w-md mx-auto mt-2 text-gray-400">
-          Buit for speed, security and productivity.
+          Buit for security, speed, collaboration and productivity.
         </p>
       </div>
       <div className="grid mt-10 gap-x-48 gap-y-12 md:grid-cols-2">
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <BsShieldFillCheck className="w-6 h-6" />
           </span>
           <div>
@@ -28,7 +28,7 @@ const Features = () => {
           </div>
         </div>
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <BiGitBranch className="w-6 h-6" />
           </span>
           <div>
@@ -39,7 +39,7 @@ const Features = () => {
           </div>
         </div>
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <TbConfetti className="w-6 h-6" />
           </span>
           <div>
@@ -50,7 +50,7 @@ const Features = () => {
           </div>
         </div>
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <BsTerminalFill className="w-6 h-6" />
           </span>
           <div>
@@ -61,7 +61,7 @@ const Features = () => {
           </div>
         </div>
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <RiOpenSourceFill className="w-6 h-6" />
           </span>
           <div>
@@ -72,7 +72,7 @@ const Features = () => {
           </div>
         </div>
         <div className="flex items-start gap-4">
-          <span className="p-3 text-teal-400 rounded-full bg-violet-500/10">
+          <span className="p-3 text-teal-400 rounded-full bg-teal-400/20">
             <RiSunCloudyFill className="w-6 h-6" />
           </span>
           <div>
