@@ -10,41 +10,44 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText("npm i -g envless");
+    navigator.clipboard.writeText("npx envless init");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }
+  };
 
   return (
     <section className="flex">
-      <div className="bg-no-repeat bg-center bg-contain bg-[url('/world.png')] h-min">
-        <div className="relative px-2 py-16 text-center xl:py-32 lg:px-48">
-          <h1 className="inline text-5xl font-semibold tracking-tight text-transparent md:text-8xl bg-gradient-to-r via-green-300 from-teal-400 to-cyan-500 bg-clip-text font-display">
+      <div className="h-min bg-[url('/world.png')] bg-contain bg-center bg-no-repeat">
+        <div className="relative px-2 py-16 text-center lg:px-48 xl:py-32">
+          <h1 className="font-display inline bg-gradient-to-r from-teal-400 via-green-300 to-cyan-500 bg-clip-text text-5xl font-semibold tracking-tight text-transparent md:text-8xl">
             {header}
           </h1>
           <h2 className="mt-3 text-lg text-gray-300 md:text-2xl">
-            An open-source, the most secure and frictionless way to share and manage
-            app secrets across teams.
+            An open-source, the most secure and frictionless way to share and
+            manage app secrets across teams.
           </h2>
 
-          <div className="flex flex-col justify-center gap-3 mt-5 md:flex-row">
-            <span className="cursor-copy flex items-center justify-between gap-5 px-5 py-3 bg-[#222] rounded-full" onClick={ copyToClipboard }>
-              <code className="overflow-hidden text-gray-300 whitespace-nowrap overflow-ellipsis">
-                npm i -g envless
+          <div className="mt-5 flex flex-col justify-center gap-3 md:flex-row">
+            <span
+              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-[#222] px-5 py-3"
+              onClick={copyToClipboard}
+            >
+              <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
+                nxp envless init
               </code>{" "}
-
-              { copied ? (
-                <IoCheckmarkCircle className="w-4 h-4 text-teal-400" />
+              {copied ? (
+                <IoCheckmarkCircle className="h-4 w-4 text-teal-400" />
               ) : (
-                <IoCopy className="w-4 h-4 text-gray-300" />
+                <IoCopy className="h-4 w-4 text-gray-300" />
               )}
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 font-medium text-white rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 text-slate-900 hover:bg-teal-200"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-white text-slate-900 hover:bg-teal-200"
               href="/auth"
             >
-              <span>Documentation</span><span className="text-xs">{" (soon) "}</span>
+              <span>Documentation</span>
+              <span className="text-xs">{" (soon) "}</span>
               <svg
                 width="20"
                 height="20"
@@ -64,7 +67,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
         </div>
       </div>
     </section>
-  )
+  );
 };
 
 export default Hero;

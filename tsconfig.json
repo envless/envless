@@ -18,9 +18,15 @@
     "paths": {
       "@/lib/*": ["lib/*"],
       "@/emails/*": ["emails/*"],
-      "@/components/*": ["components/*"],
+      "@/components/*": ["components/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "emails/index.ts", "pages/auth.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "emails/index.ts",
+    "pages/auth.js"
+  ],
   "exclude": ["node_modules"]
 }

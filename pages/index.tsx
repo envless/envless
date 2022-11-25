@@ -12,18 +12,18 @@ type HomeProps = {
 
 const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
   return (
-    <div className="max-w-screen-xl px-10 mx-auto xl:px-16">
+    <div className="mx-auto max-w-screen-xl px-10 xl:px-16">
       <Navigation loggedIn={loggedIn} />
       <Hero header={header} />
       <Features />
       <Pricing />
     </div>
   );
-}
+};
 
 export default Home;
 
-export async function getServerSideProps(context: { req: any; }) {
+export async function getServerSideProps(context: { req: any }) {
   const { req } = context;
   const session = await getSession({ req });
   const user = session?.user;
@@ -48,6 +48,6 @@ export async function getServerSideProps(context: { req: any; }) {
     props: {
       header,
       loggedIn: !!user,
-    }
+    },
   };
-};
+}

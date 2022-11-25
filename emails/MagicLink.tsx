@@ -80,7 +80,7 @@ const MagicLink: React.FC<MagicLinkProps> = ({
               <>
                 <MjmlSpacer height="24px" />
                 <ButtonPrimary
-                  buttonLink={ buttonLink || '' }
+                  buttonLink={buttonLink || ""}
                   buttonText={buttonText}
                 />
                 <MjmlSpacer height="8px" />

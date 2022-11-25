@@ -7,7 +7,10 @@ type ButtonPrimaryProps = {
   buttonText: string;
 };
 
-const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({ buttonLink, buttonText }) => {
+const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
+  buttonLink,
+  buttonText,
+}) => {
   return (
     <>
       <MjmlButton

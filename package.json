@@ -10,7 +10,8 @@
     "start": "next start",
     "db:migrate": "npx prisma migrate dev",
     "db:reset": "npx prisma migrate reset",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "format": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@headlessui/react": "^1.7.4",
@@ -36,9 +37,12 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "autoprefixer": "^10.4.13",
     "mailing": "^0.8.18",
     "postcss": "^8.4.19",
+    "prettier": "^2.8.0",
+    "prettier-plugin-tailwindcss": "^0.1.13",
     "prisma": "^4.6.1",
     "tailwindcss": "^3.2.4"
   }

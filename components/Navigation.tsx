@@ -6,8 +6,8 @@ const Navigation = ({ ...props }) => {
   const { loggedIn } = props;
 
   return (
-    <nav className="sticky top-0 z-50 flex flex-wrap items-center justify-between py-6 mx-auto bg-black/80 lg:justify-between">
-      <div className="flex flex-wrap items-center justify-between w-auto">
+    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-black/80 py-6 lg:justify-between">
+      <div className="flex w-auto flex-wrap items-center justify-between">
         <Logo />
       </div>
 
@@ -20,8 +20,8 @@ const Navigation = ({ ...props }) => {
         </PrimaryLink>
       </div>
     </nav>
-  )
-}
+  );
+};
 
 const Logo = () => {
   return (

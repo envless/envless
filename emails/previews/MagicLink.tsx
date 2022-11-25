@@ -7,7 +7,8 @@ export function MagicLinkEmail() {
       greeting="Hi there,"
       body={
         <>
-          We have received a login attempt. If this was you, please click the button below to complete the login process.
+          We have received a login attempt. If this was you, please click the
+          button below to complete the login process.
         </>
       }
       subText="If you did not request this email you can safely ignore it."
