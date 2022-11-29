@@ -35,13 +35,13 @@ export const options: NextAuthOptions = {
     }),
 
     GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: String(process.env.GITHUB_CLIENT_ID) || "",
+      clientSecret: String(process.env.GITHUB_CLIENT_SECRET) || "",
     }),
 
     GitlabProvider({
-      clientId: process.env.GITLAB_CLIENT_ID,
-      clientSecret: process.env.GITLAB_CLIENT_SECRET,
+      clientId: String(process.env.GITLAB_CLIENT_ID) || "",
+      clientSecret: String(process.env.GITLAB_CLIENT_SECRET) || "",
     }),
   ],
 

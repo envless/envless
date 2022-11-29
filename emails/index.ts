@@ -3,14 +3,14 @@ import { buildSendMail } from "mailing-core";
 
 const sendMail = buildSendMail({
   transport: nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    host: String(process.env.SMTP_HOST) || "localhost",
+    port: Number(process.env.SMTP_PORT) || 1025,
     auth: {
-      user: process.env.SMTP_USERNAME,
-      pass: process.env.SMTP_PASSWORD,
+      user: String(process.env.SMTP_USERNAME) || "username",
+      pass: String(process.env.SMTP_PASSWORD) || "password",
     },
   }),
-  defaultFrom: process.env.EMAIL_FROM,
+  defaultFrom: String(process.env.EMAIL_FROM) || "",
   configPath: "../mailing.config.json",
 });
 

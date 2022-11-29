@@ -14,9 +14,9 @@ const Navigation = ({ ...props }) => {
       <div className="flex items-center text-center">
         <PrimaryLink
           sr="Signup or Login"
-          href={loggedIn ? "/console" : "/auth"}
+          href={loggedIn ? "/welcome" : "/auth"}
         >
-          {loggedIn ? "Console" : "Get started"}
+          {loggedIn ? "Console" : "Get started 🎉"}
         </PrimaryLink>
       </div>
     </nav>

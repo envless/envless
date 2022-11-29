@@ -142,11 +142,11 @@ export async function getServerSideProps(context) {
 
   if (session) {
     res.writeHead(302, {
-      Location: "/console",
+      Location: "/welcome",
     });
 
     res.end();
-    return;
+    return { props: {} };
   }
 
   return {
