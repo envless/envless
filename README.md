@@ -1,5 +1,5 @@
 <a href="https://envless.dev">
-  <img alt="Frictionless and secure way to share and manage app secrets across team." src="https://raw.githubusercontent.com/envless/envless/main/public/thumbnail.png" />
+  <img alt="Frictionless and secure way to share and manage app secrets across team." src="https://envless.dev/og.png" />
   <h1 align="center">.envless</h1>
 </a>
 

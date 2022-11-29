@@ -1,4 +1,5 @@
 import { sample } from "lodash";
+import { NextSeo } from 'next-seo';
 import { getSession } from "next-auth/react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/home/Hero";
@@ -12,12 +13,35 @@ type HomeProps = {
 
 const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
   return (
-    <div className="mx-auto max-w-screen-xl px-10 xl:px-16">
-      <Navigation loggedIn={loggedIn} />
-      <Hero header={header} />
-      <Features />
-      <Pricing />
-    </div>
+    <>
+      <NextSeo
+        title="Envless - Secure and sync your secrets"
+        description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
+        canonical="https://envless.dev"
+        themeColor="#111"
+        openGraph={{
+          url: 'https://envless.dev',
+          title: 'Envless - Secure and sync your secrets',
+          description: 'OpenSource, frictionless and secure way to share and manage app secrets across teams.',
+          images: [
+            { url: 'https://envless.dev/og.png' },
+          ],
+          siteName: 'Envless',
+        }}
+        twitter={{
+          handle: '@envless',
+          site: '@envless',
+          cardType: 'summary_large_image',
+        }}
+      />
+
+      <div className="mx-auto max-w-screen-xl px-10 xl:px-16">
+        <Navigation loggedIn={loggedIn} />
+        <Hero header={header} />
+        <Features />
+        <Pricing />
+      </div>
+    </>
   );
 };
 
