@@ -47,7 +47,8 @@ const Pricing = ({ ...props }) => {
                 </li>
               </ul>
               <Link
-                href="/auth"
+                href="https://dub.sh/envless"
+                target="_blank"
                 className="font-heading tracking-px group relative mb-3 w-full rounded text-center text-xs font-semibold uppercase text-gray-900 md:w-auto"
               >
                 <div className="rounded bg-white py-4 px-9 hover:bg-gray-300 ">
@@ -84,7 +85,8 @@ const Pricing = ({ ...props }) => {
                   </li>
                 </ul>
                 <Link
-                  href="/auth"
+                  href="https://dub.sh/envless"
+                  target="_blank"
                   className="font-heading tracking-px group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase text-white md:w-auto"
                 >
                   <div className="overflow-hidden rounded bg-black py-4 px-9 hover:bg-[#222]">

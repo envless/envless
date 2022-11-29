@@ -1,5 +1,5 @@
 import { sample } from "lodash";
-import { NextSeo } from 'next-seo';
+import { NextSeo } from "next-seo";
 import { getSession } from "next-auth/react";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/home/Hero";
@@ -20,18 +20,17 @@ const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
         canonical="https://envless.dev"
         themeColor="#111"
         openGraph={{
-          url: 'https://envless.dev',
-          title: 'Envless - Secure and sync your secrets',
-          description: 'OpenSource, frictionless and secure way to share and manage app secrets across teams.',
-          images: [
-            { url: 'https://envless.dev/og.png' },
-          ],
-          siteName: 'Envless',
+          url: "https://envless.dev",
+          title: "Envless - Secure and sync your secrets",
+          description:
+            "OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+          images: [{ url: "https://envless.dev/og.png" }],
+          siteName: "Envless",
         }}
         twitter={{
-          handle: '@envless',
-          site: '@envless',
-          cardType: 'summary_large_image',
+          handle: "@envless",
+          site: "@envless",
+          cardType: "summary_large_image",
         }}
       />
 

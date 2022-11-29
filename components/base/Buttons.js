@@ -12,11 +12,12 @@ export const PrimaryButton = ({ sr, onClick, children }) => {
   );
 };
 
-export const PrimaryLink = ({ sr, href, children }) => {
+export const PrimaryLink = ({ sr, href, target, children }) => {
   return (
     <Link
       className="flex w-full justify-center rounded border border-transparent bg-white px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
       href={href}
+      target={target}
     >
       <span className="sr-only">{sr}</span>
       {children}

@@ -13,8 +13,9 @@ const Navigation = ({ ...props }) => {
 
       <div className="flex items-center text-center">
         <PrimaryLink
+          target="_blank"
           sr="Signup or Login"
-          href={loggedIn ? "/welcome" : "/auth"}
+          href={loggedIn ? "/welcome" : "https://dub.sh/envless"}
         >
           {loggedIn ? "Console" : "Get started 🎉"}
         </PrimaryLink>

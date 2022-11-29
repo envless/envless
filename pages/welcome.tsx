@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 import { getSession } from "next-auth/react";
 
 type Props = {
@@ -29,15 +29,28 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
                 </svg>
               </div>
               <div className="mt-3 text-center sm:mt-5">
-                <h3
-                  className="text-2xl font-medium leading-6"
-                  id="modal-title"
-                >
+                <h3 className="text-2xl font-medium leading-6" id="modal-title">
                   Welcome to .envless
                 </h3>
                 <div className="mt-2 mb-2">
                   <p className="text-sm text-gray-400">
-                    We are contineously building envless in public. Follow us on <Link href="https://twitter.com/envless" target="_blank" className="text-teal-400">Twitter</Link> and <Link href="https://github.com/envless/envless" className="text-teal-400" target="_blank">Github</Link> to stay updated. We will notify you when we are ready.
+                    We are contineously building envless in public. Follow us on{" "}
+                    <Link
+                      href="https://twitter.com/envless"
+                      target="_blank"
+                      className="text-teal-400"
+                    >
+                      Twitter
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="https://github.com/envless/envless"
+                      className="text-teal-400"
+                      target="_blank"
+                    >
+                      Github
+                    </Link>{" "}
+                    to stay updated. We will notify you when we are ready.
                   </p>
                 </div>
               </div>

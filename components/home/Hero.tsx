@@ -43,8 +43,9 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-white text-slate-900 hover:bg-teal-200"
-              href="/auth"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-white hover:bg-teal-200"
+              href="https://dub.sh/envless"
+              target="_blank"
             >
               <span>Documentation</span>
               <span className="text-xs">{" (soon) "}</span>
