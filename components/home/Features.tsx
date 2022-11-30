@@ -76,7 +76,7 @@ const Features = () => {
               Check us out on{" "}
               <Link
                 href="https://github.com/envless/envless"
-                target="_blank"
+                target="_self"
                 className="text-teal-400"
               >
                 Github
