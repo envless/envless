@@ -33,7 +33,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               onClick={copyToClipboard}
             >
               <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
-                nxp envless init
+                npx envless init
               </code>{" "}
               {copied ? (
                 <IoCheckmarkCircle className="h-4 w-4 text-teal-400" />
