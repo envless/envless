@@ -1,0 +1,48 @@
+{
+  "headers": [
+    {
+      "source": "/docs/:match*",
+      "headers": [
+        {
+          "key": "X-Rewrite-From",
+          "value": "next"
+        }
+      ]
+    },
+    {
+      "source": "/blog/:match*",
+      "headers": [
+        {
+          "key": "X-Rewrite-From",
+          "value": "next"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/docs/:match*",
+      "destination": "https://envless-docs.vercel.app/docs/:match*"
+    },
+    {
+      "source": "/blog/:match*",
+      "destination": "https://envless-docs.vercel.app/blog/:match*"
+    },
+    {
+      "source": "/img/:match*",
+      "destination": "https://envless-docs.vercel.app/img/:match*"
+    },
+    {
+      "source": "/assets/css/:match*",
+      "destination": "https://envless-docs.vercel.app/assets/css/:match*"
+    },
+    {
+      "source": "/assets/js/:match*",
+      "destination": "https://envless-docs.vercel.app/assets/js/:match*"
+    },
+    {
+      "source": "/assets/images/:match*",
+      "destination": "https://envless-docs.vercel.app/assets/images/:match*"
+    }
+  ]
+}
