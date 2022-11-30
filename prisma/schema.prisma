@@ -15,11 +15,22 @@ datasource db {
 
 model Team {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @default("Personal")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  members   User[]
+  members   Access[]
   projects  Project[]
+}
+
+model Access {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  team      Team?    @relation(fields: [teamId], references: [id])
+  teamId    String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  role      String?
 }
 
 model Project {
@@ -29,24 +40,28 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  secrets   Secret[]
+  branches  Branch[]
 }
 
-model Secret {
+model Branch {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  envs      Env[]
+}
+
+model Env {
   id        String   @id @default(cuid())
   key       String
   value     String
-  env       String   @default("development")
-  version   Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Example {
-  id String @id @default(cuid())
+  branchId String
+  branch   Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -85,9 +100,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  teamId        String?
-  role          String?
-  team          Team? @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teams         Access[]
 }
 
 model VerificationToken {

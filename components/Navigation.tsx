@@ -15,7 +15,7 @@ const Navigation = ({ ...props }) => {
         <PrimaryLink
           target="_self"
           sr="Signup or Login"
-          href={loggedIn ? "/welcome" : "/auth"}
+          href={loggedIn ? "/console" : "/auth"}
         >
           {loggedIn ? "Console" : "Get started 🎉"}
         </PrimaryLink>

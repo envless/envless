@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
+import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Input from "@/components/base/Input";
@@ -141,12 +142,9 @@ export async function getServerSideProps(context) {
   const session = await getSession({ req });
 
   if (session) {
-    res.writeHead(302, {
-      Location: "/welcome",
-    });
-
+    info("Redirecting to dashboard");
+    res.writeHead(301, { Location: "/console" });
     res.end();
-    return { props: {} };
   }
 
   return {
