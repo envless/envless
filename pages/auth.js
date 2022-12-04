@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
+import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Input from "@/components/base/Input";
@@ -31,7 +32,7 @@ const Login = ({ csrfToken }) => {
             Get started with Envless
           </h2>
 
-          <p className="mt-2 text-center text-sm text-gray-400">
+          <p className="mt-2 text-center text-sm text-light">
             Login or Sign up
           </p>
         </div>
@@ -75,7 +76,7 @@ const Login = ({ csrfToken }) => {
                   <div className="w-full border-t border-zinc-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-black px-2 text-white">
+                  <span className="bg-darkest px-2 text-light">
                     Or continue with
                   </span>
                 </div>
@@ -87,7 +88,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("github")}
                 >
                   <svg
-                    className="h-5 w-5 text-white"
+                    className="h-5 w-5 text-light"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     width="24"
@@ -104,7 +105,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("gitlab")}
                 >
                   <svg
-                    className="h-5 w-5 text-white"
+                    className="h-5 w-5 text-light"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     width="24"
@@ -119,7 +120,7 @@ const Login = ({ csrfToken }) => {
               </div>
             </div>
 
-            <p className="mt-8 text-center text-sm text-gray-400">
+            <p className="mt-8 text-center text-sm text-light">
               By continuing, you agree to our{" "}
               <Link className="hover:text-gray-200" href="/terms">
                 Terms of service
@@ -141,12 +142,9 @@ export async function getServerSideProps(context) {
   const session = await getSession({ req });
 
   if (session) {
-    res.writeHead(302, {
-      Location: "/welcome",
-    });
-
+    info("Redirecting to dashboard");
+    res.writeHead(301, { Location: "/console" });
     res.end();
-    return { props: {} };
   }
 
   return {

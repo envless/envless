@@ -1,34 +1,28 @@
 import Link from "next/link";
-import Image from "next/image";
+import Logo from "@/components/base/Logo";
 import { PrimaryLink } from "@/components/base/Buttons";
 
 const Navigation = ({ ...props }) => {
   const { loggedIn } = props;
 
   return (
-    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-black/80 py-6 lg:justify-between">
+    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-darkest/80 py-6 lg:justify-between">
       <div className="flex w-auto flex-wrap items-center justify-between">
-        <Logo />
+        <Link href="/">
+          <Logo />
+        </Link>
       </div>
 
       <div className="flex items-center text-center">
         <PrimaryLink
-          target="_blank"
+          target="_self"
           sr="Signup or Login"
-          href={loggedIn ? "/welcome" : "https://dub.sh/envless"}
+          href={loggedIn ? "/console" : "/auth"}
         >
           {loggedIn ? "Console" : "Get started 🎉"}
         </PrimaryLink>
       </div>
     </nav>
-  );
-};
-
-const Logo = () => {
-  return (
-    <Link href="/" className="flex items-center">
-      <Image src="/logo.png" alt="logo" height={40} width={40} />
-    </Link>
   );
 };
 
