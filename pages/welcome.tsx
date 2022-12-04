@@ -33,7 +33,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
                   Welcome to .envless
                 </h3>
                 <div className="mt-2 mb-2">
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-light">
                     We are contineously building envless in public. Follow us on{" "}
                     <Link
                       href="https://twitter.com/envless"
