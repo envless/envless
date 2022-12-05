@@ -1,4 +1,16 @@
-import React from "react";
+/**
+ * A functional react component for rendering a text input.
+ *
+ * @param {Object} props - The input props object.
+ * @param {string} props.id - The id of the input element.
+ * @param {string} props.name - The name of the input element.
+ * @param {string} props.label - The label of the input element.
+ * @param {string} props.type - The type of the input element.
+ * @param {string} props.placeholder - The placeholder text of the input element.
+ * @param {boolean} props.required - A boolean indicating whether the input is optional.
+ * @param {boolean} props.error - A boolean indicating whether the input has an error.
+ * @param {function} props.onChange - A function to be called when the input value changes.
+ */
 
 type InputProps = {
   id: string;
@@ -6,7 +18,7 @@ type InputProps = {
   label: string;
   type: string;
   placeholder: string;
-  required: boolean;
+  required?: boolean;
   error: boolean;
   onChange: () => void;
 };

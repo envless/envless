@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Logo from "@/components/base/Logo";
-import { PrimaryLink } from "@/components/base/Buttons";
+import { Logo } from "@/components/base";
+import { Button } from "@/components/base";
 
 const Navigation = ({ ...props }) => {
   const { loggedIn } = props;
@@ -14,13 +14,12 @@ const Navigation = ({ ...props }) => {
       </div>
 
       <div className="flex items-center text-center">
-        <PrimaryLink
-          target="_self"
+        <Button
           sr="Signup or Login"
           href={loggedIn ? "/console" : "/auth"}
         >
           {loggedIn ? "Console" : "Get started 🎉"}
-        </PrimaryLink>
+        </Button>
       </div>
     </nav>
   );

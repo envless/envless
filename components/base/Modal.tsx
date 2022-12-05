@@ -1,18 +1,24 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
-import Logo from "@/components/base/Logo";
+import React, { Fragment, useState } from "react";
+import { Logo } from "@/components/base";
 import { IoCloseSharp } from "react-icons/io5";
+import { Dialog, Transition } from "@headlessui/react";
 
-export default function Modal({ ...props }) {
+type ModalProps = {
+  Button: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+};
+
+const Modal = (props: ModalProps) => {
   const { Button, title, children } = props;
-  let [isOpen, setIsOpen] = useState(false);
+  let [open, isOpen] = useState(false);
 
   function closeModal() {
-    setIsOpen(false);
+    isOpen(false);
   }
 
   function openModal() {
-    setIsOpen(true);
+    isOpen(true);
   }
 
   return (
@@ -21,7 +27,7 @@ export default function Modal({ ...props }) {
         <Button />
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10 " onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -62,7 +68,7 @@ export default function Modal({ ...props }) {
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="border-b border-[#222] pb-6 text-center text-2xl font-medium leading-6"
+                    className="border-b border-dark pb-6 text-center text-2xl font-medium leading-6"
                   >
                     {title}
                   </Dialog.Title>
@@ -77,4 +83,6 @@ export default function Modal({ ...props }) {
       </Transition>
     </>
   );
-}
+};
+
+export default Modal;

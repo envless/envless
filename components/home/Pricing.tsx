@@ -22,7 +22,7 @@ const Pricing = ({ ...props }) => {
           </div>
 
           <div className="w-full p-7 md:w-1/3">
-            <div className="h-full rounded border border-gray-900 bg-[#111] p-8">
+            <div className="h-full rounded border border-darkest bg-dark p-8">
               <div className="mb-7 flex flex-wrap justify-between pb-2">
                 <div className="w-full xl:w-auto">
                   <h3 className="text-2xl font-normal text-lightest">
@@ -91,7 +91,7 @@ const Pricing = ({ ...props }) => {
                   target="_self"
                   className="font-heading tracking-px group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase text-light md:w-auto"
                 >
-                  <div className="overflow-hidden rounded bg-darkest py-4 px-9 hover:bg-[#222]">
+                  <div className="overflow-hidden rounded bg-darkest py-4 px-9 hover:bg-dark">
                     <p className="relative z-10">$5 per month per user</p>
                   </div>
                 </Link>

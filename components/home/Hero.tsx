@@ -29,7 +29,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
 
           <div className="mt-5 flex flex-col justify-center gap-3 md:flex-row">
             <span
-              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-[#222] px-5 py-3"
+              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
               onClick={copyToClipboard}
             >
               <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-light hover:bg-teal-200"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-lightest hover:bg-teal-200"
               href="/auth"
               target="_self"
             >

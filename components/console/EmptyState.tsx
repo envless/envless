@@ -1,21 +1,22 @@
 import axios from "axios";
 import { clsx } from "clsx";
 import { useState } from "react";
-import Input from "@/components/base/Input";
+import { Input } from "@/components/base";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { RiArrowRightLine } from "react-icons/ri";
 
 const Options = [
   {
-    id: 1,
-    title: "Team project",
-    description: "Perfect for team collaborating on one or multiple projects.",
-  },
-  {
-    id: 2,
+    id: "personal",
     title: "Personal project",
     description: "Perfect for your OpenSource or your side projects.",
+  },
+
+  {
+    id: "team",
+    title: "Team project",
+    description: "Perfect for team collaborating on one or multiple projects.",
   },
 ];
 
@@ -31,7 +32,7 @@ const EmptyState = ({ ...props }) => {
     const res = await axios.post("/api/v1/projects", {
       team,
       project,
-      personal: selectedOptions.id === 2,
+      personal: selectedOptions.id === "personal",
     });
 
     // const res = await fetch("/api/v1/projects", {
@@ -40,22 +41,22 @@ const EmptyState = ({ ...props }) => {
     //     "Content-Type": "application/json",
     //   },
     //   body: JSON.stringify({
-    //     team: team,
-    //     project: project,
-    //     personal: selectedOptions.id === 2,
+    //     team: "team",
+    //     project: "project",
+    //     personal: false,
     //   })
     // });
   };
 
   return (
-    <div className="mt-32 flex place-items-center content-center justify-center sm:mt-40">
+    <div className="mt-24 flex place-items-center content-center justify-center sm:mt-40">
       <div className="max-w-xl">
         <RadioGroup value={selectedOptions} onChange={setSelectedOptions}>
           <RadioGroup.Label className="text-2xl ">
             👋 Welcome to Envless
           </RadioGroup.Label>
           <RadioGroup.Description className="text-md mt-1 text-light">
-            You dont have any projects. Let{"'"}s creat one.
+            Let{"'"}s get started by creating a project.
           </RadioGroup.Description>
 
           <div className="mt-8 grid grid-cols-2 gap-y-6 gap-x-6">
@@ -110,7 +111,7 @@ const EmptyState = ({ ...props }) => {
 
         <div className="mt-6 block">
           <form onSubmit={handleSubmit}>
-            {selectedOptions.id === 1 && (
+            {selectedOptions.id === "team" && (
               <Input
                 id="team"
                 name="team"

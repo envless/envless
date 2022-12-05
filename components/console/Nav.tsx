@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@/components/base/Logo";
+import { Logo } from "@/components/base";
 import { signOut } from "next-auth/react";
 import Dropdown from "@/components/base/Dropdown";
 
