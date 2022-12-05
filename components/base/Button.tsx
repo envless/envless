@@ -25,11 +25,12 @@ const Button = (props: {
 
   if (href) {
     return (
-      <Link href={href}>
-        <a className="flex w-full justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2">
-          {children}
-          {sr && <span className="sr-only">{sr}</span>}
-        </a>
+      <Link
+        href={href}
+        className="flex w-full justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+      >
+        {children}
+        {sr && <span className="sr-only">{sr}</span>}
       </Link>
     );
   } else {
@@ -37,7 +38,6 @@ const Button = (props: {
       <button
         type={type}
         className="flex w-full justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
-        sr={sr}
         onClick={onClick}
       >
         {children}
