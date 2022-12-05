@@ -34,7 +34,7 @@ const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
         }}
       />
 
-      <div className="mx-auto max-w-screen-xl px-10 xl:px-16">
+      <div className="mx-auto max-w-screen-xl px-5 xl:px-16">
         <Navigation loggedIn={loggedIn} />
         <Hero header={header} />
         <Features />
