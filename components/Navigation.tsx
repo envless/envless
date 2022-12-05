@@ -14,10 +14,7 @@ const Navigation = ({ ...props }) => {
       </div>
 
       <div className="flex items-center text-center">
-        <Button
-          sr="Signup or Login"
-          href={loggedIn ? "/console" : "/auth"}
-        >
+        <Button sr="Signup or Login" href={loggedIn ? "/console" : "/auth"}>
           {loggedIn ? "Console" : "Get started 🎉"}
         </Button>
       </div>

@@ -18,7 +18,7 @@ type Data = {
     team: string;
     project: string;
     personal: boolean;
-  }
+  };
 };
 
 /**
@@ -34,7 +34,7 @@ export default async function handler(
 ) {
   // parse the team, project, and personal properties from the request body
   const { team, project, personal } = req.body;
-  console.log({team, project, personal});
+  console.log({ team, project, personal });
 
   // return a success response with the data
   return res.json({
