@@ -7,25 +7,27 @@ import React from 'react';
  * @param {string} [color="lightest"] The color of the text. Can be "light", "lighter", or "lightest".
  */
 
-type TextProps = {
-  size?: 'small' | 'medium' | 'large';
+type SpanProps = {
+  size?: 'sm' | 'lg' | 'xl' | '2xl';
   color?: 'light' | 'lighter' | 'lightest';
   children: React.ReactNode;
 }
 
-const Text = (props: TextProps) => {
+const Span = (props: SpanProps) => {
   const { size, color, children } = props;
 
   let className = '';
   switch (size) {
-    case 'small':
+    case 'sm':
       className = 'text-sm';
       break;
-    case 'medium':
-      className = 'text-base';
-      break;
-    case 'large':
+    case 'lg':
       className = 'text-lg';
+      break;
+    case 'xl':
+      className = 'text-xl';
+    case '2xl':
+      className = 'text-2xl';
       break;
     default:
       className = 'text-base';
@@ -54,9 +56,9 @@ const Text = (props: TextProps) => {
   );
 };
 
-Text.defaultProps = {
+Span.defaultProps = {
   size: 'medium',
   color: 'lightest',
 };
 
-export default Text;
+export default Span;

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Logo } from "@/components/base";
-import { Button } from "@/components/base";
+import { Logo } from "@/components/theme/index";
+import { Button } from "@/components/theme/index";
 
 const Navigation = ({ ...props }) => {
   const { loggedIn } = props;

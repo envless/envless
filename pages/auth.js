@@ -4,7 +4,7 @@ import Image from "next/image";
 import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input, Button } from "@/components/base";
+import { Input, Button } from "@/components";
 import { signIn, getSession, getCsrfToken } from "next-auth/react";
 
 const Login = ({ csrfToken }) => {
