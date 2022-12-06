@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Logo } from "@/components/base";
+import { Logo } from "@/components/theme";
 import { signOut } from "next-auth/react";
-import Dropdown from "@/components/base/Dropdown";
+import Dropdown from "@/components/theme/Dropdown";
 
 const Nav = ({ ...props }) => {
   const { currentUser } = props;

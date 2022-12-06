@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { Logo } from "@/components/base";
+import { Logo } from "@/components/theme";
 import { IoCloseSharp } from "react-icons/io5";
 import { Dialog, Transition } from "@headlessui/react";
 

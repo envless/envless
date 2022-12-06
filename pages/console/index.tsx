@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import Nav from "@/components/console/Nav";
 import { getSession } from "next-auth/react";
 import EmptyState from "@/components/console/EmptyState";
-import Container from "@/components/base/Container";
+import { Container } from "@/components/theme";
 
 type Props = {
   teams: Object;
@@ -19,9 +19,13 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, projects }) => {
         <Nav currentUser={currentUser} />
       </Container>
 
-      <pre>
-        {JSON.stringify(projectArray, null, 2)}
-      </pre>
+      { projectArray.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <pre>
+          {JSON.stringify(projectArray, null, 2)}
+        </pre>
+      )}
     </>
   );
 };
@@ -47,9 +51,6 @@ export async function getServerSideProps(context: { req: any }) {
         projects: true,
       },
     });
-
-    console.log("currentUser", currentUser);
-    console.log("User with teams", user);
 
     return {
       props: {
