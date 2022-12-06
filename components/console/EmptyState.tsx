@@ -1,7 +1,7 @@
 import axios from "axios";
 import { clsx } from "clsx";
 import { useState } from "react";
-import { Input } from "@/components/base";
+import { Text, Input } from "@/components/base";
 import { RadioGroup } from "@headlessui/react";
 import { CheckCircleIcon } from "@heroicons/react/20/solid";
 import { RiArrowRightLine } from "react-icons/ri";

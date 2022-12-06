@@ -64,7 +64,7 @@ const Login = ({ csrfToken }) => {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <Button sr="Send magic link">Send magic link</Button>
+              <Button sr="Send magic link" type="submit">Send magic link</Button>
             </form>
 
             <div className="my-6">
