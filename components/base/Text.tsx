@@ -1,32 +1,62 @@
-import React from "react";
+import React from 'react';
 
 /**
- * Text component
+ * A text component that can be used to display text with different sizes and colors.
  *
- * @param {Object} props
- * @param {boolean} [props.light] - Whether the text should be light
- * @param {boolean} [props.lighter] - Whether the text should be lighter
- * @param {boolean} [props.lightest] - Whether the text should be lightest
- * @param {('sm'|'md'|'lg')} [props.size='md'] - The size of the text
- * @param {React.ReactNode} [props.children] - The children to render
+ * @param {string} [size="medium"] The size of the text. Can be "small", "medium", or "large".
+ * @param {string} [color="lightest"] The color of the text. Can be "light", "lighter", or "lightest".
  */
-const Text = (props: {
-  light?: boolean;
-  lighter?: boolean;
-  lightest?: boolean;
-  size?: "sm" | "md" | "lg";
-  children?: React.ReactNode;
-}) => {
-  const { light, lighter, lightest, size = "md" } = props;
 
-  let className = "text";
-  if (light) className += " text-light";
-  if (lighter) className += " text-lighter";
-  if (lightest) className += " text-lightest";
-  if (size === "sm") className += " text-sm";
-  if (size === "lg") className += " text-lg";
+type TextProps = {
+  size?: 'small' | 'medium' | 'large';
+  color?: 'light' | 'lighter' | 'lightest';
+  children: React.ReactNode;
+}
 
-  return <span className={className}>{props.children}</span>;
+const Text = (props: TextProps) => {
+  const { size, color, children } = props;
+
+  let className = '';
+  switch (size) {
+    case 'small':
+      className = 'text-sm';
+      break;
+    case 'medium':
+      className = 'text-base';
+      break;
+    case 'large':
+      className = 'text-lg';
+      break;
+    default:
+      className = 'text-base';
+      break;
+  }
+
+  switch (color) {
+    case 'light':
+      className += ' text-light';
+      break;
+    case 'lighter':
+      className += ' text-lighter';
+      break;
+    case 'lightest':
+      className += ' text-lightest';
+      break;
+    default:
+      className += ' text-lightest';
+      break;
+  }
+
+  return (
+    <span className={className}>
+      {children}
+    </span>
+  );
+};
+
+Text.defaultProps = {
+  size: 'medium',
+  color: 'lightest',
 };
 
 export default Text;
