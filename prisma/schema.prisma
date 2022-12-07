@@ -13,24 +13,37 @@ datasource db {
   referentialIntegrity  = "prisma"
 }
 
+// Org has many projects
+// Org has many users through access
+model Org {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects  Project[]
+  users     Access[]
+}
+
 model Project {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   branches  Branch[]
-  teams     Access[]
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
 }
 
 model Access {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String?
-  role      String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  role      String?  @default("admin")
 }
 
 model Branch {
@@ -90,7 +103,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  projects      Access[]
+  orgs          Access[]
 }
 
 model VerificationToken {

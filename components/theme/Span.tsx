@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * A text component that can be used to display text with different sizes and colors.
@@ -8,57 +8,53 @@ import React from 'react';
  */
 
 type SpanProps = {
-  size?: 'sm' | 'lg' | 'xl' | '2xl';
-  color?: 'light' | 'lighter' | 'lightest';
+  size?: "sm" | "lg" | "xl" | "2xl";
+  color?: "light" | "lighter" | "lightest";
   children: React.ReactNode;
-}
+};
 
 const Span = (props: SpanProps) => {
   const { size, color, children } = props;
 
-  let className = '';
+  let className = "";
   switch (size) {
-    case 'sm':
-      className = 'text-sm';
+    case "sm":
+      className = "text-sm";
       break;
-    case 'lg':
-      className = 'text-lg';
+    case "lg":
+      className = "text-lg";
       break;
-    case 'xl':
-      className = 'text-xl';
-    case '2xl':
-      className = 'text-2xl';
+    case "xl":
+      className = "text-xl";
+    case "2xl":
+      className = "text-2xl";
       break;
     default:
-      className = 'text-base';
+      className = "text-base";
       break;
   }
 
   switch (color) {
-    case 'light':
-      className += ' text-light';
+    case "light":
+      className += " text-light";
       break;
-    case 'lighter':
-      className += ' text-lighter';
+    case "lighter":
+      className += " text-lighter";
       break;
-    case 'lightest':
-      className += ' text-lightest';
+    case "lightest":
+      className += " text-lightest";
       break;
     default:
-      className += ' text-lightest';
+      className += " text-lightest";
       break;
   }
 
-  return (
-    <span className={className}>
-      {children}
-    </span>
-  );
+  return <span className={className}>{children}</span>;
 };
 
 Span.defaultProps = {
-  size: 'medium',
-  color: 'lightest',
+  size: "medium",
+  color: "lightest",
 };
 
 export default Span;

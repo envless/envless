@@ -1,36 +1,30 @@
 import prisma from "@/lib/prisma";
-import Nav from "@/components/console/Nav";
 import { getSession } from "next-auth/react";
 import EmptyState from "@/components/console/EmptyState";
-import { Container } from "@/components/theme";
+import Wrapper from "@/components/console/Wrapper";
 
 type Props = {
-  teams: Object;
-  projects: Object;
+  orgs: Object;
   currentUser: Object;
 };
 
-const ConsoleHome: React.FC<Props> = ({ currentUser, projects }) => {
-  const projectArray = Object.values(projects);
+const ConsoleHome: React.FC<Props> = ({ currentUser, orgs }) => {
+  const orgArray = Object.values(orgs);
 
   return (
-    <>
-      <Container>
-        <Nav currentUser={currentUser} />
-      </Container>
-
-      { projectArray.length === 0 ? (
+    <Wrapper currentUser={currentUser}>
+      {orgArray.length === 0 ? (
         <EmptyState />
       ) : (
-        <pre>
-          {JSON.stringify(projectArray, null, 2)}
-        </pre>
+        <pre>{JSON.stringify(orgArray, null, 2)}</pre>
       )}
-    </>
+    </Wrapper>
   );
 };
 
 export async function getServerSideProps(context: { req: any }) {
+  let projects = [];
+
   const { req } = context;
   const session = await getSession({ req });
   const currentUser = session?.user;
@@ -48,14 +42,29 @@ export async function getServerSideProps(context: { req: any }) {
         id: session?.user?.id,
       },
       include: {
-        projects: true,
+        orgs: true,
       },
     });
 
+    const orgIds = user?.orgs.map((org) => org.id) || [];
+
+    if (orgIds.length != 0) {
+      const projects = await prisma.project.findMany({
+        where: {
+          orgId: {
+            in: orgIds,
+          },
+        },
+      });
+    }
+
+    const orgs = user?.orgs;
+
     return {
       props: {
-        projects: user?.projects,
-        currentUser: currentUser,
+        orgs,
+        projects,
+        currentUser,
       },
     };
   }

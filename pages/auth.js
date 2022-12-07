@@ -4,7 +4,7 @@ import Image from "next/image";
 import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input, Button } from "@/components";
+import { Input, Button } from "@/components/theme";
 import { signIn, getSession, getCsrfToken } from "next-auth/react";
 
 const Login = ({ csrfToken }) => {
@@ -64,7 +64,9 @@ const Login = ({ csrfToken }) => {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <Button sr="Send magic link" type="submit">Send magic link</Button>
+              <Button sr="Send magic link" type="submit" full="true">
+                Send magic link
+              </Button>
             </form>
 
             <div className="my-6">
