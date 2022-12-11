@@ -1,3 +1,4 @@
+import cookie from "cookie";
 import prisma from "@/lib/prisma";
 import { getSession } from "next-auth/react";
 import EmptyState from "@/components/console/EmptyState";
@@ -22,10 +23,8 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, orgs }) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  let projects = [];
-
-  const { req } = context;
+export async function getServerSideProps(context: { req: any; res: any }) {
+  const { req, res } = context;
   const session = await getSession({ req });
   const currentUser = session?.user;
 
@@ -39,23 +38,31 @@ export async function getServerSideProps(context: { req: any }) {
   } else {
     const user = await prisma.user.findUnique({
       where: {
-        id: session?.user?.id,
+        email: session?.user?.email ?? "",
       },
       include: {
         orgs: true,
       },
     });
 
-    const orgIds = user?.orgs.map((org) => org.id) || [];
+    if (!user) {
+      res.setHeader(
+        "Set-Cookie",
+        cookie.serialize("next-auth.session-token", "", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          path: "/",
+          expires: new Date(0),
+        }),
+      );
 
-    if (orgIds.length != 0) {
-      const projects = await prisma.project.findMany({
-        where: {
-          orgId: {
-            in: orgIds,
-          },
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
         },
-      });
+      };
     }
 
     const orgs = user?.orgs;
@@ -63,7 +70,6 @@ export async function getServerSideProps(context: { req: any }) {
     return {
       props: {
         orgs,
-        projects,
         currentUser,
       },
     };

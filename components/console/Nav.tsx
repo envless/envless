@@ -17,17 +17,15 @@ const Nav = ({ ...props }) => {
   const avatar =
     image || `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
 
-  const menuButton = () => {
-    return (
-      <Image
-        className="cursor-pointer rounded-full"
-        src={avatar}
-        alt="avatar"
-        height={40}
-        width={40}
-      />
-    );
-  };
+  const menuButton = (
+    <Image
+      className="cursor-pointer rounded-full"
+      src={avatar}
+      alt="avatar"
+      height={40}
+      width={40}
+    />
+  );
 
   const menuItems = [
     {
