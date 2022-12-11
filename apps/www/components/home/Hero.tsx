@@ -22,14 +22,14 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
           <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl font-semibold tracking-tight text-transparent md:text-8xl">
             {header}
           </h1>
-          <h2 className="mt-3 text-lg text-lighter md:text-2xl">
+          <h2 className="text-lighter mt-3 text-lg md:text-2xl">
             An open-source, the most secure and frictionless way to share and
             manage app secrets across teams.
           </h2>
 
           <div className="mt-5 flex flex-col justify-center gap-3 md:flex-row">
             <span
-              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
+              className="bg-dark flex cursor-copy items-center justify-between gap-5 rounded-full px-5 py-3"
               onClick={copyToClipboard}
             >
               <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-lightest hover:bg-teal-200"
+              className="text-lightest inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium hover:bg-teal-200"
               href="/auth"
               target="_self"
             >

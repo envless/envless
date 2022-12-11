@@ -21,7 +21,7 @@ export default function Dropdown(props: Props) {
           return (
             <Menu.Item key={index} as="div">
               <button
-                className="w-full rounded p-2 px-5 text-left text-sm hover:bg-dark"
+                className="hover:bg-dark w-full rounded p-2 px-5 text-left text-sm"
                 onClick={item.handleClick}
               >
                 {item.title}
@@ -48,7 +48,7 @@ export default function Dropdown(props: Props) {
       >
         <Menu.Items
           as="div"
-          className="absolute right-0 mt-2 w-56 origin-top-right rounded shadow-xl shadow-black ring-1 ring-dark focus:outline-none"
+          className="ring-dark absolute right-0 mt-2 w-56 origin-top-right rounded shadow-xl shadow-black ring-1 focus:outline-none"
         >
           <div className="m-3">
             <DropDownItems />

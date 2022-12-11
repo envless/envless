@@ -3,3 +3,8 @@
 .vercel/*
 .vscode/*
 node_modules/*
+apps/*/node_modules/*
+apps/*/.next/*
+apps/*/.mailing/*
+apps/*/.vercel/*
+apps/*/.vscode/*

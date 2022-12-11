@@ -31,7 +31,7 @@ const Login = ({ csrfToken }) => {
             Get started with Envless
           </h2>
 
-          <p className="mt-2 text-center text-sm text-light">
+          <p className="text-light mt-2 text-center text-sm">
             Login or Sign up
           </p>
         </div>
@@ -75,7 +75,7 @@ const Login = ({ csrfToken }) => {
                   <div className="w-full border-t border-zinc-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-darkest px-2 text-light">
+                  <span className="bg-darkest text-light px-2">
                     Or continue with
                   </span>
                 </div>
@@ -87,7 +87,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("github")}
                 >
                   <svg
-                    className="h-5 w-5 text-light"
+                    className="text-light h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     width="24"
@@ -104,7 +104,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("gitlab")}
                 >
                   <svg
-                    className="h-5 w-5 text-light"
+                    className="text-light h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     width="24"
@@ -119,7 +119,7 @@ const Login = ({ csrfToken }) => {
               </div>
             </div>
 
-            <p className="mt-8 text-center text-sm text-light">
+            <p className="text-light mt-8 text-center text-sm">
               By continuing, you agree to our{" "}
               <Link className="hover:text-gray-200" href="/terms">
                 Terms of service

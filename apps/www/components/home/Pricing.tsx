@@ -11,7 +11,7 @@ const Pricing = ({ ...props }) => {
               <h2 className="font-heading mb-5 text-3xl font-normal text-gray-300 sm:text-4xl">
                 Pricing
               </h2>
-              <p className="text-base text-light">
+              <p className="text-light text-base">
                 Simple pricing, cancel anytime. Get started with personal plan.
                 You can always upgrade later. No credit card required.{" "}
                 <span className="text-teal-200">
@@ -22,28 +22,28 @@ const Pricing = ({ ...props }) => {
           </div>
 
           <div className="w-full p-7 md:w-1/3">
-            <div className="h-full rounded border border-darkest bg-dark p-8">
+            <div className="border-darkest bg-dark h-full rounded border p-8">
               <div className="mb-7 flex flex-wrap justify-between pb-2">
                 <div className="w-full xl:w-auto">
-                  <h3 className="text-2xl font-normal text-lightest">
+                  <h3 className="text-lightest text-2xl font-normal">
                     Personal
                   </h3>
                 </div>
               </div>
               <ul className="mb-8">
-                <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
+                <li className="font-heading text-light mb-4 flex items-center text-base font-medium">
                   <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Unlimited projects</p>
                 </li>
-                <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
+                <li className="font-heading text-light mb-4 flex items-center text-base font-medium">
                   <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Unlimited branches</p>
                 </li>
-                <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
+                <li className="font-heading text-light mb-4 flex items-center text-base font-medium">
                   <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
                   <p>End to end encryption</p>
                 </li>
-                <li className="font-heading flex items-center text-base font-medium text-light">
+                <li className="font-heading text-light flex items-center text-base font-medium">
                   <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Deploy anywhere</p>
                 </li>
@@ -53,7 +53,7 @@ const Pricing = ({ ...props }) => {
                 target="_self"
                 className="font-heading tracking-px group relative mb-3 w-full rounded text-center text-xs font-semibold uppercase text-gray-900 md:w-auto"
               >
-                <div className="rounded bg-lightest py-4 px-9 hover:bg-gray-300 ">
+                <div className="bg-lightest rounded py-4 px-9 hover:bg-gray-300 ">
                   <p className="relative z-10 ">Forever free</p>
                 </div>
               </Link>
@@ -62,7 +62,7 @@ const Pricing = ({ ...props }) => {
 
           <div className="w-full p-7 md:w-1/3">
             <div className="h-full rounded p-0.5">
-              <div className="rounded bg-lightest p-8">
+              <div className="bg-lightest rounded p-8">
                 <div className="mb-7 flex flex-wrap justify-between pb-2">
                   <div className="w-full xl:w-auto">
                     <h3 className="text-2xl font-normal text-gray-900">Team</h3>
@@ -89,9 +89,9 @@ const Pricing = ({ ...props }) => {
                 <Link
                   href="/auth"
                   target="_self"
-                  className="font-heading tracking-px group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase text-light md:w-auto"
+                  className="font-heading tracking-px text-light group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase md:w-auto"
                 >
-                  <div className="overflow-hidden rounded bg-darkest py-4 px-9 hover:bg-dark">
+                  <div className="bg-darkest hover:bg-dark overflow-hidden rounded py-4 px-9">
                     <p className="relative z-10">$5 per month per user</p>
                   </div>
                 </Link>

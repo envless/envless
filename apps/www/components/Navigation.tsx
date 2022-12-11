@@ -6,7 +6,7 @@ const Navigation = ({ ...props }) => {
   const { loggedIn } = props;
 
   return (
-    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-darkest/80 py-6 lg:justify-between">
+    <nav className="bg-darkest/80 sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between py-6 lg:justify-between">
       <div className="flex w-auto flex-wrap items-center justify-between">
         <Link href="/">
           <Logo />

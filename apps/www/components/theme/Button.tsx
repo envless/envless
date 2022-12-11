@@ -32,7 +32,7 @@ const Button = (props: {
         href={href}
         className={clsx(
           full ? "w-full" : "",
-          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
+          "bg-lightest flex justify-center rounded border border-transparent px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
         )}
       >
         {children}
@@ -45,7 +45,7 @@ const Button = (props: {
         type={type}
         className={clsx(
           full ? "w-full" : "",
-          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
+          "bg-lightest flex justify-center rounded border border-transparent px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
         )}
         onClick={onClick}
       >

@@ -42,7 +42,7 @@ const Input = ({ ...props }: InputProps) => {
           required={required}
           placeholder={placeholder}
           onChange={onChange}
-          className="block w-full appearance-none rounded border border-zinc-700 bg-dark px-3 py-2 placeholder-gray-500 shadow-sm focus:border-zinc-700 focus:outline-none focus:ring-zinc-700 sm:text-sm"
+          className="bg-dark block w-full appearance-none rounded border border-zinc-700 px-3 py-2 placeholder-gray-500 shadow-sm focus:border-zinc-700 focus:outline-none focus:ring-zinc-700 sm:text-sm"
         />
       </div>
     </div>
