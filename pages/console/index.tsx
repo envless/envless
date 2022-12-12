@@ -1,29 +1,29 @@
 import prisma from "@/lib/prisma";
 import { getSession } from "next-auth/react";
-import EmptyState from "@/components/console/EmptyState";
 import Wrapper from "@/components/console/Wrapper";
+import EmptyState from "@/components/console/EmptyState";
 
 type Props = {
-  orgs: Object;
+  workspaces: Object;
   currentUser: Object;
 };
 
-const ConsoleHome: React.FC<Props> = ({ currentUser, orgs }) => {
-  const orgArray = Object.values(orgs);
+const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
+  const spaces = Object.values(workspaces);
 
   return (
     <Wrapper currentUser={currentUser}>
-      {orgArray.length === 0 ? (
+      {spaces.length === 0 ? (
         <EmptyState />
       ) : (
-        <pre>{JSON.stringify(orgArray, null, 2)}</pre>
+        <pre>{JSON.stringify(spaces, null, 2)}</pre>
       )}
     </Wrapper>
   );
 };
 
 export async function getServerSideProps(context: { req: any }) {
-  let projects = [];
+  let projects: any = [];
 
   const { req } = context;
   const session = await getSession({ req });
@@ -42,28 +42,31 @@ export async function getServerSideProps(context: { req: any }) {
         id: session?.user?.id,
       },
       include: {
-        orgs: true,
+        workspaces: true,
       },
     });
 
-    const orgIds = user?.orgs.map((org) => org.id) || [];
+    const workspaceIds =
+      user?.workspaces.map((workspace) => workspace.id) || [];
 
-    if (orgIds.length != 0) {
-      const projects = await prisma.project.findMany({
+    if (workspaceIds.length != 0) {
+      projects = await prisma.project.findMany({
         where: {
-          orgId: {
-            in: orgIds,
+          workspaceId: {
+            in: workspaceIds,
           },
         },
       });
+
+      projects ||= [];
     }
 
-    const orgs = user?.orgs;
+    const workspaces = user?.workspaces || [];
 
     return {
       props: {
-        orgs,
         projects,
+        workspaces,
         currentUser,
       },
     };

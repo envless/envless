@@ -13,9 +13,9 @@ datasource db {
   referentialIntegrity  = "prisma"
 }
 
-// Org has many projects
-// Org has many users through access
-model Org {
+// Workspace has many projects
+// Workspace has many users through access
+model Workspace {
   id        String   @id @default(cuid())
   name      String
   createdAt DateTime @default(now())
@@ -25,25 +25,25 @@ model Org {
 }
 
 model Project {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  branches  Branch[]
-  orgId     String
-  org       Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  name          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  branches      Branch[]
+  workspaceId   String
+  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model Access {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  orgId     String
-  org       Org      @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  role      String?  @default("admin")
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  role        String?   @default("admin")
 }
 
 model Branch {
@@ -64,7 +64,7 @@ model Env {
   updatedAt DateTime @updatedAt
 
   branchId String
-  branch   Branch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -103,7 +103,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  orgs          Access[]
+  workspaces    Access[]
 }
 
 model VerificationToken {
