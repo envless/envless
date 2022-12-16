@@ -29,7 +29,7 @@ export async function getServerSideProps(context: { req: any }) {
   const session = await getSession({ req });
   const currentUser = session?.user;
 
-  if (!session || !currentUser) {
+  if (!session || !currentUser || !currentUser.email) {
     return {
       redirect: {
         destination: "/",
@@ -39,7 +39,7 @@ export async function getServerSideProps(context: { req: any }) {
   } else {
     const user = await prisma.user.findUnique({
       where: {
-        id: session?.user?.id,
+        email: currentUser.email,
       },
       include: {
         workspaces: true,
@@ -47,7 +47,7 @@ export async function getServerSideProps(context: { req: any }) {
     });
 
     const workspaceIds =
-      user?.workspaces.map((workspace) => workspace.id) || [];
+      user?.workspaces.map((workspace: { id: any }) => workspace.id) || [];
 
     if (workspaceIds.length != 0) {
       projects = await prisma.project.findMany({

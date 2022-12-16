@@ -1,12 +1,15 @@
-import "../styles/globals.css";
+import "@/styles/globals.css";
+import "@/styles/zoom.css";
 import type { AppProps } from "next/app";
-import { Inter } from "@next/font/google";
-const inter = Inter({ subsets: ["latin"] });
+import { Manrope } from "@next/font/google";
+const font = Manrope({ subsets: ["latin"] });
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={inter.className}>
+    <main className={font.className}>
       <Component {...pageProps} />
+      <Analytics />
     </main>
   );
 }

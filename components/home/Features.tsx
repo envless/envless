@@ -8,7 +8,7 @@ const Features = () => {
   return (
     <div className="mx-auto mt-24 md:px-24">
       <div className="text-center">
-        <h2 className="font-heading text-3xl font-normal text-gray-300 sm:text-4xl">
+        <h2 className="heading font- text-3xl font-bold text-gray-300 sm:text-4xl">
           By developers, for developers
         </h2>
         <p className="mx-auto mt-2 max-w-md text-light">

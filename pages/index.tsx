@@ -6,12 +6,23 @@ import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
 import Pricing from "@/components/home/Pricing";
 
-type HomeProps = {
+type Props = {
   header: string;
   loggedIn: boolean;
 };
 
-const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
+const Home: React.FC<Props> = ({ header, loggedIn }) => {
+  const menu = [
+    {
+      name: "Blog",
+      href: "/blog",
+    },
+    {
+      name: "Docs",
+      href: "/docs",
+    },
+  ];
+
   return (
     <>
       <NextSeo
@@ -35,7 +46,7 @@ const Home: React.FC<HomeProps> = ({ header, loggedIn }) => {
       />
 
       <div className="mx-auto max-w-screen-xl px-5 xl:px-16">
-        <Navigation loggedIn={loggedIn} />
+        <Navigation loggedIn={loggedIn} menu={menu} />
         <Hero header={header} />
         <Features />
         <Pricing />
