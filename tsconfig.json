@@ -18,6 +18,7 @@
     "paths": {
       "@/lib/*": ["lib/*"],
       "@/emails/*": ["emails/*"],
+      "@/styles/*": ["styles/*"],
       "@/components/*": ["components/*"]
     }
   },
@@ -26,7 +27,9 @@
     "**/*.ts",
     "**/*.tsx",
     "emails/index.ts",
-    "pages/auth.js"
+    "pages/auth.js",
+    "components/blog/ContentBlock.js",
+    "lib/notion.ts"
   ],
   "exclude": ["node_modules"]
 }

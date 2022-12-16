@@ -23,9 +23,7 @@ const Modal = (props: ModalProps) => {
 
   return (
     <>
-      <div onClick={openModal}>
-        <Button />
-      </div>
+      <div onClick={openModal}>{Button}</div>
 
       <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10 " onClose={closeModal}>
