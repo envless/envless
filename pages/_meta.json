@@ -1,15 +1,16 @@
 {
-  "index": "Introduction",
-  "another": "Another Page",
+  "index": "⚡ Introduction",
+  "another": "👋 Getting started",
   "advanced": "Advanced (A Folder)",
-  "about": {
-    "title": "About",
-    "type": "page"
+  "home": {
+    "title": "Home",
+    "type": "page",
+    "href": "/"
   },
   "contact": {
-    "title": "Contact ↗",
+    "title": "Blog",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
-    "newWindow": true
+    "href": "/blog",
+    "newWindow": false
   }
 }

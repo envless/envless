@@ -1,7 +1,7 @@
 {
-  "name": "nextra-docs-template",
+  "name": "docs",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "Envless - OpenSource, frictionless and secure way to share and manage app secrets across teams.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,15 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+    "url": "git+https://github.com/envless/docs.git"
   },
-  "author": "Shu Ding <g@shud.in>",
+  "author": "Puru Dahal <puru@envless.dev>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shuding/nextra-docs-template/issues"
+    "url": "https://github.com/envless/docs/issues"
   },
-  "homepage": "https://github.com/shuding/nextra-docs-template#readme",
+  "homepage": "https://github.com/envless/docs#readme",
   "dependencies": {
+    "@next/font": "^13.0.7",
+    "@vercel/analytics": "^0.1.6",
     "next": "^13.0.6",
     "nextra": "2.0.1",
     "nextra-theme-docs": "2.0.1",
