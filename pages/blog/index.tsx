@@ -6,7 +6,6 @@ import Post from "@/components/blog/Post";
 import { getNotionData } from "@/lib/notion";
 import { getSession } from "next-auth/react";
 import Navigation from "@/components/Navigation";
-import Featured from "@/components/blog/Featured";
 import Container from "@/components/theme/Container";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
@@ -58,10 +57,6 @@ type PostProps = {
 
 const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
   const menu = [
-    {
-      name: "Home",
-      href: "/",
-    },
     {
       name: "Docs",
       href: "/docs",

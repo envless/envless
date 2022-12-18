@@ -18,7 +18,7 @@ export const RenderBlocks = ({ blocks }) => {
 
       case "paragraph":
         return (
-          <div className="pt-3" key={id}>
+          <div className="pt-3 text-lg" key={id}>
             <Text text={value.rich_text} id={id} />
           </div>
         );
@@ -110,9 +110,6 @@ export const RenderBlocks = ({ blocks }) => {
 
 const SpanText = ({ text, id }) => {
   if (!text) return null;
-
-  // if(text.link) {
-  // }
 
   return text.map((value, i) => {
     const {

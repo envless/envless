@@ -1,7 +1,7 @@
 import { NextSeo } from "next-seo";
+import Zoom from "react-medium-image-zoom";
 import { getSession } from "next-auth/react";
 import Navigation from "@/components/Navigation";
-import Featured from "@/components/blog/Featured";
 import Container from "@/components/theme/Container";
 import { RenderBlocks } from "@/components/blog/ContentBlock";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
@@ -14,10 +14,6 @@ type Props = {
 
 const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
   const menu = [
-    {
-      name: "Home",
-      href: "/",
-    },
     {
       name: "Blog",
       href: "/blog",
@@ -80,13 +76,19 @@ const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
 
       <Container>
         <section className="md:px-32">
-          <Featured
-            title={postTitle()}
-            date={postDate()}
-            image={postImageUrl()}
-          />
-
           <section className="mx-auto my-16 sm:max-w-3xl">
+            <h1 className="mt-10 text-center text-5xl">{postTitle()}</h1>
+            <p className="text-md my-2 text-center text-light">{postDate()}</p>
+            <Zoom>
+              <img
+                alt={postTitle()}
+                sizes="80vw"
+                src={postImageUrl()}
+                decoding="async"
+                data-nimg="fill"
+                className="my-10 object-cover transition-all"
+              />
+            </Zoom>
             <RenderBlocks blocks={blocks} />
           </section>
         </section>
