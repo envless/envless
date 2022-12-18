@@ -15,12 +15,12 @@ type Props = {
 const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
   const menu = [
     {
-      name: "Blog",
-      href: "/blog",
-    },
-    {
       name: "Docs",
       href: "/docs",
+    },
+    {
+      name: "Blog",
+      href: "/blog",
     },
   ];
 

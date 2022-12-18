@@ -1,10 +1,11 @@
 import { sample } from "lodash";
 import { NextSeo } from "next-seo";
-import { getSession } from "next-auth/react";
-import Navigation from "@/components/Navigation";
 import Hero from "@/components/home/Hero";
-import Features from "@/components/home/Features";
+import { getSession } from "next-auth/react";
 import Pricing from "@/components/home/Pricing";
+import Navigation from "@/components/Navigation";
+import Features from "@/components/home/Features";
+import Container from "@/components/theme/Container";
 
 type Props = {
   header: string;
@@ -14,12 +15,12 @@ type Props = {
 const Home: React.FC<Props> = ({ header, loggedIn }) => {
   const menu = [
     {
-      name: "Blog",
-      href: "/blog",
-    },
-    {
       name: "Docs",
       href: "/docs",
+    },
+    {
+      name: "Blog",
+      href: "/blog",
     },
   ];
 
@@ -45,12 +46,12 @@ const Home: React.FC<Props> = ({ header, loggedIn }) => {
         }}
       />
 
-      <div className="mx-auto max-w-screen-xl px-5 xl:px-16">
+      <Container>
         <Navigation loggedIn={loggedIn} menu={menu} />
         <Hero header={header} />
         <Features />
         <Pricing />
-      </div>
+      </Container>
     </>
   );
 };
