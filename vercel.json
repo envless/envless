@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/docs",
-      "destination": "https://docs-envless.vercel.app"
+      "destination": "https://docs-envless.vercel.app/docs"
     },
     {
       "source": "/docs/:match*",
-      "destination": "https://docs-envless.vercel.app/:match*"
+      "destination": "https://docs-envless.vercel.app/docs/:match*"
     }
   ]
 }

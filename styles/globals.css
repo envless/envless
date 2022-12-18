@@ -14,3 +14,7 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+pre {
+  font-size: 14px;
+}
