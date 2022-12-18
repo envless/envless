@@ -5,12 +5,12 @@
   "home": {
     "title": "Home",
     "type": "page",
-    "href": "/"
+    "href": "https://envless-envless.vercel.app"
   },
   "contact": {
     "title": "Blog",
     "type": "page",
-    "href": "/blog",
+    "href": "https://envless-envless.vercel.app/blog",
     "newWindow": false
   }
 }
