@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/docs",
+      "destination": "https://docs-envless.vercel.app"
+    },
+    {
+      "source": "/docs/:match*",
+      "destination": "https://docs-envless.vercel.app/:match*"
+    }
+  ]
+}
