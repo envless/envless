@@ -1,23 +1,17 @@
-# Nextra Docs Template 
+<a href="https://envless.dev">
+  <img alt="Frictionless and secure way to share and manage app secrets across team." src="https://envless.dev/og.png" />
+  <h1 align="center">.envless</h1>
+</a>
 
-This is a template for creating documentation with [Nextra](https://nextra.site).
+<p align="center">
+  An open-source, frictionless and secure way to share and manage app secrets across team.
+</p>
 
-[**Live Demo →**](https://nextra-docs-template.vercel.app)
-
-[![](.github/screenshot.png)](https://nextra-docs-template.vercel.app)
-
-## Quick Start
-
-Click the button to clone this repository and deploy it on Vercel:
-
-[![](https://vercel.com/button)](https://vercel.com/new/clone?s=https%3A%2F%2Fgithub.com%2Fshuding%2Fnextra-docs-template&showOptionalTeamCreation=false)
-
-## Local Development
-
-First, run `pnpm i` to install the dependencies.
-
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
-
-## License
-
-This project is licensed under the MIT License.
+<p align="center">
+  <a href="https://twitter.com/envless">
+    <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt="Twitter" />
+  </a>
+  <a href="https://github.com/envless/envless/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/envless/envless?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
+  </a>
+</p>
