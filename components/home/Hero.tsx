@@ -44,11 +44,10 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
 
             <Link
               className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-lightest hover:bg-teal-200"
-              href="/auth"
+              href="/docs"
               target="_self"
             >
               <span>Documentation</span>
-              <span className="text-xs">{" (soon) "}</span>
               <svg
                 width="20"
                 height="20"
