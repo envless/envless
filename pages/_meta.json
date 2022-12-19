@@ -6,10 +6,5 @@
     "title": "Blog",
     "type": "page",
     "href": "https://envless-envless.vercel.app/blog"
-  },
-  "changelog": {
-    "title": "Changelog",
-    "type": "page",
-    "href": "https://envless-envless.vercel.app/changelog"
   }
 }
