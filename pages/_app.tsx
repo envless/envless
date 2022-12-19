@@ -1,6 +1,6 @@
 import "../styles/font.css";
 import type { AppProps } from "next/app";
-import { Lexend_Deca } from "@next/font/google"
+import { Lexend_Deca } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 const font = Lexend_Deca({ subsets: ["latin"], weight: "400" });
 
