@@ -7,10 +7,14 @@
     "type": "page",
     "href": "https://envless-envless.vercel.app"
   },
-  "contact": {
+  "changelog": {
+    "title": "Changelog",
+    "type": "page",
+    "href": "https://envless-envless.vercel.app/changelog"
+  },
+  "blog": {
     "title": "Blog",
     "type": "page",
-    "href": "https://envless-envless.vercel.app/blog",
-    "newWindow": false
+    "href": "https://envless-envless.vercel.app/blog"
   }
 }

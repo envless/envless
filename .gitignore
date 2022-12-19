@@ -3,3 +3,4 @@ node_modules
 .vercel
 .env
 .envless
+.DS_Store
