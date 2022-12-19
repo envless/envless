@@ -2,19 +2,14 @@
   "index": "⚡ Introduction",
   "another": "👋 Getting started",
   "advanced": "Advanced (A Folder)",
-  "home": {
-    "title": "Home",
+  "blog": {
+    "title": "Blog",
     "type": "page",
-    "href": "https://envless-envless.vercel.app"
+    "href": "https://envless-envless.vercel.app/blog"
   },
   "changelog": {
     "title": "Changelog",
     "type": "page",
     "href": "https://envless-envless.vercel.app/changelog"
-  },
-  "blog": {
-    "title": "Blog",
-    "type": "page",
-    "href": "https://envless-envless.vercel.app/blog"
   }
 }
