@@ -43,7 +43,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-medium text-lightest hover:bg-teal-200"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-bold text-darkest hover:bg-teal-200"
               href="/docs"
               target="_self"
             >

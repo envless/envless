@@ -1,8 +1,6 @@
 import "@/styles/globals.css";
 import "@/styles/zoom.css";
 import type { AppProps } from "next/app";
-// import { Manrope } from "@next/font/google";
-// const font = Manrope({ subsets: ["latin"] });
 import { Lexend_Deca } from "@next/font/google";
 const font = Lexend_Deca({ subsets: ["latin"], weight: ["300"] });
 

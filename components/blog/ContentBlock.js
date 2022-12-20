@@ -135,7 +135,7 @@ const SpanText = ({ text, id }) => {
         {text.link ? (
           <Link
             href={text.link.url}
-            className="font-bold text-teal-300 hover:underline break-all"
+            className="break-all font-bold text-teal-300 hover:underline"
           >
             {text.content}
           </Link>
