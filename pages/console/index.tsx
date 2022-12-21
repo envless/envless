@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
+import { Button } from "@/components/theme";
 import { getSession } from "next-auth/react";
 import Wrapper from "@/components/console/Wrapper";
-import EmptyState from "@/components/console/EmptyState";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { HiOutlineViewGridAdd } from "react-icons/hi";
+import EmptyState from "@/components/theme/EmptyState";
 
 type Props = {
   workspaces: Object;
@@ -13,8 +16,22 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
 
   return (
     <Wrapper currentUser={currentUser}>
+      {" "}
       {spaces.length === 0 ? (
-        <EmptyState />
+        <EmptyState
+          icon={<HiOutlineViewGridAdd className="m-3 mx-auto h-12 w-12" />}
+          title={`You don't have any workspaces`}
+          subtitle="Get started by creating a new workspace."
+        >
+          <Button
+            onClick={() => {
+              console.log("Create new workspace");
+            }}
+          >
+            <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+            New workspace
+          </Button>
+        </EmptyState>
       ) : (
         <pre>{JSON.stringify(spaces, null, 2)}</pre>
       )}

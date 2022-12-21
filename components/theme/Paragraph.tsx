@@ -8,7 +8,7 @@ import React from "react";
  */
 
 type ParagraphProps = {
-  size?: "sm" | "lg" | "xl" | "2xl";
+  size?: "sm" | "lg" | "xl" | "2xl" | "3xl";
   color?: "light" | "lighter" | "lightest";
   children: React.ReactNode;
 };
@@ -28,6 +28,9 @@ const Paragraph = (props: ParagraphProps) => {
       className = "text-xl";
     case "2xl":
       className = "text-2xl";
+      break;
+    case "3xl":
+      className = "text-3xl";
       break;
     default:
       className = "text-base";
