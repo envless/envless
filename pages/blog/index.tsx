@@ -1,7 +1,7 @@
 import { Key } from "react";
 import Link from "next/link";
 import { NextSeo } from "next-seo";
-import Hero from "@/components/blog/Hero";
+import Hero from "@/components/shared/Hero";
 import Post from "@/components/blog/Post";
 import { getNotionData } from "@/lib/notion";
 import { getSession } from "next-auth/react";
@@ -66,7 +66,7 @@ const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
   return (
     <>
       <NextSeo
-        title="Envless Blog - Tutorials and articles about Envless, security, and more."
+        title="Blog - Tutorials and articles about Envless, security, and more."
         description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
         canonical="https://envless.dev/blog"
         themeColor="#111"
@@ -88,7 +88,7 @@ const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
 
       <Container>
         <Navigation loggedIn={loggedIn} menu={menu} />
-        <Hero />
+        <Hero title="Blog" subtitle="Tutorials and articles about Envless, security, and more." />
       </Container>
 
       <Container>
