@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Code from "@/components/Code";
+import Code from "@/components/theme/Code";
 import Zoom from "react-medium-image-zoom";
 import Embedable from "@/components/Embedable";
 

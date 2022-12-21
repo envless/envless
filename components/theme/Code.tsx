@@ -3,14 +3,28 @@ import { FiCopy, FiCheckCircle } from "react-icons/fi";
 import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
 
+/**
+ * Props for the Code component
+ * @typedef {Object} Props
+ * @property {string} code - The code to be displayed
+ * @property {string} language - The language of the code
+ */
 type Props = {
   code: string;
   language: string;
 };
 
+/**
+ * Code component to display and copy code with syntax highlighting
+ * @param {Props} props - The props for the component
+ */
 const Code: React.FC<Props> = ({ code, language }) => {
   const [copied, setCopied] = useState(false);
 
+  /**
+   * Copies the given code to the clipboard
+   * @param {string} code - The code to be copied
+   */
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
     setCopied(true);
