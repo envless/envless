@@ -3,14 +3,13 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
   provider              = "mysql"
   url                   = env("DATABASE_URL")
   shadowDatabaseUrl     = env("SHADOW_DATABASE_URL")
-  referentialIntegrity  = "prisma"
+  relationMode          = "prisma"
 }
 
 // Workspace has many projects
@@ -32,6 +31,9 @@ model Project {
   branches      Branch[]
   workspaceId   String
   workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+  @@unique([name, workspaceId])
 }
 
 model Access {
@@ -43,7 +45,11 @@ model Access {
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  role        String?   @default("admin")
+  role        String?   @default("owner")
+
+  @@index([userId])
+  @@index([workspaceId])
+  @@unique([userId, workspaceId])
 }
 
 model Branch {
@@ -54,6 +60,9 @@ model Branch {
   updatedAt DateTime @updatedAt
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   envs      Env[]
+
+  @@index([projectId])
+  @@unique([name, projectId])
 }
 
 model Env {
@@ -65,6 +74,9 @@ model Env {
 
   branchId String
   branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@index([branchId])
+  @@unique([key, branchId])
 }
 
 // Necessary for Next auth
@@ -84,6 +96,7 @@ model Account {
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@unique([provider, providerAccountId])
 }
 
@@ -93,6 +106,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model User {

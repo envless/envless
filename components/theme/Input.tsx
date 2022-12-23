@@ -16,11 +16,11 @@ type InputProps = {
   id: string;
   name: string;
   label: string;
-  type: string;
+  type?: string;
   placeholder: string;
   required?: boolean;
-  error: boolean;
-  onChange: () => void;
+  error?: boolean;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 const Input = ({ ...props }: InputProps) => {
@@ -50,3 +50,9 @@ const Input = ({ ...props }: InputProps) => {
 };
 
 export default Input;
+
+Input.defaultProps = {
+  type: "text",
+  required: false,
+  error: false,
+};

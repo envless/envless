@@ -8,7 +8,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 const development = !!process.env.VERCEL_URL;
 
-export const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
       sendVerificationRequest({ identifier, url }) {
@@ -99,4 +99,4 @@ export const options: NextAuthOptions = {
   },
 };
 
-export default NextAuth(options);
+export default NextAuth(authOptions);

@@ -1,29 +1,46 @@
-import React, { Fragment, useState } from "react";
 import { Logo } from "@/components/theme";
+import React, { Fragment, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { Dialog, Transition } from "@headlessui/react";
 
-type ModalProps = {
-  Button: React.ReactNode;
+/**
+ * Props for the Modal component.
+ * @typedef {Object} Props
+ * @property {string} title - The title of the modal.
+ * @property {React.ReactNode} button - The button that will trigger the modal.
+ * @property {React.ReactNode} children - The content of the modal.
+ */
+type Props = {
   title: string;
+  button: React.ReactNode;
   children: React.ReactNode;
 };
 
-const Modal = (props: ModalProps) => {
-  const { Button, title, children } = props;
+/**
+ * A modal component.
+ * @param {Props} props - The props for the component.
+ */
+const Modal = (props: Props) => {
+  const { button, title, children } = props;
   let [open, isOpen] = useState(false);
 
+  /**
+   * Closes the modal.
+   */
   function closeModal() {
     isOpen(false);
   }
 
+  /**
+   * Opens the modal.
+   */
   function openModal() {
     isOpen(true);
   }
 
   return (
     <>
-      <div onClick={openModal}>{Button}</div>
+      <div onClick={openModal}>{button}</div>
 
       <Transition appear show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10 " onClose={closeModal}>
@@ -50,7 +67,7 @@ const Modal = (props: ModalProps) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-dark p-6 text-left align-middle shadow-xl shadow-black ring-1 ring-[#222] transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-darker p-8 text-left align-middle shadow-xl shadow-black ring-1 ring-[#222] transition-all">
                   <div className="absolute top-0 right-0 p-3">
                     <button
                       type="button"
@@ -66,13 +83,11 @@ const Modal = (props: ModalProps) => {
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="border-b border-dark pb-6 text-center text-2xl font-medium leading-6"
+                    className="border-b border-dark pb-6 text-center text-2xl font-normal leading-6"
                   >
                     {title}
                   </Dialog.Title>
-                  <div className="mt-4">
-                    <p className="text-sm">{children}</p>
-                  </div>
+                  <div className="mt-4">{children}</div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

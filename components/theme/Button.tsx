@@ -10,7 +10,8 @@ import * as React from "react";
  * @param {string} [sr] - The text to use for screen reader accessibility, if provided.
  * @param {() => void} [onClick] - The callback to be invoked when the user clicks on the button or link.
  * @param {string} [href] - The URL to link to, if the component should render a link.
- * @param {string} [full] - Whether the button should take up the full width of its container.
+ * @param {boolean} [full] - Whether the button should take up the full width of its container.
+ * @param {boolean} [disablad] - Whether on not the button should be disabled.
  * @param {string} [target] - The target attribute for the link, if the component should render a link.
  * @param {React.ReactNode} children - The content to render inside the button or link.
  */
@@ -22,9 +23,19 @@ const Button = (props: {
   href?: string;
   full?: boolean;
   target?: string;
+  disabled?: boolean;
   children: React.ReactNode;
 }) => {
-  const { type = "button", sr, onClick, href, full, target, children } = props;
+  const {
+    type = "button",
+    sr,
+    onClick,
+    href,
+    full,
+    target,
+    disabled,
+    children,
+  } = props;
 
   if (href) {
     return (
@@ -45,9 +56,10 @@ const Button = (props: {
         type={type}
         className={clsx(
           full ? "w-full" : "",
-          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
+          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
         onClick={onClick}
+        disabled={disabled}
       >
         {children}
         {sr && <span className="sr-only">{sr}</span>}
@@ -59,6 +71,7 @@ const Button = (props: {
 Button.defaultProps = {
   full: false,
   type: "button",
+  disablad: false,
 };
 
 export default Button;
