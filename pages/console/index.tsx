@@ -25,7 +25,7 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
   });
 
   const createWorkspace = async () => {
-    const body = { project, workspace }
+    const body = { project, workspace };
     const validated = workspaceSchema.safeParse(body);
 
     if (!validated.success) {
@@ -74,9 +74,7 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
                 required={true}
                 label="Workspace name"
                 placeholder="Acme Inc."
-                onChange={(e) =>
-                  setWorkspace(e.target.value)
-                }
+                onChange={(e) => setWorkspace(e.target.value)}
               />
 
               <Input
@@ -85,15 +83,16 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
                 required={true}
                 label="Project name"
                 placeholder="Project X"
-                onChange={(e) =>
-                  setProject(e.target.value)
-                }
+                onChange={(e) => setProject(e.target.value)}
               />
 
               <div className="float-right">
                 <Button type="submit" disabled={loading}>
                   Save and continue
-                  <ArrowRightIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
+                  <ArrowRightIcon
+                    className="-mr-1 ml-2 h-5 w-5"
+                    aria-hidden="true"
+                  />
                 </Button>
               </div>
             </form>
