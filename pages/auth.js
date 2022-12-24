@@ -1,15 +1,45 @@
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input, Button } from "@/components/theme";
+import { useForm } from "react-hook-form";
+import { Input, Button, Toast } from "@/components/theme";
 import { signIn, getSession, getCsrfToken } from "next-auth/react";
 
 const Login = ({ csrfToken }) => {
   const { query } = useRouter();
-  const [email, setEmail] = useState("");
+  const [toast, setToast] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    console.log("onSubmit", data);
+    setLoading(true);
+    data = { ...data, callbackUrl: "/console" };
+
+    const res = await fetch("/api/auth/signin/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (res.status === 200) {
+      setToast(true);
+    } else {
+      const json = await res.json();
+      if (json?.error) {
+        console.log("error", json.error);
+      }
+    }
+    reset();
+  };
 
   return (
     <>
@@ -48,20 +78,36 @@ const Login = ({ csrfToken }) => {
             )}
 
             <form
-              method="POST"
+              // method="POST"
               className="space-y-6"
-              action="/api/auth/signin/email"
+              // action="/api/auth/signin/email"
+              onSubmit={handleSubmit(onSubmit)}
             >
-              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+              <Input
+                name="csrfToken"
+                type="hidden"
+                register={register}
+                defaultValue={csrfToken}
+              />
 
               <Input
-                id="email"
                 name="email"
                 type="email"
                 label="Email address"
                 placeholder="your@email.com"
                 required={true}
-                onChange={(e) => setEmail(e.target.value)}
+                register={register}
+                errors={errors}
+                defaultValue="envless.dev@gmail.com"
+                validationSchema={{
+                  required: "Email is required",
+                  pattern: {
+                    // Email regex
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                }}
+                // onChange={(e) => setEmail(e.target.value)}
               />
 
               <Button sr="Send magic link" type="submit" full={true}>
@@ -132,6 +178,13 @@ const Login = ({ csrfToken }) => {
           </div>
         </div>
       </div>
+
+      <Toast
+        title="Magic link sent"
+        subtitle="Please check your email"
+        open={toast}
+        onClose={() => setToast(false)}
+      />
     </>
   );
 };
@@ -141,7 +194,7 @@ export async function getServerSideProps(context) {
   const session = await getSession({ req });
 
   if (session) {
-    info("Redirecting to dashboard");
+    console.info("Redirecting to dashboard");
     res.writeHead(301, { Location: "/console" });
     res.end();
   }
