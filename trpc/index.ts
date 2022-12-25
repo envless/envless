@@ -1,10 +1,10 @@
-import { router } from "@/trpc/router";
+import { createRouter } from "@/trpc/router";
 
 // import all sub-routers
 // import { projects } from '@/trpc/routes/projects'
 import { workspaces } from "@/trpc/routes/workspaces";
 
-export const appRouter = router({
+export const appRouter = createRouter({
   // projects,
   workspaces,
 });

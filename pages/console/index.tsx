@@ -1,47 +1,68 @@
-import { z } from "zod";
 import { useState } from "react";
 import prisma from "@/lib/prisma";
+import { trpc } from "@/utils/trpc";
+import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { getSession } from "next-auth/react";
 import Wrapper from "@/components/console/Wrapper";
-import { PlusIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
-import { HiOutlineViewGridAdd } from "react-icons/hi";
 import EmptyState from "@/components/theme/EmptyState";
 import { Button, Input, Modal } from "@/components/theme";
+import { Workspace, Project, User } from "@prisma/client";
 
-type Props = {
-  workspaces: Object;
-  currentUser: Object;
-};
+import {
+  PlusIcon,
+  ArrowRightIcon,
+  SquaresPlusIcon,
+} from "@heroicons/react/20/solid";
+
+interface Props {
+  workspaces: Workspace[];
+  currentUser: User;
+}
+
+interface NewWorkspace {
+  workspaceName: string;
+  projectName: string;
+}
 
 const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
+  const router = useRouter();
   const spaces = Object.values(workspaces);
   const [loading, setLoading] = useState(false);
-  const [project, setProject] = useState("");
-  const [workspace, setWorkspace] = useState("");
+  const workspaceMutation = trpc.workspaces.create.useMutation({
+    onSuccess: (data) => {
+      const { id } = data;
+      router.push(`/console/${id}`);
+    },
 
-  const workspaceSchema = z.object({
-    workspace: z.string(),
-    project: z.string(),
+    onError: (error) => {
+      console.log("Mutation error", error);
+    },
   });
 
-  const createWorkspace = async () => {
-    const body = { project, workspace };
-    const validated = workspaceSchema.safeParse(body);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-    if (!validated.success) {
+  const createWorkspace: SubmitHandler<NewWorkspace> = async (data) => {
+    const { workspaceName, projectName } = data;
+    console.log("Creating workspace ", data);
+    setLoading(true);
+
+    if (!workspaceName || !projectName) {
+      setLoading(false);
       return;
-    } else {
-      setLoading(true);
-
-      const res = await fetch("/api/v1/workspaces", {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-      console.log(data);
-      console.log("Creating workspace ", workspace, " and project ", project);
     }
+
+    workspaceMutation.mutate({
+      workspace: { name: workspaceName },
+      project: { name: projectName },
+    });
+
+    reset();
   };
 
   return (
@@ -49,50 +70,52 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
       {" "}
       {spaces.length === 0 ? (
         <EmptyState
-          icon={<HiOutlineViewGridAdd className="m-3 mx-auto h-12 w-12" />}
+          icon={
+            <SquaresPlusIcon className="m-3 mx-auto h-12 w-12 text-teal-300" />
+          }
           title={`You don't have any workspaces`}
           subtitle="Get started by creating a new workspace."
         >
           <Modal
             button={
               <Button>
-                <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                <PlusIcon className="mr-2 h-5 w-5" aria-hidden="true" />
                 New workspace
               </Button>
             }
             title="Create a new workspace"
           >
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                await createWorkspace();
-              }}
-            >
+            <form onSubmit={handleSubmit(createWorkspace)}>
               <Input
-                id="workspace"
-                name="workspace"
-                required={true}
+                name="workspaceName"
                 label="Workspace name"
                 placeholder="Acme Inc."
-                onChange={(e) => setWorkspace(e.target.value)}
+                required={true}
+                register={register}
+                errors={errors}
+                defaultValue="Acme Inc."
+                validationSchema={{
+                  required: "Workspace name is required",
+                }}
               />
 
               <Input
-                id="project"
-                name="project"
-                required={true}
+                name="projectName"
                 label="Project name"
                 placeholder="Project X"
-                onChange={(e) => setProject(e.target.value)}
+                defaultValue="Project X"
+                required={true}
+                register={register}
+                errors={errors}
+                validationSchema={{
+                  required: "Project name is required",
+                }}
               />
 
               <div className="float-right">
                 <Button type="submit" disabled={loading}>
                   Save and continue
-                  <ArrowRightIcon
-                    className="-mr-1 ml-2 h-5 w-5"
-                    aria-hidden="true"
-                  />
+                  <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
                 </Button>
               </div>
             </form>

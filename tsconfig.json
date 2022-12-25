@@ -34,7 +34,8 @@
     "emails/index.ts",
     "pages/auth.js",
     "components/blog/ContentBlock.js",
-    "lib/notion.ts"
+    "lib/notion.ts",
+    "pages/console/index.tsx"
   ],
   "exclude": ["node_modules"]
 }

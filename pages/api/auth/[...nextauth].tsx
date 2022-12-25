@@ -62,30 +62,29 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {
-      if (development) {
-        console.log("JWT Callback", {
-          token,
-          user,
-          account,
-          profile,
-          isNewUser,
-        });
+      if (user) {
+        token.id = user.id;
+        token.user = user;
       }
 
-      if (user) {
-        token.user = user;
+      if (account) {
+        token.accessToken = account.access_token;
       }
 
       return token;
     },
 
     async session({ session, user, token }) {
-      if (development) {
-        console.log("Session Callback", { session, user, token });
-      }
       if (token.user) {
         session.user = token.user;
       }
+
+      // session.user = {
+      //   // @ts-ignore
+      //   id: token.sub,
+      //   ...session.user
+      // }
+
       return session;
     },
   },
@@ -95,6 +94,9 @@ export const authOptions: NextAuthOptions = {
       // Redirect to /onboarding if user has not created team and/or project
       const user = await message.user;
       console.log("Checking if user has created team and project", message);
+
+      // redirect user to /console
+      // return Promise.resolve("/console");
     },
   },
 };

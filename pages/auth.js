@@ -20,7 +20,6 @@ const Login = ({ csrfToken }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log("onSubmit", data);
     setLoading(true);
     data = { ...data, callbackUrl: "/console" };
 
@@ -77,12 +76,7 @@ const Login = ({ csrfToken }) => {
               </div>
             )}
 
-            <form
-              // method="POST"
-              className="space-y-6"
-              // action="/api/auth/signin/email"
-              onSubmit={handleSubmit(onSubmit)}
-            >
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <Input
                 name="csrfToken"
                 type="hidden"
@@ -102,15 +96,18 @@ const Login = ({ csrfToken }) => {
                 validationSchema={{
                   required: "Email is required",
                   pattern: {
-                    // Email regex
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",
                   },
                 }}
-                // onChange={(e) => setEmail(e.target.value)}
               />
 
-              <Button sr="Send magic link" type="submit" full={true}>
+              <Button
+                sr="Send magic link"
+                type="submit"
+                full={true}
+                disabled={loading}
+              >
                 Send magic link
               </Button>
             </form>
@@ -131,6 +128,7 @@ const Login = ({ csrfToken }) => {
                 <Button
                   sr="Sign in with Github"
                   onClick={() => signIn("github")}
+                  disabled={loading}
                 >
                   <svg
                     className="h-5 w-5 text-light"
@@ -148,6 +146,7 @@ const Login = ({ csrfToken }) => {
                 <Button
                   sr="Sign in with Gitlab"
                   onClick={() => signIn("gitlab")}
+                  disabled={loading}
                 >
                   <svg
                     className="h-5 w-5 text-light"
