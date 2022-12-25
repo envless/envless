@@ -9,12 +9,12 @@ import { Container } from "@/components/theme";
  * @returns {JSX.Element} A section element with the appropriate styles applied.
  */
 const Wrapper = ({ ...props }) => {
-  const { currentUser, children } = props;
+  const { user, children } = props;
 
   return (
     <>
       <Container>
-        <Nav currentUser={currentUser} />
+        <Nav user={user} />
       </Container>
 
       <Container>{children}</Container>

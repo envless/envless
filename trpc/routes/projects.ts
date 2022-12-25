@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 
-export const workspaces = createRouter({
+export const projects = createRouter({
   getAll: withAuth.query(({ ctx }) => {
-    // return ctx.prisma.workspaces.findMany();
+    // return ctx.prisma.projects.findMany();
     return [];
   }),
 
@@ -18,37 +18,30 @@ export const workspaces = createRouter({
   create: withAuth
     .input(
       z.object({
-        workspace: z.object({ name: z.string() }),
         project: z.object({ name: z.string() }),
       }),
     )
     .mutation(({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
-      const { workspace, project } = input;
+      const { project } = input;
 
-      const space = prisma.workspace.create({
+      return prisma.project.create({
         data: {
-          name: workspace.name,
-          members: {
+          name: project.name,
+          roles: {
             create: {
               // @ts-ignore
               userId: user.id,
+              name: "owner",
             },
           },
-          projects: {
+          branches: {
             create: {
-              name: project.name,
-              branches: {
-                create: {
-                  name: "main",
-                },
-              },
+              name: "main",
             },
           },
         },
       });
-
-      return space;
     }),
 });

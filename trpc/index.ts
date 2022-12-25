@@ -1,12 +1,10 @@
 import { createRouter } from "@/trpc/router";
 
 // import all sub-routers
-// import { projects } from '@/trpc/routes/projects'
-import { workspaces } from "@/trpc/routes/workspaces";
+import { projects } from "@/trpc/routes/projects";
 
 export const appRouter = createRouter({
-  // projects,
-  workspaces,
+  projects,
 });
 
 // export type definition of API

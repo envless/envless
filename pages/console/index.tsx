@@ -7,7 +7,7 @@ import { getSession } from "next-auth/react";
 import Wrapper from "@/components/console/Wrapper";
 import EmptyState from "@/components/theme/EmptyState";
 import { Button, Input, Modal } from "@/components/theme";
-import { Workspace, Project, User } from "@prisma/client";
+import { Project, User } from "@prisma/client";
 
 import {
   PlusIcon,
@@ -16,23 +16,20 @@ import {
 } from "@heroicons/react/20/solid";
 
 interface Props {
-  workspaces: Workspace[];
-  currentUser: User;
+  user: any;
 }
 
-interface NewWorkspace {
-  workspaceName: string;
-  projectName: string;
+interface NewProject {
+  name: string;
 }
 
-const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
+const ConsoleHome: React.FC<Props> = ({ user }) => {
   const router = useRouter();
-  const spaces = Object.values(workspaces);
   const [loading, setLoading] = useState(false);
-  const workspaceMutation = trpc.workspaces.create.useMutation({
+  const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
       const { id } = data;
-      router.push(`/console/${id}`);
+      router.push(`/console/projects/${id}`);
     },
 
     onError: (error) => {
@@ -41,66 +38,49 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
   });
 
   const {
+    reset,
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
 
-  const createWorkspace: SubmitHandler<NewWorkspace> = async (data) => {
-    const { workspaceName, projectName } = data;
-    console.log("Creating workspace ", data);
+  const createProject: SubmitHandler<NewProject> = async (data) => {
+    const { name } = data;
     setLoading(true);
 
-    if (!workspaceName || !projectName) {
+    if (!name) {
       setLoading(false);
       return;
     }
 
-    workspaceMutation.mutate({
-      workspace: { name: workspaceName },
-      project: { name: projectName },
-    });
-
+    projectMutation.mutate({ project: { name: name } });
     reset();
   };
 
+  const roles = user?.roles || [];
+
   return (
-    <Wrapper currentUser={currentUser}>
-      {" "}
-      {spaces.length === 0 ? (
+    <Wrapper user={user}>
+      {roles.length === 0 ? (
         <EmptyState
           icon={
             <SquaresPlusIcon className="m-3 mx-auto h-12 w-12 text-teal-300" />
           }
-          title={`You don't have any workspaces`}
-          subtitle="Get started by creating a new workspace."
+          title={`Welcome to Envless`}
+          subtitle="Get started by creating a new project."
         >
           <Modal
             button={
               <Button>
                 <PlusIcon className="mr-2 h-5 w-5" aria-hidden="true" />
-                New workspace
+                New project
               </Button>
             }
-            title="Create a new workspace"
+            title="Create a new project"
           >
-            <form onSubmit={handleSubmit(createWorkspace)}>
+            <form onSubmit={handleSubmit(createProject)}>
               <Input
-                name="workspaceName"
-                label="Workspace name"
-                placeholder="Acme Inc."
-                required={true}
-                register={register}
-                errors={errors}
-                defaultValue="Acme Inc."
-                validationSchema={{
-                  required: "Workspace name is required",
-                }}
-              />
-
-              <Input
-                name="projectName"
+                name="name"
                 label="Project name"
                 placeholder="Project X"
                 defaultValue="Project X"
@@ -122,20 +102,22 @@ const ConsoleHome: React.FC<Props> = ({ currentUser, workspaces }) => {
           </Modal>
         </EmptyState>
       ) : (
-        <pre>{JSON.stringify(spaces, null, 2)}</pre>
+        <>
+          {roles.map((role: any) => {
+            const { project } = role;
+            return <>{project.name}</>;
+          })}
+        </>
       )}
     </Wrapper>
   );
 };
 
 export async function getServerSideProps(context: { req: any }) {
-  let projects: any = [];
-
   const { req } = context;
   const session = await getSession({ req });
-  const currentUser = session?.user;
 
-  if (!session || !currentUser || !currentUser.email) {
+  if (!session || !session.user) {
     return {
       redirect: {
         destination: "/",
@@ -145,37 +127,32 @@ export async function getServerSideProps(context: { req: any }) {
   } else {
     const user = await prisma.user.findUnique({
       where: {
-        email: currentUser.email,
+        // @ts-ignore
+        id: session.user.id,
       },
       include: {
-        workspaces: true,
+        roles: {
+          include: {
+            project: true,
+          },
+        },
       },
     });
 
-    const workspaceIds =
-      user?.workspaces.map((workspace: { id: any }) => workspace.id) || [];
-
-    if (workspaceIds.length != 0) {
-      projects = await prisma.project.findMany({
-        where: {
-          workspaceId: {
-            in: workspaceIds,
-          },
+    if (!user) {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
         },
-      });
-
-      projects ||= [];
+      };
+    } else {
+      return {
+        props: {
+          user: JSON.parse(JSON.stringify(user)),
+        },
+      };
     }
-
-    const workspaces = user?.workspaces || [];
-
-    return {
-      props: {
-        projects,
-        workspaces,
-        currentUser,
-      },
-    };
   }
 }
 
