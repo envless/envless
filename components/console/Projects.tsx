@@ -49,12 +49,6 @@ const Projects = ({ ...props }) => {
 
       </div>
       <div className="flex flex-wrap -mx-4 -mb-4 md:mb-0">
-        <div className="w-full w-1/2 lg:w-1/3 px-4 mb-8 ">
-          <div className="border-2 w-full min-h-[152px] rounded-md border-darker hover:border-teal-300/70 bg-darker p-5 cursor-pointer">
-            Card
-          </div>
-        </div>
-
         {
           projects.map((project) => {
             return (

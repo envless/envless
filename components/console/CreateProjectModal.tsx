@@ -6,9 +6,7 @@ import { Button, Input, Modal, Container, Hr } from "@/components/theme";
 import {
   PlusIcon,
   ArrowRightIcon,
-  SquaresPlusIcon,
 } from "@heroicons/react/20/solid";
-
 
 interface Project {
   name: string;
@@ -22,7 +20,10 @@ const CreateProjectModal = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [loading, setLoading] = useState(false);
+  const [
+    loading,
+    setLoading
+  ] = useState(false);
 
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
@@ -59,27 +60,27 @@ const CreateProjectModal = () => {
       title="Create a new project"
     >
 
-    <form onSubmit={handleSubmit(createNewProject)}>
-      <Input
-        name="name2"
-        label="Project name"
-        placeholder="Project X"
-        defaultValue="Project X"
-        required={true}
-        register={register}
-        errors={errors}
-        validationSchema={{
-          required: "Project name is required",
-        }}
-      />
+      <form onSubmit={handleSubmit(createNewProject)}>
+        <Input
+          name="name"
+          label="Project name"
+          placeholder="Project X"
+          defaultValue="Project X"
+          required={true}
+          register={register}
+          errors={errors}
+          validationSchema={{
+            required: "Project name is required",
+          }}
+        />
 
-      <div className="float-right">
-        <Button type="submit" disabled={loading}>
-          Save and continue
-          <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
-        </Button>
-      </div>
-    </form>
+        <div className="float-right">
+          <Button type="submit" disabled={loading}>
+            Save and continue
+            <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
+          </Button>
+        </div>
+      </form>
     </Modal>
   )
 };

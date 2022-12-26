@@ -1,6 +1,6 @@
 import { Logo } from "@/components/theme";
-import React, { Fragment, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
+import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 /**
@@ -22,24 +22,24 @@ type Props = {
  */
 const Modal = (props: Props) => {
   const { button, title, children } = props;
-  let [open, isOpen] = useState(false);
+  let [open, setOpen] = useState(false);
 
   /**
    * Closes the modal.
    */
   function closeModal() {
-    isOpen(false);
+    setOpen(false);
   }
 
   /**
    * Opens the modal.
    */
   function openModal() {
-    isOpen(true);
+    setOpen(true);
   }
 
   return (
-    <>
+    <React.StrictMode>
       <div onClick={openModal}>{button}</div>
 
       <Transition appear show={open} as={Fragment}>
@@ -94,7 +94,7 @@ const Modal = (props: Props) => {
           </div>
         </Dialog>
       </Transition>
-    </>
+    </React.StrictMode>
   );
 };
 
