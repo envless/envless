@@ -12,7 +12,7 @@ const activity = [
     type: "invite",
     person: { name: "Sergey Tyan", href: "#" },
     imageUrl: "https://avatar.vercel.sh/ST.svg?text=ST",
-    invite: "Invited test@example.com to Project X as a Developer",
+    invite: "Invited test@example.com to Untitled as a Developer",
     date: "30 minutes ago",
   },
   {
@@ -37,7 +37,7 @@ const activity = [
     type: "invite",
     person: { name: "Puru Dahal", href: "#" },
     imageUrl: "https://avatar.vercel.sh/PD.svg?text=PD",
-    invite: "Accepted invitation to Project X as a Developer",
+    invite: "Accepted invitation to Untitled as a Developer",
     date: "2h ago",
   },
 ];

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TbGitBranch, TbUserCheck } from "react-icons/tb";
+import { TbGitBranch, TbUsers } from "react-icons/tb";
 import CreateProjectModal from "@/components/console/CreateProjectModal";
 
 const Projects = ({ ...props }) => {
@@ -20,7 +20,7 @@ const Projects = ({ ...props }) => {
           <div className="mt-8 grid grid-cols-2 gap-8 text-xs">
             <div>
               <div className="inline-block">
-                <TbUserCheck className="inline-block h-4 w-4 text-lighter" />
+                <TbUsers className="inline-block h-5 w-5 text-lighter" />
                 <span className="ml-2 inline-block">
                   {project._count.roles}
                 </span>
@@ -30,7 +30,7 @@ const Projects = ({ ...props }) => {
 
             <div>
               <div className="inline-block">
-                <TbGitBranch className="inline-block h-4 w-4 text-lighter" />
+                <TbGitBranch className="inline-block h-5 w-5 text-lighter" />
                 <span className="ml-2 inline-block">
                   {project._count.branches}
                 </span>

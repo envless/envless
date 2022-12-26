@@ -65,8 +65,8 @@ const CreateProjectModal = () => {
         <Input
           name="name"
           label="Project name"
-          placeholder="Project X"
-          defaultValue="Project X"
+          placeholder="Untitled"
+          defaultValue="Untitled"
           required={true}
           register={register}
           errors={errors}
