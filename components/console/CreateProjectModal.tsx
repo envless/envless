@@ -2,7 +2,7 @@ import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Button, Input, Modal, Container, Hr } from "@/components/theme";
+import { Button, Input, Modal } from "@/components/theme";
 import {
   PlusIcon,
   ArrowRightIcon,
@@ -16,6 +16,7 @@ const CreateProjectModal = () => {
   const router = useRouter();
   const {
     reset,
+    setError,
     register,
     handleSubmit,
     formState: { errors },
@@ -32,7 +33,14 @@ const CreateProjectModal = () => {
     },
 
     onError: (error) => {
-      console.log("Mutation error", error);
+      if ((error.message).includes('Unique constraint failed')) {
+        setError("name", {
+          type: "custom",
+          message: "Project name already exists",
+        });
+      }
+
+      setLoading(false);
     },
   });
 

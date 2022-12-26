@@ -76,6 +76,12 @@ const Input = ({ ...props }: InputProps) => {
             {errors[name]?.message}
           </span>
         )}
+
+        {errors && errors[name]?.type === "custom" && (
+          <span className="text-xs text-red-400/75">
+            {errors[name]?.message}
+          </span>
+        )}
       </div>
     </div>
   );
