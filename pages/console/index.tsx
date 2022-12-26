@@ -21,9 +21,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
         <Container>
           <Nav user={user} />
           <EmptyState
-            icon={
-              <SquaresPlusIcon className="m-3 mx-auto h-12 w-12" />
-            }
+            icon={<SquaresPlusIcon className="m-3 mx-auto h-12 w-12" />}
             title={`Welcome to Envless`}
             subtitle="Get started by creating a new project."
           >
@@ -39,11 +37,11 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
           <Hr />
 
           <Container>
-            <div className="-mx-4 -mb-4 flex flex-wrap my-12">
-              <div className="mb-4 w-full px-4 md:mb-0 lg:w-2/3 md:w-1/2">
+            <div className="-mx-4 my-12 -mb-4 flex flex-wrap">
+              <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-2/3">
                 <Projects projects={roles.map((role: any) => role.project)} />
               </div>
-                <div className="mb-4 w-full px-4 md:mb-0 lg:w-1/3 md:w-1/2">
+              <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
                 <Activities />
               </div>
             </div>
@@ -84,7 +82,7 @@ export async function getServerSideProps(context: { req: any }) {
                   },
                 },
               },
-            }
+            },
           },
         },
       },

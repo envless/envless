@@ -11,10 +11,8 @@ const activity = [
     id: 1,
     type: "invite",
     person: { name: "Sergey Tyan", href: "#" },
-    imageUrl:
-      "https://avatar.vercel.sh/ST.svg?text=ST",
-    invite:
-      "Invited test@example.com to Project X as a Developer",
+    imageUrl: "https://avatar.vercel.sh/ST.svg?text=ST",
+    invite: "Invited test@example.com to Project X as a Developer",
     date: "30 minutes ago",
   },
   {
@@ -38,10 +36,8 @@ const activity = [
     id: 4,
     type: "invite",
     person: { name: "Puru Dahal", href: "#" },
-    imageUrl:
-      "https://avatar.vercel.sh/PD.svg?text=PD",
-    invite:
-      "Accepted invitation to Project X as a Developer",
+    imageUrl: "https://avatar.vercel.sh/PD.svg?text=PD",
+    invite: "Accepted invitation to Project X as a Developer",
     date: "2h ago",
   },
 ];
@@ -52,8 +48,8 @@ function classNames(...classes) {
 
 export default function Activities() {
   return (
-    <div className="flow-root px-3">
-      <h2 className="text-2xl font-bold mb-8">Activities</h2>
+    <div className="flow-root px-14">
+      <h2 className="mb-8 text-lg font-bold">Activities</h2>
       <ul role="list" className="-mb-8">
         {activity.map((activityItem, activityItemIdx) => (
           <li key={activityItem.id}>
@@ -69,7 +65,7 @@ export default function Activities() {
                   <>
                     <div className="relative">
                       <img
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-light ring-8 ring-dark"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-light ring-8 ring-dark"
                         src={activityItem.imageUrl}
                         alt=""
                       />
@@ -113,14 +109,13 @@ export default function Activities() {
                         >
                           {activityItem.person.name}
                         </a>{" "}
-                        created a branch from main {" "}
+                        created a branch from main{" "}
                         <a
                           href={activityItem.branch?.href}
                           className="font-medium text-lighter"
                         >
                           {activityItem.branch?.name}
                         </a>{" "}
-
                         <span className="whitespace-nowrap">
                           {activityItem.date}
                         </span>

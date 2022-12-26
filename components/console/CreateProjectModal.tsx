@@ -3,10 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
-import {
-  PlusIcon,
-  ArrowRightIcon,
-} from "@heroicons/react/20/solid";
+import { PlusIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 
 interface Project {
   name: string;
@@ -21,10 +18,7 @@ const CreateProjectModal = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [
-    loading,
-    setLoading
-  ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
@@ -33,7 +27,7 @@ const CreateProjectModal = () => {
     },
 
     onError: (error) => {
-      if ((error.message).includes('Unique constraint failed')) {
+      if (error.message.includes("Unique constraint failed")) {
         setError("name", {
           type: "custom",
           message: "Project name already exists",
@@ -67,7 +61,6 @@ const CreateProjectModal = () => {
       }
       title="Create a new project"
     >
-
       <form onSubmit={handleSubmit(createNewProject)}>
         <Input
           name="name"
@@ -90,7 +83,7 @@ const CreateProjectModal = () => {
         </div>
       </form>
     </Modal>
-  )
+  );
 };
 
 export default CreateProjectModal;
