@@ -66,6 +66,7 @@ export const getBlocks = async (blockId: string): Promise<any[]> => {
 
     const { results, next_cursor } = list;
 
+    // @ts-ignore
     blocks.push(...results);
 
     if (!next_cursor) {

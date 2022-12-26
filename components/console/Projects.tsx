@@ -5,6 +5,11 @@ import CreateProjectModal from "@/components/console/CreateProjectModal";
 const Projects = ({ ...props }) => {
   const { projects } = props;
 
+  const sortedProjects = projects.sort((a, b) => {
+    // @ts-ignore
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   const Card = ({ project }) => {
     return (
       <Link href={`/console/${project.id}`} className="cursor-pointer">
@@ -52,7 +57,7 @@ const Projects = ({ ...props }) => {
         </div>
       </div>
       <div className="-mx-4 -mb-4 flex flex-wrap md:mb-0">
-        {projects.map((project) => {
+        {sortedProjects.map((project) => {
           return (
             <div className="mb-8 w-full w-1/2 px-4 lg:w-1/3" key={project.id}>
               <Card project={project} />
