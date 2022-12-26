@@ -12,44 +12,31 @@ datasource db {
   relationMode          = "prisma"
 }
 
-// Workspace has many projects
-// Workspace has many users through access
-model Workspace {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  projects  Project[]
-  users     Access[]
-}
-
 model Project {
   id            String    @id @default(cuid())
   name          String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   branches      Branch[]
-  workspaceId   String
-  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  roles         Role[]
 
-  @@index([workspaceId])
-  @@unique([name, workspaceId])
+  @@unique([name])
 }
 
-model Access {
+model Role {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId   String
+  name        String?   @default("owner")
 
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  role        String?   @default("owner")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([workspaceId])
-  @@unique([userId, workspaceId])
+  @@index([projectId])
+  @@unique([userId, projectId])
 }
 
 model Branch {
@@ -113,12 +100,12 @@ model Session {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  workspaces    Access[]
+  roles         Role[]
 }
 
 model VerificationToken {

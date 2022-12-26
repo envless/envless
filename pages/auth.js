@@ -1,15 +1,44 @@
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-import { info } from "@/lib/log";
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Input, Button } from "@/components/theme";
+import { useForm } from "react-hook-form";
+import { Input, Button, Toast } from "@/components/theme";
 import { signIn, getSession, getCsrfToken } from "next-auth/react";
 
 const Login = ({ csrfToken }) => {
   const { query } = useRouter();
-  const [email, setEmail] = useState("");
+  const [toast, setToast] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    setLoading(true);
+    data = { ...data, callbackUrl: "/console" };
+
+    const res = await fetch("/api/auth/signin/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (res.status === 200) {
+      setToast(true);
+    } else {
+      const json = await res.json();
+      if (json?.error) {
+        console.log("error", json.error);
+      }
+    }
+    reset();
+  };
 
   return (
     <>
@@ -47,24 +76,38 @@ const Login = ({ csrfToken }) => {
               </div>
             )}
 
-            <form
-              method="POST"
-              className="space-y-6"
-              action="/api/auth/signin/email"
-            >
-              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              <Input
+                name="csrfToken"
+                type="hidden"
+                register={register}
+                defaultValue={csrfToken}
+              />
 
               <Input
-                id="email"
                 name="email"
                 type="email"
                 label="Email address"
                 placeholder="your@email.com"
                 required={true}
-                onChange={(e) => setEmail(e.target.value)}
+                register={register}
+                errors={errors}
+                defaultValue="envless.dev@gmail.com"
+                validationSchema={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                }}
               />
 
-              <Button sr="Send magic link" type="submit" full={true}>
+              <Button
+                sr="Send magic link"
+                type="submit"
+                full={true}
+                disabled={loading}
+              >
                 Send magic link
               </Button>
             </form>
@@ -85,6 +128,7 @@ const Login = ({ csrfToken }) => {
                 <Button
                   sr="Sign in with Github"
                   onClick={() => signIn("github")}
+                  disabled={loading}
                 >
                   <svg
                     className="h-5 w-5 text-light"
@@ -102,6 +146,7 @@ const Login = ({ csrfToken }) => {
                 <Button
                   sr="Sign in with Gitlab"
                   onClick={() => signIn("gitlab")}
+                  disabled={loading}
                 >
                   <svg
                     className="h-5 w-5 text-light"
@@ -132,6 +177,13 @@ const Login = ({ csrfToken }) => {
           </div>
         </div>
       </div>
+
+      <Toast
+        title="Magic link sent"
+        subtitle="Please check your email"
+        open={toast}
+        onClose={() => setToast(false)}
+      />
     </>
   );
 };
@@ -141,7 +193,7 @@ export async function getServerSideProps(context) {
   const session = await getSession({ req });
 
   if (session) {
-    info("Redirecting to dashboard");
+    console.info("Redirecting to dashboard");
     res.writeHead(301, { Location: "/console" });
     res.end();
   }

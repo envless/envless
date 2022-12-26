@@ -1,4 +1,4 @@
-import Nav from "@/components/console/Nav";
+import { Nav } from "@/components/console";
 import { Container } from "@/components/theme";
 /**
  * Console wrapper component to render shared nav, children and footer
@@ -9,15 +9,17 @@ import { Container } from "@/components/theme";
  * @returns {JSX.Element} A section element with the appropriate styles applied.
  */
 const Wrapper = ({ ...props }) => {
-  const { currentUser, children } = props;
+  const { user, children } = props;
 
   return (
     <>
       <Container>
-        <Nav currentUser={currentUser} />
+        <Nav user={user} />
       </Container>
 
-      <Container>{children}</Container>
+      <Container>
+        <main className="">{children}</main>
+      </Container>
     </>
   );
 };

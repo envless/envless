@@ -5,8 +5,8 @@ import { signOut } from "next-auth/react";
 import Dropdown from "@/components/theme/Dropdown";
 
 const Nav = ({ ...props }) => {
-  const { currentUser } = props;
-  const { name, email, image } = currentUser;
+  const { user } = props;
+  const { name, email, image } = user;
   const initials = name
     ? name
         .split(" ")
