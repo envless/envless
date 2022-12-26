@@ -41,9 +41,9 @@ const Projects = ({ ...props }) => {
 
   return (
     <>
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-2 relative">
         <h2 className="text-2xl font-bold mb-8">Projects</h2>
-        <div>
+        <div className="right-0 absolute">
           <CreateProjectModal />
         </div>
 

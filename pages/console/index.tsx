@@ -75,7 +75,7 @@ export async function getServerSideProps(context: { req: any }) {
       include: {
         roles: {
           include: {
-            project: true,
+            project: true
           },
         },
       },
