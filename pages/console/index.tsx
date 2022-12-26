@@ -2,12 +2,12 @@ import { useState } from "react";
 import prisma from "@/lib/prisma";
 import { trpc } from "@/utils/trpc";
 import { useRouter } from "next/router";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { getSession } from "next-auth/react";
-import Wrapper from "@/components/console/Wrapper";
-import EmptyState from "@/components/theme/EmptyState";
-import { Button, Input, Modal } from "@/components/theme";
 import { Project, User } from "@prisma/client";
+import EmptyState from "@/components/theme/EmptyState";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { Projects, Nav, Activities } from "@/components/console";
+import { Button, Input, Modal, Container, Hr } from "@/components/theme";
 
 import {
   PlusIcon,
@@ -16,12 +16,13 @@ import {
 } from "@heroicons/react/20/solid";
 
 interface Props {
-  user: any;
+  user: User;
 }
 
 interface NewProject {
   name: string;
 }
+
 
 const ConsoleHome: React.FC<Props> = ({ user }) => {
   const router = useRouter();
@@ -57,59 +58,75 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
     reset();
   };
 
+  // @ts-ignore
   const roles = user?.roles || [];
 
   return (
-    <Wrapper user={user}>
+    <>
       {roles.length === 0 ? (
-        <EmptyState
-          icon={
-            <SquaresPlusIcon className="m-3 mx-auto h-12 w-12 text-teal-300" />
-          }
-          title={`Welcome to Envless`}
-          subtitle="Get started by creating a new project."
-        >
-          <Modal
-            button={
-              <Button>
-                <PlusIcon className="mr-2 h-5 w-5" aria-hidden="true" />
-                New project
-              </Button>
+        <Container>
+          <Nav user={user} />
+          <EmptyState
+            icon={
+              <SquaresPlusIcon className="m-3 mx-auto h-12 w-12 text-teal-300" />
             }
-            title="Create a new project"
+            title={`Welcome to Envless`}
+            subtitle="Get started by creating a new project."
           >
-            <form onSubmit={handleSubmit(createProject)}>
-              <Input
-                name="name"
-                label="Project name"
-                placeholder="Project X"
-                defaultValue="Project X"
-                required={true}
-                register={register}
-                errors={errors}
-                validationSchema={{
-                  required: "Project name is required",
-                }}
-              />
-
-              <div className="float-right">
-                <Button type="submit" disabled={loading}>
-                  Save and continue
-                  <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
+            <Modal
+              button={
+                <Button>
+                  <PlusIcon className="mr-2 h-5 w-5" aria-hidden="true" />
+                  New project
                 </Button>
-              </div>
-            </form>
-          </Modal>
-        </EmptyState>
+              }
+              title="Create a new project"
+            >
+              <form onSubmit={handleSubmit(createProject)}>
+                <Input
+                  name="name"
+                  label="Project name"
+                  placeholder="Project X"
+                  defaultValue="Project X"
+                  required={true}
+                  register={register}
+                  errors={errors}
+                  validationSchema={{
+                    required: "Project name is required",
+                  }}
+                />
+
+                <div className="float-right">
+                  <Button type="submit" disabled={loading}>
+                    Save and continue
+                    <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </Button>
+                </div>
+              </form>
+            </Modal>
+          </EmptyState>
+        </Container>
       ) : (
         <>
-          {roles.map((role: any) => {
-            const { project } = role;
-            return <>{project.name}</>;
-          })}
+          <Container>
+            <Nav user={user} />
+          </Container>
+
+          <Hr />
+
+          <Container>
+            <div className="-mx-4 -mb-4 flex flex-wrap my-12">
+              <div className="mb-4 w-full px-4 md:mb-0 lg:w-2/3 md:w-1/2">
+                <Projects projects={roles.map((role: any) => role.project)} />
+              </div>
+                <div className="mb-4 w-full px-4 md:mb-0 lg:w-1/3 md:w-1/2">
+                <Activities />
+              </div>
+            </div>
+          </Container>
         </>
       )}
-    </Wrapper>
+    </>
   );
 };
 
@@ -130,6 +147,7 @@ export async function getServerSideProps(context: { req: any }) {
         // @ts-ignore
         id: session.user.id,
       },
+
       include: {
         roles: {
           include: {
@@ -147,6 +165,7 @@ export async function getServerSideProps(context: { req: any }) {
         },
       };
     } else {
+      console.log("User with roles and projets", user);
       return {
         props: {
           user: JSON.parse(JSON.stringify(user)),

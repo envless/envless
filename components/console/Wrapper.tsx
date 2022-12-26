@@ -1,4 +1,4 @@
-import Nav from "@/components/console/Nav";
+import { Nav } from "@/components/console";
 import { Container } from "@/components/theme";
 /**
  * Console wrapper component to render shared nav, children and footer
@@ -17,7 +17,9 @@ const Wrapper = ({ ...props }) => {
         <Nav user={user} />
       </Container>
 
-      <Container>{children}</Container>
+      <Container>
+        <main className="">{children}</main>
+      </Container>
     </>
   );
 };
