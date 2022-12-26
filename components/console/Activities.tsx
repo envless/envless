@@ -4,43 +4,44 @@ import {
   TagIcon,
   UserCircleIcon,
 } from "@heroicons/react/20/solid";
+import { indexOf } from "lodash";
 
 const activity = [
   {
     id: 1,
-    type: "comment",
-    person: { name: "Eduardo Benz", href: "#" },
+    type: "invite",
+    person: { name: "Sergey Tyan", href: "#" },
     imageUrl:
-      "https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-    comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. ",
-    date: "6d ago",
+      "https://avatar.vercel.sh/ST.svg?text=ST",
+    invite:
+      "Invited test@example.com to Project X as a Developer",
+    date: "30 minutes ago",
   },
   {
     id: 2,
-    type: "assignment",
+    type: "branch",
     person: { name: "Hilary Mahy", href: "#" },
-    assigned: { name: "Kristin Watson", href: "#" },
+    branch: { name: "staging", href: "#" },
     date: "2d ago",
   },
   {
     id: 3,
-    type: "tags",
+    type: "merge",
     person: { name: "Hilary Mahy", href: "#" },
-    tags: [
-      { name: "Bug", href: "#", color: "bg-rose-500" },
-      { name: "Accessibility", href: "#", color: "bg-indigo-500" },
+    merge: [
+      { name: "staging", href: "#", color: "bg-indigo-500" },
+      { name: "main", href: "#", color: "bg-rose-500" },
     ],
     date: "6h ago",
   },
   {
     id: 4,
-    type: "comment",
-    person: { name: "Jason Meyers", href: "#" },
+    type: "invite",
+    person: { name: "Puru Dahal", href: "#" },
     imageUrl:
-      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80",
-    comment:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tincidunt nunc ipsum tempor purus vitae id. Morbi in vestibulum nec varius. Et diam cursus quis sed purus nam. Scelerisque amet elit non sit ut tincidunt condimentum. Nisl ultrices eu venenatis diam.",
+      "https://avatar.vercel.sh/PD.svg?text=PD",
+    invite:
+      "Accepted invitation to Project X as a Developer",
     date: "2h ago",
   },
 ];
@@ -64,7 +65,7 @@ export default function Activities() {
                 />
               ) : null}
               <div className="relative flex items-start space-x-3">
-                {activityItem.type === "comment" ? (
+                {activityItem.type === "invite" ? (
                   <>
                     <div className="relative">
                       <img
@@ -72,13 +73,6 @@ export default function Activities() {
                         src={activityItem.imageUrl}
                         alt=""
                       />
-
-                      <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-darkest px-0.5 py-px">
-                        <ChatBubbleLeftEllipsisIcon
-                          className="h-5 w-5 text-lightest"
-                          aria-hidden="true"
-                        />
-                      </span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div>
@@ -91,15 +85,15 @@ export default function Activities() {
                           </a>
                         </div>
                         <p className="mt-0.5 text-sm text-light">
-                          Commented {activityItem.date}
+                          {activityItem.date}
                         </p>
                       </div>
                       <div className="mt-2 text-sm text-lighter">
-                        <p>{activityItem.comment}</p>
+                        <p>{activityItem.invite}</p>
                       </div>
                     </div>
                   </>
-                ) : activityItem.type === "assignment" ? (
+                ) : activityItem.type === "branch" ? (
                   <>
                     <div>
                       <div className="relative px-1">
@@ -119,20 +113,21 @@ export default function Activities() {
                         >
                           {activityItem.person.name}
                         </a>{" "}
-                        assigned{" "}
+                        created a branch from main {" "}
                         <a
-                          href={activityItem.assigned?.href}
+                          href={activityItem.branch?.href}
                           className="font-medium text-lighter"
                         >
-                          {activityItem.assigned?.name}
+                          {activityItem.branch?.name}
                         </a>{" "}
+
                         <span className="whitespace-nowrap">
                           {activityItem.date}
                         </span>
                       </div>
                     </div>
                   </>
-                ) : activityItem.type === "tags" ? (
+                ) : activityItem.type === "merge" ? (
                   <>
                     <div>
                       <div className="relative px-1">
@@ -153,27 +148,27 @@ export default function Activities() {
                           >
                             {activityItem.person.name}
                           </a>{" "}
-                          added tags
+                          merged{" "}
                         </span>{" "}
                         <span className="mr-0.5">
                           {/* @ts-ignore */}
-                          {activityItem.tags.map((tag) => (
-                            <Fragment key={tag.name}>
+                          {activityItem.merge.map((branch) => (
+                            <Fragment key={branch.name}>
                               <a
-                                href={tag.href}
+                                href={branch.href}
                                 className="relative inline-flex items-center rounded-full border border-light px-3 py-0.5 text-sm"
                               >
                                 <span className="absolute flex flex-shrink-0 items-center justify-center">
                                   <span
                                     className={classNames(
-                                      tag.color,
+                                      branch.color,
                                       "h-1.5 w-1.5 rounded-full",
                                     )}
                                     aria-hidden="true"
                                   />
                                 </span>
                                 <span className="ml-3.5 font-medium text-lighter">
-                                  {tag.name}
+                                  {branch.name}
                                 </span>
                               </a>{" "}
                             </Fragment>
