@@ -36,10 +36,10 @@ const Toast = (props: Props) => {
         <div className="flex">
           <div className="flex w-0 flex-1 items-center py-4 pl-5">
             <div className="radix w-full">
-              <ToastPrimitive.Title className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              <ToastPrimitive.Title className="text-sm font-medium text-lightest">
                 {title}
               </ToastPrimitive.Title>
-              <ToastPrimitive.Description className="mt-1 text-sm text-gray-700 dark:text-gray-400">
+              <ToastPrimitive.Description className="mt-1 text-sm text-light">
                 {subtitle}
               </ToastPrimitive.Description>
             </div>
