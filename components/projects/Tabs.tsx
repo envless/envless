@@ -1,9 +1,10 @@
 import {
+  GoGear,
   GoFileCode,
   GoGitBranch,
-  GoGitPullRequest,
   GoOrganization,
-  GoGear,
+  GoListUnordered,
+  GoGitPullRequest,
 } from "react-icons/go";
 
 import Link from "next/link";
@@ -46,6 +47,12 @@ export default function Tabs({ active, projectId }: Props) {
       name: "Members",
       href: `${projectUrl}/members`,
       icon: GoOrganization,
+    },
+    {
+      id: "activities",
+      name: "Activities",
+      href: `${projectUrl}/activities`,
+      icon: GoListUnordered,
     },
     {
       id: "settings",
