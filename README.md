@@ -8,6 +8,9 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/envless/envless/stargazers">
+    <img src="https://img.shields.io/github/stars/envless/envless??style=flat&label=%40envless/envless&logo=github&color=2dd4bf&logoColor=fff" alt="Github" />
+  </a>
   <a href="https://twitter.com/envless">
     <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt="Twitter" />
   </a>
