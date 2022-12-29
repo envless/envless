@@ -1,10 +1,8 @@
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { User, Project } from "@prisma/client";
 import { Nav, Tabs } from "@/components/projects";
-import { Container, Hr } from "@/components/theme";
+import { Container } from "@/components/theme";
 
-interface ProjectProps {
+interface Props {
   tab?: string;
   projects: any;
   currentProject: any;
@@ -16,8 +14,7 @@ const ProjectLayout = ({
   projects,
   children,
   currentProject,
-}: ProjectProps) => {
-  const router = useRouter();
+}: Props) => {
   const { data: session, status } = useSession();
   const user = session?.user;
 
@@ -33,6 +30,7 @@ const ProjectLayout = ({
         </Container>
 
         <Tabs projectId={currentProject?.id} active={tab || "project"} />
+
         <Container>
           <div className="my-10 flex flex-wrap">{children}</div>
         </Container>
