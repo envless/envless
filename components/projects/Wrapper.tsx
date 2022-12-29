@@ -1,4 +1,4 @@
-import { Nav } from "@/components/console";
+import { Nav } from "@/components/projects";
 import { Container } from "@/components/theme";
 /**
  * Console wrapper component to render shared nav, children and footer

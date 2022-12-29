@@ -17,12 +17,13 @@
     "baseUrl": ".",
     "paths": {
       "@/lib/*": ["lib/*"],
+      "@/trpc/*": ["trpc/*"],
       "@/pages/*": ["pages/*"],
       "@/utils/*": ["utils/*"],
       "@/emails/*": ["emails/*"],
       "@/styles/*": ["styles/*"],
-      "@/trpc/*": ["trpc/*"],
       "@/api/*": ["pages/api/*"],
+      "@/layouts/*": ["layouts/*"],
       "@/components/*": ["components/*"]
     },
     "strict": false
@@ -35,7 +36,7 @@
     "pages/auth.js",
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
-    "pages/console/index.tsx"
+    "pages/projects/index.tsx"
   ],
   "exclude": ["node_modules"]
 }
