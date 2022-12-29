@@ -34,7 +34,7 @@ export default function Dropdown(props: Props) {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left z-10">
+    <Menu as="div" className="relative z-10 inline-block text-left">
       <Menu.Button>{button}</Menu.Button>
 
       <Transition

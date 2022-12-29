@@ -81,7 +81,7 @@ export async function getServerSideProps(context: { req: any }) {
   return {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(roles)),
+      projects: JSON.parse(JSON.stringify(projects)),
     },
   };
 }

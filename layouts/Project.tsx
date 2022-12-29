@@ -9,12 +9,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const ProjectLayout = ({
-  tab,
-  projects,
-  children,
-  currentProject,
-}: Props) => {
+const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
   const { data: session, status } = useSession();
   const user = session?.user;
 
