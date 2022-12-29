@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TbGitBranch, TbUsers } from "react-icons/tb";
-import CreateProjectModal from "@/components/console/CreateProjectModal";
+import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
 const Projects = ({ ...props }) => {
   const { projects } = props;
@@ -12,7 +12,7 @@ const Projects = ({ ...props }) => {
 
   const Card = ({ project }) => {
     return (
-      <Link href={`/console/${project.id}`} className="cursor-pointer">
+      <Link href={`/projects/${project.id}`} className="cursor-pointer">
         <div className="w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
           <h5
             title={project?.name}

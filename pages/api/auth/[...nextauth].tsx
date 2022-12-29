@@ -95,8 +95,8 @@ export const authOptions: NextAuthOptions = {
       const user = await message.user;
       console.log("Checking if user has created team and project", message);
 
-      // redirect user to /console
-      // return Promise.resolve("/console");
+      // redirect user to /projects
+      // return Promise.resolve("/projects");
     },
   },
 };

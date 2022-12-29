@@ -21,7 +21,7 @@ const Login = ({ csrfToken }) => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    data = { ...data, callbackUrl: "/console" };
+    data = { ...data, callbackUrl: "/projects" };
 
     const res = await fetch("/api/auth/signin/email", {
       method: "POST",
@@ -194,7 +194,7 @@ export async function getServerSideProps(context) {
 
   if (session) {
     console.info("Redirecting to dashboard");
-    res.writeHead(301, { Location: "/console" });
+    res.writeHead(301, { Location: "/projects" });
     res.end();
   }
 

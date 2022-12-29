@@ -53,7 +53,7 @@ const Nav = ({ ...props }) => {
   return (
     <nav className="mx-auto flex flex-wrap items-center justify-between py-6 lg:justify-between">
       <div className="flex w-auto flex-wrap items-center justify-between">
-        <Link href="/console">
+        <Link href="/projects">
           <Logo />
         </Link>
       </div>

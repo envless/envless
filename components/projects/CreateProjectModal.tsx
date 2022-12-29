@@ -23,7 +23,7 @@ const CreateProjectModal = () => {
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
       const { id } = data;
-      router.push(`/console/projects/${id}`);
+      router.push(`/projects/${id}`);
     },
 
     onError: (error) => {

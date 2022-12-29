@@ -35,7 +35,7 @@
     "pages/auth.js",
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
-    "pages/console/index.tsx"
+    "pages/projects/index.tsx"
   ],
   "exclude": ["node_modules"]
 }
