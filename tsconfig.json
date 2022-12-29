@@ -17,12 +17,13 @@
     "baseUrl": ".",
     "paths": {
       "@/lib/*": ["lib/*"],
+      "@/trpc/*": ["trpc/*"],
       "@/pages/*": ["pages/*"],
       "@/utils/*": ["utils/*"],
       "@/emails/*": ["emails/*"],
       "@/styles/*": ["styles/*"],
-      "@/trpc/*": ["trpc/*"],
       "@/api/*": ["pages/api/*"],
+      "@/layouts/*": ["layouts/*"],
       "@/components/*": ["components/*"]
     },
     "strict": false

@@ -1,11 +1,11 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Logo } from "@/components/theme";
 import { signOut } from "next-auth/react";
 import Dropdown from "@/components/theme/Dropdown";
 
 const Nav = ({ ...props }) => {
-  const { user } = props;
+  const { user, currentProject } = props;
   const { name, email, image } = user;
   const initials = name
     ? name
@@ -16,16 +16,6 @@ const Nav = ({ ...props }) => {
     : email.slice(0, 2).toUpperCase();
   const avatar =
     image || `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
-
-  const menuButton = () => {
-    <Image
-      className="cursor-pointer rounded-full"
-      src={avatar}
-      alt="avatar"
-      height={40}
-      width={40}
-    />;
-  };
 
   const menuItems = [
     {
@@ -56,6 +46,13 @@ const Nav = ({ ...props }) => {
         <Link href="/projects">
           <Logo />
         </Link>
+
+        {currentProject && (
+          <div className="ml-5">
+            <h3 className="text-lg">{currentProject.name}</h3>
+            <p className="text-xs text-light">Updated 2 days ago</p>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center text-center">
