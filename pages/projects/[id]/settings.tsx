@@ -22,7 +22,7 @@ export const SettingsPage = ({ projects, currentProject }: Props) => {
       projects={projects}
       currentProject={currentProject}
     >
-      <h1>SettingsPage</h1>
+      <h1>SettingsPage for {currentProject.name}</h1>
     </ProjectLayout>
   );
 };

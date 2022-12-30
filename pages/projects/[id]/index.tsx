@@ -18,7 +18,7 @@ interface Props {
 export const ProjectPage = ({ projects, currentProject }: Props) => {
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
-      <h1>ProjectPage</h1>
+      <h1>ProjectPage for {currentProject.name}</h1>
     </ProjectLayout>
   );
 };
