@@ -22,7 +22,7 @@ export const MergeRequestsPage = ({ projects, currentProject }: Props) => {
       projects={projects}
       currentProject={currentProject}
     >
-      <h1>MergeRequestsPage</h1>
+      <h1>MergeRequestsPage for {currentProject.name}</h1>
     </ProjectLayout>
   );
 };

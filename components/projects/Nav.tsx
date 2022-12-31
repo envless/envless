@@ -1,11 +1,15 @@
+import Fuse from "fuse.js";
 import Link from "next/link";
 import Image from "next/image";
-import { Logo } from "@/components/theme";
+import { useState } from "react";
 import { signOut } from "next-auth/react";
 import Dropdown from "@/components/theme/Dropdown";
+import { Logo, Popover, Hr } from "@/components/theme";
+import { MagnifyingGlassIcon, CheckIcon } from "@heroicons/react/20/solid";
 
 const Nav = ({ ...props }) => {
-  const { user, currentProject } = props;
+  const { user, currentProject, projects } = props;
+  const [projectList, setProjectList] = useState(projects);
   const { name, email, image } = user;
   const initials = name
     ? name
@@ -40,6 +44,21 @@ const Nav = ({ ...props }) => {
     },
   ];
 
+  const handleSearch = (e: any) => {
+    const query = e.target.value;
+    if (!query) {
+      setProjectList(projects);
+    } else {
+      const fuse = new Fuse(projects, {
+        keys: ["name"],
+      });
+
+      const results = fuse.search(query);
+      const items = results.map((result) => result.item);
+      setProjectList(items);
+    }
+  };
+
   return (
     <nav className="mx-auto flex flex-wrap items-center justify-between py-6 lg:justify-between">
       <div className="flex w-auto flex-wrap items-center justify-between">
@@ -48,10 +67,75 @@ const Nav = ({ ...props }) => {
         </Link>
 
         {currentProject && (
-          <div className="ml-5">
-            <h3 className="text-lg">{currentProject.name}</h3>
-            <p className="text-xs text-light">Updated 2 days ago</p>
-          </div>
+          <Popover
+            button={
+              <div className="ml-5 cursor-pointer hover:text-teal-300">
+                <div className="absolute -right-7 top-[2px] hover:text-teal-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="text-ligher h-5 w-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="text-md text-bold hover:text-teal-300">
+                  {currentProject.name}
+                </h3>
+              </div>
+            }
+          >
+            <div>
+              <div className="relative mt-1 rounded-md shadow-sm">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <MagnifyingGlassIcon
+                    className="h-4 w-4 text-light"
+                    aria-hidden="true"
+                  />
+                </div>
+                <input
+                  type="text"
+                  name="search"
+                  id="search"
+                  className="block w-full border-none bg-transparent pl-10 text-sm focus:outline-none focus:ring-0"
+                  placeholder="Search projects"
+                  onChange={handleSearch}
+                />
+                <Hr />
+              </div>
+
+              <div className="p-3 text-sm">
+                <ul className="">
+                  {projectList.map((project) => (
+                    <Link
+                      className=""
+                      href={`/projects/${project.id}`}
+                      key={project.id}
+                    >
+                      <li key={project.id} className="px-3 py-2 hover:bg-dark">
+                        {project.name}
+
+                        {project.id === currentProject.id && (
+                          <CheckIcon
+                            className="float-right h-4 w-4 text-teal-300"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </li>
+                    </Link>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Popover>
         )}
       </div>
 

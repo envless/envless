@@ -22,7 +22,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       projects={projects}
       currentProject={currentProject}
     >
-      <h1>BranchesPage</h1>
+      <h1>BranchesPage for {currentProject.name}</h1>
     </ProjectLayout>
   );
 };
