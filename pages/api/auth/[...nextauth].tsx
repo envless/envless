@@ -74,16 +74,15 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, user, token }) {
-      if (token.user) {
-        session.user = token.user;
+    async session({ session, token }) {
+      // TODO - implement 2FA here
+      console.log('Token has jwt? ', token.jwt);
+      const { user } = token;
+      token.jwt = true
+      console.log("Session callback for user ", user);
+      if (user) {
+        session.user = user;
       }
-
-      // session.user = {
-      //   // @ts-ignore
-      //   id: token.sub,
-      //   ...session.user
-      // }
 
       return session;
     },
@@ -93,7 +92,7 @@ export const authOptions: NextAuthOptions = {
     async signIn(message) {
       // Redirect to /onboarding if user has not created team and/or project
       const user = await message.user;
-      console.log("Checking if user has created team and project", message);
+      console.log("Checking if user has created team and project ====>", message);
 
       // redirect user to /projects
       // return Promise.resolve("/projects");
