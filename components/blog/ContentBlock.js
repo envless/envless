@@ -135,7 +135,7 @@ const SpanText = ({ text, id }) => {
         {text.link ? (
           <Link
             href={text.link.url}
-            className="break-all font-bold text-teal-300 hover:underline"
+            className="break-all text-teal-300 hover:underline"
           >
             {text.content}
           </Link>
@@ -167,19 +167,19 @@ const Heading = ({ text, level }) => {
   switch (level) {
     case "heading_1":
       return (
-        <h1 className="my-2 text-3xl font-bold tracking-tight md:text-5xl">
+        <h1 className="my-2 text-3xl font-semibold tracking-tight md:text-5xl">
           <SpanText text={text} />
         </h1>
       );
     case "heading_2":
       return (
-        <h2 className="my-2 text-2xl font-bold tracking-tight md:text-3xl">
+        <h2 className="my-2 text-2xl font-semibold tracking-tight md:text-3xl">
           <SpanText text={text} />
         </h2>
       );
     case "heading_3":
       return (
-        <h3 className="my-2 text-xl font-bold tracking-tight md:text-2xl">
+        <h3 className="my-2 text-xl font-semibold tracking-tight md:text-2xl">
           <SpanText text={text} />
         </h3>
       );

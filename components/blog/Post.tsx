@@ -81,7 +81,7 @@ const Post: React.FC<Props> = ({ post }) => {
 
   return (
     <div className="group grid cursor-pointer gap-3">
-      <div className="relative aspect-video overflow-hidden rounded-md transition-all transition duration-300 ease-in-out group-hover:scale-105">
+      <div className="relative aspect-video overflow-hidden rounded-md transition-all duration-300 ease-in-out group-hover:scale-105">
         <Link href={postLink()}>
           <img
             alt={postTitle()}

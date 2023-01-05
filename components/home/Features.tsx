@@ -8,7 +8,7 @@ const Features = () => {
   return (
     <div className="mx-auto mt-24 md:px-24">
       <div className="text-center">
-        <h2 className="heading font- text-3xl font-bold text-gray-300 sm:text-4xl">
+        <h2 className="heading text-3xl text-gray-300 sm:text-4xl">
           By developers, for developers
         </h2>
         <p className="mx-auto mt-2 max-w-md text-light">
@@ -21,7 +21,7 @@ const Features = () => {
             <BsShieldFillCheck className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">End to end encryption</h3>
+            <h3 className="text-xl">End to end encryption</h3>
             <p className="mt-1 text-light">
               With E2E encyption and role based read/write access you can rest
               assured that your secrets are safe with us.
@@ -33,7 +33,7 @@ const Features = () => {
             <BiGitBranch className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">Version control</h3>
+            <h3 className="text-xl">Version control</h3>
             <p className="mt-1 text-light">
               Developers work on multiple branches. Now you can create as many
               branches as you like for env variables. It works just like git.
@@ -45,7 +45,7 @@ const Features = () => {
             <TbConfetti className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">Boost productivity</h3>
+            <h3 className="text-xl">Boost productivity</h3>
             <p className="mt-1 text-light">
               Built by developer, for developers. Build with speed in mind. With
               API and database hosted on edge networks, you can globally sync
@@ -58,7 +58,7 @@ const Features = () => {
             <BsTerminalFill className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">Complete CLI support</h3>
+            <h3 className="text-xl">Complete CLI support</h3>
             <p className="mt-1 text-light">
               Without leaving your terminal, you can create projects, invite
               team, add, update or remove env variables, create branches and
@@ -71,7 +71,7 @@ const Features = () => {
             <RiOpenSourceFill className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">Proudly OpenSource</h3>
+            <h3 className="text-xl">Proudly OpenSource</h3>
             <p className="mt-1 text-light">
               Check us out on{" "}
               <Link
@@ -91,7 +91,7 @@ const Features = () => {
             <RiSunCloudyFill className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl font-semibold">Works everywhere</h3>
+            <h3 className="text-xl">Works everywhere</h3>
             <p className="mt-1 text-light">
               Envless works with any programming language, framework or
               platform. Develop your app locally, deploy to cloud and sync env

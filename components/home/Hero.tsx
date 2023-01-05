@@ -27,10 +27,10 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 transition-all hover:bg-lightest/30"
             >
               <IoLogoGithub className="inline-block h-4 w-4 text-gray-300" />
-              <p className="text-sm font-semibold">Star on GitHub </p>
+              <p className="text-sm">Star on GitHub</p>
             </Link>
           </div>
-          <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl font-semibold tracking-tight text-transparent md:text-8xl">
+          <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl tracking-tight text-transparent md:text-8xl">
             {header}
           </h1>
 
@@ -55,7 +55,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 font-bold text-darkest hover:bg-teal-200"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 text-darkest hover:bg-teal-200"
               href="/docs"
               target="_self"
             >

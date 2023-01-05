@@ -16,7 +16,7 @@ const Projects = ({ ...props }) => {
         <div className="w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
           <h5
             title={project?.name}
-            className="line-clamp-1 text-base font-bold leading-5 text-lightest"
+            className="line-clamp-1 text-base leading-5 text-lightest"
           >
             {project?.name}
           </h5>
@@ -51,7 +51,7 @@ const Projects = ({ ...props }) => {
   return (
     <>
       <div className="relative grid grid-cols-2">
-        <h2 className="mb-8 text-2xl font-bold">Projects</h2>
+        <h2 className="mb-8 text-2xl">Projects</h2>
         <div className="absolute right-0">
           <CreateProjectModal />
         </div>
