@@ -14,7 +14,7 @@ const Projects = ({ ...props }) => {
   const Card = ({ project }) => {
     return (
       <Link href={`/projects/${project.id}`} className="cursor-pointer">
-        <div className="w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
+        <div className="w-full rounded-md border-2 border-black-700 bg-black-800 p-5 hover:border-teal-300/70">
           <h5
             title={project?.name}
             className="line-clamp-1 text-base leading-5 text-lightest"

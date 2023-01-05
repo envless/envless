@@ -22,7 +22,7 @@ const Pricing = ({ ...props }) => {
           </div>
 
           <div className="w-full p-7 md:w-1/3">
-            <div className="h-full rounded border border-darkest bg-dark p-8">
+            <div className="h-full rounded border border-darkest bg-darker p-8">
               <div className="mb-7 flex flex-wrap justify-between pb-2">
                 <div className="w-full xl:w-auto">
                   <h3 className="text-2xl text-lightest">Personal</h3>
