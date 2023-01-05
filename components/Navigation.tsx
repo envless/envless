@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/theme/index";
 import { Button } from "@/components/theme/index";
-import { render } from "@headlessui/react/dist/utils/render";
 
 type Props = {
   loggedIn: boolean;

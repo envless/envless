@@ -49,7 +49,7 @@ function classNames(...classes) {
 export default function Activities() {
   return (
     <div className="flow-root px-14">
-      <h2 className="mb-8 text-lg font-bold">Activities</h2>
+      <h2 className="mb-8 text-lg">Activities</h2>
       <ul role="list" className="-mb-8">
         {activity.map((activityItem, activityItemIdx) => (
           <li key={activityItem.id}>

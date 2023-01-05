@@ -1,5 +1,3 @@
-import { Key } from "react";
-import Link from "next/link";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";

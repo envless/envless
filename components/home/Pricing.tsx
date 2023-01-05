@@ -8,7 +8,7 @@ const Pricing = ({ ...props }) => {
         <div className="-m-7 flex flex-wrap">
           <div className="w-full p-7 md:w-1/3">
             <div className="h-full">
-              <h2 className="font-heading mb-5 text-3xl font-bold text-gray-300 sm:text-4xl">
+              <h2 className="font-heading mb-5 text-3xl text-gray-300 sm:text-4xl">
                 Pricing
               </h2>
               <p className="text-base text-light">
@@ -25,7 +25,7 @@ const Pricing = ({ ...props }) => {
             <div className="h-full rounded border border-darkest bg-dark p-8">
               <div className="mb-7 flex flex-wrap justify-between pb-2">
                 <div className="w-full xl:w-auto">
-                  <h3 className="text-2xl font-bold text-lightest">Personal</h3>
+                  <h3 className="text-2xl text-lightest">Personal</h3>
                 </div>
               </div>
               <ul className="mb-8">
@@ -63,7 +63,7 @@ const Pricing = ({ ...props }) => {
               <div className="rounded bg-lightest p-8">
                 <div className="mb-7 flex flex-wrap justify-between pb-2">
                   <div className="w-full xl:w-auto">
-                    <h3 className="text-2xl font-bold text-gray-900">Team</h3>
+                    <h3 className="text-2xl text-gray-900">Team</h3>
                   </div>
                 </div>
                 <ul className="mb-8">
