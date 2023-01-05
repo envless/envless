@@ -58,7 +58,7 @@ const Home: React.FC<Props> = ({ header, loggedIn }) => {
 
 export default Home;
 
-export async function getServerSideProps(context: { req: any }) {
+export async function getStaticProps(context: { req: any }) {
   const { req } = context;
   const session = await getSession({ req });
   const user = session?.user;
