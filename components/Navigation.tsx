@@ -33,7 +33,7 @@ const Navigation: React.FC<Props> = ({ loggedIn, menu }) => {
       </div>
 
       <div className="flex items-center text-center">
-        <Button sr="Signup or Login" href={loggedIn ? "/projects" : "/auth"}>
+        <Button sr="Signup or Login" href="/projects">
           {loggedIn ? "Projects" : "Get started"}
         </Button>
       </div>
