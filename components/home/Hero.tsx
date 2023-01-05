@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { IoCopy, IoCheckmarkCircle } from "react-icons/io5";
+import { IoCopy, IoCheckmarkCircle, IoLogoGithub } from "react-icons/io5";
 
 type HeroProps = {
   header: string;
@@ -19,9 +19,21 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
     <section className="flex">
       <div className="h-min bg-[url('/world.png')] bg-contain bg-center bg-no-repeat">
         <div className="relative px-2 py-16 text-center lg:px-48 xl:py-32">
+          <div className="mb-3">
+            <Link
+              href="https://github.com/envless/envless"
+              target="_blank"
+              rel="noreferrer"
+              className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 transition-all hover:bg-lightest/30"
+            >
+              <IoLogoGithub className="inline-block h-4 w-4 text-gray-300" />
+              <p className="text-sm font-semibold">Star on GitHub </p>
+            </Link>
+          </div>
           <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl font-semibold tracking-tight text-transparent md:text-8xl">
             {header}
           </h1>
+
           <h2 className="mt-3 text-lg text-lighter md:text-2xl">
             An open-source, the most secure and frictionless way to share and
             manage app secrets across teams.
