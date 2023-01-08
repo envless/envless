@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
-import { getSession } from "next-auth/react";
 import { Project } from "@prisma/client";
+import { getSession } from "next-auth/react";
 import ProjectLayout from "@/layouts/Project";
 
 /**

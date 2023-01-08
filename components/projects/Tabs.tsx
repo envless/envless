@@ -68,12 +68,12 @@ export default function Tabs({ active, projectId }: Props) {
         <label htmlFor="tabs" className="sr-only">
           Select a tab
         </label>
-        {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
+
         <Container>
           <select
             id="tabs"
             name="tabs"
-            className="block w-full rounded-md border-dark bg-dark"
+            className="block rounded border-dark bg-dark text-sm"
             // @ts-ignore
             defaultValue={tabs.find((tab) => tab.id === active).name}
             onChange={(e) => {
