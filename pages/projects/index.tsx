@@ -85,7 +85,7 @@ export async function getServerSideProps(context: { req: any }) {
             },
           },
         },
-      }
+      },
     });
 
     if (!user) {

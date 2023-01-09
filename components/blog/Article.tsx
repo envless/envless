@@ -7,12 +7,11 @@ import { RenderBlocks } from "@/components/blog/ContentBlock";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {
-  loggedIn?: boolean;
   post: any;
   blocks: any;
 };
 
-const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
+const Article: React.FC<Props> = ({ post, blocks }) => {
   const menu = [
     {
       name: "Docs",
@@ -71,7 +70,7 @@ const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
       />
 
       <Container>
-        <Nav loggedIn={loggedIn || false} menu={menu} />
+        <Nav menu={menu} />
       </Container>
 
       <Container>
@@ -99,7 +98,3 @@ const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
 };
 
 export default Article;
-
-Article.defaultProps = {
-  loggedIn: false,
-};

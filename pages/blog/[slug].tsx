@@ -4,13 +4,12 @@ import { getNotionData, getPage, getBlocks } from "@/lib/notion";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {
-  loggedIn: boolean;
   post: any;
   blocks: any;
 };
 
-const BlogArticle: React.FC<Props> = ({ loggedIn, post, blocks }) => {
-  return <Article loggedIn={loggedIn} post={post} blocks={blocks} />;
+const BlogArticle: React.FC<Props> = ({ post, blocks }) => {
+  return <Article post={post} blocks={blocks} />;
 };
 
 export const getStaticPaths = async () => {

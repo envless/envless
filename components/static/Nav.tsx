@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Logo } from "@/components/theme/index";
 import { Button } from "@/components/theme/index";
 
 type Props = {
-  loggedIn: boolean;
   menu?: Array<{ name: string; href: string }>;
 };
 
-const Nav: React.FC<Props> = ({ loggedIn, menu }) => {
+const Nav: React.FC<Props> = ({ menu }) => {
+  const { status } = useSession();
+
   const renderMenu = () => {
     return (
       menu &&
@@ -33,9 +35,15 @@ const Nav: React.FC<Props> = ({ loggedIn, menu }) => {
       </div>
 
       <div className="flex items-center text-center">
-        <Button sr="Signup or Login" href="/projects">
-          {loggedIn ? "Projects" : "Get started"}
-        </Button>
+        {status === "authenticated" ? (
+          <Button sr="Signup or Login" href="/projects">
+            Projects
+          </Button>
+        ) : (
+          <Button sr="Signup or Login" href="/auth">
+            Get started
+          </Button>
+        )}
       </div>
     </nav>
   );

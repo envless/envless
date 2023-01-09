@@ -1,18 +1,13 @@
-import { sample } from "lodash";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/home/Hero";
-import { getSession } from "next-auth/react";
 import Pricing from "@/components/home/Pricing";
 import Nav from "@/components/static/Nav";
 import Features from "@/components/home/Features";
 import Container from "@/components/theme/Container";
 
-type Props = {
-  header: string;
-  loggedIn: boolean;
-};
+type Props = {};
 
-const Home: React.FC<Props> = ({ header, loggedIn }) => {
+const Home: React.FC<Props> = ({}) => {
   const menu = [
     {
       name: "Docs",
@@ -47,8 +42,8 @@ const Home: React.FC<Props> = ({ header, loggedIn }) => {
       />
 
       <Container>
-        <Nav loggedIn={loggedIn} menu={menu} />
-        <Hero header={header} />
+        <Nav menu={menu} />
+        <Hero header={".envless"} />
         <Features />
         <Pricing />
       </Container>
@@ -57,32 +52,3 @@ const Home: React.FC<Props> = ({ header, loggedIn }) => {
 };
 
 export default Home;
-
-export async function getStaticProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
-  const user = session?.user;
-  const headers = [
-    ".envless",
-    // "Go .envless",
-    // "Delete your .env files",
-    // "e2e encrypt your .env",
-    // "Sync your app secrets",
-    // "Branch your app secrets",
-    // "Secure your app secrets",
-    // "Manage & share app secrets",
-    // "Never leak .env again",
-    // "Never slack .env again",
-    // "e2e encrypt app secrets",
-    // "Never commit .env again",
-  ];
-
-  const header = sample(headers);
-
-  return {
-    props: {
-      header,
-      loggedIn: !!user,
-    },
-  };
-}
