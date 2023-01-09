@@ -80,6 +80,7 @@ const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
             <h1 className="mt-10 text-center text-5xl">{postTitle()}</h1>
             <p className="text-md my-2 text-center text-light">{postDate()}</p>
             <Zoom>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt={postTitle()}
                 sizes="80vw"

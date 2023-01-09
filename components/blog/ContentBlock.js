@@ -69,8 +69,8 @@ export const RenderBlocks = ({ blocks }) => {
         const caption = value.caption.length ? value.caption[0].plain_text : "";
         return (
           <figure key={id}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <Zoom>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img alt={caption} src={imageSrc} />
             </Zoom>
             {caption && <figcaption className="mt-2">{caption}</figcaption>}

@@ -85,7 +85,7 @@ export async function getServerSideProps(context: { req: any }) {
             },
           },
         },
-      },
+      }
     });
 
     if (!user) {
@@ -96,7 +96,6 @@ export async function getServerSideProps(context: { req: any }) {
         },
       };
     } else {
-      console.log("User with roles and projets", user);
       return {
         props: {
           user: JSON.parse(JSON.stringify(user)),

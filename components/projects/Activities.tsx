@@ -64,6 +64,7 @@ export default function Activities() {
                 {activityItem.type === "invite" ? (
                   <>
                     <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-light ring-8 ring-dark"
                         src={activityItem.imageUrl}

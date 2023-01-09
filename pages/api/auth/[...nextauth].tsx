@@ -8,10 +8,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 const development = !!process.env.VERCEL_URL;
 
-export const config = {
-  runtime: "experimental-edge",
-};
-
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
@@ -96,10 +92,6 @@ export const authOptions: NextAuthOptions = {
     async signIn(message) {
       // Redirect to /onboarding if user has not created team and/or project
       const user = await message.user;
-      console.log(
-        "Checking if user has created team and project ====>",
-        message,
-      );
 
       // redirect user to /projects
       // return Promise.resolve("/projects");
