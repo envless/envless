@@ -3,7 +3,7 @@ import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";
 import { getNotionData } from "@/lib/notion";
 import { getSession } from "next-auth/react";
-import Navigation from "@/components/Navigation";
+import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
@@ -85,7 +85,7 @@ const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
       />
 
       <Container>
-        <Navigation loggedIn={loggedIn} menu={menu} />
+        <Nav loggedIn={loggedIn} menu={menu} />
         <Hero />
       </Container>
 

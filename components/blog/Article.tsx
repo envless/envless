@@ -1,7 +1,7 @@
 import { NextSeo } from "next-seo";
 import Zoom from "react-medium-image-zoom";
 import { getSession } from "next-auth/react";
-import Navigation from "@/components/Navigation";
+import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
 import { RenderBlocks } from "@/components/blog/ContentBlock";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
@@ -71,7 +71,7 @@ const Article: React.FC<Props> = ({ loggedIn, post, blocks }) => {
       />
 
       <Container>
-        <Navigation loggedIn={loggedIn || false} menu={menu} />
+        <Nav loggedIn={loggedIn || false} menu={menu} />
       </Container>
 
       <Container>

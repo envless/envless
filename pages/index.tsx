@@ -3,7 +3,7 @@ import { NextSeo } from "next-seo";
 import Hero from "@/components/home/Hero";
 import { getSession } from "next-auth/react";
 import Pricing from "@/components/home/Pricing";
-import Navigation from "@/components/Navigation";
+import Nav from "@/components/static/Nav";
 import Features from "@/components/home/Features";
 import Container from "@/components/theme/Container";
 
@@ -47,7 +47,7 @@ const Home: React.FC<Props> = ({ header, loggedIn }) => {
       />
 
       <Container>
-        <Navigation loggedIn={loggedIn} menu={menu} />
+        <Nav loggedIn={loggedIn} menu={menu} />
         <Hero header={header} />
         <Features />
         <Pricing />

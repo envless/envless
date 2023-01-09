@@ -7,7 +7,7 @@ type Props = {
   menu?: Array<{ name: string; href: string }>;
 };
 
-const Navigation: React.FC<Props> = ({ loggedIn, menu }) => {
+const Nav: React.FC<Props> = ({ loggedIn, menu }) => {
   const renderMenu = () => {
     return (
       menu &&
@@ -41,4 +41,4 @@ const Navigation: React.FC<Props> = ({ loggedIn, menu }) => {
   );
 };
 
-export default Navigation;
+export default Nav;
