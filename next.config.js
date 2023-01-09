@@ -4,14 +4,7 @@ const nextConfig = {
   swcMinify: false,
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["avatar.vercel.sh"],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "avatar.vercel.sh",
-        pathname: "/**",
-      },
-    ],
+    domains: ["avatar.vercel.sh", "avatars.githubusercontent.com"],
   },
 };
 

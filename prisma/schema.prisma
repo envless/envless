@@ -19,8 +19,6 @@ model Project {
   updatedAt     DateTime  @updatedAt
   branches      Branch[]
   roles         Role[]
-
-  @@unique([name])
 }
 
 model Role {

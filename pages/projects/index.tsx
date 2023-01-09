@@ -23,7 +23,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
           <EmptyState
             icon={<SquaresPlusIcon className="m-3 mx-auto h-12 w-12" />}
             title={`Welcome to Envless`}
-            subtitle="Get started by creating a new project."
+            subtitle="Get started by creating your first project."
           >
             <CreateProjectModal />
           </EmptyState>

@@ -39,14 +39,19 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
   }, [twoFactor.enabled]);
 
   const enableMutation = trpc.twoFactor.enable.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       setLoading(false);
       setEnabled(true);
     },
 
     onError: (error) => {
       setLoading(false);
-      console.log("Error while enabling 2fa", error);
+      setEnabled(false);
+
+      setError("code", {
+        type: "custom",
+        message: error.message,
+      });
     },
   });
 

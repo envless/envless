@@ -76,7 +76,6 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }) {
       // TODO - implement 2FA here
-      // console.log("Token has jwt? ", token.jwt);
       const { user } = token;
       token.jwt = true;
       // console.log("Session callback for user ", user);

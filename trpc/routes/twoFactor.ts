@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { authenticator } from "otplib";
 import { Decrypted } from "@/lib/crypto";
-import { createRouter, withAuth, throwError } from "@/trpc/router";
+import { TRPCError } from "@trpc/server";
+import { createRouter, withAuth } from "@/trpc/router";
 
 export const twoFactor = createRouter({
   enable: withAuth
@@ -15,7 +16,7 @@ export const twoFactor = createRouter({
       const { user } = ctx.session;
       const { code } = input;
 
-      prisma.user
+      return prisma.user
         .findUnique({
           where: {
             // @ts-ignore
@@ -25,16 +26,22 @@ export const twoFactor = createRouter({
             twoFactorSecret: true,
           },
         })
-        .then((u) => {
+        // @ts-ignore
+        .then((u: any) => {
           if (!u) {
-            return throwError("NOT_FOUND", "User not found");
+            return new TRPCError({
+              code: "NOT_FOUND",
+              message:
+                "Something went wrong, our engineers are aware of it and are working on a fix.",
+            });
           }
 
           if (!u.twoFactorSecret) {
-            return throwError(
-              "BAD_REQUEST",
-              "User does not have a two factor secret",
-            );
+            return new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Something went wrong, please reload this page and try again.",
+            });
           }
 
           const decryptedSecret = Decrypted(
@@ -48,18 +55,22 @@ export const twoFactor = createRouter({
           });
 
           if (!isValid) {
-            return throwError("BAD_REQUEST", "Invalid code");
-          } else {
-            return prisma.user.update({
-              where: {
-                // @ts-ignore
-                id: user.id,
-              },
-              data: {
-                twoFactorEnabled: true,
-              },
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Code is either expired or invalid. Please copy code from authenticator app and try again.",
             });
           }
+
+          return prisma.user.update({
+            where: {
+              // @ts-ignore
+              id: user.id,
+            },
+            data: {
+              twoFactorEnabled: true,
+            },
+          });
         });
     }),
 
