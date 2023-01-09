@@ -8,7 +8,6 @@ import Container from "@/components/theme/Container";
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {
-  loggedIn: boolean;
   posts: Array<PostProps>;
 };
 
@@ -53,7 +52,7 @@ type PostProps = {
   };
 };
 
-const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
+const Blog: React.FC<Props> = ({ posts }) => {
   const menu = [
     {
       name: "Docs",
@@ -85,7 +84,7 @@ const Blog: React.FC<Props> = ({ loggedIn, posts }) => {
       />
 
       <Container>
-        <Nav loggedIn={loggedIn} menu={menu} />
+        <Nav menu={menu} />
         <Hero />
       </Container>
 
