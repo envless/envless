@@ -1,6 +1,6 @@
+import { Tabs } from "@/components/projects";
 import { useSession } from "next-auth/react";
-import { Nav, Tabs } from "@/components/projects";
-import { Container } from "@/components/theme";
+import { Container, Nav } from "@/components/theme";
 
 interface Props {
   tab?: string;

@@ -106,6 +106,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
   roles         Role[]
+
+  // Two factor authentication
+  twoFactorSecret   String?
+  twoFactorEnabled  Boolean   @default(false)
 }
 
 model VerificationToken {

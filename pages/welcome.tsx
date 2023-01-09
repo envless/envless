@@ -38,6 +38,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
                     <Link
                       href="https://twitter.com/envless"
                       target="_blank"
+                      rel="noreferrer"
                       className="text-teal-400"
                     >
                       Twitter
@@ -47,6 +48,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
                       href="https://github.com/envless/envless"
                       className="text-teal-400"
                       target="_blank"
+                      rel="noreferrer"
                     >
                       Github
                     </Link>{" "}

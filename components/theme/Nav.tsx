@@ -1,5 +1,6 @@
 import Fuse from "fuse.js";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -8,7 +9,8 @@ import { Logo, Popover, Hr } from "@/components/theme";
 import { MagnifyingGlassIcon, CheckIcon } from "@heroicons/react/20/solid";
 
 const Nav = ({ ...props }) => {
-  const { user, currentProject, projects } = props;
+  const router = useRouter();
+  const { user, currentProject, projects, layout } = props;
   const [projectList, setProjectList] = useState(projects);
   const { name, email, image } = user;
   const initials = name
@@ -23,12 +25,8 @@ const Nav = ({ ...props }) => {
 
   const menuItems = [
     {
-      title: "Profile",
-      handleClick: () => console.log("Profile"),
-    },
-    {
-      title: "Billing",
-      handleClick: () => console.log("Billing"),
+      title: "Settings",
+      handleClick: () => router.push("/settings"),
     },
     {
       title: "Documentation",
@@ -65,6 +63,8 @@ const Nav = ({ ...props }) => {
         <Link href="/projects">
           <Logo />
         </Link>
+
+        {layout && <h2 className="ml-5">{layout}</h2>}
 
         {currentProject && (
           <Popover

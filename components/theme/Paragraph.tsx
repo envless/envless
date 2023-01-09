@@ -3,56 +3,60 @@ import React from "react";
 /**
  * A text component that can be used to display text with different sizes and colors.
  *
+ * @param {string} [className] The class name of the text.
  * @param {string} [size="medium"] The size of the text. Can be "small", "medium", or "large".
  * @param {string} [color="lightest"] The color of the text. Can be "light", "lighter", or "lightest".
  */
 
 type ParagraphProps = {
+  className?: string;
   size?: "sm" | "lg" | "xl" | "2xl" | "3xl";
   color?: "light" | "lighter" | "lightest";
   children: React.ReactNode;
 };
 
 const Paragraph = (props: ParagraphProps) => {
-  const { size, color, children } = props;
+  const { size, color, children, className } = props;
 
-  let className = "";
+  let klassName = "";
   switch (size) {
     case "sm":
-      className = "text-sm";
+      klassName = "text-sm";
       break;
     case "lg":
-      className = "text-lg";
+      klassName = "text-lg";
       break;
     case "xl":
-      className = "text-xl";
+      klassName = "text-xl";
     case "2xl":
-      className = "text-2xl";
+      klassName = "text-2xl";
       break;
     case "3xl":
-      className = "text-3xl";
+      klassName = "text-3xl";
       break;
     default:
-      className = "text-base";
+      klassName = "text-base";
       break;
   }
 
   switch (color) {
     case "light":
-      className += " text-light";
+      klassName += " text-light";
       break;
     case "lighter":
-      className += " text-lighter";
+      klassName += " text-lighter";
       break;
     case "lightest":
-      className += " text-lightest";
+      klassName += " text-lightest";
       break;
     default:
-      className += " text-lightest";
+      klassName += " text-lightest";
       break;
   }
 
-  return <p className={className}>{children}</p>;
+  klassName += " " + className;
+
+  return <p className={klassName}>{children}</p>;
 };
 
 Paragraph.defaultProps = {

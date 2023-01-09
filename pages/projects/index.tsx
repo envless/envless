@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
-import { Container, Hr } from "@/components/theme";
+import { Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
-import { Projects, Nav, Activities } from "@/components/projects";
+import { Projects, Activities } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 
