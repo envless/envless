@@ -51,34 +51,29 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/auth",
+    signOut: "/auth",
   },
 
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
-    // maxAge: 30 * 24 * 60 * 60, // 30 days
-    // updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
   },
 
   callbacks: {
-    async jwt({ token, user, account, profile, isNewUser }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.user = user;
-      }
-
-      if (account) {
-        token.accessToken = account.access_token;
       }
 
       return token;
     },
 
     async session({ session, token }) {
-      // TODO - implement 2FA here
       const { user } = token;
-      token.jwt = true;
-      // console.log("Session callback for user ", user);
+
       if (user) {
         session.user = user;
       }
@@ -89,11 +84,7 @@ export const authOptions: NextAuthOptions = {
 
   events: {
     async signIn(message) {
-      // Redirect to /onboarding if user has not created team and/or project
-      const user = await message.user;
-
-      // redirect user to /projects
-      // return Promise.resolve("/projects");
+      // Create an audit log entry for the sign in
     },
   },
 };
