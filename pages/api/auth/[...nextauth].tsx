@@ -8,6 +8,10 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 const development = !!process.env.VERCEL_URL;
 
+export const config = {
+  runtime: "experimental-edge",
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
