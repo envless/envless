@@ -11,8 +11,11 @@ import * as React from "react";
  * @param {() => void} [onClick] - The callback to be invoked when the user clicks on the button or link.
  * @param {string} [href] - The URL to link to, if the component should render a link.
  * @param {boolean} [full] - Whether the button should take up the full width of its container.
+ * @param {boolean} [outline] - Whether the button should be outlined.
  * @param {boolean} [disablad] - Whether on not the button should be disabled.
  * @param {string} [target] - The target attribute for the link, if the component should render a link.
+ * @param {string} [className] - The class name to apply to the button or link.
+ * @param {boolean} [small] - Whether the button should be small.
  * @param {React.ReactNode} children - The content to render inside the button or link.
  */
 
@@ -23,6 +26,9 @@ const Button = (props: {
   href?: string;
   full?: boolean;
   target?: string;
+  className?: string;
+  small?: boolean;
+  outline: boolean;
   disabled?: boolean;
   children: React.ReactNode;
 }) => {
@@ -33,7 +39,10 @@ const Button = (props: {
     href,
     full,
     target,
+    className,
+    small,
     disabled,
+    outline,
     children,
   } = props;
 
@@ -42,8 +51,14 @@ const Button = (props: {
       <Link
         href={href}
         className={clsx(
-          full ? "w-full" : "",
-          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2",
+          className,
+          full ? "w-full" : "w-fit",
+          small ? "py-1" : "py-2",
+          outline
+            ? "border-2 border-dark bg-transparent text-lightest hover:bg-dark"
+            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+
+          "flex justify-center rounded-md border px-4 text-sm font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
       >
         {children}
@@ -55,8 +70,14 @@ const Button = (props: {
       <button
         type={type}
         className={clsx(
-          full ? "w-full" : "",
-          "flex justify-center rounded border border-transparent bg-lightest px-4 py-2 text-sm font-medium text-black shadow hover:bg-gray-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+          className,
+          full ? "w-full" : "w-fit",
+          small ? "py-1" : "py-2",
+          outline
+            ? "border-2 border-dark bg-darker text-lightest hover:bg-dark"
+            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+
+          "flex justify-center rounded-md border px-4 text-sm font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
         onClick={onClick}
         disabled={disabled}
@@ -72,6 +93,8 @@ Button.defaultProps = {
   full: false,
   type: "button",
   disablad: false,
+  outline: false,
+  small: false,
 };
 
 export default Button;

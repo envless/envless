@@ -12,8 +12,13 @@ const Tabs = ({ active }) => {
     },
     {
       id: "security",
-      name: "Two factor authentication",
+      name: "Security",
       href: "/settings/security",
+    },
+    {
+      id: "audit",
+      name: "Audit log",
+      href: "/settings/audit",
     },
   ];
 

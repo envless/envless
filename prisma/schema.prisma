@@ -12,6 +12,21 @@ datasource db {
   relationMode          = "prisma"
 }
 
+model Audit {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  event     String
+  data      Json
+
+  userId    String
+  projectId String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([projectId])
+}
+
 model Project {
   id            String    @id @default(cuid())
   name          String
@@ -19,6 +34,7 @@ model Project {
   updatedAt     DateTime  @updatedAt
   branches      Branch[]
   roles         Role[]
+  audits        Audit[]
 }
 
 model Role {
@@ -104,6 +120,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   roles         Role[]
+  audits        Audit[]
 
   // Two factor authentication
   twoFactorSecret   String?

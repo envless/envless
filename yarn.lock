@@ -4118,6 +4118,11 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+lucide-react@^0.105.0-alpha.4:
+  version "0.105.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.105.0-alpha.4.tgz#9f9fa5a22973a071d63d65504866489d8050eaa7"
+  integrity sha512-QclWOzKYj7sDW33jTQK4enmxL1LmI2SHFqEEP56EWhvs4mmlbbFe6ALYcdcdGysNISNovEbH5WBHg8tN5DLn0w==
+
 mailing-core@^0.8.18, mailing-core@^0.8.19:
   version "0.8.19"
   resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.8.19.tgz#8e6faa10133dd303327996f1cf79ef0fd4b8c134"
