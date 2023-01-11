@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DateTimeAgo from "@/components/DateTimeAgo";
 import { TbGitBranch, TbUsers } from "react-icons/tb";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
@@ -20,7 +21,9 @@ const Projects = ({ ...props }) => {
           >
             {project?.name}
           </h5>
-          <p className="mt-1 text-xs text-light">Created 2 days ago</p>
+          <p className="mt-1 text-xs text-light">Created {""}
+            <DateTimeAgo date={project.createdAt} />
+          </p>
 
           <div className="mt-8 grid grid-cols-2 gap-8 text-xs">
             <div>

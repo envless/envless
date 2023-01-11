@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
+import Audit from "@/lib/audit";
+import { createRouter, withAuth } from "@/trpc/router";
 
 export const projects = createRouter({
   getAll: withAuth.query(({ ctx }) => {
@@ -21,18 +22,19 @@ export const projects = createRouter({
         project: z.object({ name: z.string() }),
       }),
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
       const { project } = input;
+      // @ts-ignore
+      const userId = user.id;
 
-      return prisma.project.create({
+      const newProject = await prisma.project.create({
         data: {
           name: project.name,
           roles: {
             create: {
-              // @ts-ignore
-              userId: user.id,
+              userId: userId,
               name: "owner",
             },
           },
@@ -43,5 +45,21 @@ export const projects = createRouter({
           },
         },
       });
+
+      if (newProject.id) {
+        await Audit.create({
+          userId,
+          projectId: newProject.id,
+          event: "created.project",
+          data: {
+            project: {
+              id: newProject.id,
+              name: newProject.name,
+            },
+          },
+        });
+      }
+
+      return newProject;
     }),
 });

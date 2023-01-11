@@ -9,7 +9,7 @@ type Props = {
 const AccountSettings: React.FC<Props> = ({ user }) => {
   return (
     <SettingsLayout tab={"general"} user={user}>
-      <h2>Account settings</h2>
+      <h3 className="text-lg">Account settings</h3>
     </SettingsLayout>
   );
 };

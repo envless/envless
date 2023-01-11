@@ -1,11 +1,11 @@
 import {
-  GoGear,
-  GoFileCode,
-  GoGitBranch,
-  GoOrganization,
-  GoListUnordered,
-  GoGitPullRequest,
-} from "react-icons/go";
+  ShieldCheck,
+  GitBranch,
+  GitPullRequest,
+  Users,
+  LayoutList,
+  Settings2,
+} from "lucide-react";
 
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -28,37 +28,37 @@ export default function Tabs({ active, projectId }: Props) {
       id: "project",
       name: "Project",
       href: `${projectUrl}`, // This is the default
-      icon: GoFileCode,
+      icon: ShieldCheck,
     },
     {
       id: "branches",
       name: "Branches",
       href: `${projectUrl}/branches`,
-      icon: GoGitBranch,
+      icon: GitBranch,
     },
     {
       id: "mrs",
       name: "Merge Requests",
       href: `${projectUrl}/merge-requests`,
-      icon: GoGitPullRequest,
+      icon: GitPullRequest,
     },
     {
       id: "members",
       name: "Members",
       href: `${projectUrl}/members`,
-      icon: GoOrganization,
+      icon: Users,
     },
     {
       id: "activities",
       name: "Activities",
       href: `${projectUrl}/activities`,
-      icon: GoListUnordered,
+      icon: LayoutList,
     },
     {
       id: "settings",
       name: "Settings",
       href: `${projectUrl}/settings`,
-      icon: GoGear,
+      icon: Settings2,
     },
   ];
 
