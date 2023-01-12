@@ -1,6 +1,6 @@
-import { toUUID } from "@/lib/helpers";
 import Article from "@/components/blog/Article";
-import { getPage, getBlocks } from "@/lib/notion";
+import { toUUID } from "@/lib/helpers";
+import { getBlocks, getPage } from "@/lib/notion";
 
 type Props = {
   post: any;

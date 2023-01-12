@@ -1,6 +1,6 @@
+import SettingsLayout from "@/layouts/Settings";
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
-import SettingsLayout from "@/layouts/Settings";
 
 type Props = {
   user: User;

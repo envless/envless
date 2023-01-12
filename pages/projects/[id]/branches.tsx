@@ -1,7 +1,7 @@
-import prisma from "@/lib/prisma";
-import { getSession } from "next-auth/react";
-import { Project } from "@prisma/client";
 import ProjectLayout from "@/layouts/Project";
+import { Project } from "@prisma/client";
+import { getSession } from "next-auth/react";
+import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.

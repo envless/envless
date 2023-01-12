@@ -1,12 +1,12 @@
+import type { AppType } from "next/app";
+import { trpc } from "@/utils/trpc";
+import { Inter } from "@next/font/google";
+import { Analytics } from "@vercel/analytics/react";
+import { SessionProvider } from "next-auth/react";
 import "@/styles/globals.css";
 import "@/styles/zoom.css";
-import { trpc } from "@/utils/trpc";
-import type { AppType } from "next/app";
-import { Inter } from "@next/font/google";
-import { SessionProvider } from "next-auth/react";
-const inter = Inter({ subsets: ["latin"] });
 
-import { Analytics } from "@vercel/analytics/react";
+const inter = Inter({ subsets: ["latin"] });
 
 const Envless: AppType = ({ Component, pageProps }) => {
   return (

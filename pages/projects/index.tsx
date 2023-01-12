@@ -1,12 +1,12 @@
-import Audit from "@/lib/audit";
-import prisma from "@/lib/prisma";
+import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
+import { Activities, Projects } from "@/components/projects";
+import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
-import { Projects, Activities } from "@/components/projects";
-import CreateProjectModal from "@/components/projects/CreateProjectModal";
-import { SquaresPlusIcon } from "@heroicons/react/20/solid";
+import Audit from "@/lib/audit";
+import prisma from "@/lib/prisma";
 
 interface Props {
   user: User;

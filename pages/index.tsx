@@ -1,8 +1,8 @@
 import { NextSeo } from "next-seo";
+import Features from "@/components/home/Features";
 import Hero from "@/components/home/Hero";
 import Pricing from "@/components/home/Pricing";
 import Nav from "@/components/static/Nav";
-import Features from "@/components/home/Features";
 import Container from "@/components/theme/Container";
 
 type Props = {};

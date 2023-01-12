@@ -1,11 +1,11 @@
-import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { getCsrfToken, getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { Input, Button, Toast } from "@/components/theme";
-import { signIn, getSession, getCsrfToken } from "next-auth/react";
+import { Button, Input, Toast } from "@/components/theme";
 
 const Login = ({ csrfToken }) => {
   const { query } = useRouter();

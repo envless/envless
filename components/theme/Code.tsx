@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FiCopy, FiCheckCircle } from "react-icons/fi";
-import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { FiCheckCircle, FiCopy } from "react-icons/fi";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
+import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 /**
  * Props for the Code component
