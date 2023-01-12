@@ -15,14 +15,14 @@ interface Props {
   currentProject: Project;
 }
 
-export const ActivitiesPage = ({ projects, currentProject }: Props) => {
+export const AuditLogsPage = ({ projects, currentProject }: Props) => {
   return (
     <ProjectLayout
-      tab="activities"
+      tab="audits"
       projects={projects}
       currentProject={currentProject}
     >
-      <h1>ActivitiesPage for {currentProject.name}</h1>
+      <h1>AuditLogsPage for {currentProject.name}</h1>
     </ProjectLayout>
   );
 };
@@ -90,4 +90,4 @@ export async function getServerSideProps(context: { req: any }) {
   };
 }
 
-export default ActivitiesPage;
+export default AuditLogsPage;

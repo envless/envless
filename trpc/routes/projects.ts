@@ -70,7 +70,7 @@ export const projects = createRouter({
         const branch = newProject.branches[0];
 
         await Audit.create({
-          userId,
+          createdById: userId,
           projectId: newProject.id,
           event: "created.role",
           data: {

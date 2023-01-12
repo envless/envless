@@ -48,9 +48,9 @@ export default function Tabs({ active, projectId }: Props) {
       icon: Users,
     },
     {
-      id: "activities",
-      name: "Activities",
-      href: `${projectUrl}/activities`,
+      id: "audits",
+      name: "Audit logs",
+      href: `${projectUrl}/audits`,
       icon: LayoutList,
     },
     {
