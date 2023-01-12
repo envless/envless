@@ -1,24 +1,26 @@
 import prisma from "@/lib/prisma";
 
 interface CreateInterface {
-  userId: string;
+  createdById: string;
+  createdForId?: string;
   projectId?: string;
-  event: string;
+  action: string;
   data: any;
 }
 
 interface LogInterface {
-  userId: string;
+  createdById: string;
   projectId?: string;
   limit?: number;
 }
 
-const create = async ({ userId, projectId, event, data }: CreateInterface) => {
+const create = async ({ createdById, createdForId, projectId, action, data }: CreateInterface) => {
   const audit = await prisma.audit.create({
     data: {
-      userId,
+      createdById,
+      createdForId,
       projectId,
-      event,
+      action,
       data,
     },
   });
@@ -26,16 +28,23 @@ const create = async ({ userId, projectId, event, data }: CreateInterface) => {
   return audit;
 };
 
-const logs = async ({ userId, projectId, limit }: LogInterface) => {
+const logs = async ({ createdById, projectId, limit }: LogInterface) => {
   const audits = await prisma.audit.findMany({
     where: {
       AND: [
-        { userId: { equals: userId } },
+        { createdById: { equals: createdById } },
         ...(projectId ? [{ projectId: { equals: projectId } }] : []),
       ],
     },
     include: {
-      user: {
+      createdBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      createdFor: {
         select: {
           id: true,
           name: true,

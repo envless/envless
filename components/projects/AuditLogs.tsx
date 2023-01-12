@@ -75,7 +75,7 @@ const description = (log) => {
   }
 };
 
-export default function Activities({ logs, user }) {
+export default function AuditLogs({ logs, user }) {
   return (
     <div className="flow-root md:px-14">
       <h2 className="mb-8 text-lg">Audit logs</h2>
