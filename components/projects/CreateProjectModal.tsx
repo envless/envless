@@ -1,9 +1,9 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { useRouter } from "next/router";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { ArrowRightIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
-import { PlusIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 
 interface Project {
   name: string;

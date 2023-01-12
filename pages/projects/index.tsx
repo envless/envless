@@ -1,17 +1,19 @@
-import prisma from "@/lib/prisma";
+import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
+import { AuditLogs, Projects } from "@/components/projects";
+import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
-import { Projects, Activities } from "@/components/projects";
-import CreateProjectModal from "@/components/projects/CreateProjectModal";
-import { SquaresPlusIcon } from "@heroicons/react/20/solid";
+import Audit from "@/lib/audit";
+import prisma from "@/lib/prisma";
 
 interface Props {
   user: User;
+  logs: any;
 }
 
-const ConsoleHome: React.FC<Props> = ({ user }) => {
+const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
   // @ts-ignore
   const roles = user?.roles || [];
 
@@ -42,7 +44,7 @@ const ConsoleHome: React.FC<Props> = ({ user }) => {
                 <Projects projects={roles.map((role: any) => role.project)} />
               </div>
               <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
-                <Activities />
+                <AuditLogs logs={logs} user={user} />
               </div>
             </div>
           </Container>
@@ -64,10 +66,11 @@ export async function getServerSideProps(context: { req: any }) {
       },
     };
   } else {
+    // @ts-ignore
+    const userId = session?.user?.id;
     const user = await prisma.user.findUnique({
       where: {
-        // @ts-ignore
-        id: session.user.id,
+        id: userId,
       },
 
       include: {
@@ -95,13 +98,19 @@ export async function getServerSideProps(context: { req: any }) {
           permanent: false,
         },
       };
-    } else {
-      return {
-        props: {
-          user: JSON.parse(JSON.stringify(user)),
-        },
-      };
     }
+
+    const logs = await Audit.logs({
+      userId: user.id,
+      limit: 10,
+    });
+
+    return {
+      props: {
+        user: JSON.parse(JSON.stringify(user)),
+        logs: JSON.parse(JSON.stringify(logs)),
+      },
+    };
   }
 }
 

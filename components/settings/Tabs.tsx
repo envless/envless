@@ -1,6 +1,6 @@
-import { clsx } from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { clsx } from "clsx";
 
 const Tabs = ({ active }) => {
   const router = useRouter();
@@ -12,8 +12,13 @@ const Tabs = ({ active }) => {
     },
     {
       id: "security",
-      name: "Two factor authentication",
+      name: "Security",
       href: "/settings/security",
+    },
+    {
+      id: "audit",
+      name: "Audit log",
+      href: "/settings/audit",
     },
   ];
 

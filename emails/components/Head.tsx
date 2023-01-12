@@ -1,11 +1,11 @@
 import React, { ReactElement } from "react";
 import {
-  MjmlHead,
-  MjmlFont,
-  MjmlAttributes,
   MjmlAll,
-  MjmlStyle,
+  MjmlAttributes,
+  MjmlFont,
+  MjmlHead,
   MjmlRaw,
+  MjmlStyle,
 } from "mjml-react";
 import { black, grayDark } from "./theme";
 

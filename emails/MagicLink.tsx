@@ -1,25 +1,24 @@
 import { ReactElement } from "react";
-import Head from "./components/Head";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ButtonPrimary from "./components/ButtonPrimary";
-import {
-  leadingTight,
-  leadingRelaxed,
-  textBase,
-  textSm,
-  textLg,
-} from "./components/theme";
-
 import {
   Mjml,
   MjmlBody,
-  MjmlSection,
   MjmlColumn,
-  MjmlText,
-  MjmlSpacer,
   MjmlDivider,
+  MjmlSection,
+  MjmlSpacer,
+  MjmlText,
 } from "mjml-react";
+import ButtonPrimary from "./components/ButtonPrimary";
+import Footer from "./components/Footer";
+import Head from "./components/Head";
+import Header from "./components/Header";
+import {
+  leadingRelaxed,
+  leadingTight,
+  textBase,
+  textLg,
+  textSm,
+} from "./components/theme";
 
 type MagicLinkProps = {
   headline: string;

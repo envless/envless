@@ -1,11 +1,12 @@
-import sendMail from "emails";
-import prisma from "@/lib/prisma";
 import MagicLink from "@/emails/MagicLink";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import sendMail from "emails";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import prisma from "@/lib/prisma";
+
 const development = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
@@ -57,8 +58,8 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 1 * 24 * 60 * 60, // 1 day
+    updateAge: 6 * 60 * 60, // 6 hours
   },
 
   callbacks: {

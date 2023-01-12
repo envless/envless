@@ -1,6 +1,7 @@
 import { getSession } from "next-auth/react";
 import Article from "@/components/blog/Article";
-import { getNotionData, getPage, getBlocks } from "@/lib/notion";
+import { getBlocks, getNotionData, getPage } from "@/lib/notion";
+
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {

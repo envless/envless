@@ -40,6 +40,7 @@
     "fuse.js": "^6.6.2",
     "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.105.0-alpha.4",
     "mailing-core": "^0.8.18",
     "next": "^13.1.1",
     "next-auth": "^4.16.4",

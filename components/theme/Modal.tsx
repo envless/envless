@@ -1,7 +1,7 @@
-import { Logo } from "@/components/theme";
-import { IoCloseSharp } from "react-icons/io5";
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { IoCloseSharp } from "react-icons/io5";
+import { Logo } from "@/components/theme";
 
 /**
  * Props for the Modal component.

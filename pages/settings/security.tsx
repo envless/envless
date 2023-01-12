@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import prisma from "@/lib/prisma";
-import QRCode from "react-qr-code";
-import { trpc } from "@/utils/trpc";
-import { User } from "@prisma/client";
-import { authenticator } from "otplib";
-import { getSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
 import { TwoFactorAuth } from "@/utils/interfaces";
-import { Encrypted, Decrypted } from "@/lib/crypto";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { trpc } from "@/utils/trpc";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { Paragraph, Input, Button, Modal } from "@/components/theme";
+import { User } from "@prisma/client";
+import { getSession } from "next-auth/react";
+import { authenticator } from "otplib";
+import { SubmitHandler, useForm } from "react-hook-form";
+import QRCode from "react-qr-code";
+import { Button, Input, Modal, Paragraph } from "@/components/theme";
+import { Decrypted, Encrypted } from "@/lib/crypto";
+import prisma from "@/lib/prisma";
 
 type Props = {
   user: User;
@@ -96,16 +96,21 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
       {enabled ? (
         <Button
+          outline={true}
           onClick={() => {
             disableMutation.mutate();
           }}
           disabled={loading}
         >
-          Disable two-factor authentication
+          <span className="text-red-400">
+            Disable two-factor authentication
+          </span>
         </Button>
       ) : (
         <Modal
-          button={<Button>Activate two-factor authentication</Button>}
+          button={
+            <Button outline={true}>Activate two-factor authentication</Button>
+          }
           title="Activate two-factor authentication"
         >
           <Paragraph color="light" size="sm" className="mb-4 text-center">

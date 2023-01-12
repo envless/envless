@@ -1,6 +1,6 @@
-import cx from "classnames";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
+import cx from "classnames";
 
 type Props = {
   open: boolean;

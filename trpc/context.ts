@@ -1,10 +1,9 @@
-import prisma from "@/lib/prisma";
 import { authOptions } from "@/api/auth/[...nextauth]";
-import { unstable_getServerSession } from "next-auth/next";
-
-import { type Session } from "next-auth";
 import { type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type Session } from "next-auth";
+import { unstable_getServerSession } from "next-auth/next";
+import prisma from "@/lib/prisma";
 
 type CreateContextOptions = {
   session: Session | null;

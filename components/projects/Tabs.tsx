@@ -1,14 +1,13 @@
-import {
-  GoGear,
-  GoFileCode,
-  GoGitBranch,
-  GoOrganization,
-  GoListUnordered,
-  GoGitPullRequest,
-} from "react-icons/go";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
+import {
+  GitBranch,
+  GitPullRequest,
+  LayoutList,
+  Settings2,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import { Container } from "@/components/theme";
 
 function classNames(...classes) {
@@ -28,37 +27,37 @@ export default function Tabs({ active, projectId }: Props) {
       id: "project",
       name: "Project",
       href: `${projectUrl}`, // This is the default
-      icon: GoFileCode,
+      icon: ShieldCheck,
     },
     {
       id: "branches",
       name: "Branches",
       href: `${projectUrl}/branches`,
-      icon: GoGitBranch,
+      icon: GitBranch,
     },
     {
       id: "mrs",
       name: "Merge Requests",
       href: `${projectUrl}/merge-requests`,
-      icon: GoGitPullRequest,
+      icon: GitPullRequest,
     },
     {
       id: "members",
       name: "Members",
       href: `${projectUrl}/members`,
-      icon: GoOrganization,
+      icon: Users,
     },
     {
-      id: "activities",
-      name: "Activities",
-      href: `${projectUrl}/activities`,
-      icon: GoListUnordered,
+      id: "audits",
+      name: "Audit logs",
+      href: `${projectUrl}/audits`,
+      icon: LayoutList,
     },
     {
       id: "settings",
       name: "Settings",
       href: `${projectUrl}/settings`,
-      icon: GoGear,
+      icon: Settings2,
     },
   ];
 
