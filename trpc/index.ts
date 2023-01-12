@@ -1,5 +1,4 @@
 import { createRouter } from "@/trpc/router";
-
 // import all sub-routers
 import { projects } from "@/trpc/routes/projects";
 import { twoFactor } from "@/trpc/routes/twoFactor";

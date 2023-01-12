@@ -1,6 +1,6 @@
-import { clsx } from "clsx";
 import Link from "next/link";
 import * as React from "react";
+import { clsx } from "clsx";
 
 /**
  * Button is a component that renders either a button or a link, depending on the provided `href` prop.

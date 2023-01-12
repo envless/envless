@@ -1,8 +1,8 @@
-import { clsx } from "clsx";
 import Link from "next/link";
-import { Button } from "@/components/theme";
+import { clsx } from "clsx";
+import { GitBranchPlus, Shield, ShieldCheck, UserPlus } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
-import { ShieldCheck, Shield } from "lucide-react";
+import { Button } from "@/components/theme";
 
 const events = [
   {
@@ -10,6 +10,18 @@ const events = [
     icon: ShieldCheck,
     bg: "bg-teal-100",
     color: "text-teal-500",
+  },
+  {
+    type: "created.role",
+    icon: UserPlus,
+    bg: "bg-indigo-100",
+    color: "text-indigo-500",
+  },
+  {
+    type: "created.branch",
+    icon: GitBranchPlus,
+    bg: "bg-orange-100",
+    color: "text-orange-500",
   },
 ];
 
@@ -37,12 +49,24 @@ const description = (log) => {
     case "created.project":
       return (
         <>
-          Created project{" "}
+          created project{" "}
           <Link
             className="font-semibold text-lightest hover:underline"
             href={`/projects/${log.project.id}`}
           >
             {log.project.name}
+          </Link>
+        </>
+      );
+    case "created.role":
+      return (
+        <>
+          created role{" "}
+          <Link
+            className="font-semibold text-lightest hover:underline"
+            href={`/projects/${log.project.id}`}
+          >
+            {log.data.role.name}
           </Link>
         </>
       );
@@ -70,17 +94,12 @@ export default function Activities({ logs, user }) {
                 <div className="min-w-0 flex-1">
                   <div>
                     <div className="text-sm">
-                      <a
-                        href={log.user.href}
-                        className="font-medium text-lightest"
-                      >
+                      <span className="font-medium text-lightest">
                         {log.user.id === user.id
                           ? "You"
-                          : log.user.name || log.user.email}
-                      </a>
-                    </div>
-                    <div className="mt-2 text-sm text-lighter">
-                      {description(log)}
+                          : log.user.name || log.user.email}{" "}
+                        {description(log)}
+                      </span>
                     </div>
                   </div>
                   <DateTimeAgo

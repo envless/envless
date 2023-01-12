@@ -1,6 +1,6 @@
+import { createRouter, withAuth } from "@/trpc/router";
 import { z } from "zod";
 import Audit from "@/lib/audit";
-import { createRouter, withAuth } from "@/trpc/router";
 
 export const projects = createRouter({
   getAll: withAuth.query(({ ctx }) => {
@@ -44,6 +44,11 @@ export const projects = createRouter({
             },
           },
         },
+
+        include: {
+          roles: true,
+          branches: true,
+        },
       });
 
       if (newProject.id) {
@@ -55,6 +60,48 @@ export const projects = createRouter({
             project: {
               id: newProject.id,
               name: newProject.name,
+            },
+          },
+        });
+
+        // @ts-ignore
+        const role = newProject.roles[0];
+        // @ts-ignore
+        const branch = newProject.branches[0];
+
+        await Audit.create({
+          userId,
+          projectId: newProject.id,
+          event: "created.role",
+          data: {
+            project: {
+              id: newProject.id,
+              name: newProject.name,
+            },
+            role: {
+              id: role.id,
+              name: role.name,
+            },
+
+            user: {
+              id: userId,
+              email: user.email,
+            },
+          },
+        });
+
+        await Audit.create({
+          userId,
+          projectId: newProject.id,
+          event: "created.branch",
+          data: {
+            project: {
+              id: newProject.id,
+              name: newProject.name,
+            },
+            branch: {
+              id: branch.id,
+              name: branch.name,
             },
           },
         });

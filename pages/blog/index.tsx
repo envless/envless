@@ -1,10 +1,11 @@
+import { getSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";
-import { getNotionData } from "@/lib/notion";
-import { getSession } from "next-auth/react";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
+import { getNotionData } from "@/lib/notion";
+
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {

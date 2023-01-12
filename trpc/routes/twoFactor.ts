@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { authenticator } from "otplib";
-import { Decrypted } from "@/lib/crypto";
-import { TRPCError } from "@trpc/server";
 import { createRouter, withAuth } from "@/trpc/router";
+import { TRPCError } from "@trpc/server";
+import { authenticator } from "otplib";
+import { z } from "zod";
+import { Decrypted } from "@/lib/crypto";
 
 export const twoFactor = createRouter({
   enable: withAuth

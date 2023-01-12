@@ -1,12 +1,12 @@
-import Fuse from "fuse.js";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import { useState } from "react";
+import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import Fuse from "fuse.js";
 import { signOut } from "next-auth/react";
+import { Hr, Logo, Popover } from "@/components/theme";
 import Dropdown from "@/components/theme/Dropdown";
-import { Logo, Popover, Hr } from "@/components/theme";
-import { MagnifyingGlassIcon, CheckIcon } from "@heroicons/react/20/solid";
 
 const Nav = ({ ...props }) => {
   const router = useRouter();

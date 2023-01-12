@@ -1,9 +1,10 @@
+import { getSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Zoom from "react-medium-image-zoom";
-import { getSession } from "next-auth/react";
+import { RenderBlocks } from "@/components/blog/ContentBlock";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
-import { RenderBlocks } from "@/components/blog/ContentBlock";
+
 export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {

@@ -1,23 +1,22 @@
 import { ReactElement } from "react";
-import Head from "./components/Head";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import {
-  leadingTight,
-  leadingRelaxed,
-  textBase,
-  textLg,
-} from "./components/theme";
-
 import {
   Mjml,
   MjmlBody,
-  MjmlSection,
   MjmlColumn,
-  MjmlText,
-  MjmlSpacer,
   MjmlDivider,
+  MjmlSection,
+  MjmlSpacer,
+  MjmlText,
 } from "mjml-react";
+import Footer from "./components/Footer";
+import Head from "./components/Head";
+import Header from "./components/Header";
+import {
+  leadingRelaxed,
+  leadingTight,
+  textBase,
+  textLg,
+} from "./components/theme";
 
 type SecurityAlertProps = {
   name: string;

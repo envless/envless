@@ -1,8 +1,8 @@
-import Audit from "@/lib/audit";
-import { User } from "@prisma/client";
-import Code from "@/components/theme/Code";
-import { getSession } from "next-auth/react";
 import SettingsLayout from "@/layouts/Settings";
+import { User } from "@prisma/client";
+import { getSession } from "next-auth/react";
+import Code from "@/components/theme/Code";
+import Audit from "@/lib/audit";
 
 type Props = {
   user: User;

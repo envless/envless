@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Code from "@/components/theme/Code";
 import Zoom from "react-medium-image-zoom";
 import Embedable from "@/components/Embedable";
+import Code from "@/components/theme/Code";
 
 export const RenderBlocks = ({ blocks }) => {
   return blocks.map((block) => {

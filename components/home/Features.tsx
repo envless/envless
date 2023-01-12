@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { BsShieldFillCheck, BsTerminalFill } from "react-icons/bs";
 import { BiGitBranch } from "react-icons/bi";
-import { TbConfetti } from "react-icons/tb";
+import { BsShieldFillCheck, BsTerminalFill } from "react-icons/bs";
 import { RiOpenSourceFill, RiSunCloudyFill } from "react-icons/ri";
+import { TbConfetti } from "react-icons/tb";
 
 const Features = () => {
   return (

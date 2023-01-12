@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { IoCopy, IoCheckmarkCircle, IoLogoGithub } from "react-icons/io5";
+import { IoCheckmarkCircle, IoCopy, IoLogoGithub } from "react-icons/io5";
 
 type HeroProps = {
   header: string;
