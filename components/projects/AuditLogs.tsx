@@ -3,6 +3,10 @@ import { clsx } from "clsx";
 import { GitBranchPlus, Shield, ShieldCheck, UserPlus } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 
+const isVowel = (word) => {
+  return /[aeiou]/.test(word.charAt(0));
+};
+
 const actions = [
   {
     type: "created.project",
@@ -60,7 +64,7 @@ export default function AuditLogs({ logs, user }) {
 
     switch (log.action) {
       case "created.project":
-        return <>created project {projectLink()}</>;
+        return <>created {projectLink()} project</>;
       case "created.branch":
         return (
           <>
@@ -70,6 +74,7 @@ export default function AuditLogs({ logs, user }) {
           </>
         );
       case "created.access":
+        const role = log.data.access.role;
         const name =
           createdFor.id === user.id
             ? "yourself"
@@ -77,7 +82,7 @@ export default function AuditLogs({ logs, user }) {
 
         return (
           <>
-            added {name} as {log.data.access.role} to {projectLink()} project
+            added {name} as {isVowel(role) ? "an" : "a"} {role} of {projectLink()} project
           </>
         );
       default:

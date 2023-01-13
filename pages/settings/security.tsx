@@ -79,19 +79,19 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
       <h3 className="text-lg">
         Two factor authentication
         {enabled ? (
-          <span className="ml-5 mr-1 inline-block rounded-full bg-teal-200 py-[2px] px-2 text-xs uppercase text-teal-600 last:mr-0">
-            enabled
+          <span className="ml-5 mr-1 inline-block rounded-full bg-teal-200 py-[2px] px-2 text-xs text-teal-600 last:mr-0">
+            Enabled
           </span>
         ) : (
-          <span className="ml-5 mr-1 inline-block rounded-full bg-red-200 py-[2px] px-2 text-xs uppercase text-red-600 last:mr-0">
-            disabled
+          <span className="ml-5 mr-1 inline-block rounded-full bg-red-200 py-[2px] px-2 text-xs text-red-600 last:mr-0">
+            isabled
           </span>
         )}
       </h3>
       <Paragraph color="light" size="sm" className="mb-4">
         Two factor authentication adds an extra layer of security to your
-        account by requiring an OTP code when you login using new device or
-        browser.
+        account by requiring a code when you login using new device or
+        browser and make critical changes.
       </Paragraph>
 
       {enabled ? (

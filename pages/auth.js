@@ -130,6 +130,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("github")}
                   disabled={loading}
                   outline={true}
+                  full={true}
                 >
                   <svg
                     className="h-5 w-5"
@@ -150,6 +151,7 @@ const Login = ({ csrfToken }) => {
                   onClick={() => signIn("gitlab")}
                   disabled={loading}
                   outline={true}
+                  full={true}
                 >
                   <svg
                     className="h-5 w-5"

@@ -6,8 +6,8 @@ const Tabs = ({ active }) => {
   const router = useRouter();
   const tabs = [
     {
-      id: "general",
-      name: "General",
+      id: "account",
+      name: "Account",
       href: "/settings",
     },
     {
