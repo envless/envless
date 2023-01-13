@@ -16,7 +16,7 @@ model Audit {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
   action        String
-  data          Json
+  data          Json?
 
   createdById   String
   createdForId  String?
@@ -37,17 +37,17 @@ model Project {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   branches  Branch[]
-  roles     Role[]
+  access    Access[]
   audits    Audit[]
 }
 
-model Role {
+model Access {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userId    String
   projectId String
-  name      String?   @default("owner")
+  role      String?   @default("owner")
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
@@ -122,7 +122,7 @@ model User {
   image             String?
   accounts          Account[]
   sessions          Session[]
-  roles             Role[]
+  access            Access[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
 

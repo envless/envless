@@ -5,35 +5,50 @@ interface CreateInterface {
   createdForId?: string;
   projectId?: string;
   action: string;
-  data: any;
+  data?: any;
 }
 
-interface LogInterface {
-  createdById: string;
-  projectId?: string;
-  limit?: number;
-}
-
-const create = async ({ createdById, createdForId, projectId, action, data }: CreateInterface) => {
+const create = async ({
+  createdById,
+  createdForId,
+  projectId,
+  action,
+  data,
+}: CreateInterface) => {
   const audit = await prisma.audit.create({
     data: {
       createdById,
       createdForId,
       projectId,
       action,
-      data,
+      ...(data ? { data } : {}),
     },
   });
 
   return audit;
 };
 
-const logs = async ({ createdById, projectId, limit }: LogInterface) => {
+interface LogInterface {
+  createdById?: string;
+  createdForId?: string;
+  projectId: any;
+  limit?: number;
+  skip?: number;
+}
+
+const logs = async ({
+  createdById,
+  createdForId,
+  projectId,
+  limit,
+  skip,
+}: LogInterface) => {
   const audits = await prisma.audit.findMany({
     where: {
       AND: [
-        { createdById: { equals: createdById } },
-        ...(projectId ? [{ projectId: { equals: projectId } }] : []),
+        { projectId: { in: projectId } },
+        ...(createdById ? [{ createdById }] : []),
+        ...(createdForId ? [{ createdForId }] : []),
       ],
     },
     include: {
@@ -60,6 +75,7 @@ const logs = async ({ createdById, projectId, limit }: LogInterface) => {
     },
     orderBy: { createdAt: "desc" },
     ...(limit ? { take: limit } : {}),
+    ...(skip ? { skip } : {}),
   });
 
   return audits;
