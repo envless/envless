@@ -53,12 +53,12 @@ const Button = (props: {
         className={clsx(
           className,
           full ? "w-full" : "w-fit",
-          small ? "py-1" : "py-2",
+          small ? "py-1.5 text-xs" : "py-2 text-sm",
           outline
             ? "border-2 border-dark bg-transparent text-lightest hover:bg-dark"
             : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
 
-          "flex justify-center rounded-md border px-4 text-sm font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+          "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
       >
         {children}
@@ -72,12 +72,12 @@ const Button = (props: {
         className={clsx(
           className,
           full ? "w-full" : "w-fit",
-          small ? "py-1" : "py-2",
+          small ? "py-1.5 text-xs" : "py-2 text-sm",
           outline
             ? "border-2 border-dark bg-darker text-lightest hover:bg-dark"
             : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
 
-          "flex justify-center rounded-md border px-4 text-sm font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+          "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
         onClick={onClick}
         disabled={disabled}

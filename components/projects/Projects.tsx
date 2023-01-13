@@ -31,7 +31,7 @@ const Projects = ({ ...props }) => {
               <div className="inline-block">
                 <TbUsers className="inline-block h-5 w-5 text-lighter" />
                 <span className="ml-2 inline-block">
-                  {project._count.roles}
+                  {project._count.access}
                 </span>
               </div>
               <p className="mt-1 text-light">Members</p>

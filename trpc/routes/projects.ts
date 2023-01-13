@@ -32,10 +32,10 @@ export const projects = createRouter({
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
-          roles: {
+          access: {
             create: {
               userId: userId,
-              name: "owner",
+              role: "owner",
             },
           },
           branches: {
@@ -46,59 +46,41 @@ export const projects = createRouter({
         },
 
         include: {
-          roles: true,
+          access: true,
           branches: true,
         },
       });
 
       if (newProject.id) {
         await Audit.create({
-          userId,
+          createdById: userId,
           projectId: newProject.id,
-          event: "created.project",
-          data: {
-            project: {
-              id: newProject.id,
-              name: newProject.name,
-            },
-          },
+          action: "created.project",
         });
 
         // @ts-ignore
-        const role = newProject.roles[0];
+        const access = newProject.access[0];
         // @ts-ignore
         const branch = newProject.branches[0];
 
         await Audit.create({
           createdById: userId,
+          createdForId: userId,
           projectId: newProject.id,
-          event: "created.role",
+          action: "created.access",
           data: {
-            project: {
-              id: newProject.id,
-              name: newProject.name,
-            },
-            role: {
-              id: role.id,
-              name: role.name,
-            },
-
-            user: {
-              id: userId,
-              email: user.email,
+            access: {
+              id: access.id,
+              role: access.role,
             },
           },
         });
 
         await Audit.create({
-          userId,
+          createdById: userId,
           projectId: newProject.id,
-          event: "created.branch",
+          action: "created.branch",
           data: {
-            project: {
-              id: newProject.id,
-              name: newProject.name,
-            },
             branch: {
               id: branch.id,
               name: branch.name,

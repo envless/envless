@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
-import { Container, Hr, Nav } from "@/components/theme";
+import { Button, Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
@@ -15,11 +15,12 @@ interface Props {
 
 const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
   // @ts-ignore
-  const roles = user?.roles || [];
+  const access = user?.access || [];
+  const projects = access.map((a: any) => a.project);
 
   return (
     <>
-      {roles.length === 0 ? (
+      {projects.length === 0 ? (
         <Container>
           <Nav user={user} />
           <EmptyState
@@ -41,10 +42,22 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
           <Container>
             <div className="-mx-4 my-12 -mb-4 flex flex-wrap">
               <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-2/3">
-                <Projects projects={roles.map((role: any) => role.project)} />
+                <Projects projects={projects} />
               </div>
               <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
-                <AuditLogs logs={logs} user={user} />
+                <div className="md:px-14">
+                  <h2 className="mb-8 text-lg">Audit logs</h2>
+                  <AuditLogs logs={logs} user={user} />
+
+                  <Button
+                    small={true}
+                    outline={true}
+                    className="mt-8"
+                    href="/settings/audit"
+                  >
+                    More audit logs
+                  </Button>
+                </div>
               </div>
             </div>
           </Container>
@@ -74,13 +87,13 @@ export async function getServerSideProps(context: { req: any }) {
       },
 
       include: {
-        roles: {
+        access: {
           include: {
             project: {
               include: {
                 _count: {
                   select: {
-                    roles: true,
+                    access: true,
                     branches: true,
                   },
                 },
@@ -100,10 +113,10 @@ export async function getServerSideProps(context: { req: any }) {
       };
     }
 
-    const logs = await Audit.logs({
-      userId: user.id,
-      limit: 10,
-    });
+    const access = user?.access || [];
+    const projects = access.map((a: any) => a.project);
+    const projectIds = projects.map((project: any) => project.id);
+    const logs = await Audit.logs({ projectId: projectIds, limit: 10 });
 
     return {
       props: {

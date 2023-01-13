@@ -2,9 +2,8 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import { GitBranchPlus, Shield, ShieldCheck, UserPlus } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
-import { Button } from "@/components/theme";
 
-const events = [
+const actions = [
   {
     type: "created.project",
     icon: ShieldCheck,
@@ -12,7 +11,7 @@ const events = [
     color: "text-teal-500",
   },
   {
-    type: "created.role",
+    type: "created.access",
     icon: UserPlus,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
@@ -26,63 +25,72 @@ const events = [
 ];
 
 const renderIcon = (log) => {
-  const event = events.find((e) => e.type === log.event);
-  const Icon = event?.icon || Shield;
+  const action = actions.find((e) => e.type === log.action);
+  const Icon = action?.icon || Shield;
 
   return (
     <div
       className={clsx(
-        event?.bg,
+        action?.bg,
         "flex h-8 w-8 items-center justify-center rounded-full ring-8 ring-dark",
       )}
     >
       <Icon
-        className={clsx(event?.color, "h-5 w-5 text-darkest")}
+        className={clsx(action?.color, "h-5 w-5 text-darkest")}
         aria-hidden="true"
       />
     </div>
   );
 };
 
-const description = (log) => {
-  switch (log.event) {
-    case "created.project":
-      return (
-        <>
-          created project{" "}
-          <Link
-            className="font-semibold text-lightest hover:underline"
-            href={`/projects/${log.project.id}`}
-          >
-            {log.project.name}
-          </Link>
-        </>
-      );
-    case "created.role":
-      return (
-        <>
-          created role{" "}
-          <Link
-            className="font-semibold text-lightest hover:underline"
-            href={`/projects/${log.project.id}`}
-          >
-            {log.data.role.name}
-          </Link>
-        </>
-      );
-    default:
-      return null;
-  }
-};
-
 export default function AuditLogs({ logs, user }) {
+  const description = (log) => {
+    const project = log.project;
+    const createdBy = log.createdBy;
+    const createdFor = log.createdFor;
+
+    const projectLink = () => (
+      <Link
+        className="text-xs text-teal-300 hover:underline"
+        href={`/projects/${project.id}`}
+      >
+        {project.name}
+      </Link>
+    );
+
+    switch (log.action) {
+      case "created.project":
+        return <>created project {projectLink()}</>;
+      case "created.branch":
+        return (
+          <>
+            created a{" "}
+            <span className="font-semibold">{log.data.branch.name}</span> branch
+            on {projectLink()} project
+          </>
+        );
+      case "created.access":
+        const name =
+          createdFor.id === user.id
+            ? "yourself"
+            : createdFor.name || createdFor.email;
+
+        return (
+          <>
+            added {name} as {log.data.access.role} to {projectLink()} project
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="flow-root md:px-14">
-      <h2 className="mb-8 text-lg">Audit logs</h2>
+    <div className="flow-root">
       <ul role="list" className="-mb-8">
         {logs.map((log, idx) => (
           <li key={log.id}>
-            <div className="relative pb-8">
+            <div className="relative pb-4">
               {idx !== logs.length - 1 ? (
                 <span
                   className="absolute left-4 -ml-px h-full w-0.5 bg-dark"
@@ -95,9 +103,9 @@ export default function AuditLogs({ logs, user }) {
                   <div>
                     <div className="text-sm">
                       <span className="font-medium text-lightest">
-                        {log.user.id === user.id
+                        {log.createdById === user.id
                           ? "You"
-                          : log.user.name || log.user.email}{" "}
+                          : log.createdBy.name || log.createdBy.email}{" "}
                         {description(log)}
                       </span>
                     </div>
@@ -112,15 +120,6 @@ export default function AuditLogs({ logs, user }) {
           </li>
         ))}
       </ul>
-
-      <Button
-        small={true}
-        outline={true}
-        className="mt-5"
-        href="/settings/audit"
-      >
-        More audit logs
-      </Button>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export async function getServerSideProps(context: { req: any }) {
     };
   }
 
-  const roles = await prisma.role.findMany({
+  const access = await prisma.access.findMany({
     where: {
       // @ts-ignore
       userId: user.id,
@@ -61,7 +61,7 @@ export async function getServerSideProps(context: { req: any }) {
     },
   });
 
-  if (!roles) {
+  if (!access) {
     return {
       redirect: {
         destination: "/projects",
@@ -70,7 +70,7 @@ export async function getServerSideProps(context: { req: any }) {
     };
   }
 
-  const projects = roles.map((role) => role.project);
+  const projects = access.map((access) => access.project);
   const currentProject = projects.find((project) => project.id === id);
 
   if (!currentProject) {
