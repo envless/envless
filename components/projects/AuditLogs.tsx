@@ -82,7 +82,8 @@ export default function AuditLogs({ logs, user }) {
 
         return (
           <>
-            added {name} as {isVowel(role) ? "an" : "a"} {role} of {projectLink()} project
+            added {name} as {isVowel(role) ? "an" : "a"} {role} of{" "}
+            {projectLink()} project
           </>
         );
       default:

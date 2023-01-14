@@ -6,6 +6,7 @@ export { default as Input } from "./Input";
 export { default as Modal } from "./Modal";
 export { default as Toast } from "./Toast";
 export { default as Button } from "./Button";
+export { default as Toggle } from "./Toggle";
 export { default as Popover } from "./Popover";
 export { default as Paragraph } from "./Paragraph";
 export { default as Container } from "./Container";

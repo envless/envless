@@ -129,6 +129,9 @@ model User {
   // Two factor authentication
   twoFactorSecret   String?
   twoFactorEnabled  Boolean   @default(false)
+
+  marketing         Boolean   @default(true)
+  notification      Boolean   @default(true)
 }
 
 model VerificationToken {

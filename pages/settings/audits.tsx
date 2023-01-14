@@ -14,15 +14,18 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
   return (
     <SettingsLayout tab={"audit"} user={user}>
       <h3 className="mb-8 text-lg ">Audit logs</h3>
-      <AuditLogs logs={logs} user={user} />
-      <Button
-        small={true}
-        outline={true}
-        className="mt-8"
-        href="/settings/audit"
-      >
-        Load more
-      </Button>
+
+      <div className="w-full lg:w-3/5">
+        <AuditLogs logs={logs} user={user} />
+        <Button
+          small={true}
+          outline={true}
+          className="mt-8"
+          href="/settings/audit"
+        >
+          Load more
+        </Button>
+      </div>
     </SettingsLayout>
   );
 };

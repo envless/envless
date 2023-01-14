@@ -45,7 +45,7 @@ const logs = async ({
 }: LogInterface) => {
   const audits = await prisma.audit.findMany({
     where: {
-      AND: [
+      OR: [
         { projectId: { in: projectId } },
         ...(createdById ? [{ createdById }] : []),
         ...(createdForId ? [{ createdForId }] : []),

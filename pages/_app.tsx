@@ -3,6 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { Inter } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
+import SnackbarProvider from "react-simple-snackbar";
 import "@/styles/globals.css";
 import "@/styles/zoom.css";
 
@@ -13,7 +14,9 @@ const Envless: AppType = ({ Component, pageProps }) => {
     // @ts-ignore
     <SessionProvider session={pageProps.session}>
       <main className={inter.className}>
-        <Component {...pageProps} />
+        <SnackbarProvider>
+          <Component {...pageProps} />
+        </SnackbarProvider>
         <Analytics />
       </main>
     </SessionProvider>
