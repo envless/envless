@@ -18,7 +18,7 @@ const Tabs = ({ active }) => {
     {
       id: "audit",
       name: "Audit logs",
-      href: "/settings/audit",
+      href: "/settings/audits",
     },
   ];
 

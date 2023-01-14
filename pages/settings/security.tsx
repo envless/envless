@@ -76,7 +76,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
   return (
     <SettingsLayout tab={"security"} user={user}>
-      <h3 className="text-lg">
+      <h3 className="mb-8 text-lg">
         Two factor authentication
         {enabled ? (
           <span className="ml-5 mr-1 inline-block rounded-full bg-teal-200 py-[2px] px-2 text-xs text-teal-600 last:mr-0">
@@ -84,105 +84,108 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
           </span>
         ) : (
           <span className="ml-5 mr-1 inline-block rounded-full bg-red-200 py-[2px] px-2 text-xs text-red-600 last:mr-0">
-            isabled
+            Not enabled
           </span>
         )}
       </h3>
-      <Paragraph color="light" size="sm" className="mb-4">
-        Two factor authentication adds an extra layer of security to your
-        account by requiring a code when you login using new device or
-        browser and make critical changes.
-      </Paragraph>
+      <div className="w-full lg:w-3/5">
+        <Paragraph color="light" size="sm" className="mb-4 w-full">
+          Two factor authentication adds an extra layer of security to your
+          account by requiring a code when you login using new device or browser
+          and make critical changes.
+        </Paragraph>
 
-      {enabled ? (
-        <Button
-          outline={true}
-          onClick={() => {
-            disableMutation.mutate();
-          }}
-          disabled={loading}
-        >
-          <span className="text-red-400">
-            Disable two-factor authentication
-          </span>
-        </Button>
-      ) : (
-        <Modal
-          button={
-            <Button outline={true}>Activate two-factor authentication</Button>
-          }
-          title="Activate two-factor authentication"
-        >
-          <Paragraph color="light" size="sm" className="mb-4 text-center">
-            Please scan the QR code below with your favorite{" "}
-            <Link
-              href="https://www.nytimes.com/wirecutter/reviews/best-two-factor-authentication-app/"
-              target="_blank"
-              rel="noreferrer"
-              className="text-lighter"
-            >
-              two-factor authentication app
-            </Link>{" "}
-            and then confirm the code below. For mannual setup, you can
-            copy/paste this code
-          </Paragraph>
-          <Paragraph color="light" size="sm" className="m-5 text-center">
-            <code
-              className="cursor-copy rounded bg-dark py-1 px-2 font-mono text-xs tracking-wider text-lightest"
-              onClick={() => {
-                navigator.clipboard.writeText(`${twoFactor.secret}`);
-              }}
-            >
-              {twoFactor.secret}
-            </code>
-          </Paragraph>
+        {enabled ? (
+          <Button
+            outline={true}
+            onClick={() => {
+              disableMutation.mutate();
+            }}
+            disabled={loading}
+          >
+            <span className="text-red-400">
+              Disable two-factor authentication
+            </span>
+          </Button>
+        ) : (
+          <Modal
+            button={
+              <Button outline={true}>Enable two-factor authentication</Button>
+            }
+            title="Activate two-factor authentication"
+          >
+            <Paragraph color="light" size="sm" className="mb-4 text-center">
+              Please scan the QR code below with your favorite{" "}
+              <Link
+                href="https://www.nytimes.com/wirecutter/reviews/best-two-factor-authentication-app/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-lighter"
+              >
+                two-factor authentication app
+              </Link>{" "}
+              and then confirm the code below. For mannual setup, you can
+              copy/paste this code
+            </Paragraph>
+            <Paragraph color="light" size="sm" className="m-5 text-center">
+              <code
+                className="cursor-copy rounded bg-dark py-1 px-2 font-mono text-xs tracking-wider text-lightest"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${twoFactor.secret}`);
+                }}
+              >
+                {twoFactor.secret}
+              </code>
+            </Paragraph>
 
-          <div className="flex flex-wrap">
-            <div className="mt-4 w-1/2 md:mb-0">
-              <QRCode
-                size={175}
-                style={{ height: "175px", maxWidth: "75%", width: "75%" }}
-                value={twoFactor.keyUri}
-                bgColor={"#000000"}
-                fgColor={"#e4e4e4"}
-              />
-            </div>
-
-            <div className="w-1/2 md:mb-0">
-              <form onSubmit={handleSubmit(verifyOtp)}>
-                <Input
-                  type="text"
-                  name="code"
-                  inputMode="numeric"
-                  label="Two-factor auth code"
-                  placeholder="xxxxxx"
-                  required={true}
-                  register={register}
-                  errors={errors}
-                  help="Enter the six-digit code from your authenticator app."
-                  validationSchema={{
-                    required: "Two-factor authentication code is required",
-                    pattern: {
-                      value: /^[0-9]{6}$/,
-                      message: "Invalid two-factor authentication code",
-                    },
-                  }}
+            <div className="flex flex-wrap">
+              <div className="mt-4 w-1/2 md:mb-0">
+                <QRCode
+                  size={175}
+                  style={{ height: "175px", maxWidth: "75%", width: "75%" }}
+                  value={twoFactor.keyUri}
+                  bgColor={"#000000"}
+                  fgColor={"#e4e4e4"}
                 />
+              </div>
 
-                <div className="float-right">
-                  <Button type="submit" disabled={loading}>
-                    Verify and continue
-                    <ArrowRightIcon
-                      className="ml-2 h-5 w-5"
-                      aria-hidden="true"
-                    />
-                  </Button>
-                </div>
-              </form>
+              <div className="w-1/2 md:mb-0">
+                <form onSubmit={handleSubmit(verifyOtp)}>
+                  <Input
+                    type="text"
+                    name="code"
+                    inputMode="numeric"
+                    label="Two-factor auth code"
+                    placeholder="xxxxxx"
+                    required={true}
+                    full={true}
+                    register={register}
+                    errors={errors}
+                    help="Enter the six-digit code from your authenticator app."
+                    validationSchema={{
+                      required: "Two-factor authentication code is required",
+                      pattern: {
+                        value: /^[0-9]{6}$/,
+                        message: "Invalid two-factor authentication code",
+                      },
+                    }}
+                  />
+
+                  <div className="float-right">
+                    <Button type="submit" disabled={loading}>
+                      Verify and continue
+                      <ArrowRightIcon
+                        className="ml-2 h-5 w-5"
+                        aria-hidden="true"
+                      />
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
-        </Modal>
-      )}
+          </Modal>
+        )}
+      </div>
     </SettingsLayout>
   );
 };

@@ -68,6 +68,7 @@ const CreateProjectModal = () => {
           placeholder="Untitled"
           defaultValue="Untitled"
           required={true}
+          full={true}
           register={register}
           errors={errors}
           validationSchema={{

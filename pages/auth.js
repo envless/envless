@@ -82,6 +82,7 @@ const Login = ({ csrfToken }) => {
                 type="hidden"
                 register={register}
                 defaultValue={csrfToken}
+                full={true}
               />
 
               <Input
@@ -90,6 +91,7 @@ const Login = ({ csrfToken }) => {
                 label="Email address"
                 placeholder="your@email.com"
                 required={true}
+                full={true}
                 register={register}
                 errors={errors}
                 defaultValue="envless.dev@gmail.com"

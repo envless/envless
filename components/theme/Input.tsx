@@ -1,3 +1,5 @@
+import { clsx } from "clsx";
+
 /**
  * A functional react component for rendering a text input.
  *
@@ -9,10 +11,12 @@
  * @param {object} [props.errors] - An object containing the validation errors of the input element.
  * @param {boolean} [props.required=false] - A boolean indicating whether the input is required.
  * @param {boolean} [props.disabled=false] - A boolean indicating whether the input is disabled.
+ * @param {boolean} [props.full=true] - A boolean indicating whether the input should take up the full width of the parent container.
  * @param {string} [props.type='text'] - The type of the input element.
  * @param {string} [props.type='inputMode'] - The inputMode of the input element.
  * @param {string} [props.placeholder] - The placeholder text of the input element.
  * @param {string} [props.defaultValue] - The default value of the input element.
+ * @param {string} [props.className] - The class name of the input element.
  * @param {object} [props.validationSchema] - An object containing the validation rules for the input element.
  */
 
@@ -24,10 +28,12 @@ interface InputProps {
   errors?: object;
   required?: boolean;
   disabled?: boolean;
+  full?: boolean;
   type?: string;
   inputMode?: string;
   placeholder?: string;
   defaultValue?: string;
+  className?: string;
   validationSchema?: object;
 }
 
@@ -39,10 +45,13 @@ const Input = ({ ...props }: InputProps) => {
     register,
     errors,
     required,
+    disabled,
+    full,
     type,
     inputMode,
     placeholder,
     defaultValue,
+    className,
     validationSchema,
   } = props;
 
@@ -60,10 +69,16 @@ const Input = ({ ...props }: InputProps) => {
           type={type}
           inputMode={inputMode}
           required={required}
+          disabled={disabled}
           placeholder={placeholder}
           defaultValue={defaultValue}
           {...register(name, validationSchema)}
-          className="block w-full appearance-none rounded border border-dark bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-dark focus:border-dark focus:outline-none focus:ring-light sm:text-sm"
+          className={clsx(
+            className,
+            disabled && "cursor-not-allowed bg-light/40",
+            full && "w-full",
+            "block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm",
+          )}
         />
 
         {help && <p className="pt-1 text-xs text-light">{help}</p>}
@@ -102,4 +117,5 @@ Input.defaultProps = {
   type: "text",
   required: false,
   disabled: false,
+  full: false,
 };
