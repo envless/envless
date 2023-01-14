@@ -30,25 +30,26 @@ const create = async ({
 
 interface LogInterface {
   createdById?: string;
-  createdForId?: string;
-  projectId: any;
+  projectIds: any;
+  actions?: any;
   limit?: number;
   skip?: number;
 }
 
 const logs = async ({
   createdById,
-  createdForId,
-  projectId,
+  projectIds,
+  actions,
   limit,
   skip,
 }: LogInterface) => {
   const audits = await prisma.audit.findMany({
     where: {
       OR: [
-        { projectId: { in: projectId } },
-        ...(createdById ? [{ createdById }] : []),
-        ...(createdForId ? [{ createdForId }] : []),
+        { projectId: { in: projectIds } },
+        ...(actions && createdById
+          ? [{ action: { in: actions }, createdById: { in: [createdById] } }]
+          : []),
       ],
     },
     include: {

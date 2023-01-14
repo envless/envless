@@ -53,7 +53,7 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
                     small={true}
                     outline={true}
                     className="mt-8"
-                    href="/settings/audit"
+                    href="/settings/audits"
                   >
                     More audit logs
                   </Button>
@@ -116,7 +116,12 @@ export async function getServerSideProps(context: { req: any }) {
     const access = user?.access || [];
     const projects = access.map((a: any) => a.project);
     const projectIds = projects.map((project: any) => project.id);
-    const logs = await Audit.logs({ projectId: projectIds, limit: 10 });
+    const logs = await Audit.logs({
+      createdById: userId,
+      actions: ["updated.account"],
+      projectIds: projectIds,
+      limit: 10,
+    });
 
     return {
       props: {
