@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { clsx } from "clsx";
-import { GitBranchPlus, Shield, ShieldCheck, UserPlus } from "lucide-react";
+import {
+  GitBranchPlus,
+  Settings2,
+  Shield,
+  ShieldCheck,
+  UserPlus,
+} from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 
 const isVowel = (word) => {
@@ -17,6 +23,12 @@ const actions = [
   {
     type: "created.access",
     icon: UserPlus,
+    bg: "bg-indigo-100",
+    color: "text-indigo-500",
+  },
+  {
+    type: "updated.account",
+    icon: Settings2,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
   },
@@ -84,6 +96,18 @@ export default function AuditLogs({ logs, user }) {
           <>
             added {name} as {isVowel(role) ? "an" : "a"} {role} of{" "}
             {projectLink()} project
+          </>
+        );
+      case "updated.account":
+        return (
+          <>
+            updated your{" "}
+            <Link
+              className="text-xs text-teal-300 hover:underline"
+              href="/settings"
+            >
+              account.
+            </Link>
           </>
         );
       default:
