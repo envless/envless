@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import { useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
 import { Logo } from "@/components/theme";
@@ -12,6 +13,7 @@ import { Logo } from "@/components/theme";
  */
 type Props = {
   title: string;
+  subtitle?: string;
   button: React.ReactNode;
   children: React.ReactNode;
 };
@@ -21,7 +23,7 @@ type Props = {
  * @param {Props} props - The props for the component.
  */
 const Modal = (props: Props) => {
-  const { button, title, children } = props;
+  const { button, title, subtitle, children } = props;
   let [open, setOpen] = useState(false);
 
   /**
@@ -39,7 +41,7 @@ const Modal = (props: Props) => {
   }
 
   return (
-    <React.StrictMode>
+    <>
       <div onClick={openModal}>{button}</div>
 
       <Transition appear show={open} as={Fragment}>
@@ -83,10 +85,21 @@ const Modal = (props: Props) => {
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="border-b border-dark pb-6 text-center text-2xl font-normal leading-6"
+                    className="pb-6 text-center text-2xl font-normal leading-6"
                   >
                     {title}
                   </Dialog.Title>
+                  {subtitle && (
+                    <Dialog.Title
+                      as="h5"
+                      className="pb-6 text-center text-sm leading-5 text-light"
+                    >
+                      {subtitle}
+                    </Dialog.Title>
+                  )}
+
+                  <Hr />
+
                   <div className="mt-4">{children}</div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -94,7 +107,7 @@ const Modal = (props: Props) => {
           </div>
         </Dialog>
       </Transition>
-    </React.StrictMode>
+    </>
   );
 };
 
