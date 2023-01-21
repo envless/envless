@@ -4,8 +4,14 @@ import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useSnackbar } from "react-simple-snackbar";
-import { Button, Hr, Input, Paragraph, Toggle } from "@/components/theme";
+import {
+  Button,
+  Hr,
+  Input,
+  Paragraph,
+  Toast,
+  Toggle,
+} from "@/components/theme";
 import prisma from "@/lib/prisma";
 
 interface DefaultProps {
@@ -28,13 +34,13 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
     formState: { errors },
   } = useForm();
 
+  const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [openSnackbar, closeSnackbar] = useSnackbar("");
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (data) => {
       setLoading(false);
-      openSnackbar("Successfully updated account settings.");
+      setToast(true);
     },
 
     onError: (error) => {
@@ -134,6 +140,13 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
           </Button>
         </form>
       </div>
+
+      <Toast
+        title="Account settings"
+        subtitle="Successfully updated account settings."
+        open={toast}
+        onClose={() => setToast(false)}
+      />
     </SettingsLayout>
   );
 };

@@ -23,7 +23,9 @@ export const RenderBlocks = ({ blocks }) => {
           </div>
         );
 
-      case "heading_1": case "heading_2": case "heading_3":
+      case "heading_1":
+      case "heading_2":
+      case "heading_3":
         return (
           <div className="pt-3" key={id}>
             <Heading text={value.rich_text} id={id} level={type} />
