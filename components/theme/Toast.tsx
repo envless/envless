@@ -20,6 +20,7 @@ const Toast = (props: Props) => {
   return (
     <ToastPrimitive.Provider swipeDirection="right">
       <ToastPrimitive.Root
+        duration={3000}
         open={open}
         onOpenChange={props.onClose}
         className={cx(
