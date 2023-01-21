@@ -9,14 +9,14 @@ type Props = {};
 
 const Home: React.FC<Props> = ({}) => {
   const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
+    // {
+    //   name: "Docs",
+    //   href: "/docs",
+    // },
+    // {
+    //   name: "Blog",
+    //   href: "/blog",
+    // },
   ];
 
   return (
