@@ -41,10 +41,7 @@ const Span = (props: SpanProps) => {
     case "lighter":
       className += " text-lighter";
       break;
-    case "lightest":
-      className += " text-lightest";
-      break;
-    default:
+    default: // lightest and default
       className += " text-lightest";
       break;
   }

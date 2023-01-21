@@ -46,10 +46,7 @@ const Paragraph = (props: ParagraphProps) => {
     case "lighter":
       klassName += " text-lighter";
       break;
-    case "lightest":
-      klassName += " text-lightest";
-      break;
-    default:
+    default: // lightest and default
       klassName += " text-lightest";
       break;
   }
