@@ -1,12 +1,13 @@
 import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
-import { getSession } from "next-auth/react";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { Button, Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
+import { type GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 
 interface Props {
   user: User;
@@ -67,9 +68,8 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
 
   if (!session || !session.user) {
     return {

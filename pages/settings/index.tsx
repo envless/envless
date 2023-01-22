@@ -2,7 +2,6 @@ import { useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
-import { getSession } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Button,
@@ -13,6 +12,8 @@ import {
   Toggle,
 } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import { GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 
 interface DefaultProps {
   user: User;
@@ -151,9 +152,8 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
   const user = session?.user;
 
   if (!session || !user) {

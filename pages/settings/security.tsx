@@ -5,13 +5,14 @@ import { TwoFactorAuth } from "@/utils/interfaces";
 import { trpc } from "@/utils/trpc";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
-import { getSession } from "next-auth/react";
 import { authenticator } from "otplib";
 import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import { Decrypted, Encrypted } from "@/lib/crypto";
 import prisma from "@/lib/prisma";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { type GetServerSidePropsContext } from "next";
 
 type Props = {
   user: User;
@@ -190,9 +191,8 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
 
   if (!session || !session.user) {
     return {

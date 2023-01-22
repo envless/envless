@@ -1,9 +1,10 @@
 import SettingsLayout from "@/layouts/Settings";
 import { User } from "@prisma/client";
-import { getSession } from "next-auth/react";
 import AuditLogs from "@/components/projects/AuditLogs";
 import { Button } from "@/components/theme";
 import Audit from "@/lib/audit";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { type GetServerSidePropsContext } from "next";
 
 interface AuditSettingsProps {
   user: User;
@@ -30,9 +31,8 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
   // @ts-ignore
   const userId = session?.user?.id;
 
