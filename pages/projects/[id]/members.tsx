@@ -1,7 +1,8 @@
 import ProjectLayout from "@/layouts/Project";
 import { Project } from "@prisma/client";
-import { getSession } from "next-auth/react";
 import prisma from "@/lib/prisma";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { type GetServerSidePropsContext } from "next";
 
 /**
  * A functional component that represents a project.
@@ -27,9 +28,8 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
   );
 };
 
-export async function getServerSideProps(context: { req: any }) {
-  const { req } = context;
-  const session = await getSession({ req });
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(context);
   const user = session?.user;
 
   // @ts-ignore
