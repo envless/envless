@@ -1,8 +1,7 @@
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
-import { authenticator } from "otplib";
 import { z } from "zod";
-import { Decrypted } from "@/lib/crypto";
+import TwofactorAuth from "@/lib/twoFactorAuth";
 
 export const twoFactor = createRouter({
   enable: withAuth
@@ -11,82 +10,65 @@ export const twoFactor = createRouter({
         code: z.string(),
       }),
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
       const { code } = input;
+      // @ts-ignore
+      const userId = user.id;
 
-      return (
-        prisma.user
-          .findUnique({
-            where: {
-              // @ts-ignore
-              id: user.id,
-            },
-            select: {
-              twoFactorSecret: true,
-            },
-          })
-          // @ts-ignore
-          .then((u: any) => {
-            if (!u) {
-              return new TRPCError({
-                code: "NOT_FOUND",
-                message:
-                  "Something went wrong, our engineers are aware of it and are working on a fix.",
-              });
-            }
+      const userRecord = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          twoFactor: true,
+        },
+      });
 
-            if (!u.twoFactorSecret) {
-              return new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Something went wrong, please reload this page and try again.",
-              });
-            }
+      if (!userRecord) {
+        return new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Something went wrong, our engineers are aware of it and are working on a fix.",
+        });
+      }
 
-            const decryptedSecret = Decrypted(
-              u.twoFactorSecret,
-              process.env.ENCRYPTION_KEY || "",
-            );
+      const isValid = await TwofactorAuth.verify({
+        code,
+        secret: userRecord.twoFactor,
+      });
 
-            const isValid = authenticator.verify({
-              token: code,
-              secret: decryptedSecret,
-            });
+      if (!isValid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Code is either expired or invalid. Please copy code from authenticator app and try again.",
+        });
+      }
 
-            if (!isValid) {
-              throw new TRPCError({
-                code: "BAD_REQUEST",
-                message:
-                  "Code is either expired or invalid. Please copy code from authenticator app and try again.",
-              });
-            }
-
-            return prisma.user.update({
-              where: {
-                // @ts-ignore
-                id: user.id,
-              },
-              data: {
-                twoFactorEnabled: true,
-              },
-            });
-          })
-      );
+      return await prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          twoFactorEnabled: true,
+        },
+      });
     }),
 
-  disable: withAuth.mutation(({ ctx, input }) => {
+  disable: withAuth.mutation(async ({ ctx, input }) => {
     const { prisma } = ctx;
     const { user } = ctx.session;
+    // @ts-ignore
+    const userId = user.id;
 
-    return prisma.user.update({
+    return await prisma.user.update({
       where: {
-        // @ts-ignore
-        id: user.id,
+        id: userId,
       },
       data: {
-        twoFactorSecret: null,
+        twoFactor: {},
         twoFactorEnabled: false,
       },
     });

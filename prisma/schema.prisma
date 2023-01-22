@@ -127,7 +127,7 @@ model User {
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
 
   // Two factor authentication
-  twoFactorSecret   String?
+  twoFactor         Json?
   twoFactorEnabled  Boolean   @default(false)
 
   marketing         Boolean   @default(true)

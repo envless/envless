@@ -1,18 +1,18 @@
-import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
-import { TwoFactorAuth } from "@/utils/interfaces";
+import prisma from "@/lib/prisma";
+import QRCode from "react-qr-code";
 import { trpc } from "@/utils/trpc";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { authenticator } from "otplib";
+import { useEffect, useState } from "react";
+import SettingsLayout from "@/layouts/Settings";
+import { TwoFactorAuth } from "@/utils/interfaces";
+import { decrypt, encrypt } from "@/lib/encryption";
+import { type GetServerSidePropsContext } from "next";
 import { SubmitHandler, useForm } from "react-hook-form";
-import QRCode from "react-qr-code";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
-import { Decrypted, Encrypted } from "@/lib/crypto";
-import prisma from "@/lib/prisma";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 
 type Props = {
   user: User;
@@ -202,40 +202,40 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } else {
-    const currentUser = session.user;
+    const sessionUser = session.user;
     let user = await prisma.user.findUnique({
       where: {
         // @ts-ignore
-        id: currentUser.id,
+        id: sessionUser.id,
       },
       select: {
         email: true,
+        twoFactor: true,
         twoFactorEnabled: true,
-        twoFactorSecret: true,
       },
     });
 
     if (!user?.twoFactorEnabled) {
       const secret = await authenticator.generateSecret(20);
-      const encryptedSecret = await Encrypted(
-        secret,
-        String(process.env.ENCRYPTION_KEY),
-      );
+      const encryptedSecret = await encrypt({
+        plaintext: secret,
+        key: String(process.env.ENCRYPTION_KEY),
+      });
 
       // @ts-ignore
       user = await prisma.user.update({
         where: {
           // @ts-ignore
-          id: currentUser.id,
+          id: sessionUser.id,
         },
         data: {
-          twoFactorSecret: encryptedSecret,
+          twoFactor: encryptedSecret,
         },
 
         select: {
           email: true,
+          twoFactor: true,
           twoFactorEnabled: true,
-          twoFactorSecret: true,
         },
       });
     }
@@ -247,21 +247,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
 
     if (!user?.twoFactorEnabled) {
-      const decryptedSecret = await Decrypted(
-        // @ts-ignore
-        user?.twoFactorSecret,
-        String(process.env.ENCRYPTION_KEY),
-      );
+      const encrypted = Object.assign({}, user?.twoFactor) as {
+        ciphertext: string;
+        iv: string;
+        tag: string;
+      };
+
+      const decrypted = await decrypt({
+        ...encrypted,
+        key: String(process.env.ENCRYPTION_KEY),
+      });
 
       const keyUri = authenticator.keyuri(
         user?.email,
         "envless.dev",
-        decryptedSecret,
+        decrypted,
       );
 
       twoFactor = {
         ...twoFactor,
-        secret: decryptedSecret,
+        secret: decrypted,
         keyUri: keyUri,
       };
     }
@@ -269,7 +274,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         twoFactor,
-        user: JSON.parse(JSON.stringify(currentUser)),
+        user: JSON.parse(JSON.stringify(sessionUser)),
       },
     };
   }
