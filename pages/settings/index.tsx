@@ -5,6 +5,7 @@ import { getServerAuthSession } from "@/utils/get-server-auth-session";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
+import TwoFactorModal from "@/components/TwoFactorModal";
 import {
   Button,
   Hr,
@@ -37,6 +38,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 
   const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [twoFaRequired, setTwoFaRequired] = useState(false);
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (data) => {
