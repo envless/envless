@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import AuthCode from "react-auth-code-input";
 import { IoCloseSharp } from "react-icons/io5";
-import { Logo } from "@/components/theme";
+import { Button, Logo, Paragraph } from "@/components/theme";
 
 /**
  * Props for the Modal component.
@@ -12,6 +13,7 @@ import { Logo } from "@/components/theme";
 interface Props {
   open: boolean;
   onConfirm: () => void;
+  onStateChange: (state: boolean) => void;
 }
 
 /**
@@ -19,7 +21,10 @@ interface Props {
  * @param {Props} props - The props for the component.
  */
 const TwoFactorModal = (props: Props) => {
-  let [open, setOpen] = useState(props.open);
+  const [open, setOpen] = useState(props.open);
+  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setOpen(props.open);
@@ -30,14 +35,33 @@ const TwoFactorModal = (props: Props) => {
    */
   function closeModal() {
     setOpen(false);
+    props.onStateChange(false);
   }
 
-  /**
-   * Opens the modal.
-   */
-  function openModal() {
-    setOpen(true);
-  }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!code) {
+      setError("Please enter the code");
+      setLoading(false);
+      return;
+    }
+
+    if (code.length !== 6) {
+      setError("Please enter a valid code");
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    // props.onConfirm();
+  };
+
+  const handleOnChange = (res: string) => {
+    setError("");
+    setCode(res);
+  };
 
   return (
     <React.StrictMode>
@@ -84,11 +108,37 @@ const TwoFactorModal = (props: Props) => {
                     as="h3"
                     className="border-b border-dark pb-6 text-center text-2xl font-normal leading-6"
                   >
-                    Two-factor authentication code
+                    Two-factor authentication
                   </Dialog.Title>
                   <div className="mt-4">
-                    {/* Open two factor app and confirm the code */}
-                    Open two factor app and confirm the code
+                    <Paragraph color="light" size="sm" className="pb-6">
+                      Two factor authentication is required to continue. Please
+                      enter the code from your authenticator app.
+                    </Paragraph>
+
+                    <form onSubmit={handleSubmit}>
+                      <AuthCode
+                        allowedCharacters="numeric"
+                        containerClassName="grid grid-cols-6 gap-4 m-3"
+                        inputClassName="block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light text-center"
+                        onChange={handleOnChange}
+                      />
+
+                      {error && (
+                        <p className="px-3 pt-1 text-xs text-red-400/75">
+                          {error}
+                        </p>
+                      )}
+
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="mt-10"
+                        full={true}
+                      >
+                        Confirm and continue
+                      </Button>
+                    </form>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

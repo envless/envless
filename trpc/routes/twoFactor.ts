@@ -1,7 +1,7 @@
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import TwofactorAuth from "@/lib/twoFactorAuth";
+import { verifyTwoFactor } from "@/lib/twoFactorAuth";
 
 export const twoFactor = createRouter({
   enable: withAuth
@@ -34,7 +34,7 @@ export const twoFactor = createRouter({
         });
       }
 
-      const isValid = await TwofactorAuth.verify({
+      const isValid = await verifyTwoFactor({
         code,
         secret: userRecord.twoFactor,
       });
