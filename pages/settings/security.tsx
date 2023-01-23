@@ -1,6 +1,8 @@
+import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 import { TwoFactorAuth } from "@/utils/interfaces";
 import { trpc } from "@/utils/trpc";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
@@ -11,8 +13,6 @@ import QRCode from "react-qr-code";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import { Decrypted, Encrypted } from "@/lib/crypto";
 import prisma from "@/lib/prisma";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
-import { type GetServerSidePropsContext } from "next";
 
 type Props = {
   user: User;

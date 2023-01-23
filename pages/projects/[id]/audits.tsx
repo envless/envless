@@ -1,8 +1,8 @@
+import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 import { Project } from "@prisma/client";
 import prisma from "@/lib/prisma";
-import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
 
 /**
  * A functional component that represents a project.

@@ -1,3 +1,5 @@
+import { type GetServerSidePropsContext } from "next";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { AuditLogs, Projects } from "@/components/projects";
@@ -6,8 +8,6 @@ import { Button, Container, Hr, Nav } from "@/components/theme";
 import EmptyState from "@/components/theme/EmptyState";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
 
 interface Props {
   user: User;

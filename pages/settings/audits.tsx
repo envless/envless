@@ -1,10 +1,10 @@
+import { type GetServerSidePropsContext } from "next";
 import SettingsLayout from "@/layouts/Settings";
+import { getServerAuthSession } from "@/utils/get-server-auth-session";
 import { User } from "@prisma/client";
 import AuditLogs from "@/components/projects/AuditLogs";
 import { Button } from "@/components/theme";
 import Audit from "@/lib/audit";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
-import { type GetServerSidePropsContext } from "next";
 
 interface AuditSettingsProps {
   user: User;
