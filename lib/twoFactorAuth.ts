@@ -8,7 +8,7 @@ interface VerifyTypes {
   secret: any;
 }
 
-const verify = async ({ code, secret }: VerifyTypes) => {
+export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
   const encrypted = Object.assign({}, secret) as {
     ciphertext: string;
     iv: string;
@@ -28,8 +28,6 @@ const verify = async ({ code, secret }: VerifyTypes) => {
   return isValid;
 };
 
-const TwofactorAuth = {
-  verify,
+export const isTwoFactorRequired = (user: any) => {
+  return user.twoFactorAuthEnabled;
 };
-
-export default TwofactorAuth;

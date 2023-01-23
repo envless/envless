@@ -6,7 +6,6 @@ import { User } from "@prisma/client";
 import { authenticator } from "otplib";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { TwoFactorAuth } from "@/utils/interfaces";
 import { decrypt, encrypt } from "@/lib/encryption";
 import { type GetServerSidePropsContext } from "next";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -22,6 +21,10 @@ type Props = {
     enabled: boolean;
   };
 };
+
+interface TwoFactorCode {
+  code: string;
+}
 
 const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
   const {
@@ -68,7 +71,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
     },
   });
 
-  const verifyOtp: SubmitHandler<TwoFactorAuth> = async (data) => {
+  const verifyOtp: SubmitHandler<TwoFactorCode> = async (data) => {
     const { code } = data;
     enableMutation.mutate({ code: code });
     reset();
