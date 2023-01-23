@@ -4272,10 +4272,24 @@ lucide-react@^0.105.0-alpha.4:
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.105.0.tgz#545bf09598d47dc6018136088d705f0fc054ce5a"
   integrity sha512-iHaIkd4Wq6aNIVrFMXt3If8E/+2lnJd4WlCyntoJNIzZ8nWhdSSHWpsw7XM4rlw2319LZ2t4WLdnM8Z0ECDTOQ==
 
-mailing-core@^0.8.18, mailing-core@^0.8.19:
+mailing-core@^0.8.19:
   version "0.8.19"
   resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.8.19.tgz#8e6faa10133dd303327996f1cf79ef0fd4b8c134"
   integrity sha512-QhAT0SU4NUCppsyPxxmjTCEEauu09GDpJewSuOjdcI9iWTNGFJcV36XHKtGVEBULIx2LZKsheC6Qnq2HnHvImg==
+  dependencies:
+    chalk "^4.1.2"
+    fs-extra "^10.1.0"
+    mjml "^4.12.0"
+    mjml-react "^2.0.7"
+    node-fetch "^2.6.7"
+    node-html-parser "^6.1.1"
+    open "^8.4.0"
+    posthog-node "^2.0.2"
+
+mailing-core@^0.9.8:
+  version "0.9.8"
+  resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.8.tgz#f73c3866f4acbf2b6c68b5ab5ea60590c02127cf"
+  integrity sha512-NrFcgixt8LUeoSgL2k6RxRqQemZYMRT+3mJc8g3PQi1+ONh7E+5ft3dPy4qwa7Mt9XVFlcOL06dNH+Htm8/GsA==
   dependencies:
     chalk "^4.1.2"
     fs-extra "^10.1.0"
