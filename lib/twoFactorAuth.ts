@@ -25,9 +25,9 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
     secret: decrypted,
   });
 
-  return isValid;
+  return isValid as boolean;
 };
 
 export const isTwoFactorRequired = (user: any) => {
-  return user.twoFactorAuthEnabled;
+  return user.twoFactorEnabled;
 };

@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
+import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import AuthCode from "react-auth-code-input";
 import { IoCloseSharp } from "react-icons/io5";
@@ -38,8 +39,27 @@ const TwoFactorModal = (props: Props) => {
     props.onStateChange(false);
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
+    onSuccess: (code: { valid: boolean }) => {
+      setLoading(false);
+
+      if (code.valid) {
+        closeModal();
+        props.onConfirm();
+      } else {
+        setError("Please enter a valid code");
+      }
+    },
+
+    onError: (error) => {
+      setLoading(false);
+      setError(error.message);
+    },
+  });
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!code) {
       setError("Please enter the code");
@@ -53,9 +73,7 @@ const TwoFactorModal = (props: Props) => {
       return;
     }
 
-    setLoading(true);
-
-    // props.onConfirm();
+    verifyTwoFactorMutation.mutate({ code });
   };
 
   const handleOnChange = (res: string) => {

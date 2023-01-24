@@ -6,8 +6,6 @@ import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import TwoFactorModal from "@/components/TwoFactorModal";
-import { isTwoFactorRequired } from "@/lib/twoFactorAuth";
-
 import {
   Button,
   Hr,
@@ -17,6 +15,7 @@ import {
   Toggle,
 } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import { isTwoFactorRequired } from "@/lib/twoFactorAuth";
 
 interface DefaultProps {
   user: User;
@@ -41,7 +40,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({} as SettingProps);
-  const [twoFactorRequired, setTwoFactorRequired] = useState(true);
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (data) => {
@@ -72,7 +71,9 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   };
 
   const submitWithTwoFactor = async (data) => {
-    const isRequired = await isTwoFactorRequired(user)
+    const isRequired = await isTwoFactorRequired(user);
+
+    console.log("is required", isRequired)
 
     if (isRequired) {
       setFormData(data);
@@ -92,8 +93,8 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
         onStateChange={setTwoFactorRequired}
         onConfirm={() => {
           setTwoFactorRequired(false);
-          console.log("Submitting after confirmation", formData);
           handleSubmit(saveSettings(formData));
+          reset();
         }}
       />
 
