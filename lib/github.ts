@@ -26,4 +26,13 @@ export const getContributors = async () => {
   );
 
   return data;
+}
+
+export const getReleases = async () => {
+  const releases = await octokit.rest.repos.listReleases({
+    owner: "envless",
+    repo: "envless",
+  });
+
+  return releases.data;
 };

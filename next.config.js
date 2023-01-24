@@ -4,7 +4,11 @@ const nextConfig = {
   swcMinify: false,
   images: {
     dangerouslyAllowSVG: true,
-    domains: ["avatar.vercel.sh", "avatars.githubusercontent.com"],
+    domains: [
+      "avatar.vercel.sh",
+      "avatars.githubusercontent.com",
+      "user-images.githubusercontent.com",
+    ],
   },
 };
 
