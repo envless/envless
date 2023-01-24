@@ -1,17 +1,17 @@
+import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import prisma from "@/lib/prisma";
-import QRCode from "react-qr-code";
-import { trpc } from "@/utils/trpc";
-import { User } from "@prisma/client";
-import { authenticator } from "otplib";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { decrypt, encrypt } from "@/lib/encryption";
-import { type GetServerSidePropsContext } from "next";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { trpc } from "@/utils/trpc";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { User } from "@prisma/client";
+import { authenticator } from "otplib";
+import { SubmitHandler, useForm } from "react-hook-form";
+import QRCode from "react-qr-code";
+import { Button, Input, Modal, Paragraph } from "@/components/theme";
+import { decrypt, encrypt } from "@/lib/encryption";
+import prisma from "@/lib/prisma";
 
 type Props = {
   user: User;

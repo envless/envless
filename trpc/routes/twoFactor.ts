@@ -73,4 +73,44 @@ export const twoFactor = createRouter({
       },
     });
   }),
+
+  verify: withAuth
+    .input(
+      z.object({
+        code: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { code } = input;
+      const { user } = ctx.session;
+      // @ts-ignore
+      const userId = user.id;
+
+      const userRecord = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          twoFactor: true,
+        },
+      });
+
+      if (!userRecord) {
+        return new TRPCError({
+          code: "NOT_FOUND",
+          message:
+            "Something went wrong, our engineers are aware of it and are working on a fix.",
+        });
+      }
+
+      const isValid = await verifyTwoFactor({
+        code,
+        secret: userRecord.twoFactor,
+      });
+
+      return {
+        valid: isValid,
+      };
+    }),
 });
