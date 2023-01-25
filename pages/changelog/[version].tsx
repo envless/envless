@@ -19,6 +19,8 @@ export const getStaticProps = async (context: { params: { version: any } }) => {
       release,
       releaseBody: releaseBodyAsHtml.toString(),
     },
+
+    revalidate: 60, // In seconds
   };
 };
 
@@ -33,6 +35,7 @@ export const getStaticPaths = async () => {
     fallback: false,
   };
 };
+
 const ChangelogDetails = ({ release, releaseBody }) => {
   const parser = parse(releaseBody);
   const descriptionParagraph = parser.querySelector("p")?.textContent;

@@ -5,7 +5,7 @@ import { Compatible } from "vfile";
 import ChangelogCard from "@/components/changelog/ChangelogCard";
 import { getReleases } from "@/lib/github";
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getStaticProps(context: GetServerSidePropsContext) {
   const releases = await getReleases();
   const parsedReleaseBodyContent: string[] = [];
 
