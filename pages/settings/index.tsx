@@ -14,6 +14,7 @@ import {
   Toast,
   Toggle,
 } from "@/components/theme";
+import { getBrowser } from "@/lib/getBrowser";
 import prisma from "@/lib/prisma";
 import { isTwoFactorRequired } from "@/lib/twoFactorAuth";
 
@@ -43,7 +44,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
 
   const accountMutation = trpc.account.update.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       setLoading(false);
       setToast(true);
     },
@@ -71,9 +72,13 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   };
 
   const submitWithTwoFactor = async (data) => {
-    const isRequired = await isTwoFactorRequired(user);
+    const userAgent = navigator.userAgent;
+    const browser = await getBrowser(userAgent);
 
-    console.log("is required", isRequired)
+    // const isRequired = await isTwoFactorRequired(user, browser, visitorId);
+    const isRequired = true;
+    console.log("is required", isRequired);
+    console.log("Browser info", browser);
 
     if (isRequired) {
       setFormData(data);

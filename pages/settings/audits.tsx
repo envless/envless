@@ -33,7 +33,6 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerAuthSession(context);
-  // @ts-ignore
   const userId = session?.user?.id;
 
   if (!session || !session.user) {

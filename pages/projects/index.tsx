@@ -79,7 +79,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } else {
-    // @ts-ignore
     const userId = session?.user?.id;
     const user = await prisma.user.findUnique({
       where: {

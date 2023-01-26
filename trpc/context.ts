@@ -1,3 +1,4 @@
+import { NextApiRequest } from "next";
 import { authOptions } from "@/api/auth/[...nextauth]";
 import { type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
@@ -7,6 +8,7 @@ import prisma from "@/lib/prisma";
 
 type CreateContextOptions = {
   session: Session | null;
+  req: NextApiRequest;
 };
 
 /** Use this helper for:
@@ -16,6 +18,7 @@ type CreateContextOptions = {
  **/
 export const createContextInner = async (opts: CreateContextOptions) => {
   return {
+    req: opts.req,
     session: opts.session,
     prisma,
   };
@@ -32,6 +35,7 @@ export const createContext = async (opts: CreateNextContextOptions) => {
   const session = await unstable_getServerSession(req, res, authOptions);
 
   return await createContextInner({
+    req,
     session,
   });
 };

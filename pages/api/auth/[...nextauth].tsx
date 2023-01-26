@@ -73,10 +73,23 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      const { user } = token;
+      const user: {
+        id: string;
+        name: string;
+        email: string;
+        twoFactorEnabled: boolean;
+      } = token.user as any;
 
       if (user) {
-        session.user = user;
+        session = {
+          ...session,
+          user: {
+            id: user?.id,
+            name: user?.name,
+            email: user?.email,
+            twoFactorEnabled: user?.twoFactorEnabled,
+          },
+        };
       }
 
       return session;

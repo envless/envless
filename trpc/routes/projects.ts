@@ -26,15 +26,13 @@ export const projects = createRouter({
       const { prisma } = ctx;
       const { user } = ctx.session;
       const { project } = input;
-      // @ts-ignore
-      const userId = user.id;
 
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
           access: {
             create: {
-              userId: userId,
+              userId: user.id,
               role: "owner",
             },
           },
@@ -53,7 +51,7 @@ export const projects = createRouter({
 
       if (newProject.id) {
         await Audit.create({
-          createdById: userId,
+          createdById: user.id,
           projectId: newProject.id,
           action: "created.project",
         });
@@ -64,8 +62,8 @@ export const projects = createRouter({
         const branch = newProject.branches[0];
 
         await Audit.create({
-          createdById: userId,
-          createdForId: userId,
+          createdById: user.id,
+          createdForId: user.id,
           projectId: newProject.id,
           action: "created.access",
           data: {
@@ -77,7 +75,7 @@ export const projects = createRouter({
         });
 
         await Audit.create({
-          createdById: userId,
+          createdById: user.id,
           projectId: newProject.id,
           action: "created.branch",
           data: {

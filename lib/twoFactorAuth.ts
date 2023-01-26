@@ -3,12 +3,19 @@ import { decrypt } from "@/lib/encryption";
 
 const ENCRYPTION_KEY = String(process.env.ENCRYPTION_KEY);
 
-interface VerifyTypes {
+interface VerifyType {
   code: string;
   secret: any;
 }
 
-export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
+interface BrowserType {
+  os: object;
+  bot: boolean;
+  device: object;
+  browser: object;
+}
+
+export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
   const encrypted = Object.assign({}, secret) as {
     ciphertext: string;
     iv: string;
@@ -28,6 +35,12 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
   return isValid as boolean;
 };
 
-export const isTwoFactorRequired = (user: any) => {
+export const isTwoFactorRequired = (
+  user: any,
+  browser: BrowserType,
+  visitorId: string,
+) => {
+  console.log("Browser", browser);
+  console.log("Visitor ID", visitorId);
   return user.twoFactorEnabled;
 };
