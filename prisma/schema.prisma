@@ -104,7 +104,7 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
+model SessionHistory {
   id           String   @id @default(cuid())
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -112,16 +112,24 @@ model Session {
   ip           String?
   os           Json?    @default("{}")
   device       Json?    @default("{}")
-  visitorId    String?  // fingerprint.visitorId
-  browser      Json?    @default("{}")
-  bot          Boolean? @default(false)
+  client       Json?    @default("{}")
+  bot          Json?    @default("{}")
 
   city         String?
   region       String?
   country      String?
 
+  createdAt    DateTime @default(now())
   @@index([userId])
-  @@index([userId, visitorId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 }
 
 model User {
@@ -132,6 +140,7 @@ model User {
   image             String?
   accounts          Account[]
   sessions          Session[]
+  sessionHistories  SessionHistory[]
   access            Access[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")

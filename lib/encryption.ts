@@ -42,8 +42,8 @@ interface DecryptInterface {
  * @returns {Promise<{ciphertext: string, iv: string, tag: string}>} - An object containing the ciphertext, initialization vector, and authentication tag.
  */
 export const encrypt = async ({ plaintext, key }: EncryptInterface) => {
-  const iv = crypto.subtle.randomBytes(16);
-  const cipher = crypto.subtle.createCipheriv(algorithm, key, iv);
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
 
   let ciphertext = cipher.update(plaintext, "utf8", "base64");
   ciphertext += cipher.final("base64");
@@ -69,7 +69,7 @@ export const decrypt = async ({
   tag,
   key,
 }: DecryptInterface) => {
-  const decipher = crypto.subtle.createDecipheriv(
+  const decipher = crypto.createDecipheriv(
     algorithm,
     key,
     Buffer.from(iv, "base64"),

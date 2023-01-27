@@ -1,16 +1,17 @@
-// export { default } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { RedisTwoFactor } from "@/types/twoFactorTypes";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
-import requestIp from "request-ip";
-import { getFingerprint } from "@/lib/fingerprint";
 import redis from "@/lib/redis";
 
 export const config = {
   matcher: [
-    "/auth/2fa",
+    "/auth",
+    "/auth/:path*",
+
     "/projects",
     "/projects/:path*",
+
     "/settings",
     "/settings/:path*",
   ],
@@ -18,41 +19,51 @@ export const config = {
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
-    const { origin } = req.nextUrl;
+    const { nextUrl: url, geo } = req;
+    const { origin } = url;
     const authUrl = `${origin}/auth`;
     const twoFaUrl = `${origin}/auth/2fa`;
-
-    // if user is not logged in, redirect to login page
-    const token = req.nextauth.token;
-    if (!token) return NextResponse.redirect(authUrl);
-
-    // if user is logged in but does not have 2fa enabled, skip
+    const verifyAuthUrl = `${origin}/auth/verify`;
+    const { token } = req.nextauth;
     const { user } = token as any;
-    if (!user) return NextResponse.redirect(authUrl);
-    if (!user.twoFactorEnabled) return NextResponse.next();
+    const sessionId = token?.sessionId as string;
 
-    // if current page is 2fa page, skip
-    if (req.nextUrl.pathname === "/auth/2fa") return NextResponse.next();
+    // if token, user or sessionId is not present, redirect to login page
+    if (!token || !user || !sessionId) return NextResponse.redirect(authUrl);
 
-    const userId = user.id;
-    const ip = requestIp.getClientIp(req);
-    const userAgent = req.headers.get("user-agent") as any;
+    // if current page is auth, 2fa or verify auth page, skip
+    if (url.pathname === "/auth") return NextResponse.next();
+    if (url.pathname === "/auth/2fa") return NextResponse.next();
+    if (url.pathname === "/auth/verify") return NextResponse.next();
 
-    // Fingerprint is a hash of user's IP, user agent and user id. It is used to identify the user's device.
-    const fingerprint = await getFingerprint({
-      ip,
-      userId,
-      userAgent,
-    });
+    // if user is logged in but does not have 2fa enabled, redirect to verify auth
+    if (!user.twoFactorEnabled) return NextResponse.redirect(verifyAuthUrl);
 
-    // Two factor state is stored in Redis with the fingerprint and ttl of 1 week, so that the user does not have to re-enter the code every time they log in. If the user logs in from a different device, fingerprint will change and the user will be asked to enter the code again.
-    const twoFactorForUser = await redis.get(fingerprint);
+    // Get two factor state from Redis
+    const sessionStore = (await redis.get(
+      `session:${sessionId}`,
+    )) as RedisTwoFactor;
 
-    if (twoFactorForUser) {
-      return NextResponse.next();
-    } else {
+    // if sessionStore is not present, add it to Redis with geo data
+    if (!sessionStore) await redis.set(`session:${sessionId}`, { geo });
+
+    // if two factor is enabled but not verified, redirect to 2fa page
+    if (
+      sessionStore?.twoFactor?.enabled &&
+      !sessionStore?.twoFactor?.verified
+    ) {
       return NextResponse.redirect(twoFaUrl);
     }
+
+    // if two factor is not enabled and verified, skip
+    if (
+      !sessionStore?.twoFactor?.enabled &&
+      sessionStore?.twoFactor?.verified
+    ) {
+      return NextResponse.next();
+    }
+
+    return NextResponse.next();
   },
 
   {

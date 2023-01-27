@@ -1,4 +1,5 @@
 import MagicLink from "@/emails/MagicLink";
+import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
@@ -67,6 +68,11 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.user = user;
+
+        if (!token.sessionId) {
+          const session = await SessionHistory.create({ userId: user.id });
+          token.sessionId = session.id;
+        }
       }
 
       return token;
@@ -81,8 +87,10 @@ export const authOptions: NextAuthOptions = {
       } = token.user as any;
 
       if (user) {
+        const sessionId = token.sessionId as string;
         session = {
           ...session,
+          id: sessionId,
           user: {
             id: user?.id,
             name: user?.name,
@@ -101,6 +109,8 @@ export const authOptions: NextAuthOptions = {
       // Create an audit log entry for the sign in
     },
   },
+
+  debug: process.env.NODE_ENV === "development",
 };
 
-export default NextAuth(authOptions);
+export default (req, res) => NextAuth(req, res, authOptions);

@@ -201,7 +201,6 @@ export async function getServerSideProps(context) {
   const session = await getSession({ req });
 
   if (session) {
-    console.info("Redirecting to dashboard");
     res.writeHead(301, { Location: "/projects" });
     res.end();
   }

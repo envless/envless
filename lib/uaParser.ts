@@ -1,7 +1,7 @@
 import DeviceDetector from "device-detector-js";
 import BotDetector from "device-detector-js/dist/parsers/bot";
 
-export const getDevice = async (userAgent: string) => {
+export const getBrowser = async (userAgent: string) => {
   const deviceDetector = new DeviceDetector();
   const device = deviceDetector.parse(userAgent);
 

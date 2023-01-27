@@ -40,7 +40,5 @@ export const isTwoFactorRequired = (
   browser: BrowserType,
   visitorId: string,
 ) => {
-  console.log("Browser", browser);
-  console.log("Visitor ID", visitorId);
   return user.twoFactorEnabled;
 };

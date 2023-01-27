@@ -1,11 +1,10 @@
 import { type GetServerSidePropsContext } from "next";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession, logSession } from "@/utils/session";
 import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
-import { Button, Container, Hr, Nav } from "@/components/theme";
-import EmptyState from "@/components/theme/EmptyState";
+import { Button, Container, EmptyState, Hr, Nav } from "@/components/theme";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
 
@@ -69,7 +68,10 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const { req } = context;
+  const session = await getServerSideSession(context);
+  const userId = session?.user?.id as string;
+  await logSession(session, req);
 
   if (!session || !session.user) {
     return {
@@ -79,8 +81,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } else {
-    const userId = session?.user?.id;
-    const user = await prisma.user.findUnique({
+    const userRecord = await prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -103,7 +104,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     });
 
-    if (!user) {
+    if (!userRecord) {
       return {
         redirect: {
           destination: "/",
@@ -112,11 +113,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
-    const access = user?.access || [];
+    const access = userRecord?.access || [];
     const projects = access.map((a: any) => a.project);
     const projectIds = projects.map((project: any) => project.id);
     const logs = await Audit.logs({
-      createdById: userId,
+      createdById: userRecord.id,
       actions: ["updated.account"],
       projectIds: projectIds,
       limit: 10,
@@ -124,7 +125,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     return {
       props: {
-        user: JSON.parse(JSON.stringify(user)),
+        user: JSON.parse(JSON.stringify(userRecord)),
         logs: JSON.parse(JSON.stringify(logs)),
       },
     };

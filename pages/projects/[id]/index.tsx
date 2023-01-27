@@ -1,6 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
@@ -25,7 +25,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const session = await getServerSideSession(context);
   const user = session?.user;
 
   // @ts-ignore

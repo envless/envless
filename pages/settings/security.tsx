@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
@@ -195,7 +195,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const session = await getServerSideSession(context);
 
   if (!session || !session.user) {
     return {

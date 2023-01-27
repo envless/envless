@@ -1,12 +1,8 @@
-import { digest } from "@/lib/digest";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-export const getFingerprint = async (data: {
-  ip: string;
-  userAgent: string;
-  userId: string;
-}) => {
-  const { ip, userAgent, userId } = data;
-  const plaintext = `userId:${userId}-ip:${ip}-ua:${userAgent}`;
-  const fingerprint = await digest({ plaintext });
+export const getFingerprint = async () => {
+  const sdk = await FingerprintJS.load();
+  const result = await sdk.get();
+  const fingerprint = result.visitorId;
   return fingerprint;
 };

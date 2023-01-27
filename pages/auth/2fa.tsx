@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
+import TwoFactorForm from "@/components/TwoFactorForm";
 import { Hr } from "@/components/theme";
 
 const TwoFactorAuth = () => {
@@ -12,7 +12,7 @@ const TwoFactorAuth = () => {
       </Head>
 
       <div className="flex h-screen flex-col justify-center px-12">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="rounded bg-darker p-10 sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto h-12 w-auto"
             height={100}
@@ -28,10 +28,13 @@ const TwoFactorAuth = () => {
             code from your authenticator app.
           </p>
           <Hr className="my-8" />
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa rerum
-          beatae sed iste deserunt magnam, voluptatem sint dolore eos excepturi
-          perspiciatis tempore labore commodi eum, asperiores nulla deleniti.
-          Hic, consequatur.
+
+          <TwoFactorForm
+            onConfirm={() => {
+              // redirect users to /projects
+              console.log("2fa confirmed on the page, redirecting...");
+            }}
+          />
         </div>
       </div>
     </>

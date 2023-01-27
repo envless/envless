@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -77,8 +77,6 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 
     // const isRequired = await isTwoFactorRequired(user, browser, visitorId);
     const isRequired = true;
-    console.log("is required", isRequired);
-    console.log("Browser info", browser);
 
     if (isRequired) {
       setFormData(data);
@@ -186,7 +184,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const session = await getServerSideSession(context);
   const user = session?.user;
 
   if (!session || !user) {
