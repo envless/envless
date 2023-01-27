@@ -4,7 +4,6 @@
  * @example
  * const plaintext = 'Hello, world!';
  * const hash = await digest({ plaintext });
- * console.log(hash);
  * => 'b10a8db164e0754105b7a99be72e3fe5'
  */
 

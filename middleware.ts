@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { RedisTwoFactor } from "@/types/twoFactorTypes";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
+import log from "@/lib/log";
 import redis from "@/lib/redis";
 
 export const config = {
   matcher: [
-    "/auth",
-    "/auth/:path*",
+    "/auth/2fa",
+    "/auth/verify",
 
     "/projects",
     "/projects/:path*",
@@ -28,26 +29,28 @@ export default withAuth(
     const { user } = token as any;
     const sessionId = token?.sessionId as string;
 
-    // if token, user or sessionId is not present, redirect to login page
+    log("if token, user or sessionId is not present, redirect to login page");
     if (!token || !user || !sessionId) return NextResponse.redirect(authUrl);
 
-    // if current page is auth, 2fa or verify auth page, skip
+    log("if current page is auth, 2fa or verify auth page, skip");
     if (url.pathname === "/auth") return NextResponse.next();
     if (url.pathname === "/auth/2fa") return NextResponse.next();
     if (url.pathname === "/auth/verify") return NextResponse.next();
 
-    // if user is logged in but does not have 2fa enabled, redirect to verify auth
+    log(
+      "if user is logged in but does not have 2fa enabled, redirect to verify auth",
+    );
     if (!user.twoFactorEnabled) return NextResponse.redirect(verifyAuthUrl);
 
-    // Get two factor state from Redis
+    log("Get two factor state from Redis");
     const sessionStore = (await redis.get(
       `session:${sessionId}`,
     )) as RedisTwoFactor;
 
-    // if sessionStore is not present, add it to Redis with geo data
+    log("if sessionStore is not present, add it to Redis with geo data");
     if (!sessionStore) await redis.set(`session:${sessionId}`, { geo });
 
-    // if two factor is enabled but not verified, redirect to 2fa page
+    log("if two factor is enabled but not verified, redirect to 2fa page");
     if (
       sessionStore?.twoFactor?.enabled &&
       !sessionStore?.twoFactor?.verified
@@ -55,7 +58,7 @@ export default withAuth(
       return NextResponse.redirect(twoFaUrl);
     }
 
-    // if two factor is not enabled and verified, skip
+    log("if two factor is not enabled and verified, skip");
     if (
       !sessionStore?.twoFactor?.enabled &&
       sessionStore?.twoFactor?.verified
@@ -63,6 +66,7 @@ export default withAuth(
       return NextResponse.next();
     }
 
+    log("if two factor is enabled and verified, skip");
     return NextResponse.next();
   },
 

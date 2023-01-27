@@ -7,6 +7,7 @@ import Fuse from "fuse.js";
 import { signOut } from "next-auth/react";
 import { Hr, Logo, Popover } from "@/components/theme";
 import Dropdown from "@/components/theme/Dropdown";
+import log from "@/lib/log";
 
 const Nav = ({ ...props }) => {
   const router = useRouter();
@@ -30,11 +31,11 @@ const Nav = ({ ...props }) => {
     },
     {
       title: "Documentation",
-      handleClick: () => console.log("Docs"),
+      handleClick: () => log("Docs"),
     },
     {
       title: "Changelog",
-      handleClick: () => console.log("Changelog"),
+      handleClick: () => log("Changelog"),
     },
     {
       title: "Sign out",

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { getCsrfToken, getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Button, Input, Toast } from "@/components/theme";
+import log from "@/lib/log";
 
 const Login = ({ csrfToken }) => {
   const { query } = useRouter();
@@ -34,7 +35,7 @@ const Login = ({ csrfToken }) => {
     } else {
       const json = await res.json();
       if (json?.error) {
-        console.log("error", json.error);
+        log("error", json.error);
       }
     }
     reset();

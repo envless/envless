@@ -1,8 +1,8 @@
 import { type GetServerSidePropsContext } from "next";
-import { type NextRequest } from "next/server";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth";
 import requestIp from "request-ip";
+import log from "@/lib/log";
 import redis from "@/lib/redis";
 import { getBrowser } from "@/lib/uaParser";
 
@@ -24,9 +24,9 @@ export const logSession = async (
   const { user, sessionId } = session;
 
   const redisSession = await redis.get(`session:${sessionId}`);
-  console.log("Logging session", { userAgent });
+  log("Logging session", { userAgent });
 
-  // console.log("Logging session", { ip, browser })
+  // log("Logging session", { ip, browser })
 
   // get geo data from ip address
   // const geoData = await getGeoData(ip);

@@ -1,8 +1,6 @@
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
-import requestIp from "request-ip";
 import { z } from "zod";
-import { getBrowser } from "@/lib/getBrowser";
 import { verifyTwoFactor } from "@/lib/twoFactorAuth";
 
 export const twoFactor = createRouter({
@@ -71,53 +69,6 @@ export const twoFactor = createRouter({
       },
     });
   }),
-
-  isRequired: withAuth
-    .input(
-      z.object({
-        visitorId: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const { req, session, prisma } = ctx;
-      const { user } = session;
-      const { headers } = req;
-
-      const userRecord = await prisma.user.findUnique({
-        where: {
-          id: user.id,
-        },
-        select: {
-          twoFactorEnabled: true,
-        },
-      });
-
-      if (!userRecord) {
-        return new TRPCError({
-          code: "NOT_FOUND",
-          message:
-            "Something went wrong, our engineers are aware of it and are working on a fix.",
-        });
-      }
-
-      if (!userRecord.twoFactorEnabled) {
-        return {
-          required: false,
-        };
-      }
-
-      const { visitorId } = input;
-      const userAgent = headers["user-agent"] as string;
-      const country = headers["x-vercel-ip-country"] as string;
-      const city = headers["x-vercel-ip-city"] as string;
-      const region = headers["x-vercel-ip-region"] as string;
-      const browser = await getBrowser(userAgent);
-      const ip = await requestIp.getClientIp(req);
-
-      return {
-        required: userRecord.twoFactorEnabled,
-      };
-    }),
 
   verify: withAuth
     .input(

@@ -2,6 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import TwoFactorForm from "@/components/TwoFactorForm";
 import { Hr } from "@/components/theme";
+import log from "@/lib/log";
 
 const TwoFactorAuth = () => {
   return (
@@ -32,7 +33,7 @@ const TwoFactorAuth = () => {
           <TwoFactorForm
             onConfirm={() => {
               // redirect users to /projects
-              console.log("2fa confirmed on the page, redirecting...");
+              log("2fa confirmed on the page, redirecting...");
             }}
           />
         </div>
