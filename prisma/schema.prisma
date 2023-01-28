@@ -111,16 +111,19 @@ model SessionHistory {
 
   ip           String?
   os           Json?    @default("{}")
+  geo          Json?
   device       Json?    @default("{}")
-  client       Json?    @default("{}")
-  bot          Json?    @default("{}")
+  browser      Json?    @default("{}")
+  engine       Json?    @default("{}")
+  cpu          Json?    @default("{}")
+  isBot        Boolean? @default(false)
+  mfa          Boolean? @default(false)
 
-  city         String?
-  region       String?
-  country      String?
-
+  fingerprint  String?
   createdAt    DateTime @default(now())
+
   @@index([userId])
+  @@index([id, userId, fingerprint])
 }
 
 model Session {

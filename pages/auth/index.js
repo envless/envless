@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { debounce } from "lodash";
 import { getCsrfToken, getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Button, Input, Toast } from "@/components/theme";
 import log from "@/lib/log";
 
 const Login = ({ csrfToken }) => {
+  const router = useRouter();
   const { query } = useRouter();
   const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,6 +34,10 @@ const Login = ({ csrfToken }) => {
 
     if (res.status === 200) {
       setToast(true);
+
+      debounce(() => {
+        router.reload();
+      }, 3000)();
     } else {
       const json = await res.json();
       if (json?.error) {

@@ -14,7 +14,6 @@ import {
   Toast,
   Toggle,
 } from "@/components/theme";
-import { getBrowser } from "@/lib/getBrowser";
 import prisma from "@/lib/prisma";
 import { isTwoFactorRequired } from "@/lib/twoFactorAuth";
 
@@ -72,13 +71,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   };
 
   const submitWithTwoFactor = async (data) => {
-    const userAgent = navigator.userAgent;
-    const browser = await getBrowser(userAgent);
-
-    // const isRequired = await isTwoFactorRequired(user, browser, visitorId);
-    const isRequired = true;
-
-    if (isRequired) {
+    if (user.twoFactorEnabled) {
       setFormData(data);
       setTwoFactorRequired(true);
       return;

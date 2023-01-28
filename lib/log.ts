@@ -1,8 +1,8 @@
 const dev = process.env.NODE_ENV !== "production";
-const disable = process.env.DISABLE_DEV_LOG === "true";
+const devLog = process.env.DEV_LOG === "true";
 
 const log = (...args) => {
-  if (dev && !disable) console.log(args);
+  if (dev && devLog) console.debug(args);
 };
 
 export default log;

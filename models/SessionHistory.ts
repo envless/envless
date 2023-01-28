@@ -42,10 +42,26 @@ const update = async (id: string, data: any) => {
   return session;
 };
 
+const previous = async (id: string, userId: string, fingerprint: string) => {
+  const session = await prisma.sessionHistory.findFirst({
+    where: {
+      userId,
+      fingerprint,
+      id: { not: id },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return session;
+};
+
 const SessionHistory = {
   getOne,
   create,
   update,
+  previous,
 };
 
 export default SessionHistory;

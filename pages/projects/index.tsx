@@ -1,5 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
-import { getServerSideSession, logSession } from "@/utils/session";
+import { getServerSideSession } from "@/utils/session";
 import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
 import { AuditLogs, Projects } from "@/components/projects";
@@ -71,7 +71,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getServerSideSession(context);
   const userId = session?.user?.id as string;
-  await logSession(session, req);
 
   if (!session || !session.user) {
     return {

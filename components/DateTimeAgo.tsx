@@ -10,9 +10,11 @@ interface Props {
 }
 
 export default function DateTimeAgo({ date, className }: Props) {
+  const dateToInt = new Date(date).getTime();
+
   return (
     <span className={className}>
-      <ReactTimeAgo date={date} locale="en-US" />
+      <ReactTimeAgo date={dateToInt} locale="en-US" />
     </span>
   );
 }

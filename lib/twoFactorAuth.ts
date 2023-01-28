@@ -34,11 +34,3 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
 
   return isValid as boolean;
 };
-
-export const isTwoFactorRequired = (
-  user: any,
-  browser: BrowserType,
-  visitorId: string,
-) => {
-  return user.twoFactorEnabled;
-};

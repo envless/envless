@@ -1,10 +1,13 @@
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import TwoFactorForm from "@/components/TwoFactorForm";
 import { Hr } from "@/components/theme";
 import log from "@/lib/log";
 
 const TwoFactorAuth = () => {
+  const router = useRouter();
+
   return (
     <>
       <Head>
@@ -32,8 +35,8 @@ const TwoFactorAuth = () => {
 
           <TwoFactorForm
             onConfirm={() => {
-              // redirect users to /projects
               log("2fa confirmed on the page, redirecting...");
+              router.push("/projects");
             }}
           />
         </div>

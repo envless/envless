@@ -1,5 +1,5 @@
-import Router from "next/router";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Shield } from "lucide-react";
@@ -9,6 +9,8 @@ import { getFingerprint } from "@/lib/fingerprint";
 import log from "@/lib/log";
 
 export default function VerifyAuth({ sessionId }) {
+  const router = useRouter();
+
   const verifyMutation = trpc.auth.verify.useMutation({
     onSuccess: (res: any) => {
       if (res.name === "TRPCError") {
@@ -17,7 +19,7 @@ export default function VerifyAuth({ sessionId }) {
       }
 
       log("Redirecting after success", res);
-      Router.push("/projects");
+      router.push("/projects");
     },
 
     onError: (error) => {
@@ -31,10 +33,6 @@ export default function VerifyAuth({ sessionId }) {
       const fingerprint = await getFingerprint();
       await verifyMutation.mutate({ fingerprint, sessionId });
     })();
-
-    return () => {
-      // this now gets called when the component unmounts
-    };
   }, []);
 
   return (
@@ -53,6 +51,7 @@ export default function VerifyAuth({ sessionId }) {
 }
 
 export async function getServerSideProps(context) {
+  const { req } = context;
   const session = await getServerSideSession(context);
   const sessionId = session?.id as string;
 

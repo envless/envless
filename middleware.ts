@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { userAgent } from "next/server";
 import { RedisTwoFactor } from "@/types/twoFactorTypes";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
@@ -20,53 +21,87 @@ export const config = {
 
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
-    const { nextUrl: url, geo } = req;
+    const { nextUrl: url, geo, ip } = req;
     const { origin } = url;
-    const authUrl = `${origin}/auth`;
-    const twoFaUrl = `${origin}/auth/2fa`;
-    const verifyAuthUrl = `${origin}/auth/verify`;
     const { token } = req.nextauth;
     const { user } = token as any;
+
+    const authUrl = `${origin}/auth`;
+    const twoFaUrl = `${origin}/auth/2fa`;
+    const forbidden = `${origin}/error/forbidden`;
+    const verifyAuthUrl = `${origin}/auth/verify`;
+
     const sessionId = token?.sessionId as string;
+    const { isBot, browser, device, engine, os, cpu } = userAgent(req);
 
-    log("if token, user or sessionId is not present, redirect to login page");
-    if (!token || !user || !sessionId) return NextResponse.redirect(authUrl);
+    if (isBot) {
+      log("If it's a bot, redirect to forbidden page");
+      return NextResponse.redirect(forbidden);
+    }
 
-    log("if current page is auth, 2fa or verify auth page, skip");
-    if (url.pathname === "/auth") return NextResponse.next();
-    if (url.pathname === "/auth/2fa") return NextResponse.next();
-    if (url.pathname === "/auth/verify") return NextResponse.next();
+    if (!token || !user || !sessionId) {
+      log("If token, user or sessionId is not present, redirect to login page");
+      return NextResponse.redirect(authUrl);
+    }
 
-    log(
-      "if user is logged in but does not have 2fa enabled, redirect to verify auth",
-    );
-    if (!user.twoFactorEnabled) return NextResponse.redirect(verifyAuthUrl);
-
-    log("Get two factor state from Redis");
     const sessionStore = (await redis.get(
       `session:${sessionId}`,
     )) as RedisTwoFactor;
 
-    log("if sessionStore is not present, add it to Redis with geo data");
-    if (!sessionStore) await redis.set(`session:${sessionId}`, { geo });
+    const mfa = {
+      enabled: user.twoFactorEnabled,
+      verified: sessionStore?.mfa || false,
+    };
 
-    log("if two factor is enabled but not verified, redirect to 2fa page");
-    if (
-      sessionStore?.twoFactor?.enabled &&
-      !sessionStore?.twoFactor?.verified
-    ) {
-      return NextResponse.redirect(twoFaUrl);
+    log("Two Factor Status", mfa);
+
+    if (!sessionStore) {
+      log("If sessionStore is not present, add it to Redis with geo data");
+      await redis.set(
+        `session:${sessionId}`,
+        {
+          ip,
+          geo,
+          isBot,
+          browser,
+          device,
+          engine,
+          os,
+          cpu,
+          mfa: false,
+        },
+        { ex: 60 * 60 * 24 * 7 }, // 7 days
+      );
+
+      if (!mfa.enabled) {
+        log(
+          "If user is logged in but does not have 2fa enabled, redirect to verify auth",
+        );
+
+        return NextResponse.redirect(verifyAuthUrl);
+      }
     }
 
-    log("if two factor is not enabled and verified, skip");
     if (
-      !sessionStore?.twoFactor?.enabled &&
-      sessionStore?.twoFactor?.verified
+      url.pathname === "/auth" ||
+      url.pathname === "/auth/2fa" ||
+      url.pathname === "/auth/verify"
     ) {
+      log("If current page is auth, 2fa or verify auth page, skip");
       return NextResponse.next();
     }
 
-    log("if two factor is enabled and verified, skip");
+    if (mfa.enabled && !mfa.verified) {
+      log("If two factor is enabled but not verified, redirect to 2fa page");
+      return NextResponse.redirect(twoFaUrl);
+    }
+
+    if (mfa.enabled && mfa.verified) {
+      log("If two factor is not enabled and verified, skip");
+      return NextResponse.next();
+    }
+
+    log("If two factor is not enabled, skip");
     return NextResponse.next();
   },
 

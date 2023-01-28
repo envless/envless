@@ -48,13 +48,14 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
   };
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
-    onSuccess: (code: { valid: boolean }) => {
+    onSuccess: (data) => {
       setLoading(false);
 
-      if (code.valid) {
+      // @ts-ignore
+      if (data?.valid) {
         props.onConfirm();
       } else {
-        setError("Please enter a valid code");
+        setError("Invalid code. Please try again.");
       }
     },
 
