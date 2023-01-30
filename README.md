@@ -18,3 +18,24 @@
     <img src="https://img.shields.io/github/license/envless/envless?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
   </a>
 </p>
+
+
+## Table of contents
+
+- <a href="#community">Community</a>
+- <a href="#contributors">Contributors</a>
+
+<h2 id="community">Community</h2>
+We have a discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
+
+[Join the Envless Discord](https://discord.gg/XEDCq7nS)
+
+<h2 id="contributors">Contributors</h2>
+
+We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Discord](https://discord.gg/XEDCq7nS) community for either support or contributing guidance.
+
+<a href="https://github.com/envless/envless/graphs/contributors">
+  <p>
+    <img src="https://contrib.rocks/image?repo=envless/envless" alt="A table of avatars from the project's contributors" />
+  </p>
+</a>
