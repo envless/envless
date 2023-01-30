@@ -5,19 +5,18 @@ import AuthCode from "react-auth-code-input";
 import { Button, LoadingIcon } from "@/components/theme";
 
 /**
- * TwoFactorForm is a React component that displays a name and an optional age.
- *
- * @param {TwoFactorFormProps} props - The props for the component.
- * @param {string} props.name - The name to display. This is required.
- * @param {number} [props.age] - The age of the person, if available. This is optional.
- * @returns {JSX.Element} - A React element that displays the name.
- */
+  @interface TwoFactorFormProps
+  @property {() => void} onConfirm - callback function called when form is confirmed
+*/
 
-type TwoFactorFormProps = {
-  name?: string; // required
-  age?: number; // optional
+interface TwoFactorFormProps {
   onConfirm: () => void;
-};
+}
+
+/**
+  TwoFactorForm - A functional component that renders a form for two-factor authentication
+  @param {TwoFactorFormProps} props - The props for the component
+*/
 
 const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
   const [loading, setLoading] = useState(false);

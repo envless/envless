@@ -17,12 +17,14 @@ const create = async (data: {
   userId: string;
   ip?: string;
   os?: object;
+  geo?: object;
   device?: object;
-  client?: object;
-  bot?: object;
-  city?: string;
-  region?: string;
-  country?: string;
+  browser?: object;
+  engine?: object;
+  cpu?: object;
+  isBot?: boolean;
+  mfa?: boolean;
+  fingerprint?: string;
 }) => {
   const session = await prisma.sessionHistory.create({
     data: data,

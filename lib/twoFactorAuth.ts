@@ -8,13 +8,6 @@ interface VerifyType {
   secret: any;
 }
 
-interface BrowserType {
-  os: object;
-  bot: boolean;
-  device: object;
-  browser: object;
-}
-
 export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
   const encrypted = Object.assign({}, secret) as {
     ciphertext: string;
