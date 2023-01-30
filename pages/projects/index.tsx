@@ -7,7 +7,6 @@ import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { Button, Container, EmptyState, Hr, Nav } from "@/components/theme";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { getContributors } from "@/lib/github";
 
 interface Props {
   user: User;
@@ -72,10 +71,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
   const session = await getServerSideSession(context);
   const userId = session?.user?.id as string;
-
-  const contributors = await getContributors()
-
-  console.log({ contributors })
 
   if (!session || !session.user) {
     return {
