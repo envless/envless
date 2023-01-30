@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Zoom from "react-medium-image-zoom";
 import { RenderBlocks } from "@/components/blog/ContentBlock";
@@ -21,6 +20,10 @@ const Article: React.FC<Props> = ({ post, blocks }) => {
     {
       name: "Blog",
       href: "/blog",
+    },
+    {
+      name: "Changelog",
+      href: "/changelog",
     },
   ];
 

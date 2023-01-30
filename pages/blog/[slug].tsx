@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import Article from "@/components/blog/Article";
 import { getBlocks, getNotionData, getPage } from "@/lib/notion";
 

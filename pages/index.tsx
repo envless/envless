@@ -17,6 +17,10 @@ const Home: React.FC<Props> = ({}) => {
       name: "Blog",
       href: "/blog",
     },
+    {
+      name: "Changelog",
+      href: "/changelog",
+    },
   ];
 
   return (

@@ -12,7 +12,7 @@ const ChangelogCard = ({ release, parsedReleaseBody }) => {
       <div className="col-span-1">
         <div>
           <div className={"mb-4"}>
-            <span className="inline-flex items-center rounded-md bg-teal-400/50 px-5 py-1 font-mono text-lg font-medium text-teal-400">
+            <span className="inline-flex items-center rounded-md bg-teal-400/25 px-5 py-1 font-mono text-lg font-medium text-teal-400">
               {release.tag_name}
             </span>
           </div>
@@ -25,27 +25,35 @@ const ChangelogCard = ({ release, parsedReleaseBody }) => {
         </div>
       </div>
       <div className={"col-span-3"}>
-        <div className="space-y-8">
-          <div className={"text-2xl font-bold"}>{release.name}</div>
-          <div className={"font-light text-white/70"}>
-            {descriptionParagraph}
-          </div>
-          <div>
-            <Link
-              className={"text-teal-400"}
-              href={`/changelog/${release.tag_name}`}
+        <Link href={`/changelog/${release.tag_name}`}>
+          <div className="space-y-8">
+            <h2
+              className={
+                "w-fit  bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat text-2xl transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]"
+              }
             >
-              Read More →
-            </Link>
+              {release.name}
+            </h2>
+            <div className={"font-light text-white/70"}>
+              {descriptionParagraph}
+            </div>
+            <div>
+              <Link
+                className={"text-teal-400"}
+                href={`/changelog/${release.tag_name}`}
+              >
+                Read More →
+              </Link>
+            </div>
+            <Image
+              className={"rounded-lg"}
+              width={500}
+              height={500}
+              src={imageSrc}
+              alt={`envless release ${release.tag_name} image`}
+            />
           </div>
-          <Image
-            className={"rounded-lg"}
-            width={500}
-            height={500}
-            src={imageSrc}
-            alt={`envless release ${release.tag_name} image`}
-          />
-        </div>
+        </Link>
       </div>
     </div>
   );

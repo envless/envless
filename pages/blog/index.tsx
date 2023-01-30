@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";
@@ -58,6 +57,10 @@ const Blog: React.FC<Props> = ({ posts }) => {
     {
       name: "Docs",
       href: "/docs",
+    },
+    {
+      name: "Changelog",
+      href: "/changelog",
     },
   ];
 
