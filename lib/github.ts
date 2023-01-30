@@ -17,7 +17,7 @@ export const getStars = async () => {
 };
 
 export const getContributors = async () => {
-  const { data  } = await octokit.request(
+  const { data } = await octokit.request(
     "GET /repos/envless/envless/contributors",
     {
       owner: "envless",
@@ -26,4 +26,4 @@ export const getContributors = async () => {
   );
 
   return data;
-}
+};
