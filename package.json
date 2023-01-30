@@ -71,7 +71,7 @@
     "@types/react-query": "^1.2.9",
     "@types/react-syntax-highlighter": "^15.5.6",
     "autoprefixer": "^10.4.13",
-    "eslint": "8.27.0",
+    "eslint": "8.33.0",
     "eslint-config-next": "13.1.1",
     "eslint-config-prettier": "^8.6.0",
     "mailing": "^0.9.8",
