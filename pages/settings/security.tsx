@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import { decrypt, encrypt } from "@/lib/encryption";
+import log from "@/lib/log";
 import prisma from "@/lib/prisma";
 
 type Props = {
@@ -67,7 +68,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
     onError: (error) => {
       setLoading(false);
-      console.log("Error while disabling 2fa", error);
+      log("Error while disabling 2fa", error);
     },
   });
 
@@ -195,7 +196,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const session = await getServerSideSession(context);
 
   if (!session || !session.user) {
     return {

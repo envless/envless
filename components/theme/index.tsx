@@ -9,4 +9,6 @@ export { default as Button } from "./Button";
 export { default as Toggle } from "./Toggle";
 export { default as Popover } from "./Popover";
 export { default as Paragraph } from "./Paragraph";
+export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
+export { default as LoadingIcon } from "./LoadingIcon";

@@ -16,11 +16,9 @@ export const account = createRouter({
       const { prisma } = ctx;
       const { user } = ctx.session;
       const { name, email, marketing, notification } = input;
-      // @ts-ignore
-      const userId = user.id;
       const currentUser = await prisma.user.findUnique({
         where: {
-          id: userId,
+          id: user.id,
         },
         select: {
           name: true,
@@ -32,7 +30,7 @@ export const account = createRouter({
 
       const updatedUser = prisma.user.update({
         where: {
-          id: userId,
+          id: user.id,
         },
         data: {
           name,
@@ -57,8 +55,8 @@ export const account = createRouter({
         notification != currentUser?.notification
       ) {
         await Audit.create({
-          createdById: userId,
-          createdForId: userId,
+          createdById: user.id,
+          createdForId: user.id,
           action: "updated.account",
           data: {
             before: {

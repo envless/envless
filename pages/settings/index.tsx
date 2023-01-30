@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -43,7 +43,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
 
   const accountMutation = trpc.account.update.useMutation({
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       setLoading(false);
       setToast(true);
     },
@@ -71,11 +71,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   };
 
   const submitWithTwoFactor = async (data) => {
-    const isRequired = await isTwoFactorRequired(user);
-
-    console.log("is required", isRequired)
-
-    if (isRequired) {
+    if (user.twoFactorEnabled) {
       setFormData(data);
       setTwoFactorRequired(true);
       return;
@@ -181,7 +177,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
+  const session = await getServerSideSession(context);
   const user = session?.user;
 
   if (!session || !user) {

@@ -104,13 +104,34 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model SessionHistory {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ip           String?
+  os           Json?    @default("{}")
+  geo          Json?
+  device       Json?    @default("{}")
+  browser      Json?    @default("{}")
+  engine       Json?    @default("{}")
+  cpu          Json?    @default("{}")
+  isBot        Boolean? @default(false)
+  mfa          Boolean? @default(false)
+
+  fingerprint  String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([id, userId, fingerprint])
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@index([userId])
 }
 
@@ -122,6 +143,7 @@ model User {
   image             String?
   accounts          Account[]
   sessions          Session[]
+  sessionHistories  SessionHistory[]
   access            Access[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")

@@ -3,12 +3,12 @@ import { decrypt } from "@/lib/encryption";
 
 const ENCRYPTION_KEY = String(process.env.ENCRYPTION_KEY);
 
-interface VerifyTypes {
+interface VerifyType {
   code: string;
   secret: any;
 }
 
-export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
+export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
   const encrypted = Object.assign({}, secret) as {
     ciphertext: string;
     iv: string;
@@ -26,8 +26,4 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyTypes) => {
   });
 
   return isValid as boolean;
-};
-
-export const isTwoFactorRequired = (user: any) => {
-  return user.twoFactorEnabled;
 };

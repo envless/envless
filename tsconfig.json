@@ -23,7 +23,9 @@
       "@/emails/*": ["emails/*"],
       "@/styles/*": ["styles/*"],
       "@/api/*": ["pages/api/*"],
+      "@/types/*": ["types/*"],
       "@/layouts/*": ["layouts/*"],
+      "@/models/*": ["models/*"],
       "@/components/*": ["components/*"]
     },
     "strict": false
@@ -33,7 +35,7 @@
     "**/*.ts",
     "**/*.tsx",
     "emails/index.ts",
-    "pages/auth.js",
+    "pages/auth/index.js",
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
     "pages/projects/index.tsx"

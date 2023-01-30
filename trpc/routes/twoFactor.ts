@@ -1,6 +1,7 @@
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import redis from "@/lib/redis";
 import { verifyTwoFactor } from "@/lib/twoFactorAuth";
 
 export const twoFactor = createRouter({
@@ -12,14 +13,12 @@ export const twoFactor = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
+      const { id, user } = ctx.session; // id is the session id
       const { code } = input;
-      // @ts-ignore
-      const userId = user.id;
 
       const userRecord = await prisma.user.findUnique({
         where: {
-          id: userId,
+          id: user.id,
         },
         select: {
           twoFactor: true,
@@ -49,7 +48,7 @@ export const twoFactor = createRouter({
 
       return await prisma.user.update({
         where: {
-          id: userId,
+          id: user.id,
         },
         data: {
           twoFactorEnabled: true,
@@ -60,12 +59,10 @@ export const twoFactor = createRouter({
   disable: withAuth.mutation(async ({ ctx, input }) => {
     const { prisma } = ctx;
     const { user } = ctx.session;
-    // @ts-ignore
-    const userId = user.id;
 
     return await prisma.user.update({
       where: {
-        id: userId,
+        id: user.id,
       },
       data: {
         twoFactor: {},
@@ -83,13 +80,11 @@ export const twoFactor = createRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { code } = input;
-      const { user } = ctx.session;
-      // @ts-ignore
-      const userId = user.id;
+      const { id, user } = ctx.session; // id is the session id
 
       const userRecord = await prisma.user.findUnique({
         where: {
-          id: userId,
+          id: user.id,
         },
         select: {
           twoFactor: true,
@@ -108,6 +103,38 @@ export const twoFactor = createRouter({
         code,
         secret: userRecord.twoFactor,
       });
+
+      if (!isValid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Code is either expired or invalid. Please copy code from authenticator app and try again.",
+        });
+      }
+
+      const sessionStore = await redis.get(`session:${id}`);
+
+      if (!sessionStore) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Something went wrong, our engineers are aware of it and are working on a fix.",
+        });
+      }
+
+      await redis.set(`session:${id}`, {
+        ...sessionStore,
+        mfa: true,
+      });
+
+      await redis.set(
+        `session:${id}`,
+        {
+          ...sessionStore,
+          mfa: true,
+        },
+        { ex: 60 * 60 * 24 * 7 }, // 7 days
+      );
 
       return {
         valid: isValid,

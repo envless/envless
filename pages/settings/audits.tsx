@@ -1,6 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import SettingsLayout from "@/layouts/Settings";
-import { getServerAuthSession } from "@/utils/get-server-auth-session";
+import { getServerSideSession } from "@/utils/session";
 import { User } from "@prisma/client";
 import AuditLogs from "@/components/projects/AuditLogs";
 import { Button } from "@/components/theme";
@@ -32,8 +32,7 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(context);
-  // @ts-ignore
+  const session = await getServerSideSession(context);
   const userId = session?.user?.id;
 
   if (!session || !session.user) {

@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import {
   GitBranch,
   GitPullRequest,
+  LayoutGrid,
   LayoutList,
   Settings2,
-  ShieldCheck,
   Users,
 } from "lucide-react";
 import { Container } from "@/components/theme";
@@ -27,7 +27,7 @@ export default function Tabs({ active, projectId }: Props) {
       id: "project",
       name: "Project",
       href: `${projectUrl}`, // This is the default
-      icon: ShieldCheck,
+      icon: LayoutGrid,
     },
     {
       id: "branches",
