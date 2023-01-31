@@ -5,18 +5,35 @@ import Zoom from "react-medium-image-zoom";
 import { remark } from "remark";
 import html from "remark-html";
 import { Compatible } from "vfile";
+import {compile} from '@mdx-js/mdx'
 import DateTimeAgo from "@/components/DateTimeAgo";
 import Nav from "@/components/static/Nav";
 import { Container } from "@/components/theme";
 import { getReleases } from "@/lib/github";
+import {PortableText} from '@portabletext/react'
+
+import {unified} from 'unified'
+import remarkGfm from 'remark-gfm'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeStringify from 'rehype-stringify'
+import React, { Fragment } from 'react';
+import rehypeParse from 'rehype-parse'
+import rehypeReact from 'rehype-react'
+
 
 export const getStaticProps = async (context: { params: { version: any } }) => {
   const { version } = context.params;
   const releases = await getReleases();
   const release = releases.filter((release) => release.tag_name === version)[0];
-  const releaseBodyAsHtml = await remark()
-    .use(html)
-    .process(release.body as Compatible);
+
+  const releaseBodyAsHtml = await unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype)
+  .use(rehypeStringify)
+  .process(release.body as string)
+
   return {
     props: {
       version,
@@ -41,12 +58,6 @@ export const getStaticPaths = async () => {
 };
 
 const ChangelogDetails = ({ release, releaseBody }) => {
-  const parser = parse(releaseBody);
-  const descriptionParagraph = parser.querySelector("p")?.textContent as string;
-  const imageSrc = parser.querySelector("img")?.getAttribute("src") as string;
-  const releaseDetailsHeading = parser.querySelector("h2")?.textContent;
-  const releaseDetails = parser.querySelectorAll("li");
-
   const menu = [
     {
       name: "Docs",
@@ -62,13 +73,13 @@ const ChangelogDetails = ({ release, releaseBody }) => {
     <>
       <NextSeo
         title="Changelog - Latest features, fixes and improvements."
-        description={descriptionParagraph}
+        description={'descriptionParagraph'}
         canonical="https://envless.dev/changelog"
         themeColor="#111"
         openGraph={{
           url: "https://envless.dev/changelog",
           title: "Changelog - Latest features, fixes and improvements.",
-          description: descriptionParagraph,
+          description: 'descriptionParagraph',
           images: [{ url: "https://envless.dev/og.png" }],
           siteName: "Envless",
         }}
@@ -109,29 +120,35 @@ const ChangelogDetails = ({ release, releaseBody }) => {
           </div>
           <div className={"mb-20"}>
             <div>
-              <div className="space-y-8">
-                <div className={"font-light text-white/70"}>
-                  {descriptionParagraph}
-                </div>
+              <div className=" space-y-8">
+                <article className={"prose lg:prose-xl"} dangerouslySetInnerHTML={{ __html: releaseBody }}/>
+                {/*<article className={'prose lg:prose-xl'}>*/}
+                {/*  { releaseBody }*/}
+                {/*</article>*/}
+                  {/*{ releaseBody }*/}
+                {/*</article>*/}
+                {/*<div className={"font-light text-white/70"}>*/}
+                {/*  {descriptionParagraph}*/}
+                {/*</div>*/}
 
-                <Zoom>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <Image
-                    className={"rounded-lg"}
-                    width={1200}
-                    height={800}
-                    src={imageSrc}
-                    alt={`envless release ${release.tag_name} image`}
-                  />
-                </Zoom>
-                <h2 className={"font-mono text-4xl font-bold"}>
-                  {releaseDetailsHeading}
-                </h2>
-                <ul className={"list-disc space-y-4 font-mono text-white/80"}>
-                  {releaseDetails.map((item, key) => {
-                    return <li key={key}>{item.textContent}</li>;
-                  })}
-                </ul>
+                {/*<Zoom>*/}
+                {/*  /!* eslint-disable-next-line @next/next/no-img-element *!/*/}
+                {/*  <Image*/}
+                {/*    className={"rounded-lg"}*/}
+                {/*    width={1200}*/}
+                {/*    height={800}*/}
+                {/*    src={imageSrc}*/}
+                {/*    alt={`envless release ${release.tag_name} image`}*/}
+                {/*  />*/}
+                {/*</Zoom>*/}
+                {/*<h2 className={"font-mono text-4xl font-bold"}>*/}
+                {/*  {releaseDetailsHeading}*/}
+                {/*</h2>*/}
+                {/*<ul className={"list-disc space-y-4 font-mono text-white/80"}>*/}
+                {/*  {releaseDetails.map((item, key) => {*/}
+                {/*    return <li key={key}>{item.textContent}</li>;*/}
+                {/*  })}*/}
+                {/*</ul>*/}
               </div>
             </div>
           </div>
