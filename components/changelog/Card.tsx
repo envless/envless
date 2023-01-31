@@ -3,28 +3,29 @@ import Link from "next/link";
 import { parse } from "node-html-parser";
 import DateTimeAgo from "@/components/DateTimeAgo";
 
-const ChangelogCard = ({ release, parsedReleaseBody }) => {
+const Card = ({ release, parsedReleaseBody }) => {
   const parser = parse(parsedReleaseBody.toString());
   const descriptionParagraph = parser.querySelector("p")?.textContent;
   const imageSrc = parser.querySelector("img")?.getAttribute("src") as string;
   return (
     <div className={"mb-20 grid grid-cols-4"}>
-      <div className="col-span-1">
-        <div>
-          <div className={"mb-4"}>
-            <span className="inline-flex items-center rounded-md bg-teal-400/25 px-5 py-1 font-mono text-lg font-medium text-teal-400">
+      <div className="col-span-4 sm:col-span-1">
+        <Link href={`/changelog/${release.tag_name}`}>
+          <div className={"mb-4 inline-flex lg:block"}>
+            <span className="mr-3 inline-flex items-center rounded-md bg-teal-400/25 px-3 py-1 font-mono text-sm font-medium text-teal-400 lg:text-lg">
               {release.tag_name}
             </span>
           </div>
-          <div>
+
+          <div className="inline-flex lg:block">
             <DateTimeAgo
               className={"text-white/50"}
               date={release.created_at}
             />
           </div>
-        </div>
+        </Link>
       </div>
-      <div className={"col-span-3"}>
+      <div className={"col-span-4 sm:col-span-3"}>
         <Link href={`/changelog/${release.tag_name}`}>
           <div className="space-y-8">
             <h2
@@ -54,4 +55,4 @@ const ChangelogCard = ({ release, parsedReleaseBody }) => {
   );
 };
 
-export default ChangelogCard;
+export default Card;

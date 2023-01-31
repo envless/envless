@@ -3,7 +3,7 @@ import { NextSeo } from "next-seo";
 import { remark } from "remark";
 import html from "remark-html";
 import { Compatible } from "vfile";
-import ChangelogCard from "@/components/changelog/ChangelogCard";
+import Card from "@/components/changelog/Card";
 import Nav from "@/components/static/Nav";
 import { Container } from "@/components/theme";
 import { getReleases } from "@/lib/github";
@@ -56,9 +56,8 @@ const Changelog = ({ releases, parsedReleaseArr }) => {
       </Container>
 
       <Container>
-        <div className="mx-auto my-24 max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto my-6 max-w-3xl px-4 sm:px-6 md:my-12 lg:px-8">
           <div className="mb-12 grid grid-cols-4">
-            <div className="col-span-1"></div>
             <div className="col-span-3">
               <h1
                 className={
@@ -73,7 +72,7 @@ const Changelog = ({ releases, parsedReleaseArr }) => {
             {releases.map((release, i) => {
               return (
                 <li key={i}>
-                  <ChangelogCard
+                  <Card
                     release={release}
                     parsedReleaseBody={parsedReleaseArr[i]}
                   />
