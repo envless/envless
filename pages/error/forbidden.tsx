@@ -9,7 +9,9 @@ const Unacceptable = () => {
           icon={<ShieldClose className="m-3 mx-auto h-12 w-12" />}
           title={`Forbidden error`}
           subtitle="We've detected unusual activity from your account. Please contact support."
-        ></EmptyState>
+        >
+          {""}
+        </EmptyState>
       </div>
     </Container>
   );

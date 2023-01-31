@@ -13,8 +13,8 @@ import { Button, Logo, Paragraph } from "@/components/theme";
 
 interface Props {
   open: boolean;
-  onConfirm: () => void;
-  onStateChange: (state: boolean) => void;
+  onConfirm: () => any;
+  onStateChange: (state: boolean) => any;
 }
 
 /**
@@ -40,10 +40,11 @@ const TwoFactorModal = (props: Props) => {
   }
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
-    onSuccess: (code: { valid: boolean }) => {
+    // onSuccess: (code: { valid: boolean }) => {
+    onSuccess: (valid: any) => {
       setLoading(false);
 
-      if (code.valid) {
+      if (valid) {
         closeModal();
         props.onConfirm();
       } else {

@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";
@@ -54,13 +53,6 @@ type PostProps = {
 };
 
 const Blog: React.FC<Props> = ({ posts }) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-  ];
-
   return (
     <>
       <NextSeo
@@ -85,7 +77,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
         <Hero />
       </Container>
 

@@ -8,17 +8,19 @@ import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
  * @typedef {Object} Props
  * @property {string} code - The code to be displayed
  * @property {string} language - The language of the code
+ * @property {string} [className] - The className for the code
  */
 type Props = {
   code: string;
   language: string;
+  className?: string;
 };
 
 /**
  * Code component to display and copy code with syntax highlighting
  * @param {Props} props - The props for the component
  */
-const Code: React.FC<Props> = ({ code, language }) => {
+const Code: React.FC<Props> = ({ code, language, className }) => {
   const [copied, setCopied] = useState(false);
 
   /**
@@ -32,7 +34,7 @@ const Code: React.FC<Props> = ({ code, language }) => {
   };
 
   return (
-    <div>
+    <div className={className}>
       <div className="flex justify-end">
         <button
           className="absolute mt-5 mr-3 flex items-center justify-center"
