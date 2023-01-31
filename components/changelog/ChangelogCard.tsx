@@ -38,12 +38,12 @@ const ChangelogCard = ({ release, parsedReleaseBody }) => {
               {descriptionParagraph}
             </div>
             <div>
-              <Link
+              <span
                 className={"text-teal-400"}
                 href={`/changelog/${release.tag_name}`}
               >
                 Read More →
-              </Link>
+              </span>
             </div>
             <Image
               className={"rounded-lg"}
