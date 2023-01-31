@@ -3,15 +3,27 @@ import Zoom from "react-medium-image-zoom";
 import remarkGfm from "remark-gfm";
 import Code from "@/components/theme/Code";
 
-const ReactMarkdown = dynamic(() => import("react-markdown"), {
-  ssr: false,
-  loading: () => "Loading...",
-});
+interface MarkdownProps {
+  remarkPlugins: any;
+  children: string;
+  components: any;
+}
+
+const ReactMarkdown = dynamic<MarkdownProps>(
+  () =>
+    import("react-markdown").then((module) => module.default) as Promise<
+      React.ComponentType<MarkdownProps>
+    >,
+  {
+    ssr: false,
+  },
+);
 
 export default function Markdown({ children }) {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
+      // eslint-disable-next-line react/no-children-prop
       children={children}
       components={{
         code: ({ node, inline, className, children, ...props }) => {
@@ -34,7 +46,12 @@ export default function Markdown({ children }) {
         img: ({ node, ...props }) => {
           return (
             <Zoom>
-              <img {...props} className="my-10 rounded-md" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                {...props}
+                alt="Changelog image"
+                className="my-10 rounded-md"
+              />
             </Zoom>
           );
         },

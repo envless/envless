@@ -15,7 +15,6 @@ import {
   Toggle,
 } from "@/components/theme";
 import prisma from "@/lib/prisma";
-import { isTwoFactorRequired } from "@/lib/twoFactorAuth";
 
 interface DefaultProps {
   user: User;

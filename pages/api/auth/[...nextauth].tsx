@@ -113,4 +113,4 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
 };
 
-export default (req, res) => NextAuth(req, res, authOptions);
+export default NextAuth(authOptions);
