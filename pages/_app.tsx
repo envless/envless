@@ -5,7 +5,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import "@/styles/globals.css";
 import "@/styles/zoom.css";
-import "@/styles/markdown.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

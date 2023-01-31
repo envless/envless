@@ -53,17 +53,6 @@ type PostProps = {
 };
 
 const Blog: React.FC<Props> = ({ posts }) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Changelog",
-      href: "/changelog",
-    },
-  ];
-
   return (
     <>
       <NextSeo
@@ -88,7 +77,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
         <Hero />
       </Container>
 

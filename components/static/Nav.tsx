@@ -9,20 +9,33 @@ type Props = {
 
 const Nav: React.FC<Props> = ({ menu }) => {
   const { status } = useSession();
+  const defaultMenu = [
+    {
+      name: "Docs",
+      href: "/docs",
+    },
+    {
+      name: "Blog",
+      href: "/blog",
+    },
+    {
+      name: "Changelog",
+      href: "/changelog",
+    },
+  ];
+
+  const options = menu ? menu : defaultMenu;
 
   const renderMenu = () => {
-    return (
-      menu &&
-      menu.map((item, index) => (
-        <Link
-          key={index}
-          href={item.href}
-          className="ml-7 bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]"
-        >
-          {item.name}
-        </Link>
-      ))
-    );
+    return options.map((item, index) => (
+      <Link
+        key={index}
+        href={item.href}
+        className="ml-7 bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]"
+      >
+        {item.name}
+      </Link>
+    ));
   };
   return (
     <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-darkest/80 py-6 lg:justify-between">

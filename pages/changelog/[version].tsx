@@ -1,35 +1,19 @@
-import Image from "next/image";
-import React, { Fragment } from "react";
 import { NextSeo } from "next-seo";
-import Zoom from "react-medium-image-zoom";
-import rehypeStringify from "rehype-stringify";
-import remarkGfm from "remark-gfm";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import { unified } from "unified";
 import DateTimeAgo from "@/components/DateTimeAgo";
+import Markdown from "@/components/changelog/Markdown";
 import Nav from "@/components/static/Nav";
 import { Container } from "@/components/theme";
 import { getReleases } from "@/lib/github";
-import Markdown from "@/components/changelog/Markdown";
 
 export const getStaticProps = async (context: { params: { version: any } }) => {
   const { version } = context.params;
   const releases = await getReleases();
   const release = releases.filter((release) => release.tag_name === version)[0];
 
-  const releaseBodyAsHtml = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype)
-    .use(rehypeStringify)
-    .process(release.body as string);
-
   return {
     props: {
       version,
       release,
-      releaseBody: releaseBodyAsHtml.toString(),
     },
 
     revalidate: 60, // In seconds
@@ -48,18 +32,7 @@ export const getStaticPaths = async () => {
   };
 };
 
-const ChangelogDetails = ({ release, releaseBody }) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
-  ];
-
+const ChangelogDetails = ({ release }) => {
   return (
     <>
       <NextSeo
@@ -82,7 +55,7 @@ const ChangelogDetails = ({ release, releaseBody }) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
       </Container>
 
       <Container>
@@ -111,12 +84,6 @@ const ChangelogDetails = ({ release, releaseBody }) => {
           </div>
           <div className={"mb-20"}>
             <div>
-              {/* <div className=" space-y-8">
-                <article
-                  className={"markdown"}
-                  dangerouslySetInnerHTML={{ __html: releaseBody }}
-                />
-              </div> */}
               <Markdown>{release.body}</Markdown>
             </div>
           </div>

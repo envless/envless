@@ -8,21 +8,6 @@ import Container from "@/components/theme/Container";
 type Props = {};
 
 const Home: React.FC<Props> = ({}) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
-    {
-      name: "Changelog",
-      href: "/changelog",
-    },
-  ];
-
   return (
     <>
       <NextSeo
@@ -46,7 +31,7 @@ const Home: React.FC<Props> = ({}) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
         <Hero header={".envless"} />
         <Features />
         <Pricing />

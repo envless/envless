@@ -29,17 +29,6 @@ export async function getStaticProps(context: GetServerSidePropsContext) {
 }
 
 const Changelog = ({ releases, parsedReleaseArr }) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
-  ];
-
   return (
     <>
       <NextSeo
@@ -63,7 +52,7 @@ const Changelog = ({ releases, parsedReleaseArr }) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
       </Container>
 
       <Container>

@@ -12,21 +12,6 @@ type Props = {
 };
 
 const Article: React.FC<Props> = ({ post, blocks }) => {
-  const menu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
-    {
-      name: "Changelog",
-      href: "/changelog",
-    },
-  ];
-
   const postImageUrl = () => {
     const postImage = post?.properties["Cover Image"].files[0];
     return postImage?.type === "file"
@@ -74,7 +59,7 @@ const Article: React.FC<Props> = ({ post, blocks }) => {
       />
 
       <Container>
-        <Nav menu={menu} />
+        <Nav />
       </Container>
 
       <Container>
