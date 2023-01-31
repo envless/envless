@@ -33,17 +33,19 @@ export const getStaticPaths = async () => {
 };
 
 const ChangelogDetails = ({ release }) => {
+  const description = release.body.split("\r\n")[0] as string;
+
   return (
     <>
       <NextSeo
-        title="Changelog - Latest features, fixes and improvements."
-        description={"descriptionParagraph"}
-        canonical="https://envless.dev/changelog"
+        title={`Changelog #${release.tag_name} - ${release.name}`}
+        description={description}
+        canonical={`https://envless.dev/changelog/${release.tag_name}`}
         themeColor="#111"
         openGraph={{
-          url: "https://envless.dev/changelog",
-          title: "Changelog - Latest features, fixes and improvements.",
-          description: "descriptionParagraph",
+          url: `https://envless.dev/changelog/${release.tag_name}`,
+          title: `Changelog #${release.tag_name} - ${release.name}`,
+          description: description,
           images: [{ url: "https://envless.dev/og.png" }],
           siteName: "Envless",
         }}
