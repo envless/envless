@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TbGitBranch, TbUsers } from "react-icons/tb";
+import { GitBranch, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
@@ -29,7 +29,7 @@ const Projects = ({ ...props }) => {
           <div className="mt-8 grid grid-cols-2 gap-8 text-xs">
             <div>
               <div className="inline-block">
-                <TbUsers className="inline-block h-5 w-5 text-lighter" />
+                <Users className="inline-block h-5 w-5 text-lighter" />
                 <span className="ml-2 inline-block">
                   {project._count.access}
                 </span>
@@ -39,7 +39,7 @@ const Projects = ({ ...props }) => {
 
             <div>
               <div className="inline-block">
-                <TbGitBranch className="inline-block h-5 w-5 text-lighter" />
+                <GitBranch className="inline-block h-5 w-5 text-lighter" />
                 <span className="ml-2 inline-block">
                   {project._count.branches}
                 </span>

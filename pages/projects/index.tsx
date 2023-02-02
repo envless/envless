@@ -1,7 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import { getServerSideSession } from "@/utils/session";
-import { SquaresPlusIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
+import { SquarePlusIcon } from "@/components/icons";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import { Button, Container, EmptyState, Hr, Nav } from "@/components/theme";
@@ -24,7 +24,7 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
         <Container>
           <Nav user={user} />
           <EmptyState
-            icon={<SquaresPlusIcon className="m-3 mx-auto h-12 w-12" />}
+            icon={<SquarePlusIcon className="m-3 mx-auto h-12 w-12" />}
             title={`Welcome to Envless`}
             subtitle="Get started by creating your first project."
           >
