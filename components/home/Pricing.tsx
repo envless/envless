@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HiOutlineBadgeCheck } from "react-icons/hi";
+import { Verified } from "lucide-react";
 
 const Pricing = ({ ...props }) => {
   return (
@@ -30,19 +30,19 @@ const Pricing = ({ ...props }) => {
               </div>
               <ul className="mb-8">
                 <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
-                  <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                  <Verified className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Unlimited projects</p>
                 </li>
                 <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
-                  <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                  <Verified className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Unlimited branches</p>
                 </li>
                 <li className="font-heading mb-4 flex items-center text-base font-medium text-light">
-                  <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                  <Verified className="mr-2 h-6 w-6 text-teal-400" />
                   <p>End to end encryption</p>
                 </li>
                 <li className="font-heading flex items-center text-base font-medium text-light">
-                  <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                  <Verified className="mr-2 h-6 w-6 text-teal-400" />
                   <p>Deploy anywhere</p>
                 </li>
               </ul>
@@ -68,19 +68,19 @@ const Pricing = ({ ...props }) => {
                 </div>
                 <ul className="mb-8">
                   <li className="font-heading mb-4 flex items-center text-base font-medium text-gray-900">
-                    <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                    <Verified className="mr-2 h-6 w-6 text-teal-400" />
                     <p>Unlimited projects</p>
                   </li>
                   <li className="font-heading mb-4 flex items-center text-base font-medium text-gray-900">
-                    <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                    <Verified className="mr-2 h-6 w-6 text-teal-400" />
                     <p>Unlimited branches</p>
                   </li>
                   <li className="font-heading mb-4 flex items-center text-base font-medium text-gray-900">
-                    <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                    <Verified className="mr-2 h-6 w-6 text-teal-400" />
                     <p>End to end encryption</p>
                   </li>
                   <li className="font-heading mb-4 flex items-center text-base font-medium text-gray-900">
-                    <HiOutlineBadgeCheck className="mr-2 h-6 w-6 text-teal-400" />
+                    <Verified className="mr-2 h-6 w-6 text-teal-400" />
                     <p>Deploy anywhere</p>
                   </li>
                 </ul>

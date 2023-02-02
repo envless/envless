@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { User } from "@prisma/client";
+import { ArrowRight } from "lucide-react";
 import { authenticator } from "otplib";
 import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
@@ -179,10 +179,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
                   <div className="float-right">
                     <Button type="submit" disabled={loading}>
                       Verify and continue
-                      <ArrowRightIcon
-                        className="ml-2 h-5 w-5"
-                        aria-hidden="true"
-                      />
+                      <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                     </Button>
                   </div>
                 </form>

@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { BiGitBranch } from "react-icons/bi";
-import { BsShieldFillCheck, BsTerminalFill } from "react-icons/bs";
-import { RiOpenSourceFill, RiSunCloudyFill } from "react-icons/ri";
-import { TbConfetti } from "react-icons/tb";
+import {
+  Cloudy,
+  GitBranchPlus,
+  ShieldCheck,
+  TerminalSquare,
+} from "lucide-react";
+import { ConfettiIcon, OpenSourceIcon } from "@/components/icons";
 
 const Features = () => {
   return (
@@ -18,7 +21,7 @@ const Features = () => {
       <div className="mt-10 grid gap-x-48 gap-y-12 md:grid-cols-2">
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <BsShieldFillCheck className="h-6 w-6" />
+            <ShieldCheck className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">End to end encryption</h3>
@@ -30,7 +33,7 @@ const Features = () => {
         </div>
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <BiGitBranch className="h-6 w-6" />
+            <GitBranchPlus className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">Version control</h3>
@@ -42,7 +45,7 @@ const Features = () => {
         </div>
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <TbConfetti className="h-6 w-6" />
+            <ConfettiIcon className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">Boost productivity</h3>
@@ -55,7 +58,7 @@ const Features = () => {
         </div>
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <BsTerminalFill className="h-6 w-6" />
+            <TerminalSquare className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">Complete CLI support</h3>
@@ -68,7 +71,7 @@ const Features = () => {
         </div>
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <RiOpenSourceFill className="h-6 w-6" />
+            <OpenSourceIcon className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">Proudly OpenSource</h3>
@@ -88,7 +91,7 @@ const Features = () => {
         </div>
         <div className="flex items-start gap-4">
           <span className="rounded-full bg-teal-400/20 p-3 text-teal-400">
-            <RiSunCloudyFill className="h-6 w-6" />
+            <Cloudy className="h-6 w-6" />
           </span>
           <div>
             <h3 className="text-xl">Works everywhere</h3>

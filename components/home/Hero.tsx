@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { IoCheckmarkCircle, IoCopy, IoLogoGithub } from "react-icons/io5";
+import { Clipboard, ClipboardCheck, Github } from "lucide-react";
 
 type HeroProps = {
   header: string;
@@ -26,8 +26,8 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               rel="noreferrer"
               className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 transition-all hover:bg-lightest/30"
             >
-              <IoLogoGithub className="inline-block h-4 w-4 text-gray-300" />
-              <p className="text-sm">Star on GitHub</p>
+              <Github className="inline-block h-4 w-4 text-lightest" />
+              <p className="text-sm">Star on GitHub 🌟</p>
             </Link>
           </div>
           <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl tracking-tight text-transparent md:text-8xl">
@@ -48,9 +48,9 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
                 npx envless init
               </code>{" "}
               {copied ? (
-                <IoCheckmarkCircle className="h-4 w-4 text-teal-400" />
+                <ClipboardCheck className="h-4 w-4 text-teal-400" />
               ) : (
-                <IoCopy className="h-4 w-4 text-gray-300" />
+                <Clipboard className="h-4 w-4 text-gray-300" />
               )}
             </span>
 

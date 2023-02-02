@@ -294,11 +294,6 @@
   dependencies:
     client-only "^0.0.1"
 
-"@heroicons/react@^2.0.13":
-  version "2.0.13"
-  resolved "https://registry.npmjs.org/@heroicons/react/-/react-2.0.13.tgz"
-  integrity sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==
-
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.8.tgz#03595ac2075a4dc0f191cc2131de14fbd7d410b9"
@@ -919,11 +914,6 @@
     "@radix-ui/react-compose-refs" "1.0.0"
     "@radix-ui/react-primitive" "1.0.1"
     "@radix-ui/react-use-callback-ref" "1.0.0"
-
-"@radix-ui/react-icons@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@radix-ui/react-icons/-/react-icons-1.1.1.tgz"
-  integrity sha512-xc3wQC59rsFylVbSusQCrrM+6695ppF730Q6yqzhRdqDcRNWIm2R6ngpzBoSOQMcwnq4p805F+Gr7xo4fmtN1A==
 
 "@radix-ui/react-id@1.0.0":
   version "1.0.0"
@@ -6293,11 +6283,6 @@ react-hook-form@^7.41.1:
   version "7.42.1"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.42.1.tgz"
   integrity sha512-2UIGqwMZksd5HS55crTT1ATLTr0rAI4jS7yVuqTaoRVDhY2Qc4IyjskCmpnmdYqUNOYFy04vW253tb2JRVh+IQ==
-
-react-icons@^4.6.0:
-  version "4.7.1"
-  resolved "https://registry.npmjs.org/react-icons/-/react-icons-4.7.1.tgz"
-  integrity sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==
 
 react-instagram-embed@^1.5.0:
   version "1.5.0"

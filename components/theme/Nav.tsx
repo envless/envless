@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import Fuse from "fuse.js";
+import { Check, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Hr, Logo, Popover } from "@/components/theme";
 import Dropdown from "@/components/theme/Dropdown";
@@ -97,10 +97,7 @@ const Nav = ({ ...props }) => {
             <div>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <MagnifyingGlassIcon
-                    className="h-4 w-4 text-light"
-                    aria-hidden="true"
-                  />
+                  <Search className="h-4 w-4 text-light" aria-hidden="true" />
                 </div>
                 <input
                   type="text"
@@ -125,7 +122,7 @@ const Nav = ({ ...props }) => {
                         {project.name}
 
                         {project.id === currentProject.id && (
-                          <CheckIcon
+                          <Check
                             className="float-right h-4 w-4 text-teal-300"
                             aria-hidden="true"
                           />
