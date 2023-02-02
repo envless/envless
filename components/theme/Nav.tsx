@@ -5,8 +5,7 @@ import { useState } from "react";
 import Fuse from "fuse.js";
 import { Check, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { Hr, Logo, Popover } from "@/components/theme";
-import Dropdown from "@/components/theme/Dropdown";
+import { Dropdown, Hr, Logo, Popover } from "@/components/theme";
 import log from "@/lib/log";
 
 const Nav = ({ ...props }) => {
