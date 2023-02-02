@@ -4,6 +4,7 @@ import { Inter } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import "@/styles/globals.css";
+import "@/styles/primary.css";
 import "@/styles/zoom.css";
 
 const inter = Inter({ subsets: ["latin"] });

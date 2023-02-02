@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, UserPlus } from "lucide-react";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
@@ -47,29 +47,28 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
       projects={projects}
       currentProject={currentProject}
     >
-      <div className="w-full max-w-screen-md">
-        <div className="grid grid-cols-3 sm:grid-cols-4">
+      <div className="w-full">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           <div className="col-span-2">
-            <h1 className="mb-5 text-lg">Members</h1>
+            <h1 className="mb-5 text-lg">Team members</h1>
           </div>
 
           <div className="col-span-3 sm:col-span-2">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-2">
-                <input
-                  type="text"
-                  className="btn-primary w-full py-1"
-                  placeholder="Search member"
-                />
-              </div>
+            <div className="grid grid-cols-3 gap-4">
+              <input
+                type="text"
+                className="input-primary col-span-2 w-full py-1"
+                placeholder="Search member"
+              />
 
               <div className="col-span-1">
                 <Button
-                  small
-                  className="float-right"
+                  full
+                  className="col-span-1 float-right"
                   onClick={() => console.log("Invite")}
                 >
-                  Invite member
+                  <UserPlus className="mr-2 h-4 w-4" strokeWidth={2} />
+                  Member
                 </Button>
               </div>
             </div>
