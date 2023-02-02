@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { ArrowRightIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowRight, Plus } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
 
@@ -55,7 +55,7 @@ const CreateProjectModal = () => {
     <Modal
       button={
         <Button>
-          <PlusIcon className="mr-2 h-5 w-5" aria-hidden="true" />
+          <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
           New project
         </Button>
       }
@@ -79,7 +79,7 @@ const CreateProjectModal = () => {
         <div className="float-right">
           <Button type="submit" disabled={loading}>
             Save and continue
-            <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
+            <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
           </Button>
         </div>
       </form>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiCheckCircle, FiCopy } from "react-icons/fi";
+import { Clipboard, ClipboardCheck } from "lucide-react";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
 import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
@@ -43,9 +43,9 @@ const Code: React.FC<Props> = ({ code, language, className }) => {
           }}
         >
           {copied ? (
-            <FiCheckCircle className="h-5 w-5 text-teal-400" />
+            <ClipboardCheck className="h-5 w-5 text-teal-400" />
           ) : (
-            <FiCopy className="h-5 w-5 text-gray-300" />
+            <Clipboard className="h-5 w-5 text-gray-300" />
           )}
         </button>
       </div>

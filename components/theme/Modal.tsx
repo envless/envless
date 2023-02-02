@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { IoCloseSharp } from "react-icons/io5";
+import { X } from "lucide-react";
 import { Logo } from "@/components/theme";
 
 /**
@@ -75,7 +75,7 @@ const Modal = (props: Props) => {
                       onClick={closeModal}
                     >
                       <span className="sr-only">Close</span>
-                      <IoCloseSharp className="h-6 w-6" aria-hidden="true" />
+                      <X className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="mb-3 flex items-center justify-center">
