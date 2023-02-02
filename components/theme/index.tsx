@@ -8,6 +8,7 @@ export { default as Toast } from "./Toast";
 export { default as Button } from "./Button";
 export { default as Toggle } from "./Toggle";
 export { default as Popover } from "./Popover";
+export { default as Dropdown } from "./Dropdown";
 export { default as Paragraph } from "./Paragraph";
 export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
