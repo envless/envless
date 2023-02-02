@@ -44,6 +44,9 @@ yarn install
 
 Then, copy `.env.example` to `.env.local`
 
+> Of-course this will change and we no longer will need .env files once we are ready to go live.
+
+
 ```bash
 cp .env.example .env.local
 ```
