@@ -48,27 +48,27 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
       currentProject={currentProject}
     >
       <div className="w-full">
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          <div className="col-span-2">
+        <div className="grid gap-2 md:grid-cols-12">
+          <div className="md:col-span-5">
             <h1 className="mb-5 text-lg">Team members</h1>
           </div>
 
-          <div className="col-span-3 sm:col-span-2">
-            <div className="grid grid-cols-3 gap-4">
+          <div className="md:col-span-7">
+            <div className="grid grid-cols-12 gap-2">
               <input
                 type="text"
-                className="input-primary col-span-2 w-full py-1"
-                placeholder="Search member"
+                className="input-primary col-span-7 w-full py-1 text-sm md:col-span-8"
+                placeholder="Search..."
               />
 
-              <div className="col-span-1">
+              <div className="col-span-5 md:col-span-4">
                 <Button
                   full
-                  className="col-span-1 float-right"
+                  className="float-right md:col-span-1"
                   onClick={() => console.log("Invite")}
                 >
-                  <UserPlus className="mr-2 h-4 w-4" strokeWidth={2} />
-                  Member
+                  <UserPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
+                  Add a member
                 </Button>
               </div>
             </div>

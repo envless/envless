@@ -77,7 +77,7 @@ const Input = ({ ...props }: InputProps) => {
             className,
             disabled && "cursor-not-allowed bg-light/40",
             full && "w-full",
-            "block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm",
+            "input-primary",
           )}
         />
 

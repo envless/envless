@@ -36,9 +36,9 @@ export default function Tabs({ active, projectId }: Props) {
       icon: GitBranch,
     },
     {
-      id: "mrs",
-      name: "Merge Requests",
-      href: `${projectUrl}/merge-requests`,
+      id: "pr",
+      name: "Pull requests",
+      href: `${projectUrl}/pulls`,
       icon: GitPullRequest,
     },
     {
