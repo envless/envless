@@ -55,6 +55,7 @@
     "react": "18.2.0",
     "react-auth-code-input": "^3.2.1",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-embed": "^3.6.0",
     "react-hook-form": "^7.41.1",
     "react-icons": "^4.6.0",
