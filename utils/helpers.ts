@@ -14,21 +14,25 @@ export const formatDateTime = (date: Date) => {
 export const extractEnvKeyValuePair = (contents: string) =>
   contents.match(/\b(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=(.*)/gm) ?? [""];
 
-export const parseEnvFile = (file: File, onLoaded: (pairs: KeyPair[]) => void) => {
+export const parseEnvFile = (
+  file: File,
+  onLoaded: (pairs: KeyPair[]) => void,
+) => {
   const reader = new FileReader();
   reader.readAsText(file, "UTF-8");
 
-  const keyValuePairs: KeyPair[] = [];
   reader.onload = (event) => {
-    let keys = extractEnvKeyValuePair(event.target?.result as string);
-
-    keys.forEach((envKey) => {
-      const keyPair = envKey.split("=");
-      keyValuePairs.push({ envKey: keyPair[0], envValue: keyPair[1] });
-    });
-
+    let keyValuePairs = parseStringEnvContents(event.target?.result as string);
     onLoaded(keyValuePairs);
-
   };
+};
 
+export const parseStringEnvContents = (contents: string) => {
+  const keyValuePairs: KeyPair[] = [];
+  const keys = extractEnvKeyValuePair(contents);
+  keys.forEach((envKey) => {
+    const keyPair = envKey.split("=");
+    keyValuePairs.push({ envKey: keyPair[0], envValue: keyPair[1] });
+  });
+  return keyValuePairs;
 };

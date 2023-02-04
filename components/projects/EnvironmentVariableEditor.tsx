@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ComponentProps, useCallback, useState } from "react";
-import { parseEnvFile } from "@/utils/helpers";
+import { ClipboardEventHandler, ComponentProps, SyntheticEvent, useCallback, useState } from "react";
+import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
 import { useDropzone } from "react-dropzone";
 import { HiXMark } from "react-icons/hi2";
 import { TbDragDrop } from "react-icons/tb";
 import { Button, Container } from "@/components/theme";
+import useCopyToClipBoard from "hooks/useCopyToClipBoard";
 
 export interface KeyPair {
   envKey: string;
@@ -13,6 +14,7 @@ export interface KeyPair {
 
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
+  const [isPasting, setIsPasting] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -33,6 +35,12 @@ export function EnvironmentVariableEditor() {
     setEnvKeys([...(envKeys?.filter((_, i) => i !== index) as KeyPair[])]);
   };
 
+  const handlePaste = (event: any) => {
+          event.preventDefault();
+         const pastedEnvKeyValuePairs = parseStringEnvContents(event.clipboardData?.getData("text"))
+         setEnvKeys([...envKeys, ...pastedEnvKeyValuePairs]);
+  }
+
   return (
     <Container
       className={`${
@@ -48,6 +56,7 @@ export function EnvironmentVariableEditor() {
                 type="text"
                 defaultValue={envPair.envKey}
                 className="my-1 shrink-0"
+                onPaste={handlePaste}
               />
 
               <div className="my-1 flex flex-1 items-center space-x-2">
