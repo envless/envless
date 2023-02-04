@@ -87,10 +87,28 @@ SHADOW_DATABASE_URL="mysql://root:password@localhost:3306/envless_shadow"
 > If you are working with different OS, please submit a pull-request with MySQL setup instructions.
 
 <h3 id="redis">Setup Upstash Redis</h3>
+
 Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env.local` file.
 
 ![upstash](./.github/images/upstash.png)
 
+### Or you can use local Redis with Upstash
+
+- Install `Golang` https://go.dev/doc/install
+- Install `Redis` https://redis.io/docs/getting-started/installation/
+
+Then install upstash redis server
+
+`go install github.com/mna/upstashdis/cmd/upstash-redis-rest-server@latest`
+
+Update your `.env` with
+```
+UPSTASH_REDIS_REST_URL="http://127.0.0.1:3010"
+UPSTASH_REDIS_REST_TOKEN="asd"
+```
+Start Local upstash redis server with
+
+`upstash-redis-rest-server --addr 127.0.0.1:3010 --redis-addr 127.0.0.1:6379 --api-token asd`
 ### Implement your changes
 
 When making commits, make sure to follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) guidelines, i.e. prepending the message with `feat:`, `fix:`, `chore:`, `docs:`, etc... You can use `git status` to double check which files have not yet been staged for commit:
