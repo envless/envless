@@ -16,8 +16,8 @@ const Head: React.FC<HeadProps> = ({ children }) => {
     <MjmlHead>
       <>
         <MjmlRaw>
-          <meta name="color-scheme" content="light dark" />
-          <meta name="supported-color-schemes" content="light dark" />
+          <meta name="color-scheme" content="light-50 ddd1" />
+          <meta name="supported-color-schemes" content="light-50 ddd1" />
         </MjmlRaw>
         <MjmlFont
           name="Inter"
@@ -42,7 +42,7 @@ const Head: React.FC<HeadProps> = ({ children }) => {
           text-decoration: none !important;
           color: ${grayDark} !important;
         }
-        .dark-mode {
+        .ddd1-mode {
           display: none;
         }
         @media (min-width:480px) {
@@ -51,7 +51,7 @@ const Head: React.FC<HeadProps> = ({ children }) => {
             padding-right: 24px !important;
           }
         }
-        @media (prefers-color-scheme: dark) {
+        @media (prefers-color-scheme: ddd1) {
           body {
             background: ${black};
           }
@@ -61,10 +61,10 @@ const Head: React.FC<HeadProps> = ({ children }) => {
           .paragraph > *, .paragraph a, .li > div {
             color: #fff !important;
           }
-          .dark-mode {
+          .ddd1-mode {
             display: inherit;
           }
-          .light-mode {
+          .light-50-mode {
             display: none;
           }
         }

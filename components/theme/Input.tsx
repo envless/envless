@@ -75,13 +75,13 @@ const Input = ({ ...props }: InputProps) => {
           {...register(name, validationSchema)}
           className={clsx(
             className,
-            disabled && "cursor-not-allowed bg-light/40",
+            disabled && "cursor-not-allowed bg-light-50/40",
             full && "w-full",
             "input-primary",
           )}
         />
 
-        {help && <p className="pt-1 text-xs text-light">{help}</p>}
+        {help && <p className="pt-1 text-xs text-light-50">{help}</p>}
 
         {errors && errors[name]?.type === "required" && (
           <p className="pt-1 text-xs text-red-400/75">

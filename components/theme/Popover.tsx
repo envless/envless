@@ -25,13 +25,13 @@ const Popover = (props: Props) => {
           align="center"
           sideOffset={4}
           className={cx(
-            "mx-2 bg-darker",
+            "mx-2 bg-dark-800",
             "w-56 rounded shadow-md md:w-56",
-            "shadow-xl shadow-black ring-2 ring-dark focus:outline-none",
+            "shadow-xl shadow-dark ring-2 ring-dark-700 focus:outline-none",
             "radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down",
           )}
         >
-          <PopoverPrimitive.Arrow className="fill-current text-dark" />
+          <PopoverPrimitive.Arrow className="fill-current text-dark-700" />
 
           {children}
         </PopoverPrimitive.Content>

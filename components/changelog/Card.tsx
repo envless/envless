@@ -19,7 +19,7 @@ const Card = ({ release, parsedReleaseBody }) => {
 
           <div className="inline-flex lg:block">
             <DateTimeAgo
-              className={"text-white/50"}
+              className={"text-light/50"}
               date={release.created_at}
             />
           </div>
@@ -35,7 +35,7 @@ const Card = ({ release, parsedReleaseBody }) => {
             >
               {release.name}
             </h2>
-            <div className={"font-light text-white/70"}>
+            <div className={"font-light-50 text-light/70"}>
               {descriptionParagraph}
             </div>
             <div>

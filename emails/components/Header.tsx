@@ -13,7 +13,7 @@ const Header: React.FC<HeaderProps> = ({ loose }) => {
           width="80px"
           height="80px"
           align="center"
-          src="https://s3.us-west-1.amazonaws.com/cdn.envless.dev/logo-dark.png"
+          src="https://s3.us-west-1.amazonaws.com/cdn.envless.dev/logo-dark-700.png"
           cssClass="logo"
         />
       </MjmlColumn>

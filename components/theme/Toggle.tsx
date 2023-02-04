@@ -28,7 +28,7 @@ const Toggle: React.FC<ToggleProps> = (props) => {
         className="peer sr-only"
         {...register(name, validationSchema)}
       />
-      <div className="peer h-5 w-9 rounded-full after:absolute after:top-0.5 after:left-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-dark after:bg-darkest after:transition-all after:content-[''] peer-checked:bg-lighter peer-checked:after:translate-x-full peer-checked:after:border-dark dark:border-dark dark:bg-light/40"></div>
+      <div className="peer h-5 w-9 rounded-full after:absolute after:top-0.5 after:left-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-dark-700 after:bg-dark-900 after:transition-all after:content-[''] peer-checked:bg-lll2 peer-checked:after:translate-x-full peer-checked:after:border-dark-700 ddd1:border-dark-700 ddd1:bg-light-50/40"></div>
     </label>
   );
 };

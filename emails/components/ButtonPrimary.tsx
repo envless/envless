@@ -23,7 +23,7 @@ const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
         backgroundColor={black}
         color={grayLight}
         borderRadius={borderBase}
-        cssClass="light-mode"
+        cssClass="light-50-mode"
       >
         {buttonText}
       </MjmlButton>
@@ -37,7 +37,7 @@ const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
         backgroundColor={white}
         color={black}
         borderRadius={borderBase}
-        cssClass="dark-mode"
+        cssClass="ddd1-mode"
       >
         {buttonText}
       </MjmlButton>

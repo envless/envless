@@ -25,7 +25,7 @@ const Toast = (props: Props) => {
         onOpenChange={props.onClose}
         className={cx(
           "fixed inset-x-4 bottom-4 z-50 w-auto rounded shadow-lg md:top-4 md:right-4 md:left-auto md:bottom-auto md:w-full md:max-w-sm",
-          "bg-dark",
+          "bg-dark-700",
           "radix-state-open:animate-toast-slide-in-bottom md:radix-state-open:animate-toast-slide-in-right",
           "radix-state-closed:animate-toast-hide",
           "radix-swipe-end:animate-toast-swipe-out",
@@ -37,10 +37,10 @@ const Toast = (props: Props) => {
         <div className="flex">
           <div className="flex w-0 flex-1 items-center py-4 pl-5">
             <div className="radix w-full">
-              <ToastPrimitive.Title className="text-sm font-medium text-lightest">
+              <ToastPrimitive.Title className="text-sm font-medium text-light-900">
                 {title}
               </ToastPrimitive.Title>
-              <ToastPrimitive.Description className="mt-1 text-sm text-light">
+              <ToastPrimitive.Description className="mt-1 text-sm text-light-50">
                 {subtitle}
               </ToastPrimitive.Description>
             </div>
@@ -50,7 +50,7 @@ const Toast = (props: Props) => {
               <div className="flex h-0 flex-1">
                 <ToastPrimitive.Close className="">
                   <span
-                    className="flex justify-center rounded border border-transparent bg-darker px-4 py-2 text-xs font-medium text-lighter shadow hover:bg-darkest focus:outline-none focus:ring-2"
+                    className="flex justify-center rounded border border-transparent bg-dark-800 px-4 py-2 text-xs font-medium text-lll2 shadow hover:bg-dark-900 focus:outline-none focus:ring-2"
                     onClick={() => setOpen(false)}
                   >
                     Close

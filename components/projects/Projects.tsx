@@ -14,14 +14,14 @@ const Projects = ({ ...props }) => {
   const Card = ({ project }) => {
     return (
       <Link href={`/projects/${project.id}`} className="cursor-pointer">
-        <div className="w-full rounded-md border-2 border-black-700 bg-black-800 p-5 hover:border-teal-300/70">
+        <div className="w-full rounded-md border-2 border-dark-700 bg-dark-800 p-5 hover:border-teal-300/70">
           <h5
             title={project?.name}
-            className="line-clamp-1 text-base leading-5 text-lightest"
+            className="line-clamp-1 text-base leading-5 text-light-900"
           >
             {project?.name}
           </h5>
-          <p className="mt-1 text-xs text-light">
+          <p className="mt-1 text-xs text-light-50">
             Created {""}
             <DateTimeAgo date={project.createdAt} />
           </p>
@@ -29,22 +29,22 @@ const Projects = ({ ...props }) => {
           <div className="mt-8 grid grid-cols-2 gap-8 text-xs">
             <div>
               <div className="inline-block">
-                <Users className="inline-block h-5 w-5 text-lighter" />
+                <Users className="inline-block h-5 w-5 text-lll2" />
                 <span className="ml-2 inline-block">
                   {project._count.access}
                 </span>
               </div>
-              <p className="mt-1 text-light">Members</p>
+              <p className="mt-1 text-light-50">Members</p>
             </div>
 
             <div>
               <div className="inline-block">
-                <GitBranch className="inline-block h-5 w-5 text-lighter" />
+                <GitBranch className="inline-block h-5 w-5 text-lll2" />
                 <span className="ml-2 inline-block">
                   {project._count.branches}
                 </span>
               </div>
-              <p className="mt-1 text-light">Branches</p>
+              <p className="mt-1 text-light-50">Branches</p>
             </div>
           </div>
         </div>

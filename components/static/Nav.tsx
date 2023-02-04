@@ -38,7 +38,7 @@ const Nav: React.FC<Props> = ({ menu }) => {
     ));
   };
   return (
-    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-darkest/80 py-6 lg:justify-between">
+    <nav className="sticky top-0 z-50 mx-auto flex flex-wrap items-center justify-between bg-dark-900/80 py-6 lg:justify-between">
       <div className="flex w-auto flex-wrap items-center justify-between">
         <Link href="/">
           <Logo />

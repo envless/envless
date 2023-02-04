@@ -53,7 +53,7 @@ const Modal = (props: Props) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-darkest bg-opacity-25" />
+            <div className="fixed inset-0 bg-dark-900 bg-opacity-25" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto backdrop-blur">
@@ -67,11 +67,11 @@ const Modal = (props: Props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-darker p-8 text-left align-middle shadow-xl shadow-black ring-1 ring-[#222] transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-dark-800 p-8 text-left align-middle shadow-xl shadow-dark ring-1 ring-[#222] transition-all">
                   <div className="absolute top-0 right-0 p-3">
                     <button
                       type="button"
-                      className="text-light hover:text-gray-200"
+                      className="text-light-50 hover:text-gray-200"
                       onClick={closeModal}
                     >
                       <span className="sr-only">Close</span>
@@ -83,7 +83,7 @@ const Modal = (props: Props) => {
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="border-b border-dark pb-6 text-center text-2xl font-normal leading-6"
+                    className="border-b border-dark-700 pb-6 text-center text-2xl font-normal leading-6"
                   >
                     {title}
                   </Dialog.Title>

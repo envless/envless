@@ -17,7 +17,7 @@ type Props = {
 };
 
 /**
- * Code component to display and copy code with syntax highlighting
+ * Code component to display and copy code with syntax highlight-50ing
  * @param {Props} props - The props for the component
  */
 const Code: React.FC<Props> = ({ code, language, className }) => {

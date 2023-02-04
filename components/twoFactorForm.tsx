@@ -69,7 +69,7 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
       <AuthCode
         allowedCharacters="numeric"
         containerClassName="grid grid-cols-6 gap-4 m-3"
-        inputClassName="block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light text-center"
+        inputClassName="block appearance-none rounded border border-light-50/50 bg-dark-800 px-3 py-2 placeholder-light-50 shadow-sm ring-1 ring-light-50/50 focus:border-dark-700 focus:outline-none focus:ring-light-50 text-center"
         onChange={handleOnChange}
       />
 
@@ -81,7 +81,7 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
         className={clsx("mt-10", loading && "cursor-not-allowed")}
         full={true}
       >
-        {loading && <LoadingIcon className="h-4 w-4 text-dark" />}
+        {loading && <LoadingIcon className="h-4 w-4 text-dark-700" />}
         Confirm and continue
       </Button>
     </form>

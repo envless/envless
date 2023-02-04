@@ -94,7 +94,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
         )}
       </h3>
       <div className="w-full lg:w-3/5">
-        <Paragraph color="light" size="sm" className="mb-4 w-full">
+        <Paragraph color="light-50" size="sm" className="mb-4 w-full">
           Two factor authentication adds an extra layer of security to your
           account by requiring a code when you login using new device or browser
           and make critical changes.
@@ -119,22 +119,22 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
             }
             title="Activate two-factor authentication"
           >
-            <Paragraph color="light" size="sm" className="mb-4 text-center">
+            <Paragraph color="light-50" size="sm" className="mb-4 text-center">
               Please scan the QR code below with your favorite{" "}
               <Link
                 href="https://www.nytimes.com/wirecutter/reviews/best-two-factor-authentication-app/"
                 target="_blank"
                 rel="noreferrer"
-                className="text-lighter"
+                className="text-lll2"
               >
                 two-factor authentication app
               </Link>{" "}
               and then confirm the code below. For mannual setup, you can
               copy/paste this code
             </Paragraph>
-            <Paragraph color="light" size="sm" className="m-5 text-center">
+            <Paragraph color="light-50" size="sm" className="m-5 text-center">
               <code
-                className="cursor-copy rounded bg-dark py-1 px-2 font-mono text-xs tracking-wider text-lightest"
+                className="cursor-copy rounded bg-dark-700 py-1 px-2 font-mono text-xs tracking-wider text-light-900"
                 onClick={() => {
                   navigator.clipboard.writeText(`${twoFactor.secret}`);
                 }}

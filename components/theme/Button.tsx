@@ -55,8 +55,8 @@ const Button = (props: {
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
           outline
-            ? "border-2 border-dark bg-transparent text-lightest hover:bg-dark"
-            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+            ? "border-2 border-dark-700 bg-transparent text-light-900 hover:bg-dark-700"
+            : "border-transparent bg-light-900 text-dark-900 hover:bg-gray-200",
 
           "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
@@ -74,8 +74,8 @@ const Button = (props: {
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
           outline
-            ? "border-2 border-dark bg-darker text-lightest hover:bg-dark"
-            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+            ? "border-2 border-dark-700 bg-dark-800 text-light-900 hover:bg-dark-700"
+            : "border-transparent bg-light-900 text-dark-900 hover:bg-gray-200",
 
           "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}

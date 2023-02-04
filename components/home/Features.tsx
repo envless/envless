@@ -14,7 +14,7 @@ const Features = () => {
         <h2 className="heading text-3xl text-gray-300 sm:text-4xl">
           By developers, for developers
         </h2>
-        <p className="mx-auto mt-2 max-w-md text-light">
+        <p className="mx-auto mt-2 max-w-md text-light-50">
           Buit for security, speed, collaboration and productivity.
         </p>
       </div>
@@ -25,7 +25,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">End to end encryption</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               With E2E encyption and role based read/write access you can rest
               assured that your secrets are safe with us.
             </p>
@@ -37,7 +37,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">Version control</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               Developers work on multiple branches. Now you can create as many
               branches as you like for env variables. It works just like git.
             </p>
@@ -49,7 +49,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">Boost productivity</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               Built by developer, for developers. Build with speed in mind. With
               API and database hosted on edge networks, you can globally sync
               app secrets across teams.
@@ -62,7 +62,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">Complete CLI support</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               Without leaving your terminal, you can create projects, invite
               team, add, update or remove env variables, create branches and
               much more.
@@ -75,7 +75,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">Proudly OpenSource</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               Check us out on{" "}
               <Link
                 href="https://github.com/envless/envless"
@@ -95,7 +95,7 @@ const Features = () => {
           </span>
           <div>
             <h3 className="text-xl">Works everywhere</h3>
-            <p className="mt-1 text-light">
+            <p className="mt-1 text-light-50">
               Envless works with any programming language, framework or
               platform. Develop your app locally, deploy to cloud and sync env
               variables with Envless.

@@ -73,7 +73,7 @@ const ChangelogDetails = ({ release }) => {
               </h1>
               <div className={"mt-4"}>
                 <DateTimeAgo
-                  className={"text-white/50"}
+                  className={"text-light/50"}
                   date={release.created_at}
                 />
               </div>

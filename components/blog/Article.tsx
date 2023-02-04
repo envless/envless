@@ -66,7 +66,7 @@ const Article: React.FC<Props> = ({ post, blocks }) => {
         <section className="md:px-32">
           <section className="mx-auto my-16 sm:max-w-3xl">
             <h1 className="mt-10 text-center text-5xl">{postTitle()}</h1>
-            <p className="text-md my-2 text-center text-light">{postDate()}</p>
+            <p className="text-md my-2 text-center text-light-50">{postDate()}</p>
             <Zoom>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

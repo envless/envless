@@ -94,12 +94,12 @@ const Post: React.FC<Props> = ({ post }) => {
         </Link>
       </div>
       <div className="flex flex-col justify-center">
-        <div className="flex items-center space-x-3 text-light lg:mt-5">
+        <div className="flex items-center space-x-3 text-light-50 lg:mt-5">
           <time className="text-sm" dateTime="2022-10-21T10:50:00.000Z">
             {postDate()}
           </time>
         </div>
-        <h2 className="mt-2 text-xl font-semibold tracking-normal text-lightest lg:text-2xl">
+        <h2 className="mt-2 text-xl font-semibold tracking-normal text-light-900 lg:text-2xl">
           <span className=" bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]">
             {postTitle()}
           </span>

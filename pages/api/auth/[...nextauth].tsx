@@ -48,7 +48,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   theme: {
-    colorScheme: "dark",
+    colorScheme: "ddd1",
   },
 
   pages: {

@@ -82,26 +82,26 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
 
         <div className="mt-3 flex flex-col">
           <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <div className="min-w-full rounded-t bg-darker p-5">
+            <div className="overflow-hidden shadow ring-1 ring-dark-800 ring-opacity-5 md:rounded">
+              <div className="min-w-full rounded-t bg-dark-800 p-5">
                 <nav className="flex" aria-label="Tabs">
                   <a
                     href="#"
-                    className="rounded-md bg-dark px-3 py-1 text-sm font-medium text-teal-300"
+                    className="rounded-md bg-dark-700 px-3 py-1 text-sm font-medium text-teal-300"
                   >
                     Active
                   </a>
 
                   <a
                     href="#"
-                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                    className="rounded-md px-3 py-1 text-sm font-medium text-light-50 hover:text-lll2"
                   >
                     Pending
                   </a>
 
                   <a
                     href="#"
-                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                    className="rounded-md px-3 py-1 text-sm font-medium text-light-50 hover:text-lll2"
                   >
                     Inactive
                   </a>
@@ -116,8 +116,8 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
                 </nav>
               </div>
 
-              <table className="min-w-full divide-y divide-dark">
-                <tbody className=" bg-dark">
+              <table className="min-w-full divide-y divide-dark-700">
+                <tbody className=" bg-dark-700">
                   {members.map((member) => (
                     <tr key={member.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -131,7 +131,7 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
                           </div>
                           <div className="ml-4">
                             <div className="font-medium ">{member.name}</div>
-                            <div className="text-light">{member.email}</div>
+                            <div className="text-light-50">{member.email}</div>
                           </div>
                         </div>
                       </td>

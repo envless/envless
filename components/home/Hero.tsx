@@ -24,9 +24,9 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               href="https://github.com/envless/envless"
               target="_blank"
               rel="noreferrer"
-              className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 transition-all hover:bg-lightest/30"
+              className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-light-900/20 px-5 py-2 transition-all hover:bg-light-900/30"
             >
-              <Github className="inline-block h-4 w-4 text-lightest" />
+              <Github className="inline-block h-4 w-4 text-light-900" />
               <p className="text-sm">Star on GitHub 🌟</p>
             </Link>
           </div>
@@ -34,14 +34,14 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             {header}
           </h1>
 
-          <h2 className="mt-3 text-lg text-lighter md:text-2xl">
+          <h2 className="mt-3 text-lg text-lll2 md:text-2xl">
             An open-source, the most secure and frictionless way to share and
             manage app secrets across teams.
           </h2>
 
           <div className="mt-5 flex flex-col justify-center gap-3 md:flex-row">
             <span
-              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
+              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark-700 px-5 py-3"
               onClick={copyToClipboard}
             >
               <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
@@ -55,7 +55,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </span>
 
             <Link
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 text-darkest hover:bg-teal-200"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-500 px-6 py-3 text-dark-900 hover:bg-teal-200"
               href="/docs"
               target="_self"
             >

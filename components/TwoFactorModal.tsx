@@ -95,7 +95,7 @@ const TwoFactorModal = (props: Props) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-darkest bg-opacity-25" />
+            <div className="fixed inset-0 bg-dark-900 bg-opacity-25" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto backdrop-blur">
@@ -109,11 +109,11 @@ const TwoFactorModal = (props: Props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-darker p-8 text-left align-middle shadow-xl shadow-black ring-1 ring-[#222] transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded bg-dark-800 p-8 text-left align-middle shadow-xl shadow-dark ring-1 ring-[#222] transition-all">
                   <div className="absolute top-0 right-0 p-3">
                     <button
                       type="button"
-                      className="text-light hover:text-gray-200"
+                      className="text-light-50 hover:text-gray-200"
                       onClick={closeModal}
                     >
                       <span className="sr-only">Close</span>
@@ -125,12 +125,12 @@ const TwoFactorModal = (props: Props) => {
                   </div>
                   <Dialog.Title
                     as="h3"
-                    className="border-b border-dark pb-6 text-center text-2xl font-normal leading-6"
+                    className="border-b border-dark-700 pb-6 text-center text-2xl font-normal leading-6"
                   >
                     Two-factor authentication
                   </Dialog.Title>
                   <div className="mt-4">
-                    <Paragraph color="light" size="sm" className="pb-6">
+                    <Paragraph color="light-50" size="sm" className="pb-6">
                       Two factor authentication is required to continue. Please
                       enter the code from your authenticator app.
                     </Paragraph>
@@ -139,7 +139,7 @@ const TwoFactorModal = (props: Props) => {
                       <AuthCode
                         allowedCharacters="numeric"
                         containerClassName="grid grid-cols-6 gap-4 m-3"
-                        inputClassName="block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light text-center"
+                        inputClassName="block appearance-none rounded border border-light-50/50 bg-dark-800 px-3 py-2 placeholder-light-50 shadow-sm ring-1 ring-light-50/50 focus:border-dark-700 focus:outline-none focus:ring-light-50 text-center"
                         onChange={handleOnChange}
                       />
 

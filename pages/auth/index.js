@@ -67,7 +67,7 @@ const Login = ({ csrfToken }) => {
             Get started with Envless
           </h2>
 
-          <p className="mt-2 text-center text-sm text-light">
+          <p className="mt-2 text-center text-sm text-light-50">
             Login or Sign up
           </p>
         </div>
@@ -127,7 +127,7 @@ const Login = ({ csrfToken }) => {
                   <div className="w-full border-t border-zinc-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-darkest px-2 text-light">
+                  <span className="bg-dark-900 px-2 text-light-50">
                     Or continue with
                   </span>
                 </div>
@@ -179,7 +179,7 @@ const Login = ({ csrfToken }) => {
               </div>
             </div>
 
-            <p className="mt-8 text-center text-sm text-light">
+            <p className="mt-8 text-center text-sm text-light-50">
               By continuing, you agree to our{" "}
               <Link className="hover:text-gray-200" href="/terms">
                 Terms of service

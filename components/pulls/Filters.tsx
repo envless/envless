@@ -35,14 +35,14 @@ const Filter = (key, option) => {
   return (
     <span
       key={option.id || option.key || option.value}
-      className="m-1 inline-flex items-center rounded-full border border-dark bg-darkest py-1.5 pl-3 pr-2 text-xs text-lighter"
+      className="m-1 inline-flex items-center rounded-full border border-dark-700 bg-dark-900 py-1.5 pl-3 pr-2 text-xs text-lll2"
     >
       <span>
         {key}: {option.value || option.name}
       </span>
       <button
         type="button"
-        className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-light hover:bg-dark hover:text-lighter"
+        className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-light-50 hover:bg-dark-700 hover:text-lll2"
       >
         <span className="sr-only">
           Remove filter for {option.value || option.name}
@@ -69,7 +69,7 @@ export default function Filters() {
           Filters
         </h2>
 
-        <div className="border-b border-dark pb-4">
+        <div className="border-b border-dark-700 pb-4">
           <div className="mx-auto flex max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Sort */}
             <Menu
@@ -77,10 +77,10 @@ export default function Filters() {
               className="relative mr-6 hidden text-left sm:inline-block"
             >
               <div>
-                <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light hover:text-lighter">
+                <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light-50 hover:text-lll2">
                   Sort
                   <ChevronDown
-                    className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light group-hover:text-lighter"
+                    className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light-50 group-hover:text-lll2"
                     aria-hidden="true"
                   />
                 </Menu.Button>
@@ -95,7 +95,7 @@ export default function Filters() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute left-0 z-10 mt-2 w-48 origin-top-left rounded-md bg-darker shadow-2xl ring-2 ring-light ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute left-0 z-10 mt-2 w-48 origin-top-left rounded-md bg-dark-800 shadow-2xl ring-2 ring-light-50 ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {sortOptions.map((option) => (
                       <Menu.Item key={option.value}>
@@ -105,8 +105,8 @@ export default function Filters() {
                               console.log("Sort by", option.key);
                             }}
                             className={classNames(
-                              active ? "w-full bg-dark text-left" : "",
-                              "block px-4 py-2 text-xs text-lighter",
+                              active ? "w-full bg-dark-700 text-left" : "",
+                              "block px-4 py-2 text-xs text-lll2",
                             )}
                           >
                             {option.value}
@@ -125,10 +125,10 @@ export default function Filters() {
               className="relative mr-6 hidden text-left sm:inline-block"
             >
               <div>
-                <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light hover:text-lighter">
+                <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light-50 hover:text-lll2">
                   Status
                   <ChevronDown
-                    className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light group-hover:text-lighter"
+                    className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light-50 group-hover:text-lll2"
                     aria-hidden="true"
                   />
                 </Menu.Button>
@@ -143,7 +143,7 @@ export default function Filters() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute left-0 z-10 mt-2 w-48 origin-top-left rounded-md bg-darker shadow-2xl ring-2 ring-light ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute left-0 z-10 mt-2 w-48 origin-top-left rounded-md bg-dark-800 shadow-2xl ring-2 ring-light-50 ring-opacity-5 focus:outline-none">
                   <div className="py-1">
                     {statusOptions.map((option) => (
                       <Menu.Item key={option.key}>
@@ -153,8 +153,8 @@ export default function Filters() {
                               console.log("Sort by", option.key);
                             }}
                             className={classNames(
-                              active ? "w-full bg-dark text-left" : "",
-                              "block px-4 py-2 text-xs text-lighter",
+                              active ? "w-full bg-dark-700 text-left" : "",
+                              "block px-4 py-2 text-xs text-lll2",
                             )}
                           >
                             {option.value}
@@ -179,16 +179,16 @@ export default function Filters() {
         </div>
 
         {/* Active filters */}
-        <div className="bg-darker/25">
+        <div className="bg-dark-800/25">
           <div className="mx-auto max-w-7xl py-3 px-4 sm:flex sm:items-center sm:px-6 lg:px-8">
-            <h3 className="text-sm font-medium text-light">
+            <h3 className="text-sm font-medium text-light-50">
               Filters
               <span className="sr-only">, active</span>
             </h3>
 
             <div
               aria-hidden="true"
-              className="hidden h-5 w-px bg-light sm:ml-4 sm:block"
+              className="hidden h-5 w-px bg-light-50 sm:ml-4 sm:block"
             />
 
             <div className="mt-2 sm:mt-0 sm:ml-4">

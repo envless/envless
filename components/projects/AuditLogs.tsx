@@ -48,11 +48,11 @@ const renderIcon = (log) => {
     <div
       className={clsx(
         action?.bg,
-        "flex h-8 w-8 items-center justify-center rounded-full ring-8 ring-dark",
+        "flex h-8 w-8 items-center justify-center rounded-full ring-8 ring-dark-700",
       )}
     >
       <Icon
-        className={clsx(action?.color, "h-5 w-5 text-darkest")}
+        className={clsx(action?.color, "h-5 w-5")}
         aria-hidden="true"
       />
     </div>
@@ -123,7 +123,7 @@ export default function AuditLogs({ logs, user }) {
             <div className="relative pb-4">
               {idx !== logs.length - 1 ? (
                 <span
-                  className="absolute left-4 -ml-px h-full w-0.5 bg-dark"
+                  className="absolute left-4 -ml-px h-full w-0.5 bg-dark-700"
                   aria-hidden="true"
                 />
               ) : null}
@@ -132,7 +132,7 @@ export default function AuditLogs({ logs, user }) {
                 <div className="min-w-0 flex-1">
                   <div>
                     <div className="text-sm">
-                      <span className="font-medium text-lightest">
+                      <span className="font-medium text-light-900">
                         {log.createdById === user.id
                           ? "You"
                           : log.createdBy.name || log.createdBy.email}{" "}
@@ -141,7 +141,7 @@ export default function AuditLogs({ logs, user }) {
                     </div>
                   </div>
                   <DateTimeAgo
-                    className="mt-0.5 text-xs text-light"
+                    className="mt-0.5 text-xs text-light-50"
                     date={log.createdAt}
                   />
                 </div>

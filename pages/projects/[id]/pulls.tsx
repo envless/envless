@@ -69,12 +69,12 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
 
         <div className="mt-3 flex flex-col">
           <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <div className="min-w-full rounded-t bg-darker pt-3">
+            <div className="overflow-hidden shadow ring-1 ring-dark-800 ring-opacity-5 md:rounded">
+              <div className="min-w-full rounded-t bg-dark-800 pt-3">
                 <Filters />
               </div>
-              <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-dark">
+              <table className="min-w-full divide-y divide-light-50">
+                <tbody className="bg-dark-700">
                   {pullRequests.map((pr) => (
                     <tr key={pr.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -106,7 +106,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
                           </div>
                           <div className="ml-4">
                             <div className="font-medium">{pr.title}</div>
-                            <div className="text-light">{pr.subtitle}</div>
+                            <div className="text-light-50">{pr.subtitle}</div>
                           </div>
                         </div>
                       </td>

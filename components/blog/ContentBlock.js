@@ -35,7 +35,7 @@ export const RenderBlocks = ({ blocks }) => {
       case "quote":
         return (
           <div className="pt-3" key={id}>
-            <blockquote className="border-l-2 border-l-black pl-4">
+            <blockquote className="border-l-2 border-l-dark pl-4">
               <SpanText id={id} text={value.rich_text} />
             </blockquote>
           </div>
@@ -109,10 +109,10 @@ const SpanText = ({ text, id }) => {
       <span
         key={id + i}
         className={[
-          "leading-relaxed text-lighter",
+          "leading-relaxed text-lll2",
           bold ? "font-bold" : "",
           code
-            ? "rounded bg-dark py-1 px-3 font-mono text-sm text-red-500"
+            ? "rounded bg-dark-700 py-1 px-3 font-mono text-sm text-red-500"
             : "",
           italic ? "italic" : "",
           strikethrough ? "line-through" : "",

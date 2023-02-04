@@ -2,7 +2,7 @@ import { clsx } from "clsx";
 
 const Hr = (props: { className?: string }) => {
   return (
-    <div className={clsx(props.className, "border-b-2 border-dark")}>
+    <div className={clsx(props.className, "border-b-2 border-dark-700")}>
       <hr className="sr-only" />
     </div>
   );

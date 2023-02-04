@@ -72,7 +72,7 @@ export default function Tabs({ active, projectId }: Props) {
           <select
             id="tabs"
             name="tabs"
-            className="block rounded border-dark bg-dark text-sm"
+            className="block rounded border-dark-700 bg-dark-700 text-sm"
             // @ts-ignore
             defaultValue={tabs.find((tab) => tab.id === active).name}
             onChange={(e) => {
@@ -92,7 +92,7 @@ export default function Tabs({ active, projectId }: Props) {
       </div>
 
       <div className="hidden sm:block">
-        <div className="border-b border-dark">
+        <div className="border-b border-dark-700">
           <Container>
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               {tabs.map((tab) => (
@@ -102,7 +102,7 @@ export default function Tabs({ active, projectId }: Props) {
                   className={classNames(
                     tab.id === active
                       ? "border-teal-300 text-teal-300"
-                      : "lighter border-transparent hover:border-dark hover:text-teal-300",
+                      : "lll2 border-transparent hover:border-dark-700 hover:text-teal-300",
                     "group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium",
                   )}
                   aria-current={tab.id === active ? "page" : undefined}
@@ -111,7 +111,7 @@ export default function Tabs({ active, projectId }: Props) {
                     className={classNames(
                       tab.id === active
                         ? "text-teal-300"
-                        : "group-hover:lighter text-lighter",
+                        : "group-hover:lll2 text-lll2",
                       "-ml-0.5 mr-2 h-5 w-5",
                     )}
                     aria-hidden="true"

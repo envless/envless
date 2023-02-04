@@ -32,7 +32,7 @@ const Tabs = ({ active }) => {
         <select
           id="tabs"
           name="tabs"
-          className="block rounded border-dark bg-dark text-sm"
+          className="block rounded border-dark-700 bg-dark-700 text-sm"
           // @ts-ignore
           defaultValue={tabs.find((tab) => tab.id === active).name}
           onChange={(e) => {
@@ -54,8 +54,8 @@ const Tabs = ({ active }) => {
           <Link href={tab.href} key={tab.id}>
             <li
               className={clsx(
-                active === tab.id ? "text-teal-300" : "text-lighter",
-                "mr-6 cursor-pointer rounded px-3 py-2 text-sm hover:bg-darker",
+                active === tab.id ? "text-teal-300" : "text-lll2",
+                "mr-6 cursor-pointer rounded px-3 py-2 text-sm hover:bg-dark-800",
               )}
             >
               {tab.name}

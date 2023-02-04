@@ -16,7 +16,7 @@ const TwoFactorAuth = () => {
       </Head>
 
       <div className="flex h-screen flex-col justify-center px-12">
-        <div className="rounded bg-darker p-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="rounded bg-dark-800 p-10 sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto h-12 w-auto"
             height={100}
@@ -27,7 +27,7 @@ const TwoFactorAuth = () => {
           <h2 className="mt-6 text-center text-2xl">
             Two-factor authentication
           </h2>
-          <p className="mt-2 text-center text-sm text-light">
+          <p className="mt-2 text-center text-sm text-light-50">
             Two factor authentication is required to continue. Please enter the
             code from your authenticator app.
           </p>

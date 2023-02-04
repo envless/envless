@@ -5,13 +5,13 @@ import React from "react";
  *
  * @param {string} [className] The class name of the text.
  * @param {string} [size="medium"] The size of the text. Can be "small", "medium", or "large".
- * @param {string} [color="lightest"] The color of the text. Can be "light", "lighter", or "lightest".
+ * @param {string} [color="light-900"] The color of the text. Can be "light-50", "lll2", or "light-900".
  */
 
 type ParagraphProps = {
   className?: string;
   size?: "sm" | "lg" | "xl" | "2xl" | "3xl";
-  color?: "light" | "lighter" | "lightest";
+  color?: "light-50" | "lll2" | "light-900";
   children: React.ReactNode;
 };
 
@@ -40,14 +40,14 @@ const Paragraph = (props: ParagraphProps) => {
   }
 
   switch (color) {
-    case "light":
-      klassName += " text-light";
+    case "light-50":
+      klassName += " text-light-50";
       break;
-    case "lighter":
-      klassName += " text-lighter";
+    case "lll2":
+      klassName += " text-lll2";
       break;
-    default: // lightest and default
-      klassName += " text-lightest";
+    default: // light-900 and default
+      klassName += " text-light-900";
       break;
   }
 
@@ -58,7 +58,7 @@ const Paragraph = (props: ParagraphProps) => {
 
 Paragraph.defaultProps = {
   size: "medium",
-  color: "lightest",
+  color: "light-900",
 };
 
 export default Paragraph;

@@ -8,7 +8,7 @@ interface BadgeProps {
 
 export const Badge = ({ children, className, type }: BadgeProps) => {
   const classes = clsx(
-    "flex p-1.5 h-8 w-8 items-center justify-center rounded-full ring-5 ring-darkest",
+    "flex p-1.5 h-8 w-8 items-center justify-center rounded-full ring-5 ring-dark-900",
     {
       "bg-emerald-200 text-emerald-700": type === "success",
       "bg-red-200 text-red-700": type === "danger",

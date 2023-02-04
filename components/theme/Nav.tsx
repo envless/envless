@@ -83,7 +83,7 @@ const Nav = ({ ...props }) => {
             <div>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search className="h-4 w-4 text-light" aria-hidden="true" />
+                  <Search className="h-4 w-4 text-light-50" aria-hidden="true" />
                 </div>
                 <input
                   type="text"
@@ -104,7 +104,7 @@ const Nav = ({ ...props }) => {
                       href={`/projects/${project.id}`}
                       key={project.id}
                     >
-                      <li key={project.id} className="px-3 py-2 hover:bg-dark">
+                      <li key={project.id} className="px-3 py-2 hover:bg-dark-700">
                         {project.name}
 
                         {project.id === currentProject.id && (
