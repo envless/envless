@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ComponentProps, Dispatch, SetStateAction, useCallback } from "react";
+import { parseEnvFile } from "@/utils/helpers";
 import { useDropzone } from "react-dropzone";
 import { HiXMark } from "react-icons/hi2";
 import { TbDragDrop } from "react-icons/tb";
@@ -15,30 +16,12 @@ interface Props {
   setEnvKeys: Dispatch<SetStateAction<KeyPair[]>>;
 }
 
-export function EnvironmentVariableEditor({
-  envKeys,
-  setEnvKeys,
-}: Props) {
-  const onDrop = useCallback((acceptedFiles) => {
+export function EnvironmentVariableEditor({ envKeys, setEnvKeys }: Props) {
+  const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
-    const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-
-    reader.onload = (event) => {
-      let keys = ((event.target?.result as string) || "").match(
-        /\b(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=(.*)/gm,
-      ) ?? [""];
-
-      const keyValuePairs: KeyPair[] = [];
-
-      keys.map((key) => {
-        const keyPair = key.split("=");
-        keyValuePairs.push({ envKey: keyPair[0], envValue: keyPair[1] });
-      });
-
-      setEnvKeys(keyValuePairs);
-    };
+    const keyValuePairs = parseEnvFile(file);
+    setEnvKeys(keyValuePairs);
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -57,8 +40,8 @@ export function EnvironmentVariableEditor({
       {envKeys && envKeys?.length > 0 ? (
         <div className="py-16">
           {envKeys.map((envPair, index) => (
-            <form>
-              <div key={index} className="flex items-center gap-8 px-4">
+            <form key={index}>
+              <div className="flex items-center gap-8 px-4">
                 <CustomInput
                   name={envPair.envKey}
                   type="text"
