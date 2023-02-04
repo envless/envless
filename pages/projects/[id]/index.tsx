@@ -1,13 +1,9 @@
 import { type GetServerSidePropsContext } from "next";
-import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import { HiOutlineCommandLine } from "react-icons/hi2";
-import {
-  EnvironmentVariableEditor,
-  KeyPair,
-} from "@/components/projects/EnvironmentVariableEditor";
+import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
@@ -24,8 +20,6 @@ interface Props {
 }
 
 export const ProjectPage = ({ projects, currentProject }: Props) => {
-  const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
-
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
       <div className="w-full bg-white bg-opacity-10 px-5 py-6">
@@ -59,7 +53,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
         </div>
       </div>
 
-      <EnvironmentVariableEditor envKeys={envKeys} setEnvKeys={setEnvKeys} />
+      <EnvironmentVariableEditor />
     </ProjectLayout>
   );
 };

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ComponentProps, Dispatch, SetStateAction, useCallback } from "react";
+import { ComponentProps, useCallback, useState } from "react";
 import { parseEnvFile } from "@/utils/helpers";
 import { useDropzone } from "react-dropzone";
 import { HiXMark } from "react-icons/hi2";
@@ -11,61 +11,61 @@ export interface KeyPair {
   envValue: string;
 }
 
-interface Props {
-  envKeys: KeyPair[];
-  setEnvKeys: Dispatch<SetStateAction<KeyPair[]>>;
-}
+export function EnvironmentVariableEditor() {
+  const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
 
-export function EnvironmentVariableEditor({ envKeys, setEnvKeys }: Props) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
-    const keyValuePairs = parseEnvFile(file);
-    setEnvKeys(keyValuePairs);
+    parseEnvFile(file, (pairs) => {
+      setEnvKeys([...pairs]);
+    });
   }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+  });
 
   const handleAddMoreEnvClick = () => {
-    setEnvKeys([...envKeys, { envKey: "", envValue: "" }]);
+    setEnvKeys([...(envKeys as KeyPair[]), { envKey: "", envValue: "" }]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
-    setEnvKeys([...(envKeys.filter((_, i) => i !== index) as KeyPair[])]);
+    setEnvKeys([...(envKeys?.filter((_, i) => i !== index) as KeyPair[])]);
   };
+
   return (
     <Container
       className={`${
         isDragActive ? "border-teal-300" : "border-darker"
       } mt-4 w-full border-2 transition duration-300`}
     >
-      {envKeys && envKeys?.length > 0 ? (
+      {envKeys.length > 0 ? (
         <div className="py-16">
-          {envKeys.map((envPair, index) => (
-            <form key={index}>
-              <div className="flex items-center gap-8 px-4">
-                <CustomInput
-                  name={envPair.envKey}
-                  type="text"
-                  defaultValue={envPair.envKey}
-                  className="my-1 shrink-0"
-                />
+          {envKeys?.map((envPair, index) => (
+            <div key={index} className="flex items-center gap-8 px-4">
+              <CustomInput
+                name={envPair.envKey}
+                type="text"
+                defaultValue={envPair.envKey}
+                className="my-1 shrink-0"
+              />
 
-                <div className="my-1 flex flex-1 items-center space-x-2">
-                  <CustomInput
-                    name={envPair.envValue}
-                    type="text"
-                    defaultValue={envPair.envValue}
-                    className="w-full"
-                  />
-                  <Button
-                    onClick={() => handleRemoveEnvPairClick(index)}
-                    className="rounded-full"
-                    outline
-                  >
-                    <HiXMark />
-                  </Button>
-                </div>
+              <div className="my-1 flex flex-1 items-center space-x-2">
+                <CustomInput
+                  name={envPair.envValue}
+                  type="text"
+                  defaultValue={envPair.envValue}
+                  className="w-full"
+                />
+                <Button
+                  onClick={() => handleRemoveEnvPairClick(index)}
+                  className="rounded-full"
+                  outline
+                >
+                  <HiXMark />
+                </Button>
               </div>
-            </form>
+            </div>
           ))}
 
           <div className="mt-4 px-4">
@@ -80,9 +80,7 @@ export function EnvironmentVariableEditor({ envKeys, setEnvKeys }: Props) {
           <h3 className="mt-2 text-xl text-gray-400">
             Drag and drop .env files
           </h3>
-
           <input {...getInputProps()} type="file" className="hidden" />
-
           <p className="mx-auto mt-1 max-w-md text-sm text-gray-200 text-lighter">
             You can also click here to import, copy/paste contents in .env file,
             or create{" "}
