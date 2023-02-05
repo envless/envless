@@ -39,6 +39,17 @@ model Project {
   branches  Branch[]
   access    Access[]
   audits    Audit[]
+  invites   ProjectInvite[]
+}
+
+model ProjectInvite {
+  email       String
+  expires     DateTime
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   String
+  createdAt   DateTime @default(now())
+  @@unique([email, projectId])
+  @@index([projectId])
 }
 
 model Access {
