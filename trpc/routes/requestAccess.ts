@@ -22,6 +22,16 @@ export const requestAccess = createRouter({
       };
 
       const response = await createRecord(data);
-      return response;
+
+      if(response.error) {
+        return {
+          success: false,
+          error: response.error,
+        }
+      } else {
+        return {
+          success: true,
+        }
+      }
     }),
 });
