@@ -1,4 +1,4 @@
-import { ComponentProps, useCallback, useState } from "react";
+import { ComponentProps, useCallback, useRef, useState } from "react";
 import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
 import { useDropzone } from "react-dropzone";
 import { HiXMark } from "react-icons/hi2";
@@ -12,6 +12,7 @@ export interface KeyPair {
 
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
+  const pastingInputIndex = useRef(0);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -44,9 +45,20 @@ export function EnvironmentVariableEditor() {
       return;
     }
 
-    //remove the last input
-    const newEnvKeys = envKeys.filter((_, i) => i !== envKeys.length - 1);
-    setEnvKeys([...pastedEnvKeyValuePairs, ...newEnvKeys]);
+    event.preventDefault();
+    const envKeysBeforePastingInput = envKeys.slice(
+      0,
+      pastingInputIndex.current,
+    );
+
+    const envKeysAfterPastingInput = envKeys.slice(
+      pastingInputIndex.current + 1,
+    );
+    setEnvKeys([
+      ...envKeysBeforePastingInput,
+      ...pastedEnvKeyValuePairs,
+      ...envKeysAfterPastingInput,
+    ]);
   };
 
   return (
@@ -59,15 +71,17 @@ export function EnvironmentVariableEditor() {
         <div className="py-16">
           {envKeys?.map((envPair, index) => (
             <div
-              key={new Date().toDateString() + index}
+              key={new Date().toString() + index}
               className="flex items-center gap-8 px-4"
             >
               <CustomInput
                 name={envPair.envKey}
+                onFocus={() => (pastingInputIndex.current = index)}
                 type="text"
                 defaultValue={envPair.envKey}
                 className="my-1 shrink-0"
                 onPaste={handlePaste}
+                  placeholder="eg. CLIENT_ID"
               />
 
               <div className="my-1 flex flex-1 items-center space-x-2">
