@@ -34,13 +34,18 @@ export function EnvironmentVariableEditor() {
   };
 
   const handlePaste = (event: any) => {
-    // need to handle this use case
-    event.preventDefault();
     const pastedEnvKeyValuePairs = parseStringEnvContents(
       event.clipboardData?.getData("text"),
     );
-     //remove the last input
-   const newEnvKeys = envKeys.filter((_, i) => i !== envKeys.length - 1);
+
+    if (
+      !(pastedEnvKeyValuePairs[0].envKey && pastedEnvKeyValuePairs[0].envValue)
+    ) {
+      return;
+    }
+
+    //remove the last input
+    const newEnvKeys = envKeys.filter((_, i) => i !== envKeys.length - 1);
     setEnvKeys([...pastedEnvKeyValuePairs, ...newEnvKeys]);
   };
 
