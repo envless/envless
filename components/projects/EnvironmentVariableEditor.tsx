@@ -22,7 +22,7 @@ export function EnvironmentVariableEditor() {
     });
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
     onDrop,
   });
@@ -115,9 +115,9 @@ export function EnvironmentVariableEditor() {
           <h3 className="mt-2 text-xl text-gray-400">
             Drag and drop .env files
           </h3>
-          <input {...getInputProps()} type="file" className="hidden" />
+          <input {...getInputProps()} type="file" className="hidden" accept="env" />
           <p className="mx-auto mt-1 max-w-md text-sm text-gray-200 text-lighter">
-            You can also click here to import, copy/paste contents in .env file,
+            You can also <span onClick={open} className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline">click here</span> to import, copy/paste contents in .env file,
             or create{" "}
             <span
               onClick={handleAddMoreEnvClick}
