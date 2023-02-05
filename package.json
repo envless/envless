@@ -34,7 +34,7 @@
     "@types/react-dom": "18.0.10",
     "@upstash/redis": "^1.19.3",
     "@vercel/analytics": "^0.1.6",
-    "@vercel/og": "^0.0.22",
+    "@vercel/og": "^0.0.27",
     "clsx": "^1.2.1",
     "device-detector-js": "^3.0.3",
     "fuse.js": "^6.6.2",
