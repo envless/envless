@@ -1,11 +1,9 @@
-import Link from "next/link";
-import { ClipboardEventHandler, ComponentProps, SyntheticEvent, useCallback, useState } from "react";
+import { ComponentProps, useCallback, useState } from "react";
 import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
 import { useDropzone } from "react-dropzone";
 import { HiXMark } from "react-icons/hi2";
 import { TbDragDrop } from "react-icons/tb";
 import { Button, Container } from "@/components/theme";
-import useCopyToClipBoard from "hooks/useCopyToClipBoard";
 
 export interface KeyPair {
   envKey: string;
@@ -14,7 +12,6 @@ export interface KeyPair {
 
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
-  const [isPasting, setIsPasting] = useState(false);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -25,6 +22,7 @@ export function EnvironmentVariableEditor() {
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    noClick: true,
     onDrop,
   });
 
@@ -32,10 +30,11 @@ export function EnvironmentVariableEditor() {
     setEnvKeys([...(envKeys as KeyPair[]), { envKey: "", envValue: "" }]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
-    setEnvKeys([...(envKeys?.filter((_, i) => i !== index) as KeyPair[])]);
+    setEnvKeys(envKeys?.filter((_, i) => i !== index));
   };
 
   const handlePaste = (event: any) => {
+          // need to handle this use case
           event.preventDefault();
          const pastedEnvKeyValuePairs = parseStringEnvContents(event.clipboardData?.getData("text"))
          setEnvKeys([...envKeys, ...pastedEnvKeyValuePairs]);
@@ -50,7 +49,7 @@ export function EnvironmentVariableEditor() {
       {envKeys.length > 0 ? (
         <div className="py-16">
           {envKeys?.map((envPair, index) => (
-            <div key={index} className="flex items-center gap-8 px-4">
+            <div key={envPair.envKey} className="flex items-center gap-8 px-4">
               <CustomInput
                 name={envPair.envKey}
                 type="text"
@@ -70,8 +69,9 @@ export function EnvironmentVariableEditor() {
                   onClick={() => handleRemoveEnvPairClick(index)}
                   className="rounded-full"
                   outline
+                  small
                 >
-                  <HiXMark />
+                  <HiXMark className="w-4 h-4" />
                 </Button>
               </div>
             </div>
@@ -93,9 +93,9 @@ export function EnvironmentVariableEditor() {
           <p className="mx-auto mt-1 max-w-md text-sm text-gray-200 text-lighter">
             You can also click here to import, copy/paste contents in .env file,
             or create{" "}
-            <Link href="/" className="text-teal-300">
+            <span onClick={handleAddMoreEnvClick} className="text-teal-300 hover:underline hover:cursor-pointer transition duration-300">
               one at a time.
-            </Link>
+            </span>
           </p>
         </div>
       )}
