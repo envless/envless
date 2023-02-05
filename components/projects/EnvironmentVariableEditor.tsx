@@ -34,11 +34,15 @@ export function EnvironmentVariableEditor() {
   };
 
   const handlePaste = (event: any) => {
-          // need to handle this use case
-          event.preventDefault();
-         const pastedEnvKeyValuePairs = parseStringEnvContents(event.clipboardData?.getData("text"))
-         setEnvKeys([...envKeys, ...pastedEnvKeyValuePairs]);
-  }
+    // need to handle this use case
+    event.preventDefault();
+    const pastedEnvKeyValuePairs = parseStringEnvContents(
+      event.clipboardData?.getData("text"),
+    );
+     //remove the last input
+   const newEnvKeys = envKeys.filter((_, i) => i !== envKeys.length - 1);
+    setEnvKeys([...pastedEnvKeyValuePairs, ...newEnvKeys]);
+  };
 
   return (
     <Container
@@ -49,7 +53,10 @@ export function EnvironmentVariableEditor() {
       {envKeys.length > 0 ? (
         <div className="py-16">
           {envKeys?.map((envPair, index) => (
-            <div key={envPair.envKey} className="flex items-center gap-8 px-4">
+            <div
+              key={new Date().toDateString() + index}
+              className="flex items-center gap-8 px-4"
+            >
               <CustomInput
                 name={envPair.envKey}
                 type="text"
@@ -71,7 +78,7 @@ export function EnvironmentVariableEditor() {
                   outline
                   small
                 >
-                  <HiXMark className="w-4 h-4" />
+                  <HiXMark className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -93,7 +100,10 @@ export function EnvironmentVariableEditor() {
           <p className="mx-auto mt-1 max-w-md text-sm text-gray-200 text-lighter">
             You can also click here to import, copy/paste contents in .env file,
             or create{" "}
-            <span onClick={handleAddMoreEnvClick} className="text-teal-300 hover:underline hover:cursor-pointer transition duration-300">
+            <span
+              onClick={handleAddMoreEnvClick}
+              className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
+            >
               one at a time.
             </span>
           </p>
