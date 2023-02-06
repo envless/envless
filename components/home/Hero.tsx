@@ -41,26 +41,23 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
           </h2>
 
           <div className="mt-5 flex flex-col content-center justify-center gap-3 text-center md:flex-row">
-            <RequestAccess
-              source="copy snippet button"
-              button={
-                <button
-                  className="cursor-copy content-center items-center justify-between gap-5 rounded-full bg-dark px-5 py-3 text-center"
-                  onClick={copyToClipboard}
-                >
-                  <div className="flex">
-                    <code className="mr-3 overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
-                      npx envless init
-                    </code>{" "}
-                    {copied ? (
-                      <IoCheckmarkCircle className="mt-1 h-4 w-4 text-teal-400" />
-                    ) : (
-                      <IoCopy className="mt-1 h-4 w-4 text-gray-300" />
-                    )}
-                  </div>
-                </button>
-              }
-            />
+
+            <button
+              className="cursor-copy content-center items-center justify-between gap-5 rounded-full bg-dark px-5 py-3 text-center"
+              onClick={copyToClipboard}
+            >
+              <div className="flex">
+                <code className="mr-3 overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
+                  npx envless init
+                </code>{" "}
+                {copied ? (
+                  <IoCheckmarkCircle className="mt-1 h-4 w-4 text-teal-400" />
+                ) : (
+                  <IoCopy className="mt-1 h-4 w-4 text-gray-300" />
+                )}
+              </div>
+            </button>
+
 
             <RequestAccess
               source="documentation button"
