@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
-import { MoreVertical, UserPlus } from "lucide-react";
+import { Lock, Settings2, Unlock, UserPlus } from "lucide-react";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
@@ -21,23 +21,39 @@ interface Props {
 export const MembersPage = ({ projects, currentProject }: Props) => {
   const members = [
     {
-      name: "Lindsay Walton",
-      title: "Front-end Developer",
-      department: "Optimization",
-      email: "lindsay.walton@example.com",
-      role: "Member",
-      image:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 1,
+      name: "Becky Russell",
+      email: "becky@example.com",
+      role: "developer",
+      image: "https://randomuser.me/api/portraits/women/60.jpg",
+      twoFactorEnabled: true,
     },
 
     {
-      name: "Lindsay Walton",
-      title: "Front-end Developer",
-      department: "Optimization",
-      email: "lindsay.walton@example.com",
-      role: "Member",
-      image:
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 2,
+      name: "Glen Hughes",
+      email: "glen@example.com",
+      role: "mantainer",
+      image: "https://randomuser.me/api/portraits/men/54.jpg",
+      twoFactorEnabled: false,
+    },
+
+    {
+      id: 3,
+      name: "Marion Miles",
+      email: "marion@example.com",
+      role: "owner",
+      image: "https://randomuser.me/api/portraits/women/18.jpg",
+      twoFactorEnabled: true,
+    },
+
+    {
+      id: 4,
+      name: "Gene May",
+      email: "gene@example.com",
+      role: "mantainer",
+      image: "https://randomuser.me/api/portraits/men/31.jpg",
+      twoFactorEnabled: false,
     },
   ];
 
@@ -48,69 +64,62 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
       currentProject={currentProject}
     >
       <div className="w-full">
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-          <div className="col-span-2">
-            <h1 className="mb-5 text-lg">Team members</h1>
+        <div className="grid grid-cols-12 gap-2">
+          <div className="col-span-6">
+            <h1 className="text-lg">Team members</h1>
           </div>
 
-          <div className="col-span-3 sm:col-span-2">
-            <div className="grid grid-cols-3 gap-4">
-              <input
-                type="text"
-                className="input-primary col-span-2 w-full py-1"
-                placeholder="Search member"
-              />
-
-              <div className="col-span-1">
-                <Button
-                  full
-                  className="col-span-1 float-right"
-                  onClick={() => console.log("Invite")}
-                >
-                  <UserPlus className="mr-2 h-4 w-4" strokeWidth={2} />
-                  Member
-                </Button>
-              </div>
-            </div>
+          <div className="col-span-6">
+            <Button
+              className="float-right"
+              onClick={() => console.log("Invite")}
+            >
+              <UserPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
+              Invite member
+            </Button>
           </div>
         </div>
 
         <div className="mt-3 flex flex-col">
           <div className="inline-block min-w-full py-4 align-middle">
             <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <table className="min-w-full divide-y divide-dark">
-                <thead className="bg-darker">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold  sm:pl-6"
-                    >
-                      Member
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold "
-                    >
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      className="hidden px-3 py-3.5 text-left text-sm font-semibold md:block "
-                    >
-                      Role
-                    </th>
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                    >
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
+              <div className="min-w-full rounded-t bg-darker p-5">
+                <nav className="flex" aria-label="Tabs">
+                  <a
+                    href="#"
+                    className="rounded-md bg-dark px-3 py-1 text-sm font-medium text-teal-300"
+                  >
+                    Active
+                  </a>
 
+                  <a
+                    href="#"
+                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                  >
+                    Pending
+                  </a>
+
+                  <a
+                    href="#"
+                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                  >
+                    Inactive
+                  </a>
+
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      className="input-primary float-right max-w-md justify-end py-1.5 text-sm"
+                      placeholder="Search members..."
+                    />
+                  </div>
+                </nav>
+              </div>
+
+              <table className="min-w-full divide-y divide-dark">
                 <tbody className=" bg-dark">
                   {members.map((member) => (
-                    <tr key={member.email}>
+                    <tr key={member.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
@@ -122,22 +131,29 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
                           </div>
                           <div className="ml-4">
                             <div className="font-medium ">{member.name}</div>
-                            <div className="">{member.email}</div>
+                            <div className="text-light">{member.email}</div>
                           </div>
                         </div>
                       </td>
 
-                      <td className="whitespace-nowrap px-3 py-4 text-sm ">
-                        <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                          Active
-                        </span>
-                      </td>
-                      <td className="relative mt-3 hidden whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
+                      <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                         {member.role}
                       </td>
+
+                      <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
+                        <div className="inline-flex">
+                          2FA
+                          {member.twoFactorEnabled ? (
+                            <Lock className="ml-2 h-4 w-4 text-teal-400" />
+                          ) : (
+                            <Unlock className="ml-2 h-4 w-4 text-red-400" />
+                          )}
+                        </div>
+                      </td>
+
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <a href="#" className="hover:text-teal-400">
-                          <MoreVertical className="h-5 w-5" strokeWidth={2} />
+                          <Settings2 className="h-5 w-5" strokeWidth={2} />
                           <span className="sr-only">, {member.name}</span>
                         </a>
                       </td>

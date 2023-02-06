@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Fuse from "fuse.js";
-import { Check, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Dropdown, Hr, Logo, Popover } from "@/components/theme";
 import log from "@/lib/log";
@@ -70,21 +70,8 @@ const Nav = ({ ...props }) => {
           <Popover
             button={
               <div className="ml-5 cursor-pointer hover:text-teal-300">
-                <div className="absolute -right-7 top-[2px] hover:text-teal-300">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="text-ligher h-5 w-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-                    />
-                  </svg>
+                <div className="absolute -right-7 hover:text-teal-300">
+                  <ChevronDown />
                 </div>
 
                 <h3 className="text-md text-bold hover:text-teal-300">

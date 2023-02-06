@@ -18,7 +18,7 @@ const Popover = (props: Props) => {
   const { button, children } = props;
 
   return (
-    <div className="relative inline-block text-left">
+    <div className="relative z-10 inline-block text-left">
       <PopoverPrimitive.Root>
         <PopoverPrimitive.Trigger asChild>{button}</PopoverPrimitive.Trigger>
         <PopoverPrimitive.Content
