@@ -118,7 +118,7 @@ export default function AuditLogs({ logs, user }) {
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-8">
-        {logs.map((log, idx) => (
+        {logs && logs.map((log, idx) => (
           <li key={log.id}>
             <div className="relative pb-4">
               {idx !== logs.length - 1 ? (

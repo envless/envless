@@ -2,7 +2,10 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
+import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import { TerminalSquareIcon } from "lucide-react";
 
 /**
  * A functional component that represents a project.
@@ -19,7 +22,38 @@ interface Props {
 export const ProjectPage = ({ projects, currentProject }: Props) => {
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
-      <h1>ProjectPage for {currentProject.name}</h1>
+      <div className="w-full bg-white bg-opacity-10 px-5 py-6">
+        <div className="flex flex-col md:flex-row md:space-x-1">
+          <TerminalSquareIcon className="h-8 w-8 shrink-0 text-teal-300" />
+          <div className="mt-2 px-0 md:mt-0 md:px-4">
+            <h3 className="text-sm leading-relaxed text-white">
+              This project does not have a production branch defined
+            </h3>
+            <p className="mt-1 text-sm font-light text-gray-500">
+              Production branches are protected. You cannot update it directly
+              without making a pull request.You can unprotect production
+              branches by going to settings page.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 w-full">
+        <div className="flex w-full items-center justify-between">
+          <Button outline small>
+            main
+          </Button>
+          <Button
+            outline
+            small
+            className="border border-white focus:outline-none"
+          >
+            New Branch
+          </Button>
+        </div>
+      </div>
+
+      <EnvironmentVariableEditor />
     </ProjectLayout>
   );
 };
