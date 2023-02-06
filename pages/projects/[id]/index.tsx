@@ -2,10 +2,10 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
-import { HiOutlineCommandLine } from "react-icons/hi2";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import { TerminalSquareIcon } from "lucide-react";
 
 /**
  * A functional component that represents a project.
@@ -24,7 +24,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
     <ProjectLayout projects={projects} currentProject={currentProject}>
       <div className="w-full bg-white bg-opacity-10 px-5 py-6">
         <div className="flex flex-col md:flex-row md:space-x-1">
-          <HiOutlineCommandLine className="h-8 w-8 shrink-0 text-teal-300" />
+          <TerminalSquareIcon className="h-8 w-8 shrink-0 text-teal-300" />
           <div className="mt-2 px-0 md:mt-0 md:px-4">
             <h3 className="text-sm leading-relaxed text-white">
               This project does not have a production branch defined
