@@ -15,3 +15,4 @@ export { default as Paragraph } from "./Paragraph";
 export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
 export { default as LoadingIcon } from "./LoadingIcon";
+export { default as InputGroup } from "./InputGroup";
