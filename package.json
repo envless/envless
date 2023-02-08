@@ -23,6 +23,7 @@
     "@prisma/client": "^4.8.1",
     "@radix-ui/react-avatar": "^1.0.1",
     "@radix-ui/react-popover": "^1.0.2",
+    "@radix-ui/react-scroll-area": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.2",
     "@tanstack/react-query": "^4.22.4",
     "@trpc/client": "^10.6.0",

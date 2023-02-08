@@ -6,6 +6,7 @@ import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Dropdown, Hr, Logo, Popover } from "@/components/theme";
+import { ScrollArea } from "./ScrollArea";
 import log from "@/lib/log";
 
 const Nav = ({ ...props }) => {
@@ -96,6 +97,7 @@ const Nav = ({ ...props }) => {
                 <Hr />
               </div>
 
+              <ScrollArea className="h-72">
               <div className="p-3 text-sm">
                 <ul className="">
                   {projectList.map((project) => (
@@ -118,6 +120,7 @@ const Nav = ({ ...props }) => {
                   ))}
                 </ul>
               </div>
+              </ScrollArea>
             </div>
           </Popover>
         )}
