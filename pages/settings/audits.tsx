@@ -1,30 +1,58 @@
 import { type GetServerSidePropsContext } from "next";
+import { Fragment, useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
+import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import AuditLogs from "@/components/projects/AuditLogs";
 import { Button } from "@/components/theme";
 import Audit from "@/lib/audit";
 
 interface AuditSettingsProps {
   user: User;
-  logs: any;
 }
 
-const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
+const AuditSettings = ({ user }: AuditSettingsProps) => {
+  const [page, setPage] = useState(0);
+  const {
+    data: auditLogs,
+    fetchNextPage,
+    isLoading,
+    status,
+    isFetchingNextPage,
+    hasNextPage
+  } = trpc.audits.paginate.useInfiniteQuery(
+    { limit: 20 },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
+
   return (
     <SettingsLayout tab={"audit"} user={user}>
       <h3 className="mb-8 text-lg ">Audit logs</h3>
 
       <div className="w-full lg:w-3/5">
-        <AuditLogs logs={logs} user={user} />
+        {isLoading ? (
+          "loading..."
+        ) : (
+            auditLogs?.pages.map((page, index) => (
+              <Fragment key={index}>
+                <AuditLogs logs={page.logs} user={user} />
+              </Fragment>
+            ))
+        )}
         <Button
           small={true}
           secondary={true}
           className="mt-8"
-          href="/settings/audits"
+          disabled={isFetchingNextPage || !hasNextPage}
+          onClick={() => {
+            fetchNextPage();
+          }}
         >
-          Load more
+          {isFetchingNextPage ?  'Loading...': hasNextPage ? 'Load More': 'Nothing to load'} 
         </Button>
       </div>
     </SettingsLayout>
@@ -44,22 +72,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const access = await prisma?.access.findMany({
-    where: { userId },
-    select: { projectId: true },
-  });
-
-  const projectIds = access?.map((e) => e.projectId);
-  const logs = await Audit.logs({
-    createdById: userId,
-    actions: ["updated.account"],
-    projectIds: projectIds,
-  });
-
   return {
     props: {
       user: JSON.parse(JSON.stringify(session.user)),
-      logs: JSON.parse(JSON.stringify(logs)),
     },
   };
 }
