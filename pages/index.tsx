@@ -12,14 +12,14 @@ const Home: React.FC<Props> = ({}) => {
     <>
       <NextSeo
         title="Envless - Secure and sync your secrets"
-        description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
+        description="Open source, frictionless and secure way to share and manage app secrets across teams."
         canonical="https://envless.dev"
         themeColor="#111"
         openGraph={{
           url: "https://envless.dev",
           title: "Envless - Secure and sync your secrets",
           description:
-            "OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+            "Open source, frictionless and secure way to share and manage app secrets across teams.",
           images: [{ url: "https://envless.dev/og.png" }],
           siteName: "Envless",
         }}

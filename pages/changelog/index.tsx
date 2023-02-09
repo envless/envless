@@ -33,14 +33,14 @@ const Changelog = ({ releases, parsedReleaseArr }) => {
     <>
       <NextSeo
         title="Changelog - Latest features, fixes and improvements."
-        description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
+        description="Open source, frictionless and secure way to share and manage app secrets across teams."
         canonical="https://envless.dev/changelog"
         themeColor="#111"
         openGraph={{
           url: "https://envless.dev/changelog",
           title: "Changelog - Latest features, fixes and improvements.",
           description:
-            "OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+            "Open source, frictionless and secure way to share and manage app secrets across teams.",
           images: [{ url: "https://envless.dev/og.png" }],
           siteName: "Envless",
         }}

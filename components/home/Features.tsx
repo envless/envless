@@ -74,7 +74,7 @@ const Features = () => {
             <OpenSourceIcon className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl">Proudly OpenSource</h3>
+            <h3 className="text-xl">Proudly open source</h3>
             <p className="mt-1 text-light">
               Check us out on{" "}
               <Link
