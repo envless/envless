@@ -2,10 +2,16 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+import {
+  ChevronDown,
+  GitBranchIcon,
+  Search,
+  TerminalSquareIcon,
+} from "lucide-react";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
-import { Button } from "@/components/theme";
+import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
-import { TerminalSquareIcon } from "lucide-react";
+import Link from "next/link";
 
 /**
  * A functional component that represents a project.
@@ -40,9 +46,59 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
 
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
-          <Button outline small>
-            main
-          </Button>
+          <Popover
+            button={
+              <button className="inline-flex items-center justify-center space-x-2 rounded border border-dark px-3 py-1.5 text-xs transition-colors duration-75 hover:bg-dark">
+                <div>
+                  <GitBranchIcon className="h-4 w-4" />
+                </div>
+
+                <span className="font-semibold">main</span>
+
+                <div>
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </button>
+            }
+          >
+            <div className="text-xs">
+              <div className="border-b border-dark px-3 py-2">
+                <p className="font-semibold">Switch branches</p>
+              </div>
+
+              <div className="relative mt-1 flex items-center border-b border-dark px-3">
+                <Search className="absolute h-4 w-4 text-light" />
+                <input
+                  type="text"
+                  name="search"
+                  id="search"
+                  className="border-none bg-transparent w-full pr-3 pl-6 text-xs focus:outline-none focus:ring-0"
+                  placeholder="Find a branch..."
+                />
+                <Hr />
+              </div>
+
+              <div className="text-xs px-6 py-2">
+                 <ul className="w-full flex flex-col gap-2">
+                   <Link href="#">
+                    <li className="w-full inline-flex items-center justify-between">
+                      <span>main</span>
+                      <span className="px-1 py-0.5 rounded-full border border-dark text-teal-300">default</span>
+                    </li>
+                   </Link>
+
+                   <Link href="#">
+                    <li>staging</li>
+                   </Link>
+
+                   <Link href="#">
+                    <li>production</li>
+                   </Link>
+                 </ul>
+              </div>
+            </div>
+          </Popover>
+
           <Button
             outline
             small
