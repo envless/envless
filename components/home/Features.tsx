@@ -15,7 +15,7 @@ const Features = () => {
           By developers, for developers
         </h2>
         <p className="mx-auto mt-2 max-w-md text-light">
-          Buit for security, speed, collaboration and productivity.
+          Built for security, speed, collaboration and productivity.
         </p>
       </div>
       <div className="mt-10 grid gap-x-48 gap-y-12 md:grid-cols-2">
