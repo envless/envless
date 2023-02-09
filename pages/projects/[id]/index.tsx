@@ -7,6 +7,7 @@ import {
   GitBranchIcon,
   Search,
   TerminalSquareIcon,
+  Check
 } from "lucide-react";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button, Hr, Popover } from "@/components/theme";
@@ -47,6 +48,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
           <Popover
+          zIndex={10}
             button={
               <button className="inline-flex items-center justify-center space-x-2 rounded border border-dark px-3 py-1.5 text-xs transition-colors duration-75 hover:bg-dark">
                 <div>
@@ -83,7 +85,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
                    <Link href="#">
                     <li className="w-full inline-flex items-center justify-between">
                       <span>main</span>
-                      <span className="px-1 py-0.5 rounded-full border border-dark text-teal-300">default</span>
+                      <Check className="h-4 w-4 text-teal-300" aria-hidden="true" />
                     </li>
                    </Link>
 
