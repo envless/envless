@@ -17,6 +17,7 @@
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^3.4.0",
     "@headlessui/react": "^1.7.9",
+    "@hookform/resolvers": "^2.9.10",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@next/font": "^13.1.6",
     "@notionhq/client": "^2.2.2",

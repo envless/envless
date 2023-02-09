@@ -4,6 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 type Props = {
   button: React.ReactNode;
   items: { title: string; handleClick: () => void }[];
+  itemsPosition?: string;
 };
 
 export default function Dropdown(props: Props) {
@@ -48,7 +49,9 @@ export default function Dropdown(props: Props) {
       >
         <Menu.Items
           as="div"
-          className="absolute right-0 mt-2 w-60 origin-top-right rounded bg-darker shadow-xl shadow-black ring-1 ring-dark focus:outline-none"
+          className={`${
+            props.itemsPosition || "right-0"
+          } absolute mt-2 w-60 origin-top-right rounded bg-darker shadow-xl shadow-black ring-1 ring-dark focus:outline-none`}
         >
           <div className="m-3">
             <DropDownItems />
