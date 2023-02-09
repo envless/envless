@@ -1,17 +1,18 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
 import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
+import clsx from "clsx";
 import { EyeIcon, XIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { DragDropIcon } from "@/components/icons";
 import { Button, Container, InputGroup } from "@/components/theme";
-import clsx from "clsx";
 
-export interface KeyPair {
+export interface EnvVariable {
   envKey: string;
   envValue: string;
 }
 
 export function EnvironmentVariableEditor() {
-  const [envKeys, setEnvKeys] = useState<KeyPair[]>([]);
+  const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -28,7 +29,7 @@ export function EnvironmentVariableEditor() {
   });
 
   const handleAddMoreEnvClick = () => {
-    setEnvKeys([...(envKeys as KeyPair[]), { envKey: "", envValue: "" }]);
+    setEnvKeys([...(envKeys as EnvVariable[]), { envKey: "", envValue: "" }]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
     setEnvKeys(envKeys?.filter((_, i) => i !== index));
@@ -63,9 +64,10 @@ export function EnvironmentVariableEditor() {
 
   return (
     <Container
-      className={`${
-        isDragActive ? "border-teal-300" : "border-darker"
-      } mt-4 w-full border-2 transition duration-300`}
+      className={clsx(
+        isDragActive ? "border-teal-300" : "border-darker",
+        "mt-4 w-full border-2 transition duration-300",
+      )}
     >
       {envKeys.length > 0 ? (
         <div className="py-16">
@@ -147,46 +149,25 @@ export function EnvironmentVariableEditor() {
   );
 }
 
+interface InputProps {
+  reveal?: boolean;
+}
+
 function CustomInput({
   disabled,
   className,
+  reveal,
   ...props
-}: ComponentProps<"input">) {
+}: ComponentProps<"input"> & InputProps) {
   return (
     <input
       {...props}
       disabled={disabled}
-      className={`${
-        disabled ? "cursor-not-allowed" : ""
-      } ${className} block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm`}
+      className={clsx(
+        "block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm",
+        className,
+        disabled ? "cursor-not-allowed" : "",
+      )}
     />
-  );
-}
-
-function DragDropIcon({ className } : { className?: string}) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className={clsx(className)}
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      stroke-width="2"
-      stroke="currentColor"
-      fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M19 11v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
-      <path d="M13 13l9 3l-4 2l-2 4l-3 -9" />
-      <path d="M3 3l0 .01" />
-      <path d="M7 3l0 .01" />
-      <path d="M11 3l0 .01" />
-      <path d="M15 3l0 .01" />
-      <path d="M3 7l0 .01" />
-      <path d="M3 11l0 .01" />
-      <path d="M3 15l0 .01" />
-    </svg>
   );
 }

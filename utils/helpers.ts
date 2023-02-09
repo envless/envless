@@ -1,4 +1,4 @@
-import { KeyPair } from "@/components/projects/EnvironmentVariableEditor";
+import { EnvVariable } from "@/components/projects/EnvironmentVariableEditor";
 
 export const formatDateTime = (date: Date) => {
   return new Date(date).toLocaleString("en-us", {
@@ -16,7 +16,7 @@ export const extractEnvKeyValuePair = (contents: string) =>
 
 export const parseEnvFile = (
   file: File,
-  onLoaded: (pairs: KeyPair[]) => void,
+  onLoaded: (pairs: EnvVariable[]) => void,
 ) => {
   const reader = new FileReader();
   reader.readAsText(file, "UTF-8");
@@ -28,7 +28,7 @@ export const parseEnvFile = (
 };
 
 export const parseStringEnvContents = (contents: string) => {
-  const keyValuePairs: KeyPair[] = [];
+  const keyValuePairs: EnvVariable[] = [];
   const keys = extractEnvKeyValuePair(contents);
   keys.forEach((envKey) => {
     const keyPair = envKey.split("=");
