@@ -34,7 +34,6 @@ interface LogInterface {
   actions?: any;
   limit?: number;
   skip?: number;
-  cursor: string|undefined;
 }
 
 const logs = async ({
@@ -43,7 +42,6 @@ const logs = async ({
   actions,
   limit,
   skip,
-  cursor
 }: LogInterface) => {
   const audits = await prisma.audit.findMany({
     where: {
@@ -79,7 +77,6 @@ const logs = async ({
     orderBy: { createdAt: "desc" },
     ...(limit ? { take: limit } : {}),
     ...(skip ? { skip } : {}),
-     cursor: cursor ? { id:  cursor } : undefined
   });
 
   return audits;
