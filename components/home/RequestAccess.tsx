@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { ArrowRight } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
 
@@ -123,7 +123,7 @@ const RequestAccessModal = (props: RequestAccessProps) => {
 
           <Button type="submit" full={true} disabled={loading}>
             Request access
-            <ArrowRightIcon className="ml-2 h-5 w-5" aria-hidden="true" />
+            <ArrowRight className="ml-2 h-5" />
           </Button>
         </form>
       )}

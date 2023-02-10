@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 import { useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
-import { Logo } from "@/components/theme";
+import { Logo, Hr } from "@/components/theme";
 
 /**
  * Props for the Modal component.
