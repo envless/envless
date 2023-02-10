@@ -32,7 +32,7 @@ export const parseStringEnvContents = (contents: string) => {
   const keys = extractEnvKeyValuePair(contents);
   keys.forEach((envKey) => {
     const keyPair = envKey.split("=");
-    keyValuePairs.push({ envKey: keyPair[0], envValue: keyPair[1] });
+    keyValuePairs.push({ envKey: keyPair[0], envValue: keyPair[1], hidden: true });
   });
   return keyValuePairs;
 };

@@ -4,6 +4,7 @@ import clsx from "clsx";
 type InputGroupTypes = {
   icon: ReactNode;
   full?: boolean;
+  iconActionClick?: () => void;
 } & ComponentProps<"input">;
 
 export default function InputGroup({
@@ -11,6 +12,7 @@ export default function InputGroup({
   icon,
   className,
   disabled,
+  iconActionClick,
   ...props
 }: InputGroupTypes) {
   return (
@@ -25,7 +27,7 @@ export default function InputGroup({
         )}
       />
 
-      <button className="absolute inset-y-0 right-0 mr-3 flex items-center rounded p-1">
+      <button onClick={iconActionClick} className="absolute inset-y-0 right-0 mr-3 flex items-center rounded p-1">
         {icon}
       </button>
     </div>
