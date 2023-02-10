@@ -10,18 +10,18 @@ type Props = {
 const Nav: React.FC<Props> = ({ menu }) => {
   const { status } = useSession();
   const defaultMenu = [
-    {
-      name: "Docs",
-      href: "/docs",
-    },
-    {
-      name: "Blog",
-      href: "/blog",
-    },
-    {
-      name: "Changelog",
-      href: "/changelog",
-    },
+    // {
+    //   name: "Docs",
+    //   href: "/docs",
+    // },
+    // {
+    //   name: "Blog",
+    //   href: "/blog",
+    // },
+    // {
+    //   name: "Changelog",
+    //   href: "/changelog",
+    // },
   ];
 
   const options = menu ? menu : defaultMenu;

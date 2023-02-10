@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Clipboard, ClipboardCheck, Github } from "lucide-react";
+import { GithubFullIcon } from "@/components/icons";
 import RequestAccess from "@/components/home/RequestAccess";
 
 type HeroProps = {
@@ -27,7 +28,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               rel="noreferrer"
               className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 text-sm transition-all hover:bg-lightest/30"
             >
-              <Github className="mr-2 inline-block h-4 w-4 text-lightest" />
+              <GithubFullIcon className="mr-2 inline-block h-5 w-5 text-lightest" />
               Star us on GitHub <span className="animate-wave">⭐</span>
             </Link>
           </div>
@@ -47,7 +48,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
                 <>
                   <span
                     className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
-                    // onClick={copyToClipboard}
+                  // onClick={copyToClipboard}
                   >
                     <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
                       npx envless init
