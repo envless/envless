@@ -7,6 +7,7 @@ import {
   LayoutList,
   Settings2,
   Users,
+  Zap
 } from "lucide-react";
 import { Container } from "@/components/theme";
 
@@ -46,6 +47,12 @@ export default function Tabs({ active, projectId }: Props) {
       name: "Members",
       href: `${projectUrl}/members`,
       icon: Users,
+    },
+    {
+      id: "integrations",
+      name: "Integrations",
+      href: `${projectUrl}/integrations`,
+      icon: Zap,
     },
     {
       id: "audits",
