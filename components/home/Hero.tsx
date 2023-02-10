@@ -35,7 +35,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
           </h1>
 
           <h2 className="mt-3 text-lg text-lighter md:text-2xl">
-            An open-source, the most secure and frictionless way to share and
+            The most secure, open source and frictionless way to share and
             manage app secrets across teams.
           </h2>
 
