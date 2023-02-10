@@ -7,7 +7,7 @@ import Container from "@/components/theme/Container";
 
 type Props = {};
 
-const Home: React.FC<Props> = ({ }) => {
+const Home: React.FC<Props> = ({}) => {
   return (
     <>
       <NextSeo

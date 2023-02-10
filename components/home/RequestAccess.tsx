@@ -3,7 +3,7 @@ import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { ArrowRight } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, Input, Modal } from "@/components/theme";
+import { Button, Input, Modal, Paragraph } from "@/components/theme";
 
 interface RequestAccessProps {
   source: string;
@@ -125,6 +125,14 @@ const RequestAccessModal = (props: RequestAccessProps) => {
             Request access
             <ArrowRight className="ml-2 h-5" />
           </Button>
+
+          <Paragraph
+            color="lighter"
+            size="xs"
+            className="mt-2 text-center text-[12px]"
+          >
+            We will never spam you with bs.
+          </Paragraph>
         </form>
       )}
     </Modal>

@@ -10,7 +10,7 @@ import React from "react";
 
 type ParagraphProps = {
   className?: string;
-  size?: "sm" | "lg" | "xl" | "2xl" | "3xl";
+  size?: "xs" | "sm" | "lg" | "xl" | "2xl" | "3xl";
   color?: "light" | "lighter" | "lightest";
   children: React.ReactNode;
 };
@@ -20,6 +20,8 @@ const Paragraph = (props: ParagraphProps) => {
 
   let klassName = "";
   switch (size) {
+    case "xs":
+      klassName = "text-xs";
     case "sm":
       klassName = "text-sm";
       break;

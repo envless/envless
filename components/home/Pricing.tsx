@@ -23,7 +23,7 @@ const Pricing = ({ ...props }) => {
               </p>
             }
           />
-        </div >
+        </div>
 
         <div className="-m-7 flex flex-wrap">
           {/* Startup */}
@@ -170,11 +170,22 @@ const Pricing = ({ ...props }) => {
                   <p>Unlimited audit logs</p>
                 </li>
               </ul>
-            </div >
-          </div >
-        </div >
-      </div >
-    </section >
+
+              <RequestAccess
+                source="enterprise plan button"
+                button={
+                  <button className="font-heading tracking-px group relative mb-3 w-full rounded text-center text-xs font-semibold uppercase text-gray-900 md:w-auto">
+                    <div className="rounded bg-lightest py-4 px-9 hover:bg-gray-300 ">
+                      <p className="relative z-10 ">Contact us</p>
+                    </div>
+                  </button>
+                }
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

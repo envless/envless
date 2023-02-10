@@ -25,12 +25,12 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
               href="https://github.com/envless/envless"
               target="_blank"
               rel="noreferrer"
-              className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 transition-all hover:bg-lightest/30"
+              className="mx-auto flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full bg-lightest/20 px-5 py-2 text-sm transition-all hover:bg-lightest/30"
             >
-              <Github className="inline-block h-4 w-4 text-lightest" />
-              <p className="text-sm">Star us on GitHub 🌟</p>
-            </Link >
-          </div >
+              <Github className="mr-2 inline-block h-4 w-4 text-lightest" />
+              Star us on GitHub <span className="animate-wave">⭐</span>
+            </Link>
+          </div>
           <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl tracking-tight text-transparent md:text-8xl">
             {header}
           </h1>
@@ -41,19 +41,26 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
           </h2>
 
           <div className="mt-5 flex flex-col justify-center gap-3 md:flex-row">
-            <span
-              className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
-              onClick={copyToClipboard}
-            >
-              <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
-                npx envless init
-              </code>{" "}
-              {copied ? (
-                <ClipboardCheck className="h-4 w-4 text-teal-400" />
-              ) : (
-                <Clipboard className="h-4 w-4 text-gray-300" />
-              )}
-            </span>
+            <RequestAccess
+              source="copy snippet button"
+              button={
+                <>
+                  <span
+                    className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
+                    // onClick={copyToClipboard}
+                  >
+                    <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
+                      npx envless init
+                    </code>{" "}
+                    {copied ? (
+                      <ClipboardCheck className="h-4 w-4 text-teal-400" />
+                    ) : (
+                      <Clipboard className="h-4 w-4 text-gray-300" />
+                    )}
+                  </span>
+                </>
+              }
+            />
 
             <RequestAccess
               source="documentation button"
@@ -79,8 +86,8 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             />
           </div>
         </div>
-      </div >
-    </section >
+      </div>
+    </section>
   );
 };
 
