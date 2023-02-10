@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Clipboard, ClipboardCheck, Github } from "lucide-react";
-import { GithubFullIcon } from "@/components/icons";
 import RequestAccess from "@/components/home/RequestAccess";
+import { GithubFullIcon } from "@/components/icons";
 
 type HeroProps = {
   header: string;
@@ -48,7 +48,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
                 <>
                   <span
                     className="flex cursor-copy items-center justify-between gap-5 rounded-full bg-dark px-5 py-3"
-                  // onClick={copyToClipboard}
+                    // onClick={copyToClipboard}
                   >
                     <code className="overflow-hidden overflow-ellipsis whitespace-nowrap text-gray-300">
                       npx envless init
