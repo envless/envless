@@ -15,7 +15,7 @@ const Pricing = ({ ...props }) => {
                 Simple pricing, cancel anytime. Get started with personal plan.
                 You can always upgrade later. No credit card required.{" "}
                 <span className="text-teal-200">
-                  Free for OpenSource projects.
+                  Free for open source projects.
                 </span>
               </p>
             </div>

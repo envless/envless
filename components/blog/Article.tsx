@@ -41,13 +41,13 @@ const Article: React.FC<Props> = ({ post, blocks }) => {
     <>
       <NextSeo
         title={`Envless - ${postTitle()}`}
-        description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
+        description="Open source, frictionless and secure way to share and manage app secrets across teams."
         canonical="https://envless.dev"
         themeColor="#111"
         openGraph={{
           url: "https://envless.dev",
           description:
-            "OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+            "Open source, frictionless and secure way to share and manage app secrets across teams.",
           images: [{ url: postImageUrl() }],
           siteName: "Envless",
         }}
