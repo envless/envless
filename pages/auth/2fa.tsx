@@ -1,8 +1,8 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import TwoFactorForm from "@/components/TwoFactorForm";
 import { Hr } from "@/components/theme";
+import TwoFactorForm from "@/components/twoFactorForm";
 import log from "@/lib/log";
 
 const TwoFactorAuth = () => {
