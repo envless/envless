@@ -57,7 +57,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
     <>
       <NextSeo
         title="Envless Blog - Tutorials and articles about Envless, security, and more."
-        description="OpenSource, frictionless and secure way to share and manage app secrets across teams."
+        description="Open source, frictionless and secure way to share and manage app secrets across teams."
         canonical="https://envless.dev/blog"
         themeColor="#111"
         openGraph={{
@@ -65,7 +65,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
           title:
             "Envless Blog - Tutorials and articles about Envless, security, and more.",
           description:
-            "OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+            "Open source, frictionless and secure way to share and manage app secrets across teams.",
           images: [{ url: "https://envless.dev/og.png" }],
           siteName: "Envless",
         }}

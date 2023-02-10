@@ -15,7 +15,7 @@ const Features = () => {
           By developers, for developers
         </h2>
         <p className="mx-auto mt-2 max-w-md text-light">
-          Buit for security, speed, collaboration and productivity.
+          Built for security, speed, collaboration and productivity.
         </p>
       </div>
       <div className="mt-10 grid gap-x-48 gap-y-12 md:grid-cols-2">
@@ -50,7 +50,7 @@ const Features = () => {
           <div>
             <h3 className="text-xl">Boost productivity</h3>
             <p className="mt-1 text-light">
-              Built by developer, for developers. Build with speed in mind. With
+              Built by developers, for developers. Built with speed in mind. With
               API and database hosted on edge networks, you can globally sync
               app secrets across teams.
             </p>
@@ -74,7 +74,7 @@ const Features = () => {
             <OpenSourceIcon className="h-6 w-6" />
           </span>
           <div>
-            <h3 className="text-xl">Proudly OpenSource</h3>
+            <h3 className="text-xl">Proudly open source</h3>
             <p className="mt-1 text-light">
               Check us out on{" "}
               <Link
