@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
 import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
 import clsx from "clsx";
-import { EyeIcon, XIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, XIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, InputGroup } from "@/components/theme";
@@ -9,6 +9,7 @@ import { Button, Container, InputGroup } from "@/components/theme";
 export interface EnvVariable {
   envKey: string;
   envValue: string;
+  hidden: boolean;
 }
 
 export function EnvironmentVariableEditor() {
@@ -29,10 +30,50 @@ export function EnvironmentVariableEditor() {
   });
 
   const handleAddMoreEnvClick = () => {
-    setEnvKeys([...(envKeys as EnvVariable[]), { envKey: "", envValue: "" }]);
+    setEnvKeys([
+      ...(envKeys as EnvVariable[]),
+      { envKey: "", envValue: "", hidden: true },
+    ]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
     setEnvKeys(envKeys?.filter((_, i) => i !== index));
+  };
+
+  const handleToggleHiddenEnvPairClick = (index: number) => {
+    const newEnvKeys = envKeys.map((envVariable, i) => {
+      const isHidden = () => {
+        if (i === index) {
+          return !envVariable.hidden;
+        }
+
+        return envVariable.hidden;
+      };
+
+      console.log(envVariable);
+
+      return {
+        envKey: envVariable.envKey,
+        envValue: envVariable.envValue,
+        hidden: isHidden(),
+      } as EnvVariable;
+    });
+
+    setEnvKeys(newEnvKeys);
+  };
+
+  const handleEnvValueChange = (index: number) => (e) => {
+    setEnvKeys(
+      envKeys.map((envVariable, i) => {
+        if (i === index) {
+          return {
+            ...envVariable,
+            envValue: i === index ? e.target.value : envVariable.envValue,
+          } as EnvVariable;
+        }
+
+        return envVariable;
+      }),
+    );
   };
 
   const handlePaste = (event: any) => {
@@ -89,11 +130,19 @@ export function EnvironmentVariableEditor() {
               <div className="my-1 flex w-full items-center space-x-2">
                 <InputGroup
                   full
-                  icon={<EyeIcon className="h-4 w-4" />}
+                  icon={
+                    envPair.hidden ? (
+                      <EyeIcon className="h-4 w-4" />
+                    ) : (
+                      <EyeOffIcon className="h-4 w-4" />
+                    )
+                  }
                   name={envPair.envValue}
-                  type="password"
+                  type={envPair.hidden ? "password" : "text"}
                   autoComplete="off"
-                  defaultValue={envPair.envValue}
+                  iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
+                  onChange={handleEnvValueChange(index)}
+                  value={envPair.envValue}
                   className="font-mono"
                 />
 
@@ -101,7 +150,6 @@ export function EnvironmentVariableEditor() {
                   onClick={() => handleRemoveEnvPairClick(index)}
                   className="rounded"
                   outline
-                  small
                 >
                   <XIcon className="h-4 w-4" />
                 </Button>
