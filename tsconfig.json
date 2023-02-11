@@ -27,7 +27,8 @@
       "@/layouts/*": ["layouts/*"],
       "@/models/*": ["models/*"],
       "@/components/*": ["components/*"]
-    }
+    },
+    "strict": false
   },
   "include": [
     "next-env.d.ts",
