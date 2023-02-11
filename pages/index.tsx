@@ -1,6 +1,7 @@
 import { NextSeo } from "next-seo";
 import Features from "@/components/home/Features";
 import Hero from "@/components/home/Hero";
+import Integrations from "@/components/home/Integrations";
 import Pricing from "@/components/home/Pricing";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
@@ -34,6 +35,7 @@ const Home: React.FC<Props> = ({}) => {
         <Nav />
         <Hero header={".envless"} />
         <Features />
+        <Integrations />
         <Pricing />
       </Container>
     </>
