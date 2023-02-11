@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
-import cx from "classnames";
+import clsx from "clsx";
 
 type Props = {
   open: boolean;
@@ -23,7 +23,7 @@ const Toast = (props: Props) => {
         duration={3000}
         open={open}
         onOpenChange={props.onClose}
-        className={cx(
+        className={clsx(
           "fixed inset-x-4 bottom-4 z-50 w-auto rounded shadow-lg md:top-4 md:right-4 md:left-auto md:bottom-auto md:w-full md:max-w-sm",
           "bg-dark",
           "radix-state-open:animate-toast-slide-in-bottom md:radix-state-open:animate-toast-slide-in-right",

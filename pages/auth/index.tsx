@@ -3,16 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { getServerSideSession } from "@/utils/session";
 import { debounce } from "lodash";
-import { getCsrfToken, getSession, signIn } from "next-auth/react";
+import { getCsrfToken, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { Button, Input, Toast } from "@/components/theme";
+import { Toaster } from "react-hot-toast";
+import { Button, Input } from "@/components/theme";
 import log from "@/lib/log";
 
 const Login = ({ csrfToken }) => {
   const router = useRouter();
   const { query } = useRouter();
-  const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -33,8 +34,6 @@ const Login = ({ csrfToken }) => {
     });
 
     if (res.status === 200) {
-      setToast(true);
-
       debounce(() => {
         router.reload();
       }, 3000)();
@@ -138,7 +137,7 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Github"
                   onClick={() => signIn("github")}
                   disabled={loading}
-                  outline={true}
+                  secondary={true}
                   full={true}
                 >
                   <svg
@@ -159,7 +158,7 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Gitlab"
                   onClick={() => signIn("gitlab")}
                   disabled={loading}
-                  outline={true}
+                  secondary={true}
                   full={true}
                 >
                   <svg
@@ -193,19 +192,14 @@ const Login = ({ csrfToken }) => {
         </div>
       </div>
 
-      <Toast
-        title="Magic link sent"
-        subtitle="Please check your email"
-        open={toast}
-        onClose={() => setToast(false)}
-      />
+      <Toaster position="top-right" />
     </>
   );
 };
 
 export async function getServerSideProps(context) {
-  const { req, res } = context;
-  const session = await getSession({ req });
+  const { res } = context;
+  const session = await getServerSideSession(context);
 
   if (session) {
     res.writeHead(301, { Location: "/projects" });

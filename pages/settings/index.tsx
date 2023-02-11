@@ -6,14 +6,8 @@ import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import TwoFactorModal from "@/components/TwoFactorModal";
-import {
-  Button,
-  Hr,
-  Input,
-  Paragraph,
-  Toast,
-  Toggle,
-} from "@/components/theme";
+import { Button, Hr, Input, Paragraph, Toggle } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
 interface DefaultProps {
@@ -36,7 +30,6 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
     formState: { errors },
   } = useForm();
 
-  const [toast, setToast] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({} as SettingProps);
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
@@ -44,7 +37,11 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (_data) => {
       setLoading(false);
-      setToast(true);
+      showToast({
+        type: "success",
+        title: "Account settings",
+        subtitle: "Successfully updated account settings.",
+      });
     },
 
     onError: (error) => {
@@ -164,13 +161,6 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
           </Button>
         </form>
       </div>
-
-      <Toast
-        title="Account settings"
-        subtitle="Successfully updated account settings."
-        open={toast}
-        onClose={() => setToast(false)}
-      />
     </SettingsLayout>
   );
 };
