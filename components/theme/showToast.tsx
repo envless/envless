@@ -13,6 +13,7 @@ type Props = {
   subtitle: string;
   open: boolean;
   type: "warning" | "success" | "error";
+  id: string;
 };
 
 export default function Toast({
@@ -20,8 +21,8 @@ export default function Toast({
   title,
   subtitle,
   open,
+  id,
 }: Props) {
-
   function renderToastIcon(type) {
     switch (type) {
       case "success":
@@ -66,17 +67,15 @@ export default function Toast({
           <div className="pointer-events-auto z-50 w-full max-w-sm overflow-hidden rounded bg-dark shadow-lg">
             <div className="p-4">
               <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  {renderToastIcon(type)}
-                </div>
+                <div className="flex-shrink-0">{renderToastIcon(type)}</div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
                   <p className="text-sm font-medium text-lightest">{title}</p>
                   <p className="mt-1 text-sm text-light">{subtitle}</p>
                 </div>
                 <div className="ml-4 flex flex-shrink-0">
                   <button
-                    className="inline-flex rounded border border-transparent bg-darker text-lighter hover:bg-darkest focus:outline-none focus:ring-1 focus:ring-teal-300  focus:ring-offset-1"
-                    onClick={() => {}}
+                    className="px-2 py-0.5 inline-flex rounded border border-transparent text-lighter hover:bg-darkest focus:outline-none focus:ring-1 focus:ring-teal-300  focus:ring-offset-1"
+                    onClick={() => toast.dismiss(id)}
                   >
                     <span className="sr-only">Close</span>
                     <XIcon className="h-5 w-5" aria-hidden="true" />
@@ -93,7 +92,15 @@ export default function Toast({
 
 export function showToast({ title, subtitle, duration = 1500, type }) {
   toast.custom(
-    (t) => <Toast title={title} subtitle={subtitle} open={t.visible} type={type} />,
+    (t) => (
+      <Toast
+        title={title}
+        subtitle={subtitle}
+        open={t.visible}
+        type={type}
+        id={t.id}
+      />
+    ),
     { duration },
   );
 }

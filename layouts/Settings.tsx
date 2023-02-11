@@ -2,6 +2,7 @@ import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
 import Tabs from "@/components/settings/Tabs";
 import { Container, Hr, Nav } from "@/components/theme";
+import { Toaster } from "react-hot-toast";
 
 type Props = {
   user: User;
@@ -29,6 +30,8 @@ const Settings: React.FC<Props> = ({ tab, user, children }) => {
           </div>
         </div>
       </Container>
+
+      <Toaster position="top-right" />
     </>
   );
 };

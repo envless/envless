@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { Tabs } from "@/components/projects";
 import { Container, Nav } from "@/components/theme";
-
+import { Toaster } from "react-hot-toast";
 interface Props {
   tab?: string;
   projects: any;
@@ -29,6 +29,8 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
         <Container>
           <div className="my-10 flex flex-wrap">{children}</div>
         </Container>
+
+      <Toaster position="top-right" />
       </>
     );
   } else {
