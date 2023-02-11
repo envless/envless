@@ -6,13 +6,7 @@ import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import TwoFactorModal from "@/components/TwoFactorModal";
-import {
-  Button,
-  Hr,
-  Input,
-  Paragraph,
-  Toggle,
-} from "@/components/theme";
+import { Button, Hr, Input, Paragraph, Toggle } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
@@ -167,7 +161,6 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
           </Button>
         </form>
       </div>
-
     </SettingsLayout>
   );
 };

@@ -74,7 +74,7 @@ export default function Toast({
                 </div>
                 <div className="ml-4 flex flex-shrink-0">
                   <button
-                    className="px-2 py-0.5 inline-flex rounded border border-transparent text-lighter hover:bg-darkest focus:outline-none focus:ring-1 focus:ring-teal-300  focus:ring-offset-1"
+                    className="inline-flex rounded border border-transparent px-2 py-0.5 text-lighter hover:bg-darkest focus:outline-none focus:ring-1 focus:ring-teal-300  focus:ring-offset-1"
                     onClick={() => toast.dismiss(id)}
                   >
                     <span className="sr-only">Close</span>

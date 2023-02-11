@@ -1,8 +1,8 @@
 import { User } from "@prisma/client";
 import { getSession } from "next-auth/react";
+import { Toaster } from "react-hot-toast";
 import Tabs from "@/components/settings/Tabs";
 import { Container, Hr, Nav } from "@/components/theme";
-import { Toaster } from "react-hot-toast";
 
 type Props = {
   user: User;
