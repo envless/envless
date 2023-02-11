@@ -4,7 +4,7 @@ interface Props {
   className?: string;
 }
 
-export const Vercel = ({ className }: Props) => {
+export const VercelIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -24,7 +24,7 @@ export const Vercel = ({ className }: Props) => {
   );
 };
 
-export const Supabase = ({ className }: Props) => {
+export const SupabaseIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -76,7 +76,7 @@ export const Supabase = ({ className }: Props) => {
   );
 };
 
-export const Netlify = ({ className }: Props) => {
+export const NetlifyIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -110,7 +110,7 @@ export const Netlify = ({ className }: Props) => {
   );
 };
 
-export const Render = ({ className }: Props) => {
+export const RenderIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -125,7 +125,7 @@ export const Render = ({ className }: Props) => {
   );
 };
 
-export const Fly = ({ className }: Props) => {
+export const FlyIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -168,7 +168,7 @@ export const Fly = ({ className }: Props) => {
   );
 };
 
-export const Railway = ({ className }: Props) => {
+export const RailwayIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -183,7 +183,7 @@ export const Railway = ({ className }: Props) => {
   );
 };
 
-export const Heroku = ({ className }: Props) => {
+export const HerokuIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -203,7 +203,7 @@ export const Heroku = ({ className }: Props) => {
   );
 };
 
-export const GCP = ({ className }: Props) => {
+export const GCPIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -235,11 +235,11 @@ export const GCP = ({ className }: Props) => {
   );
 };
 
-export const Github = ({ className }: Props) => {
+export const GithubIcon = ({ className }: Props) => {
   return <GithubFullIcon className={className} />;
 };
 
-export const Docker = ({ className }: Props) => {
+export const DockerIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -260,7 +260,7 @@ export const Docker = ({ className }: Props) => {
   );
 };
 
-export const Kubernetes = ({ className }: Props) => {
+export const KubernetesIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -288,7 +288,7 @@ export const Kubernetes = ({ className }: Props) => {
   );
 };
 
-export const AWS = ({ className }: Props) => {
+export const AWSIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -313,7 +313,7 @@ export const AWS = ({ className }: Props) => {
   );
 };
 
-export const Gitlab = ({ className }: Props) => {
+export const GitlabIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -357,7 +357,7 @@ export const Gitlab = ({ className }: Props) => {
   );
 };
 
-export const Rails = ({ className }: Props) => {
+export const RailsIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -372,7 +372,7 @@ export const Rails = ({ className }: Props) => {
   );
 };
 
-export const NextJs = ({ className }: Props) => {
+export const NextJsIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -387,7 +387,7 @@ export const NextJs = ({ className }: Props) => {
   );
 };
 
-export const NuxtJs = ({ className }: Props) => {
+export const NuxtJsIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -402,7 +402,7 @@ export const NuxtJs = ({ className }: Props) => {
   );
 };
 
-export const Laraval = ({ className }: Props) => {
+export const LaravalIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
@@ -417,7 +417,7 @@ export const Laraval = ({ className }: Props) => {
   );
 };
 
-export const Placeholder = ({ className }: Props) => {
+export const PlaceholderIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}
