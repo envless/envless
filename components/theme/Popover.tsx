@@ -1,6 +1,6 @@
 import React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import cx from "classnames";
+import clsx from "clsx";
 
 /**
  * Popover component.
@@ -24,7 +24,7 @@ const Popover = (props: Props) => {
         <PopoverPrimitive.Content
           align="center"
           sideOffset={4}
-          className={cx(
+          className={clsx(
             "mx-2 bg-darker",
             "w-56 rounded shadow-md md:w-56",
             "shadow-xl shadow-black ring-2 ring-dark focus:outline-none",
