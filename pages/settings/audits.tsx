@@ -20,7 +20,7 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
         <AuditLogs logs={logs} user={user} />
         <Button
           small={true}
-          outline={true}
+          secondary={true}
           className="mt-8"
           href="/settings/audits"
         >

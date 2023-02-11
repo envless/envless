@@ -138,7 +138,7 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Github"
                   onClick={() => signIn("github")}
                   disabled={loading}
-                  outline={true}
+                  secondary={true}
                   full={true}
                 >
                   <svg
@@ -159,7 +159,7 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Gitlab"
                   onClick={() => signIn("gitlab")}
                   disabled={loading}
-                  outline={true}
+                  secondary={true}
                   full={true}
                 >
                   <svg
