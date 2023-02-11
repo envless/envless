@@ -50,9 +50,9 @@ const Features = () => {
           <div>
             <h3 className="text-xl">Boost productivity</h3>
             <p className="mt-1 text-light">
-              Built by developers, for developers. Built with speed in mind. With
-              API and database hosted on edge networks, you can globally sync
-              app secrets across teams.
+              Built by developers, for developers. Built with speed in mind.
+              With API and database hosted on edge networks, you can globally
+              sync app secrets across teams.
             </p>
           </div>
         </div>

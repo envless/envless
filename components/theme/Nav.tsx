@@ -6,8 +6,8 @@ import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Dropdown, Hr, Logo, Popover } from "@/components/theme";
-import { ScrollArea } from "./ScrollArea";
 import log from "@/lib/log";
+import { ScrollArea } from "./ScrollArea";
 
 const Nav = ({ ...props }) => {
   const router = useRouter();
@@ -98,28 +98,31 @@ const Nav = ({ ...props }) => {
               </div>
 
               <ScrollArea className="h-72">
-              <div className="p-3 text-sm">
-                <ul className="">
-                  {projectList.map((project) => (
-                    <Link
-                      className=""
-                      href={`/projects/${project.id}`}
-                      key={project.id}
-                    >
-                      <li key={project.id} className="px-3 py-2 hover:bg-dark">
-                        {project.name}
+                <div className="p-3 text-sm">
+                  <ul className="">
+                    {projectList.map((project) => (
+                      <Link
+                        className=""
+                        href={`/projects/${project.id}`}
+                        key={project.id}
+                      >
+                        <li
+                          key={project.id}
+                          className="px-3 py-2 hover:bg-dark"
+                        >
+                          {project.name}
 
-                        {project.id === currentProject.id && (
-                          <Check
-                            className="float-right h-4 w-4 text-teal-300"
-                            aria-hidden="true"
-                          />
-                        )}
-                      </li>
-                    </Link>
-                  ))}
-                </ul>
-              </div>
+                          {project.id === currentProject.id && (
+                            <Check
+                              className="float-right h-4 w-4 text-teal-300"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </li>
+                      </Link>
+                    ))}
+                  </ul>
+                </div>
               </ScrollArea>
             </div>
           </Popover>

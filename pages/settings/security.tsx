@@ -102,7 +102,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
         {enabled ? (
           <Button
-            outline={true}
+            secondary={true}
             onClick={() => {
               disableMutation.mutate();
             }}
@@ -115,7 +115,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
         ) : (
           <Modal
             button={
-              <Button outline={true}>Enable two-factor authentication</Button>
+              <Button secondary={true}>Enable two-factor authentication</Button>
             }
             title="Activate two-factor authentication"
           >

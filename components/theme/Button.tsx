@@ -11,7 +11,7 @@ import { clsx } from "clsx";
  * @param {() => void} [onClick] - The callback to be invoked when the user clicks on the button or link.
  * @param {string} [href] - The URL to link to, if the component should render a link.
  * @param {boolean} [full] - Whether the button should take up the full width of its container.
- * @param {boolean} [outline] - Whether the button should be outlined.
+ * @param {boolean} [secondary] - Whether the button should be secondaryd.
  * @param {boolean} [disablad] - Whether on not the button should be disabled.
  * @param {string} [target] - The target attribute for the link, if the component should render a link.
  * @param {string} [className] - The class name to apply to the button or link.
@@ -28,7 +28,7 @@ const Button = (props: {
   target?: string;
   className?: string;
   small?: boolean;
-  outline: boolean;
+  secondary: boolean;
   disabled?: boolean;
   children: React.ReactNode;
 }) => {
@@ -42,7 +42,7 @@ const Button = (props: {
     className,
     small,
     disabled,
-    outline,
+    secondary,
     children,
   } = props;
 
@@ -54,11 +54,11 @@ const Button = (props: {
           className,
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
-          outline
-            ? "border-2 border-dark bg-transparent text-lightest hover:bg-dark"
-            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+          secondary
+            ? "border-2 border-dark bg-dark text-lightest shadow-md hover:bg-dark/60"
+            : "bg-lightest text-darkest hover:bg-lighter",
 
-          "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+          "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
       >
         {children}
@@ -73,11 +73,11 @@ const Button = (props: {
           className,
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
-          outline
-            ? "border-2 border-dark bg-darker text-lightest hover:bg-dark"
-            : "border-transparent bg-lightest text-darkest hover:bg-gray-200",
+          secondary
+            ? "border-2 border-dark bg-dark text-lightest shadow-md hover:bg-dark/60"
+            : "bg-lightest text-darkest hover:bg-lighter",
 
-          "flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+          "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
         onClick={onClick}
         disabled={disabled}
@@ -93,7 +93,7 @@ Button.defaultProps = {
   full: false,
   type: "button",
   disablad: false,
-  outline: false,
+  secondary: false,
   small: false,
 };
 

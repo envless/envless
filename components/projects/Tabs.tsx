@@ -7,7 +7,7 @@ import {
   LayoutList,
   Settings2,
   Users,
-  Zap
+  Zap,
 } from "lucide-react";
 import { Container } from "@/components/theme";
 
