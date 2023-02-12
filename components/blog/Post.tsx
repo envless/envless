@@ -100,7 +100,7 @@ const Post: React.FC<Props> = ({ post }) => {
           </time>
         </div>
         <h2 className="mt-2 text-xl font-semibold tracking-normal text-lightest lg:text-2xl">
-          <span className=" bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]">
+          <span className=" bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_2px] hover:bg-[length:100%_2px]">
             {postTitle()}
           </span>
         </h2>

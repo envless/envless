@@ -16,3 +16,6 @@ export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
 export { default as LoadingIcon } from "./LoadingIcon";
 export { default as InputGroup } from "./InputGroup";
+
+export { ScrollBar } from "./ScrollArea";
+export { ScrollArea } from "./ScrollArea";

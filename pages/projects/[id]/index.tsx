@@ -1,18 +1,19 @@
 import { type GetServerSidePropsContext } from "next";
+import Link from "next/link";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import {
+  Check,
   ChevronDown,
   GitBranchIcon,
+  GitBranchPlus,
   Search,
   TerminalSquareIcon,
-  Check
 } from "lucide-react";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
-import Link from "next/link";
 
 /**
  * A functional component that represents a project.
@@ -48,14 +49,19 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
           <Popover
-          zIndex={10}
+            zIndex={10}
             button={
-              <button className="inline-flex items-center justify-center space-x-2 rounded border border-dark px-3 py-1.5 text-xs transition-colors duration-75 hover:bg-dark">
+              <button className="inline-flex items-center justify-center space-x-3 rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker">
                 <div>
                   <GitBranchIcon className="h-4 w-4" />
                 </div>
 
-                <span className="font-semibold">main</span>
+                <span>
+                  <span className="mr-3 text-xs text-light">
+                    Current branch
+                  </span>
+                  <span className="font-semibold">main</span>
+                </span>
 
                 <div>
                   <ChevronDown className="h-4 w-4" />
@@ -64,49 +70,54 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
             }
           >
             <div className="text-xs">
-              <div className="border-b border-dark px-3 py-2">
-                <p className="font-semibold">Switch branches</p>
+              <div className="border-b border-dark px-3 py-3">
+                <p className="font-semibold">Switch between branches</p>
               </div>
 
               <div className="relative mt-1 flex items-center border-b border-dark px-3">
-                <Search className="absolute h-4 w-4 text-light" />
+                <Search className="absolute mb-1.5 h-4 w-4 text-light" />
                 <input
                   type="text"
                   name="search"
                   id="search"
-                  className="border-none bg-transparent w-full pr-3 pl-6 text-xs focus:outline-none focus:ring-0"
+                  className="w-full border-none bg-transparent pr-3 pl-6 pb-3 text-sm focus:outline-none focus:ring-0"
                   placeholder="Find a branch..."
                 />
                 <Hr />
               </div>
 
-              <div className="text-xs px-6 py-2">
-                 <ul className="w-full flex flex-col gap-2">
-                   <Link href="#">
-                    <li className="w-full inline-flex items-center justify-between">
+              <div className="text-sm">
+                <ul className="flex w-full flex-col">
+                  <Link href="#">
+                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
                       <span>main</span>
-                      <Check className="h-4 w-4 text-teal-300" aria-hidden="true" />
+                      <Check
+                        className="h-4 w-4 text-teal-300"
+                        aria-hidden="true"
+                      />
                     </li>
-                   </Link>
+                  </Link>
 
-                   <Link href="#">
-                    <li>staging</li>
-                   </Link>
+                  <Link href="#">
+                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
+                      staging
+                    </li>
+                  </Link>
 
-                   <Link href="#">
-                    <li>production</li>
-                   </Link>
-                 </ul>
+                  <Link href="#">
+                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
+                      production
+                    </li>
+                  </Link>
+                </ul>
               </div>
             </div>
           </Popover>
 
-          <Button
-            outline
-            small
-            className="border border-white focus:outline-none"
-          >
-            New Branch
+          <Button className="border border-white focus:outline-none">
+            <GitBranchPlus className="mr-3 h-4 w-4" />
+            <span className="hidden sm:block">Create new branch</span>
+            <span className="block sm:hidden">Branch</span>
           </Button>
         </div>
       </div>

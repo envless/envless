@@ -17,17 +17,17 @@ export default function InputGroup({
 }: InputGroupTypes) {
   return (
     <div className={clsx("relative flex items-center", full && "w-full")}>
-      <input
-        {...props}
+      <textarea
+        rows={1}
         className={clsx(
-          disabled && "cursor-not-allowed bg-light/40",
-          "block appearance-none rounded border border-light/50 bg-darker px-3 py-2 pr-10 focus:border-dark focus:outline-none focus:ring-light sm:text-sm",
-          className,
-          full && "w-full",
+          "input-primary scrollbar-track-dark scrollbar-thumb-darker w-full scrollbar-thin",
         )}
       />
 
-      <button onClick={iconActionClick} className="absolute inset-y-0 right-0 mr-3 flex items-center rounded p-1">
+      <button
+        onClick={iconActionClick}
+        className="absolute inset-y-0 right-0 mr-3 flex items-center rounded p-1"
+      >
         {icon}
       </button>
     </div>

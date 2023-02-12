@@ -50,7 +50,7 @@ const Toast = (props: Props) => {
               <div className="flex h-0 flex-1">
                 <ToastPrimitive.Close className="">
                   <span
-                    className="flex justify-center rounded border border-transparent bg-darker px-4 py-2 text-xs font-medium text-lighter shadow hover:bg-darkest focus:outline-none focus:ring-2"
+                    className="flex justify-center rounded border border-transparent bg-darker px-4 py-2 text-xs font-medium text-lighter shadow focus:outline-none focus:ring-2 hover:bg-darkest"
                     onClick={() => setOpen(false)}
                   >
                     Close

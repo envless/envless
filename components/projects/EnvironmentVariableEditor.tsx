@@ -1,7 +1,7 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
 import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
 import clsx from "clsx";
-import { EyeIcon, EyeOffIcon, XIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, XCircleIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, InputGroup } from "@/components/theme";
@@ -104,96 +104,99 @@ export function EnvironmentVariableEditor() {
   };
 
   return (
-    <Container
-      className={clsx(
-        isDragActive ? "border-teal-300" : "border-darker",
-        "mt-4 w-full border-2 transition duration-300",
-      )}
-    >
+    <>
       {envKeys.length > 0 ? (
-        <div className="py-16">
+        <div className="w-full py-8">
           {envKeys?.map((envPair, index) => (
             <div
               key={new Date().toString() + index}
-              className="flex items-center gap-8 px-4"
+              className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
             >
-              <CustomInput
-                name={envPair.envKey}
-                onFocus={() => (pastingInputIndex.current = index)}
-                type="text"
-                defaultValue={envPair.envKey}
-                className="my-1 w-full font-mono"
-                onPaste={handlePaste}
-                placeholder="eg. CLIENT_ID"
-              />
-
-              <div className="my-1 flex w-full items-center space-x-2">
-                <InputGroup
-                  full
-                  icon={
-                    envPair.hidden ? (
-                      <EyeIcon className="h-4 w-4" />
-                    ) : (
-                      <EyeOffIcon className="h-4 w-4" />
-                    )
-                  }
-                  name={envPair.envValue}
-                  type={envPair.hidden ? "password" : "text"}
-                  autoComplete="off"
-                  iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
-                  onChange={handleEnvValueChange(index)}
-                  value={envPair.envValue}
-                  className="font-mono"
+              <div className="col-span-3">
+                <CustomInput
+                  name={envPair.envKey}
+                  onFocus={() => (pastingInputIndex.current = index)}
+                  type="text"
+                  defaultValue={envPair.envKey}
+                  className="my-1 w-full font-mono"
+                  onPaste={handlePaste}
+                  placeholder="eg. CLIENT_ID"
                 />
+              </div>
 
-                <Button
-                  onClick={() => handleRemoveEnvPairClick(index)}
-                  className="rounded"
-                  outline
-                >
-                  <XIcon className="h-4 w-4" />
-                </Button>
+              <div className="col-span-9">
+                <div className="flex items-center gap-3">
+                  <InputGroup
+                    full
+                    icon={
+                      envPair.hidden ? (
+                        <EyeIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeOffIcon className="h-4 w-4" />
+                      )
+                    }
+                    name={envPair.envValue}
+                    type={envPair.hidden ? "password" : "text"}
+                    autoComplete="off"
+                    iconActionClick={() =>
+                      handleToggleHiddenEnvPairClick(index)
+                    }
+                    onChange={handleEnvValueChange(index)}
+                    value={envPair.envValue}
+                    className="inline-block font-mono"
+                  />
+
+                  <XCircleIcon
+                    className="h-5 w-5 shrink-0 cursor-pointer text-light hover:text-lighter"
+                    onClick={() => handleRemoveEnvPairClick(index)}
+                  />
+                </div>
               </div>
             </div>
           ))}
 
           <div className="mt-4 px-4">
-            <Button small outline onClick={() => handleAddMoreEnvClick()}>
+            <Button small secondary onClick={() => handleAddMoreEnvClick()}>
               Add more
             </Button>
           </div>
         </div>
       ) : (
-        <div {...getRootProps()} className="py-16 text-center">
-          <DragDropIcon className="mx-auto h-12 w-12" />
-          <h3 className="mt-2 text-xl text-gray-400">
-            Drag and drop .env files
-          </h3>
-          <input
-            {...getInputProps()}
-            type="file"
-            className="hidden"
-            accept="env"
-          />
-          <p className="mx-auto mt-1 max-w-md text-sm text-gray-200 text-lighter">
-            You can also{" "}
-            <span
-              onClick={open}
-              className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
-            >
-              click here
-            </span>{" "}
-            to import, copy/paste contents in .env file, or create{" "}
-            <span
-              onClick={handleAddMoreEnvClick}
-              className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
-            >
-              one at a time.
-            </span>
-          </p>
-        </div>
+        <Container
+          className={clsx(
+            isDragActive ? "border-teal-300" : "border-darker",
+            "mt-10 w-full border-2 transition duration-300",
+          )}
+        >
+          <div {...getRootProps()} className="py-32 text-center">
+            <DragDropIcon className="mx-auto h-12 w-12" />
+            <h3 className="mt-2 text-xl">Drag and drop .env files</h3>
+            <input
+              {...getInputProps()}
+              type="file"
+              className="hidden"
+              accept="env"
+            />
+            <p className="mx-auto mt-1 max-w-md text-sm text-lighter">
+              You can also{" "}
+              <span
+                onClick={open}
+                className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
+              >
+                click here
+              </span>{" "}
+              to import, copy/paste contents in .env file, or create{" "}
+              <span
+                onClick={handleAddMoreEnvClick}
+                className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
+              >
+                one at a time.
+              </span>
+            </p>
+          </div>
+        </Container>
       )}
-    </Container>
+    </>
   );
 }
 
@@ -212,7 +215,7 @@ function CustomInput({
       {...props}
       disabled={disabled}
       className={clsx(
-        "block appearance-none rounded border border-light/50 bg-darker px-3 py-2 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm",
+        "input-primary",
         className,
         disabled ? "cursor-not-allowed" : "",
       )}
