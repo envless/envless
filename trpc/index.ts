@@ -5,6 +5,7 @@ import { auth } from "@/trpc/routes/auth";
 import { members } from "@/trpc/routes/members";
 import { projects } from "@/trpc/routes/projects";
 import { twoFactor } from "@/trpc/routes/twoFactor";
+import { branches } from "@/trpc/routes/branch";
 
 export const appRouter = createRouter({
   auth,
@@ -12,6 +13,7 @@ export const appRouter = createRouter({
   projects,
   members,
   twoFactor,
+  branches,
 });
 
 // export type definition of API
