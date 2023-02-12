@@ -15,7 +15,6 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
-    "types": ["cypress", "node"],
     "paths": {
       "@/lib/*": ["lib/*"],
       "@/trpc/*": ["trpc/*"],
@@ -39,7 +38,8 @@
     "pages/auth/index.js",
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
-    "pages/projects/index.tsx"
+    "pages/projects/index.tsx",
+    "test/cypress/support/component.ts"
   ],
   "exclude": ["node_modules"]
 }
