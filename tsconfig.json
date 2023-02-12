@@ -15,6 +15,7 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+    "types": ["cypress", "node"],
     "paths": {
       "@/lib/*": ["lib/*"],
       "@/trpc/*": ["trpc/*"],
