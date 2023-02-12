@@ -14,6 +14,8 @@ import {
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import CreateBranchModal from "@/components/branches/CreateBranchModal";
+import { useState } from "react";
 
 /**
  * A functional component that represents a project.
@@ -28,8 +30,14 @@ interface Props {
 }
 
 export const ProjectPage = ({ projects, currentProject }: Props) => {
+
+    const [isOpen, setIsOpen] = useState(false)
+
+
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
+      <CreateBranchModal isOpen={isOpen} setIsOpen={setIsOpen} />
+
       <div className="w-full bg-white bg-opacity-10 px-5 py-6">
         <div className="flex flex-col md:flex-row md:space-x-1">
           <TerminalSquareIcon className="h-8 w-8 shrink-0 text-teal-300" />
@@ -114,7 +122,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
             </div>
           </Popover>
 
-          <Button className="border border-white focus:outline-none">
+          <Button onClick={() => setIsOpen(true)} className="border border-white focus:outline-none">
             <GitBranchPlus className="mr-3 h-4 w-4" />
             <span className="hidden sm:block">Create new branch</span>
             <span className="block sm:hidden">Branch</span>

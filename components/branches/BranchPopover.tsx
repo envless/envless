@@ -15,12 +15,12 @@ interface Props {
   zIndex?: 10 | 50 | 100;
 }
 
-const Popover = (props: Props) => {
+const BranchPopover = (props: Props) => {
   const { zIndex = 50, button, children } = props;
 
   return (
     <div
-      className={clsx("relative inline-block text-left", {
+      className={clsx("w-full relative inline-block text-left", {
         "z-50": zIndex === 50,
         "z-10": zIndex === 10,
       })}
@@ -46,4 +46,4 @@ const Popover = (props: Props) => {
   );
 };
 
-export default Popover;
+export default BranchPopover;
