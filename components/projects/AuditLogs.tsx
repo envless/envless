@@ -118,37 +118,38 @@ export default function AuditLogs({ logs, user }) {
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-8">
-        {logs && logs.map((log, idx) => (
-          <li key={log.id}>
-            <div className="relative pb-4">
-              {idx !== logs.length - 1 ? (
-                <span
-                  className="absolute left-4 -ml-px h-full w-0.5 bg-dark"
-                  aria-hidden="true"
-                />
-              ) : null}
-              <div className="relative flex items-start space-x-3">
-                <div className="relative">{renderIcon(log)}</div>
-                <div className="min-w-0 flex-1">
-                  <div>
-                    <div className="text-sm">
-                      <span className="font-medium text-lightest">
-                        {log.createdById === user.id
-                          ? "You"
-                          : log.createdBy.name || log.createdBy.email}{" "}
-                        {description(log)}
-                      </span>
-                    </div>
-                  </div>
-                  <DateTimeAgo
-                    className="mt-0.5 text-xs text-light"
-                    date={log.createdAt}
+        {logs &&
+          logs.map((log, idx) => (
+            <li key={log.id}>
+              <div className="relative pb-4">
+                {idx !== logs.length - 1 ? (
+                  <span
+                    className="absolute left-4 -ml-px h-full w-0.5 bg-dark"
+                    aria-hidden="true"
                   />
+                ) : null}
+                <div className="relative flex items-start space-x-3">
+                  <div className="relative">{renderIcon(log)}</div>
+                  <div className="min-w-0 flex-1">
+                    <div>
+                      <div className="text-sm">
+                        <span className="font-medium text-lightest">
+                          {log.createdById === user.id
+                            ? "You"
+                            : log.createdBy.name || log.createdBy.email}{" "}
+                          {description(log)}
+                        </span>
+                      </div>
+                    </div>
+                    <DateTimeAgo
+                      className="mt-0.5 text-xs text-light"
+                      date={log.createdAt}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          ))}
       </ul>
     </div>
   );

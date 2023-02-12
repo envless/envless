@@ -5,9 +5,8 @@ import { useState } from "react";
 import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { Dropdown, Hr, Logo, Popover } from "@/components/theme";
+import { Dropdown, Hr, Logo, Popover, ScrollArea } from "@/components/theme";
 import log from "@/lib/log";
-import { ScrollArea } from "./ScrollArea";
 
 const Nav = ({ ...props }) => {
   const router = useRouter();
