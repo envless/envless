@@ -14,7 +14,6 @@ export const parseEnvFile = async (file: File, setEnvKeys) => {
   setEnvKeys([...pairs]);
 };
 
-
 export const parseEnvContent = async (contents: string) => {
   const pairs = parse(contents);
   const keyValues: EnvVariable[] = [];

@@ -1,8 +1,8 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
-import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import { parseEnvFile } from "@/utils/envParser";
 import { parseStringEnvContents } from "@/utils/helpers";
 import clsx from "clsx";
-import { EyeIcon, EyeOffIcon, XCircleIcon } from "lucide-react";
+import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
@@ -107,7 +107,7 @@ export function EnvironmentVariableEditor() {
         <div className="w-full py-8">
           {envKeys?.map((envPair, index) => (
             <div
-              key={new Date().toString() + index}
+              key={index}
               className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
             >
               <div className="col-span-3">
@@ -128,23 +128,26 @@ export function EnvironmentVariableEditor() {
                     full
                     icon={
                       envPair.hidden ? (
-                        <EyeIcon className="h-4 w-4" />
+                        <Eye className="h-4 w-4 text-lighter" />
                       ) : (
-                        <EyeOffIcon className="h-4 w-4" />
+                        <EyeOff className="h-4 w-4 text-light" />
                       )
                     }
                     name={envPair.envValue}
-                    type={envPair.hidden ? "password" : "text"}
                     autoComplete="off"
                     iconActionClick={() =>
                       handleToggleHiddenEnvPairClick(index)
                     }
                     onChange={handleEnvValueChange(index)}
                     value={envPair.envValue}
-                    className="inline-block font-mono"
+                    disabled={envPair.hidden}
+                    className={clsx(
+                      envPair.hidden ? "obscure" : "",
+                      "inline-block font-mono",
+                    )}
                   />
 
-                  <XCircleIcon
+                  <MinusCircle
                     className="h-5 w-5 shrink-0 cursor-pointer text-light hover:text-lighter"
                     onClick={() => handleRemoveEnvPairClick(index)}
                   />
@@ -153,7 +156,7 @@ export function EnvironmentVariableEditor() {
             </div>
           ))}
 
-          <div className="mt-4 float-right inline-flex gap-3 ">
+          <div className="float-right mt-4 inline-flex gap-3 ">
             <Button secondary onClick={() => handleAddMoreEnvClick()}>
               Add more
             </Button>

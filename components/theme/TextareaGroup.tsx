@@ -20,7 +20,9 @@ export default function Textarea({
       <textarea
         {...props}
         rows={1}
+        disabled={disabled}
         className={clsx(
+          className,
           "input-primary w-full scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker",
         )}
       />
