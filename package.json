@@ -71,7 +71,7 @@
     "rehype-react": "^7.1.2",
     "remark": "^14.0.2",
     "remark-gfm": "^3.0.1",
-    "remark-html": "^15.0.1",
+    "remark-html": "^15.0.2",
     "superjson": "^1.12.1",
     "zod": "^3.20.2"
   },
