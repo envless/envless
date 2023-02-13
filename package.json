@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "scripts": {
     "build": "next build",
-    "dev": "next dev & npx prisma studio & npx mailing",
+    "dev": "next dev & npx mailing",
     "lint": "next lint",
     "start": "next start",
     "prebuild": "prisma generate",
