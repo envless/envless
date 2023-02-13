@@ -22,6 +22,7 @@ export const parseEnvFile = (
   reader.readAsText(file, "UTF-8");
 
   reader.onload = (event) => {
+    const contents = event.target?.result as string;
     let keyValuePairs = parseStringEnvContents(event.target?.result as string);
     onLoaded(keyValuePairs);
   };

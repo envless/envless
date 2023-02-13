@@ -1,23 +1,24 @@
 import { ComponentProps, ReactNode } from "react";
 import clsx from "clsx";
 
-type InputGroupTypes = {
+type TextareaTypes = {
   icon: ReactNode;
   full?: boolean;
   iconActionClick?: () => void;
-} & ComponentProps<"input">;
+} & ComponentProps<"textarea">;
 
-export default function InputGroup({
+export default function Textarea({
   full,
   icon,
   className,
   disabled,
   iconActionClick,
   ...props
-}: InputGroupTypes) {
+}: TextareaTypes) {
   return (
     <div className={clsx("relative flex items-center", full && "w-full")}>
       <textarea
+        {...props}
         rows={1}
         className={clsx(
           "input-primary scrollbar-track-dark scrollbar-thumb-darker w-full scrollbar-thin",

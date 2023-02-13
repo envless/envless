@@ -1,10 +1,11 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
-import { parseEnvFile, parseStringEnvContents } from "@/utils/helpers";
+import { parseStringEnvContents } from "@/utils/helpers";
+import { parseEnvFile, parseEnvContent } from "@/utils/envParser";
 import clsx from "clsx";
 import { EyeIcon, EyeOffIcon, XCircleIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
-import { Button, Container, InputGroup } from "@/components/theme";
+import { Button, Container, TextareaGroup } from "@/components/theme";
 
 export interface EnvVariable {
   envKey: string;
@@ -16,12 +17,9 @@ export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-
-    parseEnvFile(file, (pairs) => {
-      setEnvKeys([...pairs]);
-    });
+    await parseEnvFile(file, setEnvKeys);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -126,7 +124,7 @@ export function EnvironmentVariableEditor() {
 
               <div className="col-span-9">
                 <div className="flex items-center gap-3">
-                  <InputGroup
+                  <TextareaGroup
                     full
                     icon={
                       envPair.hidden ? (

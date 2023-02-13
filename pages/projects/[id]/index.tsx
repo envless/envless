@@ -6,11 +6,12 @@ import { Project } from "@prisma/client";
 import {
   Check,
   ChevronDown,
-  GitBranchIcon,
+  GitBranch,
   GitBranchPlus,
   Search,
-  TerminalSquareIcon,
+  TerminalSquare,
 } from "lucide-react";
+
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
@@ -32,7 +33,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
     <ProjectLayout projects={projects} currentProject={currentProject}>
       <div className="w-full bg-white bg-opacity-10 px-5 py-6">
         <div className="flex flex-col md:flex-row md:space-x-1">
-          <TerminalSquareIcon className="h-8 w-8 shrink-0 text-teal-300" />
+          <TerminalSquare className="h-8 w-8 shrink-0 text-teal-300" />
           <div className="mt-2 px-0 md:mt-0 md:px-4">
             <h3 className="text-sm leading-relaxed text-white">
               This project does not have a production branch defined
@@ -53,7 +54,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
             button={
               <button className="inline-flex items-center justify-center space-x-3 rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker">
                 <div>
-                  <GitBranchIcon className="h-4 w-4" />
+                  <GitBranch className="h-4 w-4" />
                 </div>
 
                 <span>
