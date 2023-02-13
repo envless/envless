@@ -11,7 +11,6 @@ import {
   Search,
   TerminalSquare,
 } from "lucide-react";
-
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
@@ -36,7 +35,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
           <TerminalSquare className="h-8 w-8 shrink-0 text-teal-300" />
           <div className="mt-2 px-0 md:mt-0 md:px-4">
             <h3 className="text-sm leading-relaxed text-white">
-              This project does not have a production branch defined
+              This project does not have a production branch
             </h3>
             <p className="mt-1 text-sm font-light text-gray-500">
               Production branches are protected. You cannot update it directly

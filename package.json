@@ -42,8 +42,6 @@
     "clsx": "^1.2.1",
     "cypress": "^12.5.1",
     "device-detector-js": "^3.0.3",
-    "dotenv": "^16.0.3",
-    "envfile": "^6.18.0",
     "fuse.js": "^6.6.2",
     "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",

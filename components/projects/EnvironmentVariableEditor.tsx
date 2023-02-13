@@ -1,6 +1,6 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
+import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
 import { parseStringEnvContents } from "@/utils/helpers";
-import { parseEnvFile, parseEnvContent } from "@/utils/envParser";
 import clsx from "clsx";
 import { EyeIcon, EyeOffIcon, XCircleIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -153,9 +153,12 @@ export function EnvironmentVariableEditor() {
             </div>
           ))}
 
-          <div className="mt-4 px-4">
-            <Button small secondary onClick={() => handleAddMoreEnvClick()}>
+          <div className="mt-4 float-right inline-flex gap-3 ">
+            <Button secondary onClick={() => handleAddMoreEnvClick()}>
               Add more
+            </Button>
+            <Button onClick={() => handleAddMoreEnvClick()}>
+              Save changes
             </Button>
           </div>
         </div>

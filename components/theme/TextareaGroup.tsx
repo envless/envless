@@ -21,7 +21,7 @@ export default function Textarea({
         {...props}
         rows={1}
         className={clsx(
-          "input-primary scrollbar-track-dark scrollbar-thumb-darker w-full scrollbar-thin",
+          "input-primary w-full scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker",
         )}
       />
 

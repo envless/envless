@@ -7,7 +7,6 @@ const Projects = ({ ...props }) => {
   const { projects } = props;
 
   const sortedProjects = projects.sort((a, b) => {
-
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 

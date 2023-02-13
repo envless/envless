@@ -55,7 +55,7 @@ const Button = (props: {
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
           secondary
-            ? "border-2 border-dark bg-dark text-lightest shadow-md hover:bg-dark/60"
+            ? "border border-dark border-2 bg-dark text-lightest shadow-xl hover:bg-dark/60"
             : "bg-lightest text-darkest hover:bg-lighter",
 
           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
@@ -74,7 +74,7 @@ const Button = (props: {
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
           secondary
-            ? "border-2 border-dark bg-dark text-lightest shadow-md hover:bg-dark/60"
+            ? "border border-dark border-2 bg-dark text-lightest shadow-xl hover:bg-dark/60"
             : "bg-lightest text-darkest hover:bg-lighter",
 
           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
