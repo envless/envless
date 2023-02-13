@@ -38,7 +38,8 @@
     "pages/auth/index.js",
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
-    "pages/projects/index.tsx"
+    "pages/projects/index.tsx",
+    "test/cypress/support/component.ts"
   ],
   "exclude": ["node_modules"]
 }
