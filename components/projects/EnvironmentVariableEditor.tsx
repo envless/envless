@@ -1,6 +1,5 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
-import { parseEnvFile } from "@/utils/envParser";
-import { parseStringEnvContents } from "@/utils/helpers";
+import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -30,7 +29,7 @@ export function EnvironmentVariableEditor() {
   const handleAddMoreEnvClick = () => {
     setEnvKeys([
       ...(envKeys as EnvVariable[]),
-      { envKey: "", envValue: "", hidden: true },
+      { envKey: "", envValue: "", hidden: false },
     ]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
@@ -74,13 +73,14 @@ export function EnvironmentVariableEditor() {
     );
   };
 
-  const handlePaste = (event: any) => {
-    const pastedEnvKeyValuePairs = parseStringEnvContents(
-      event.clipboardData?.getData("text"),
-    );
+  const handlePaste = async (event: any) => {
+    const content = event.clipboardData.getData("text/plain") as string;
+    const pastedEnvKeyValuePairs = await parseEnvContent(content);
 
     if (
-      !(pastedEnvKeyValuePairs[0].envKey && pastedEnvKeyValuePairs[0].envValue)
+      !(
+        pastedEnvKeyValuePairs[0]?.envKey && pastedEnvKeyValuePairs[0]?.envValue
+      )
     ) {
       return;
     }
