@@ -32,6 +32,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "node_modules/cypress",
     "**/*.ts",
     "**/*.tsx",
     "emails/index.ts",
@@ -39,7 +40,9 @@
     "components/blog/ContentBlock.js",
     "lib/notion.ts",
     "pages/projects/index.tsx",
-    "test/cypress/support/component.ts"
+    "test/cypress/support/component.ts",
+    "jest.setup.js"
   ],
-  "exclude": ["node_modules"]
+  "types": ["node", "jest", "@testing-library/jest-dom"],
+  "exclude": ["node_modules", "cypress.config.ts"]
 }
