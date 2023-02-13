@@ -4,6 +4,6 @@ describe("Home Page", () => {
 
     cy.get('a[href*="blog"]').click();
 
-    cy.url().should("include", "/about");
+    cy.url().should("include", "/blog");
   });
 });
