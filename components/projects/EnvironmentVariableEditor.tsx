@@ -33,7 +33,8 @@ export function EnvironmentVariableEditor() {
     ]);
   };
   const handleRemoveEnvPairClick = (index: number) => {
-    setEnvKeys(envKeys?.filter((_, i) => i !== index));
+    const updatedPairs = envKeys.filter((_, i) => i !== index);
+    setEnvKeys(updatedPairs);
   };
 
   const handleToggleHiddenEnvPairClick = (index: number) => {
@@ -105,9 +106,9 @@ export function EnvironmentVariableEditor() {
     <>
       {envKeys.length > 0 ? (
         <div className="w-full py-8">
-          {envKeys?.map((envPair, index) => (
+          {envKeys.map((envPair, index) => (
             <div
-              key={index}
+              key={envPair.envKey}
               className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
             >
               <div className="col-span-3">
