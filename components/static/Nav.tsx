@@ -31,7 +31,7 @@ const Nav: React.FC<Props> = ({ menu }) => {
       <Link
         key={index}
         href={item.href}
-        className="ml-7 bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]"
+        className="ml-7 bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_2px] hover:bg-[length:100%_2px]"
       >
         {item.name}
       </Link>

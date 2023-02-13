@@ -12,13 +12,19 @@ import clsx from "clsx";
 interface Props {
   button: React.ReactNode;
   children: React.ReactNode;
+  zIndex?: 10 | 50;
 }
 
 const Popover = (props: Props) => {
-  const { button, children } = props;
+  const { zIndex = 50, button, children } = props;
 
   return (
-    <div className="relative z-10 inline-block text-left">
+    <div
+      className={clsx("relative inline-block text-left", {
+        "z-50": zIndex === 50,
+        "z-10": zIndex === 10,
+      })}
+    >
       <PopoverPrimitive.Root>
         <PopoverPrimitive.Trigger asChild>{button}</PopoverPrimitive.Trigger>
         <PopoverPrimitive.Content
