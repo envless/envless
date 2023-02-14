@@ -45,5 +45,5 @@ next-env.d.ts
 dump.rdb
 
 # cypress
-/test/**/screenshots
-/test/**/videos
+/cypress/**/screenshots
+/cypress/**/videos
