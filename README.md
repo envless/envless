@@ -32,7 +32,7 @@ We have a discord where we discuss about out updates, features, requests, best p
 
 ## 🛡️ License
 
-LinkFree is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE](https://github.com/envless/envless/blob/main/LICENSE) file for details.
+Envless is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE](https://github.com/envless/envless/blob/main/LICENSE) file for details.
 
 <h2 id="contributors">Contributors</h2>
 
