@@ -37,7 +37,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
     <ProjectLayout projects={projects} currentProject={currentProject}>
       <CreateBranchModal isOpen={isOpen} setIsOpen={setIsOpen} />
 
-      <div className="w-full bg-white bg-opacity-10 px-5 py-6">
+      <div className="w-full rounded bg-dark px-5 py-6">
         <div className="flex flex-col md:flex-row md:space-x-1">
           <TerminalSquare className="h-8 w-8 shrink-0 text-teal-300" />
           <div className="mt-2 px-0 md:mt-0 md:px-4">

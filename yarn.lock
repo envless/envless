@@ -4778,6 +4778,11 @@ gauge@^3.0.0:
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
 
+generate-passphrase@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/generate-passphrase/-/generate-passphrase-1.2.0.tgz#d520e3485fa8c48d5e7129956d960993749fd6ae"
+  integrity sha512-RZZdKMlE+0baX3ukATStWAOBOJPPzvpoF1+5SdYt9DSLogF91FPx+ARaAjpkX/b7xqD4/uUGNCkBdFcl1PS9FQ==
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz"

@@ -53,14 +53,17 @@ model ProjectSetting {
 }
 
 model ProjectInvite {
-  email       String
-  expires     DateTime
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId   String
-  createdAt   DateTime @default(now())
-  invitationToken String
-  role        String @default("developer")
-  @@unique([email, projectId])
+  id                  String    @id @default(cuid())
+  email               String
+  expires             DateTime
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String
+  createdAt           DateTime @default(now())
+  invitationToken     String
+  encryptedPassphrase Json?
+  role                String @default("developer")
+
+  @@unique(fields: [email, projectId], name: "uniq_email_project")
   @@unique([invitationToken])
   @@index([projectId])
   @@index([invitationToken])

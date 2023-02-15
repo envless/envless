@@ -10,10 +10,10 @@ const Header: React.FC<HeaderProps> = ({ loose }) => {
       <MjmlColumn>
         <MjmlImage
           padding="0 16px 0"
-          width="80px"
-          height="80px"
+          width="50px"
+          height="50px"
           align="center"
-          src="https://s3.us-west-1.amazonaws.com/cdn.envless.dev/logo-dark.png"
+          src="https://cdn.envless.dev/emails/logos/default.png"
           cssClass="logo"
         />
       </MjmlColumn>

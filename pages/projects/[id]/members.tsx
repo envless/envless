@@ -4,7 +4,6 @@ import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Project, User } from "@prisma/client";
 import { Lock, Settings2, Unlock, UserPlus } from "lucide-react";
-import { signIn } from "next-auth/react";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
@@ -20,14 +19,14 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   members: User[];
-  userId: string;
+  user: any;
 }
 
 export const MembersPage = ({
   members,
   projects,
   currentProject,
-  userId,
+  user,
 }: Props) => {
   return (
     <ProjectLayout
@@ -42,7 +41,7 @@ export const MembersPage = ({
           </div>
 
           <div className="col-span-6">
-            <AddMemberModal projectId={currentProject.id} userId={userId} />
+            <AddMemberModal projectId={currentProject.id} user={user} />
           </div>
         </div>
 
@@ -193,7 +192,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
-      userId: user.id,
+      user: user,
       members: [
         {
           id: 1,
