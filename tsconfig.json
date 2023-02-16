@@ -24,6 +24,7 @@
       "@/styles/*": ["styles/*"],
       "@/api/*": ["pages/api/*"],
       "@/types/*": ["types/*"],
+      "@/hooks/*": ["hooks/*"],
       "@/layouts/*": ["layouts/*"],
       "@/models/*": ["models/*"],
       "@/components/*": ["components/*"]
