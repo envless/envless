@@ -123,7 +123,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           <div className="inline-block min-w-full py-4 align-middle">
             <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
               <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-dark">
+                <tbody className="bg-darker">
                   {protectedBranches.map((pr) => (
                     <tr key={pr.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
