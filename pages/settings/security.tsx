@@ -6,9 +6,11 @@ import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { ArrowRight } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { authenticator } from "otplib";
 import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
+import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import { decrypt, encrypt } from "@/lib/encryption";
 import log from "@/lib/log";
@@ -36,8 +38,8 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
     formState: { errors },
   } = useForm();
 
-  const [loading, setLoading] = useState(false);
   const [enabled, setEnabled] = useState(twoFactor.enabled);
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
 
   useEffect(() => {
     setEnabled(twoFactor.enabled);
@@ -45,12 +47,11 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
   const enableMutation = trpc.twoFactor.enable.useMutation({
     onSuccess: (_data) => {
-      setLoading(false);
       setEnabled(true);
+      signOut();
     },
 
     onError: (error) => {
-      setLoading(false);
       setEnabled(false);
 
       setError("code", {
@@ -62,21 +63,28 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
   const disableMutation = trpc.twoFactor.disable.useMutation({
     onSuccess: () => {
-      setLoading(false);
+      setTwoFactorRequired(false);
       setEnabled(false);
+      signOut();
     },
 
     onError: (error) => {
-      setLoading(false);
       log("Error while disabling 2fa", error);
     },
   });
+
+  const disableWithTwoFactor = async (verified: boolean) => {
+    if (verified) {
+      disableMutation.mutate();
+    } else {
+      setTwoFactorRequired(true);
+    }
+  };
 
   const verifyOtp: SubmitHandler<TwoFactorCode> = async (data) => {
     const { code } = data;
     enableMutation.mutate({ code: code });
     reset();
-    setLoading(true);
   };
 
   return (
@@ -104,9 +112,9 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
           <Button
             secondary={true}
             onClick={() => {
-              disableMutation.mutate();
+              disableWithTwoFactor(false);
             }}
-            disabled={loading}
+            disabled={disableMutation.isLoading}
           >
             <span className="text-red-400">
               Disable two-factor authentication
@@ -177,7 +185,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
                   />
 
                   <div className="float-right">
-                    <Button type="submit" disabled={loading}>
+                    <Button type="submit" disabled={enableMutation.isLoading}>
                       Verify and continue
                       <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                     </Button>
@@ -188,6 +196,15 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
           </Modal>
         )}
       </div>
+
+      <TwoFactorModal
+        open={twoFactorRequired}
+        onStateChange={setTwoFactorRequired}
+        onConfirm={async () => {
+          disableWithTwoFactor(true);
+          reset();
+        }}
+      />
     </SettingsLayout>
   );
 };
