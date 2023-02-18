@@ -3,12 +3,25 @@ import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+<<<<<<< HEAD
 import { GitBranchPlus, TerminalSquareIcon } from "lucide-react";
 import { BranchPopover } from "@/components/branches/BranchPopover";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
+=======
+import {
+  ChevronDown,
+  GitBranchIcon,
+  Search,
+  TerminalSquareIcon,
+} from "lucide-react";
+>>>>>>> 384619c (wip: branch selection and search ui)
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
-import { Button } from "@/components/theme";
+import { Button, Hr, Popover } from "@/components/theme";
 import prisma from "@/lib/prisma";
+<<<<<<< HEAD
+=======
+import Link from "next/link";
+>>>>>>> 384619c (wip: branch selection and search ui)
 
 /**
  * A functional component that represents a project.
