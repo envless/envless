@@ -18,14 +18,14 @@ export enum BranchPopoverAlignment {
 interface Props {
   button: React.ReactNode;
   children: React.ReactNode;
-  zIndex?: 10 | 50 | 70 | 100;
+  zIndex?: 10 | 20 | 30 | 40 | 50;
   align?: BranchPopoverAlignment;
   fullButtonWidth?: boolean;
 }
 
 const Popover = (props: Props) => {
   const {
-    zIndex = 50,
+    zIndex = 20,
     align = BranchPopoverAlignment.center,
     fullButtonWidth = false,
     button,
@@ -39,9 +39,10 @@ const Popover = (props: Props) => {
         "relative inline-block text-left",
         {
           "z-10": zIndex === 10,
+          "z-20": zIndex === 20,
+          "z-30": zIndex === 30,
+          "z-40": zIndex === 40,
           "z-50": zIndex === 50,
-          "z-70": zIndex === 70,
-          "z-100": zIndex === 100,
         },
       )}
     >

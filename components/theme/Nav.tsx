@@ -68,7 +68,7 @@ const Nav = ({ ...props }) => {
 
         {currentProject && (
           <Popover
-            zIndex={70}
+            zIndex={40}
             button={
               <div className="ml-5 cursor-pointer hover:text-teal-300">
                 <div className="absolute -right-7 hover:text-teal-300">

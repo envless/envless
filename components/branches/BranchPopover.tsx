@@ -12,9 +12,11 @@ interface Props {
   outlined?: boolean;
   fullWidth?: boolean;
   buttonText?: string;
+  zIndex?: 10 | 20 | 30 | 40 | 50;
 }
 
 export const BranchPopover = ({
+  zIndex = 20,
   outlined = false,
   fullWidth = false,
   buttonText = "Current branch",
@@ -25,7 +27,7 @@ export const BranchPopover = ({
 }: Props) => {
   return (
     <Popover
-      zIndex={100}
+      zIndex={zIndex}
       align={BranchPopoverAlignment.end}
       fullButtonWidth={fullWidth}
       button={
