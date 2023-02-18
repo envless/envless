@@ -1,21 +1,14 @@
 import { type GetServerSidePropsContext } from "next";
-import Link from "next/link";
+import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
-import {
-  Check,
-  ChevronDown,
-  GitBranchIcon,
-  GitBranchPlus,
-  Search,
-  TerminalSquareIcon,
-} from "lucide-react";
-import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
-import { Button, Hr, Popover } from "@/components/theme";
-import prisma from "@/lib/prisma";
+import { GitBranchPlus, TerminalSquareIcon } from "lucide-react";
+import { BranchPopover } from "@/components/branches/BranchPopover";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
-import { useState } from "react";
+import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
+import { Button } from "@/components/theme";
+import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -30,9 +23,14 @@ interface Props {
 }
 
 export const ProjectPage = ({ projects, currentProject }: Props) => {
-
-    const [isOpen, setIsOpen] = useState(false)
-
+  const [isOpen, setIsOpen] = useState(false);
+  const defaultBranches = [
+    { id: 1, name: "main", isSelected: true },
+    { id: 2, name: "staging", isSelected: false },
+    { id: 3, name: "production", isSelected: false },
+  ];
+  const [seletedBranch, setSelectedBranch] = useState(defaultBranches[0]);
+  const [branches, setBranches] = useState(defaultBranches);
 
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
@@ -56,73 +54,17 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
 
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
-          <Popover
-            zIndex={10}
-            button={
-              <button className="inline-flex items-center justify-center space-x-3 rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker">
-                <div>
-                  <GitBranchIcon className="h-4 w-4" />
-                </div>
+          <BranchPopover
+            branches={branches}
+            selectedBranch={seletedBranch}
+            setSelectedBranch={setSelectedBranch}
+            setBranches={setBranches}
+          />
 
-                <span>
-                  <span className="mr-3 text-xs text-light">
-                    Current branch
-                  </span>
-                  <span className="font-semibold">main</span>
-                </span>
-
-                <div>
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </button>
-            }
+          <Button
+            onClick={() => setIsOpen(true)}
+            className="border border-white focus:outline-none"
           >
-            <div className="text-xs">
-              <div className="border-b border-dark px-3 py-3">
-                <p className="font-semibold">Switch between branches</p>
-              </div>
-
-              <div className="relative mt-1 flex items-center border-b border-dark px-3">
-                <Search className="absolute mb-1.5 h-4 w-4 text-light" />
-                <input
-                  type="text"
-                  name="search"
-                  id="search"
-                  className="w-full border-none bg-transparent pr-3 pl-6 pb-3 text-sm focus:outline-none focus:ring-0"
-                  placeholder="Find a branch..."
-                />
-                <Hr />
-              </div>
-
-              <div className="text-sm">
-                <ul className="flex w-full flex-col">
-                  <Link href="#">
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      <span>main</span>
-                      <Check
-                        className="h-4 w-4 text-teal-300"
-                        aria-hidden="true"
-                      />
-                    </li>
-                  </Link>
-
-                  <Link href="#">
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      staging
-                    </li>
-                  </Link>
-
-                  <Link href="#">
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      production
-                    </li>
-                  </Link>
-                </ul>
-              </div>
-            </div>
-          </Popover>
-
-          <Button onClick={() => setIsOpen(true)} className="border border-white focus:outline-none">
             <GitBranchPlus className="mr-3 h-4 w-4" />
             <span className="hidden sm:block">Create new branch</span>
             <span className="block sm:hidden">Branch</span>

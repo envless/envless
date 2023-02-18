@@ -15,7 +15,7 @@ export interface EnvVariable {
 
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const pastingInputIndex = useRef(0);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -107,8 +107,6 @@ export function EnvironmentVariableEditor() {
 
   return (
     <>
-
-
       {envKeys.length > 0 ? (
         <div className="w-full py-8">
           {envKeys?.map((envPair, index) => (

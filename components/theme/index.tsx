@@ -16,6 +16,13 @@ export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
 export { default as LoadingIcon } from "./LoadingIcon";
 export { default as InputGroup } from "./InputGroup";
+export { default as BaseInput } from "./BaseInput";
 
 export { ScrollBar } from "./ScrollArea";
 export { ScrollArea } from "./ScrollArea";
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "./Tooltip";

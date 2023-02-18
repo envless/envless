@@ -1,49 +1,150 @@
-import React from "react";
-import * as PopoverPrimitive from "@radix-ui/react-popover";
+import React, { ComponentProps } from "react";
 import clsx from "clsx";
-
-/**
- * Popover component.
- *
- * @param {Props} props - The component's props.
- * @returns {JSX.Element} The component's JSX element.
- */
+import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
+import { Hr, Popover } from "../theme";
+import { BranchPopoverAlignment } from "../theme/Popover";
 
 interface Props {
-  button: React.ReactNode;
-  children: React.ReactNode;
-  zIndex?: 10 | 50 | 100;
+  branches: any;
+  setBranches: any;
+  selectedBranch: any;
+  setSelectedBranch: any;
+  outlined?: boolean;
+  fullWidth?: boolean;
+  buttonText?: string;
 }
 
-const BranchPopover = (props: Props) => {
-  const { zIndex = 50, button, children } = props;
-
+export const BranchPopover = ({
+  outlined = false,
+  fullWidth = false,
+  buttonText = "Current branch",
+  branches,
+  setBranches,
+  selectedBranch,
+  setSelectedBranch,
+}: Props) => {
   return (
-    <div
-      className={clsx("w-full relative inline-block text-left", {
-        "z-50": zIndex === 50,
-        "z-10": zIndex === 10,
-      })}
-    >
-      <PopoverPrimitive.Root>
-        <PopoverPrimitive.Trigger asChild>{button}</PopoverPrimitive.Trigger>
-        <PopoverPrimitive.Content
-          align="center"
-          sideOffset={4}
+    <Popover
+      zIndex={100}
+      align={BranchPopoverAlignment.end}
+      fullButtonWidth={fullWidth}
+      button={
+        <button
+          type="button"
           className={clsx(
-            "mx-2 bg-darker",
-            "w-full rounded shadow-md",
-            "shadow-xl shadow-black ring-2 ring-dark focus:outline-none",
-            "radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down",
+            "inline-flex w-full items-center justify-between space-x-4 rounded border border-dark px-3 py-2 text-sm  transition-colors duration-75 hover:bg-darker",
+            outlined ? "ring-1 ring-light/50" : "bg-dark",
           )}
         >
-          <PopoverPrimitive.Arrow className="fill-current text-dark" />
+          <span className="flex flex-row items-center">
+            <div>
+              <GitBranch className="h-4 w-4" />
+            </div>
+            <span className="ml-2 text-xs text-light">{buttonText}</span>
+          </span>
 
-          {children}
-        </PopoverPrimitive.Content>
-      </PopoverPrimitive.Root>
-    </div>
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <span className="font-semibold">{selectedBranch.name}</span>
+            <ChevronDown className="h-4 w-4" />
+          </div>
+        </button>
+      }
+    >
+      <div className="text-xs">
+        <div className="border-b border-dark px-3 py-3">
+          <p className="font-semibold">Switch between branches</p>
+        </div>
+
+        <div className=" mt-1 flex items-center border-b border-dark px-3">
+          <BranchSearchInput />
+          <Hr />
+        </div>
+
+        <div className="text-sm">
+          <BranchList
+            branches={branches}
+            setSelectedBranch={setSelectedBranch}
+            setBranches={setBranches}
+          />
+        </div>
+      </div>
+    </Popover>
   );
 };
 
-export default BranchPopover;
+function BranchSearchInput() {
+  return (
+    <>
+      <Search className="absolute mb-1.5 h-4 w-4 text-light" />
+      <input
+        type="text"
+        name="search"
+        id="search"
+        className="w-full border-none bg-transparent pr-3 pl-6 pb-3 text-sm focus:outline-none focus:ring-0"
+        placeholder="Find a branch..."
+      />
+    </>
+  );
+}
+
+function BranchList({ branches, setSelectedBranch, setBranches }) {
+  const handleSelectBranchClick = (branch) => {
+    setBranches([
+      ...branches.map((b) => {
+        return {
+          ...b,
+          isSelected: b.id === branch.id,
+        };
+      }),
+    ]);
+
+    setSelectedBranch(branch);
+  };
+
+  return (
+    <ul className="flex w-full flex-col">
+      {branches.map((branch) => (
+        <button
+          key={branch.id}
+          type="button"
+          onClick={() => handleSelectBranchClick(branch)}
+        >
+          <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
+            <span>{branch.name}</span>
+            {branch.isSelected && (
+              <Check className="h-4 w-4 text-teal-300" aria-hidden="true" />
+            )}
+          </li>
+        </button>
+      ))}
+    </ul>
+  );
+}
+
+interface BranchPopoverButtonProps extends ComponentProps<"button"> {
+  label: string;
+  selectedBranch: string;
+}
+function BranchPopoverButton({
+  label,
+  selectedBranch,
+}: BranchPopoverButtonProps) {
+  return (
+    <button
+      type="button"
+      className="inline-flex w-full items-center justify-between space-x-4 rounded  border border-dark px-3 py-2 text-sm ring-1 ring-light/50 transition-colors duration-75 hover:bg-darker"
+    >
+      <span className="flex flex-row items-center">
+        <div>
+          <GitBranch className="h-4 w-4" />
+        </div>
+        <span className="ml-2 text-xs text-light">{label}</span>
+      </span>
+
+      <div className="flex flex-1 items-center justify-end space-x-2">
+        <span className="font-semibold">{selectedBranch}</span>
+        <ChevronDown className="h-4 w-4" />
+      </div>
+    </button>
+  );
+}

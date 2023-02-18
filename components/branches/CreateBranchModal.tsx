@@ -1,12 +1,23 @@
 import { useRouter } from "next/router";
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Branch } from "@prisma/client";
+import { useZodForm } from "hooks/useZodForm";
+import { AlertCircle } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button, Hr, Input } from "@/components/theme";
+import * as z from "zod";
+import {
+  BaseInput,
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/theme";
 import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
-import BranchPopover from "./BranchPopover";
+import { BranchPopover } from "./BranchPopover";
 
 interface Project {
   name: string;
@@ -19,32 +30,56 @@ interface BranchModalProps {
 
 const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
   const router = useRouter();
+
+  const schema = z.object({
+    name: z
+      .string()
+      .regex(
+        /^[a-z0-9][a-z0-9-]{0,}[a-z0-9]$/,
+        "Name can only contain lowercase alphanumeric characters and dashes, cannot start or end with a dash, and must be at least two characters.",
+      ),
+  });
+
   const {
     reset,
-    setError,
-    register,
     handleSubmit,
+    register,
     formState: { errors },
-  } = useForm();
+  } = useZodForm({
+    schema,
+  });
+
+  const defaultBranches = [
+    { id: 1, name: "main", isSelected: true },
+    { id: 2, name: "staging", isSelected: false },
+    { id: 3, name: "production", isSelected: false },
+  ];
   const [loading, setLoading] = useState(false);
+  const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
+  const [branches, setBranches] = useState(defaultBranches);
 
   const branchMutation = trpc.branches.create.useMutation({
-    onSuccess: (data) => {
-
+    onSuccess: (data: Branch) => {
       showToast({
         type: "success",
         title: "Branch created successfully",
         subtitle: "information about branch",
       });
+
+      // setTimeout(() => {
+      //   router.push(`/projects/${data.projectId}/branches`);
+      // }, 1000);
+
+      setIsOpen(false);
+      reset();
     },
 
     onError: (error) => {
-      if (error.message.includes("Unique constraint failed")) {
-        setError("name", {
-          type: "custom",
-          message: "Project name already exists",
-        });
-      }
+      showToast({
+        type: "error",
+        title: "Branch creation failed",
+        subtitle: error.message,
+      });
 
       setLoading(false);
     },
@@ -59,88 +94,61 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
       return;
     }
 
-    branchMutation.mutate({ branch: { name: name, projectId: "asdfsad" } });
-    reset();
+    const projectId = router.query.id as string;
+
+    branchMutation.mutate({ branch: { name: name, projectId } });
   };
 
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>
       <form onSubmit={handleSubmit(createNewBranch)}>
-        <Input
-          name="name"
-          label="Name"
-          required={true}
-          full={true}
-          register={register}
-          errors={errors}
-          validationSchema={{
-            required: "Branch Name is required",
-          }}
-        />
+        <div className="my-6">
+          <label className="relative inline-block text-sm">
+            Name
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <AlertCircle className="absolute top-0 -right-5 h-3.5 w-3.5 hover:text-lighter" />
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  <div className="flex space-x-2">
+                    <AlertCircle className="h-5 w-5 shrink-0 text-teal-300" />
+                    <p>
+                      Name can only contain lowercase alphanumeric characters
+                      and dashes, cannot start or end with a dash, and must be
+                      at least two characters.
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </label>
+
+          <BaseInput
+            {...register("name")}
+            className="my-2 px-3 py-2"
+            name="name"
+            required
+            full
+          />
+          {errors.name?.message && (
+            <p className="text-xs text-red-500">
+              Lowercase alphanumeric characters and dashes only
+            </p>
+          )}
+        </div>
 
         <div className="mb-4 w-full">
           <BranchPopover
-            zIndex={100}
-            button={
-              <button className="inline-flex w-full items-center justify-between space-x-4 rounded  border border-dark px-3 py-2 text-sm ring-1 ring-light/50 transition-colors duration-75 hover:bg-darker">
-                <span className="flex flex-row items-center">
-                  <div>
-                    <GitBranch className="h-4 w-4" />
-                  </div>
-                  <span className="ml-2 text-xs text-light">Base branch</span>
-                </span>
-
-                <div className="flex flex-1 items-center justify-end space-x-2">
-                  <span className="font-semibold">main</span>
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </button>
-            }
-          >
-            <div className="text-xs">
-              <div className="border-b border-dark px-3 py-3">
-                <p className="font-semibold">Switch between branches</p>
-              </div>
-
-              <div className=" mt-1 flex items-center border-b border-dark px-3">
-                <Search className="absolute mb-1.5 h-4 w-4 text-light" />
-                <input
-                  type="text"
-                  name="search"
-                  id="search"
-                  className="w-full border-none bg-transparent pr-3 pl-6 pb-3 text-sm focus:outline-none focus:ring-0"
-                  placeholder="Find a branch..."
-                />
-                <Hr />
-              </div>
-
-              <div className="text-sm">
-                <ul className="flex w-full flex-col">
-                  <button>
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      <span>main</span>
-                      <Check
-                        className="h-4 w-4 text-teal-300"
-                        aria-hidden="true"
-                      />
-                    </li>
-                  </button>
-
-                  <button>
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      staging
-                    </li>
-                  </button>
-
-                  <button>
-                    <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-                      production
-                    </li>
-                  </button>
-                </ul>
-              </div>
-            </div>
-          </BranchPopover>
+            outlined
+            fullWidth
+            buttonText="Base Branch"
+            branches={branches}
+            setBranches={setBranches}
+            selectedBranch={baseBranchFrom}
+            setSelectedBranch={setBaseBranchFrom}
+          />
         </div>
 
         <div className="float-right">
