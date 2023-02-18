@@ -167,11 +167,10 @@ export const Integrations = () => {
     <>
       <div className="mt-32 mb-16 text-center">
         <h2 className="heading text-3xl text-gray-300 sm:text-4xl">
-          It fits your needs
+          Build anything, deploy anywhere
         </h2>
         <p className="mx-auto mt-2 max-w-md text-light">
-          Envless is language, framework and platform agnostic. Build with
-          anything and deploy anywhere.
+          Envless is programming language, framework and platform agnostic.
         </p>
       </div>
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-4">

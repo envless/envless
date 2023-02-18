@@ -30,7 +30,7 @@ const Card = ({ release, parsedReleaseBody }) => {
           <div className="space-y-8">
             <h2
               className={
-                "w-fit  bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat text-2xl transition-[background-size] duration-500 hover:bg-[length:100%_2px] group-hover:bg-[length:100%_2px]"
+                "w-fit  bg-gradient-to-r from-teal-400 to-teal-400 bg-[length:0px_2px] bg-left-bottom bg-no-repeat text-2xl transition-[background-size] duration-500 group-hover:bg-[length:100%_2px] hover:bg-[length:100%_2px]"
               }
             >
               {release.name}

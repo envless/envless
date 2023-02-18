@@ -83,25 +83,7 @@ const Input = ({ ...props }: InputProps) => {
 
         {help && <p className="pt-1 text-xs text-light">{help}</p>}
 
-        {errors && errors[name]?.type === "required" && (
-          <p className="pt-1 text-xs text-red-400/75">
-            {errors[name]?.message}
-          </p>
-        )}
-
-        {errors && errors[name]?.type === "minLength" && (
-          <p className="pt-1 text-xs text-red-400/75">
-            {errors[name]?.message}
-          </p>
-        )}
-
-        {errors && errors[name]?.type === "pattern" && (
-          <p className="pt-1 text-xs text-red-400/75">
-            {errors[name]?.message}
-          </p>
-        )}
-
-        {errors && errors[name]?.type === "custom" && (
+        {errors && errors[name] != null && (
           <p className="pt-1 text-xs text-red-400/75">
             {errors[name]?.message}
           </p>

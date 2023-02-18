@@ -43,8 +43,8 @@ export const SupabaseIcon = ({ className }: Props) => {
           y2="44.0710077%"
           id="supabase-linearGradient-1"
         >
-          <stop stop-color="#249361" offset="0%"></stop>
-          <stop stop-color="#3ECF8E" offset="100%"></stop>
+          <stop stopColor="#249361" offset="0%"></stop>
+          <stop stopColor="#3ECF8E" offset="100%"></stop>
         </linearGradient>
         <linearGradient
           x1="1.99116498%"
@@ -53,8 +53,8 @@ export const SupabaseIcon = ({ className }: Props) => {
           y2="34.708062%"
           id="supabase-linearGradient-2"
         >
-          <stop stop-color="#000000" offset="0%"></stop>
-          <stop stop-color="#000000" stop-opacity="0" offset="100%"></stop>
+          <stop stopColor="#000000" offset="0%"></stop>
+          <stop stopColor="#000000" stopOpacity="0" offset="100%"></stop>
         </linearGradient>
       </defs>
       <g>
@@ -64,7 +64,7 @@ export const SupabaseIcon = ({ className }: Props) => {
         ></path>
         <path
           d="M149.601512,258.578826 C142.884085,267.038157 129.263882,262.403261 129.102024,251.601817 L126.735244,93.6176533 L232.963622,93.6176533 C252.204429,93.6176533 262.935398,115.840956 250.971119,130.909887 L149.601512,258.578826 Z"
-          fill-opacity="0.2"
+          fillOpacity="0.2"
           fill="url(#supabase-linearGradient-2)"
         ></path>
         <path
@@ -95,8 +95,8 @@ export const NetlifyIcon = ({ className }: Props) => {
           r="99.999879%"
           id="radialGradient-1"
         >
-          <stop stop-color="#20C6B7" offset="0%"></stop>
-          <stop stop-color="#4D9ABF" offset="100%"></stop>
+          <stop stopColor="#20C6B7" offset="0%"></stop>
+          <stop stopColor="#4D9ABF" offset="100%"></stop>
         </radialGradient>
       </defs>
       <g>
@@ -145,9 +145,9 @@ export const FlyIcon = ({ className }: Props) => {
           gradientTransform="translate(0.530955,0.495645),scale(0.776037,1.000000),translate(-0.530955,-0.495645)"
           id="flyRadialGradient-1"
         >
-          <stop stop-color="#BA7BF0" offset="0%"></stop>
-          <stop stop-color="#996BEC" offset="45%"></stop>
-          <stop stop-color="#5046E4" offset="100%"></stop>
+          <stop stopColor="#BA7BF0" offset="0%"></stop>
+          <stop stopColor="#996BEC" offset="45%"></stop>
+          <stop stopColor="#5046E4" offset="100%"></stop>
         </radialGradient>
       </defs>
       <g>

@@ -43,3 +43,7 @@ next-env.d.ts
 .mailing
 .dccache
 dump.rdb
+
+# cypress
+/cypress/**/screenshots
+/cypress/**/videos

@@ -1,8 +1,11 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
+import { Project, User } from "@prisma/client";
 import { Lock, Settings2, Unlock, UserPlus } from "lucide-react";
+import { signIn } from "next-auth/react";
+import AddMemberModal from "@/components/members/AddMemberModal";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
@@ -16,47 +19,16 @@ import prisma from "@/lib/prisma";
 interface Props {
   projects: Project[];
   currentProject: Project;
+  members: User[];
+  userId: string;
 }
 
-export const MembersPage = ({ projects, currentProject }: Props) => {
-  const members = [
-    {
-      id: 1,
-      name: "Becky Russell",
-      email: "becky@example.com",
-      role: "developer",
-      image: "https://randomuser.me/api/portraits/women/60.jpg",
-      twoFactorEnabled: true,
-    },
-
-    {
-      id: 2,
-      name: "Glen Hughes",
-      email: "glen@example.com",
-      role: "mantainer",
-      image: "https://randomuser.me/api/portraits/men/54.jpg",
-      twoFactorEnabled: false,
-    },
-
-    {
-      id: 3,
-      name: "Marion Miles",
-      email: "marion@example.com",
-      role: "owner",
-      image: "https://randomuser.me/api/portraits/women/18.jpg",
-      twoFactorEnabled: true,
-    },
-
-    {
-      id: 4,
-      name: "Gene May",
-      email: "gene@example.com",
-      role: "mantainer",
-      image: "https://randomuser.me/api/portraits/men/31.jpg",
-      twoFactorEnabled: false,
-    },
-  ];
-
+export const MembersPage = ({
+  members,
+  projects,
+  currentProject,
+  userId,
+}: Props) => {
   return (
     <ProjectLayout
       tab="members"
@@ -70,13 +42,7 @@ export const MembersPage = ({ projects, currentProject }: Props) => {
           </div>
 
           <div className="col-span-6">
-            <Button
-              className="float-right"
-              onClick={() => console.log("Invite")}
-            >
-              <UserPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
-              Invite member
-            </Button>
+            <AddMemberModal projectId={currentProject.id} userId={userId} />
           </div>
         </div>
 
@@ -227,6 +193,44 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
+      userId: user.id,
+      members: [
+        {
+          id: 1,
+          name: "Becky Russell",
+          email: "becky@example.com",
+          role: "developer",
+          image: "https://randomuser.me/api/portraits/women/60.jpg",
+          twoFactorEnabled: true,
+        },
+
+        {
+          id: 2,
+          name: "Glen Hughes",
+          email: "glen@example.com",
+          role: "mantainer",
+          image: "https://randomuser.me/api/portraits/men/54.jpg",
+          twoFactorEnabled: false,
+        },
+
+        {
+          id: 3,
+          name: "Marion Miles",
+          email: "marion@example.com",
+          role: "owner",
+          image: "https://randomuser.me/api/portraits/women/18.jpg",
+          twoFactorEnabled: true,
+        },
+
+        {
+          id: 4,
+          name: "Gene May",
+          email: "gene@example.com",
+          role: "mantainer",
+          image: "https://randomuser.me/api/portraits/men/31.jpg",
+          twoFactorEnabled: false,
+        },
+      ],
     },
   };
 }

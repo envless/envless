@@ -122,11 +122,6 @@ export const twoFactor = createRouter({
         });
       }
 
-      await redis.set(`session:${id}`, {
-        ...sessionStore,
-        mfa: true,
-      });
-
       await redis.set(
         `session:${id}`,
         {

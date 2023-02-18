@@ -18,13 +18,8 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
 
       <div className="w-full lg:w-3/5">
         <AuditLogs logs={logs} user={user} />
-        <Button
-          small={true}
-          secondary={true}
-          className="mt-8"
-          href="/settings/audits"
-        >
-          Load more
+        <Button small={true} secondary={true} className="mt-8">
+          Load More
         </Button>
       </div>
     </SettingsLayout>
@@ -50,6 +45,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   const projectIds = access?.map((e) => e.projectId);
+
   const logs = await Audit.logs({
     createdById: userId,
     actions: ["updated.account"],
