@@ -152,7 +152,7 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
         </div>
 
         <div className="float-right">
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={branchMutation.isLoading}>
             Create branch
           </Button>
         </div>
