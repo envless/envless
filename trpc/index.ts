@@ -3,9 +3,9 @@ import { account } from "@/trpc/routes/account";
 // import all sub-routers
 import { auth } from "@/trpc/routes/auth";
 import { members } from "@/trpc/routes/members";
+import { branches } from "@/trpc/routes/branch";
 import { projects } from "@/trpc/routes/projects";
 import { twoFactor } from "@/trpc/routes/twoFactor";
-import { branches } from "@/trpc/routes/branch";
 
 export const appRouter = createRouter({
   auth,

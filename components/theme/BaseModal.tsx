@@ -53,7 +53,7 @@ const BaseModal = ({ isOpen, setIsOpen, title, children }: BaseModalProps) => {
                     <button
                       type="button"
                       className="text-light hover:text-gray-200"
-                      onClick={() => setIsOpen(true)}
+                      onClick={() => setIsOpen(false)}
                     >
                       <span className="sr-only">Close</span>
                       <X className="h-6 w-6" aria-hidden="true" />

@@ -20,7 +20,16 @@ export const branches = createRouter({
   create: withAuth
     .input(
       z.object({
-        branch: z.object({ name: z.string(), projectId: z.string() }),
+        branch: z.object({
+          name: z
+            .string()
+            .min(2)
+            .regex(
+              /^[a-z0-9][a-z0-9-]{0,}[a-z0-9]$/,
+              "Name can only contain lowercase alphanumeric characters and dashes, cannot start or end with a dash, and must be at least two characters.",
+            ),
+          projectId: z.string(),
+        }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -28,16 +37,41 @@ export const branches = createRouter({
       const { user } = ctx.session;
       const { branch } = input;
 
-      const accessCount = await prisma.access.count({
+      const projectId = branch.projectId as string;
+      const userId = user.id as string;
+
+      const projectAccess = await prisma.access.findUnique({
         where: {
-          projectId: branch.projectId,
+          userId_projectId: {
+            userId,
+            projectId,
+          },
+        },
+        select: {
+          id: true,
         },
       });
 
-      if (accessCount <= 0) {
-        return new TRPCError({
+      if (!projectAccess) {
+        throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "You do not have permission to create branch"
+          message: "You do not have permission to create a branch",
+        });
+      }
+
+      const existingBranch = await prisma.branch.findUnique({
+        where: {
+          name_projectId: {
+            name: branch.name,
+            projectId: projectId,
+          },
+        },
+      });
+
+      if (existingBranch) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Branch name already exists",
         });
       }
 
