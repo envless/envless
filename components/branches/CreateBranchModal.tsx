@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
+import { useZodForm } from "@/hooks/useZodForm";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Branch } from "@prisma/client";
-import { useZodForm } from "hooks/useZodForm";
 import { AlertCircle } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -54,7 +54,6 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
     { id: 2, name: "staging", isSelected: false },
     { id: 3, name: "production", isSelected: false },
   ];
-  const [loading, setLoading] = useState(false);
   const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
   const [branches, setBranches] = useState(defaultBranches);
 
@@ -62,14 +61,9 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
     onSuccess: (data: Branch) => {
       showToast({
         type: "success",
-        title: "Branch created successfully",
-        subtitle: "information about branch",
+        title: "Branch successfully created",
+        subtitle: `You have now created and switched to ${data.name} branch`,
       });
-
-      // setTimeout(() => {
-      //   router.push(`/projects/${data.projectId}/branches`);
-      // }, 1000);
-
       setIsOpen(false);
       reset();
     },
@@ -80,17 +74,13 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
         title: "Branch creation failed",
         subtitle: error.message,
       });
-
-      setLoading(false);
     },
   });
 
   const createNewBranch: SubmitHandler<Project> = async (data) => {
     const { name } = data;
-    setLoading(true);
 
     if (!name) {
-      setLoading(false);
       return;
     }
 
@@ -105,16 +95,16 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
         <div className="my-6">
           <label className="relative inline-block text-sm">
             Name
-            <TooltipProvider>
+            <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <AlertCircle className="absolute top-0 -right-5 h-3.5 w-3.5 hover:text-lighter" />
                 </TooltipTrigger>
 
                 <TooltipContent>
-                  <div className="flex space-x-2">
-                    <AlertCircle className="h-5 w-5 shrink-0 text-teal-300" />
-                    <p>
+                  <div className="flex space-x-4">
+                    <AlertCircle className="h-6 w-6 shrink-0 text-teal-300" />
+                    <p className="text-xs">
                       Name can only contain lowercase alphanumeric characters
                       and dashes, cannot start or end with a dash, and must be
                       at least two characters.

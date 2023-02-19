@@ -17,7 +17,7 @@ const TooltipContent = React.forwardRef<
     ref={ref}
     sideOffset={sideOffset}
     className={clsx(
-      "animate-in fade-in-50 data-[side=bottom]:slide-in-from-top-1 data-[side=top]:slide-in-from-bottom-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 z-50 max-w-sm overflow-hidden rounded-md border border-dark bg-dark px-3 py-1.5 text-xs text-lighter shadow-md",
+      "animate-in fade-in-50 data-[side=bottom]:slide-in-from-top-1 data-[side=top]:slide-in-from-bottom-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 z-50 max-w-sm overflow-hidden rounded-md border border-dark bg-dark p-4 text-xs text-lighter shadow-md",
       className,
     )}
     {...props}
