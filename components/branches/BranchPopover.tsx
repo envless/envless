@@ -46,7 +46,7 @@ export const BranchPopover = ({
           </span>
 
           <div className="flex flex-1 items-center justify-end space-x-2">
-            <span className="font-semibold">{selectedBranch.name}</span>
+            <span className="font-semibold truncate w-full max-w-[125px]">{selectedBranch.name}</span>
             <ChevronDown className="h-4 w-4" />
           </div>
         </button>
@@ -112,9 +112,9 @@ function BranchList({ branches, setSelectedBranch, setBranches }) {
           onClick={() => handleSelectBranchClick(branch)}
         >
           <li className="inline-flex w-full items-center justify-between px-3 py-2 hover:bg-dark">
-            <span>{branch.name}</span>
+            <span className="truncate">{branch.name}</span>
             {branch.isSelected && (
-              <Check className="h-4 w-4 text-teal-300" aria-hidden="true" />
+              <Check className="h-4 w-4 text-teal-300 shrink-0" aria-hidden="true" />
             )}
           </li>
         </button>

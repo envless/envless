@@ -28,6 +28,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
     { id: 1, name: "main", isSelected: true },
     { id: 2, name: "staging", isSelected: false },
     { id: 3, name: "production", isSelected: false },
+    { id: 4, name: "feat/upload-env-file", isSelected: false },
   ];
   const [seletedBranch, setSelectedBranch] = useState(defaultBranches[0]);
   const [branches, setBranches] = useState(defaultBranches);
