@@ -42,6 +42,7 @@
     "@upstash/redis": "^1.19.3",
     "@vercel/analytics": "^0.1.6",
     "@vercel/og": "^0.1.0",
+    "argon2": "^0.30.3",
     "clsx": "^1.2.1",
     "device-detector-js": "^3.0.3",
     "fuse.js": "^6.6.2",

@@ -1,4 +1,5 @@
 import React from "react";
+import argon2 from 'argon2';
 import InviteLink from "@/emails/InviteLink";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
@@ -38,6 +39,10 @@ export const members = createRouter({
         key: String(process.env.ENCRYPTION_KEY),
       });
 
+      const hashedPassphrase = await argon2.hash(passphrase);
+
+      console.log(`hashed passphrase for ${passphrase}`, hashedPassphrase);
+
       const invited = await ctx.prisma.projectInvite.findFirst({
         where: {
           AND: [{ email }, { projectId }],
@@ -72,8 +77,6 @@ export const members = createRouter({
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         },
       });
-
-      console.log("Invite record ======>", record);
 
       const project = await ctx.prisma.project.findUnique({
         where: {
