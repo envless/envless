@@ -24,7 +24,6 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
             projects={projects}
           />
         </Container>
-        <Hr />
         <Tabs projectId={currentProject?.id} active={tab || "project"} />
 
         <Container>

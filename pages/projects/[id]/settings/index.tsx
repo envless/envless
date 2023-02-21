@@ -3,6 +3,7 @@ import ProjectLayout from "@/layouts/Project";
 import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import Tabs from "@/components/settings/Tabs";
 import {
@@ -25,17 +26,40 @@ import prisma from "@/lib/prisma";
 export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
   const props = { projects, currentProject };
 
+  const {
+    reset,
+    setError,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const submitForm = (data) => {
+    console.log(data, "hello");
+  };
+
   return (
     <ProjectLayout tab="settings" {...props}>
-      <ProjectSettings {...props}>
-        <Input
-          name="name"
-          label="Hello"
-          placeholder=""
-          defaultValue=""
-          required={true}
-          register={() => "sdsdf"}
-        />
+      <ProjectSettings active="general" {...props}>
+        <h3 className="mb-8 text-lg">General</h3>
+        <div className="w-full lg:w-3/5">
+          <form onSubmit={handleSubmit(submitForm)}>
+            <Input
+              name="project_name"
+              label="Project Name"
+              placeholder=""
+              defaultValue={currentProject.name || ""}
+              required={true}
+              register={register}
+              className="w-full"
+              validationSchema={{
+                required: "Project name is required",
+              }}
+            />
+            <Button type="submit" disabled={false}>
+              Save project settings
+            </Button>
+          </form>
+        </div>
       </ProjectSettings>
     </ProjectLayout>
   );
