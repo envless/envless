@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Filters from "@/components/branches/Filters";
 import { Badge, Button, Label } from "@/components/theme";
+import Table from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
 
 /**
@@ -192,63 +193,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <div className="min-w-full rounded-t bg-darker pt-3">
-                <Filters />
-              </div>
-              <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-dark">
-                  {allBranches.map((pr) => (
-                    <tr key={pr.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <Badge type="info">
-                              <GitBranch className="h-6 w-6" strokeWidth={2} />
-                            </Badge>
-                          </div>
-                          <div className="ml-4">
-                            <button
-                              onClick={() => {
-                                copyToClipboard(pr.name as string);
-                              }}
-                              className="inline-flex cursor-copy font-medium"
-                            >
-                              {copied === pr.name ? (
-                                <CheckCheck
-                                  className="mr-2 h-4 w-4 text-teal-400"
-                                  strokeWidth={2}
-                                />
-                              ) : (
-                                <Copy
-                                  className="mr-2 h-4 w-4"
-                                  strokeWidth={2}
-                                />
-                              )}
-
-                              {pr.name}
-                            </button>
-                            <div className="text-light">{pr.description}</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <Button
-                          secondary={true}
-                          small
-                          className="float-right border-lighter"
-                        >
-                          Open pull request
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Table />
         </div>
       </div>
     </ProjectLayout>
