@@ -4,7 +4,7 @@
 </a>
 
 <p align="center">
-  An open-source, frictionless and secure way to share and manage app secrets across team.
+  An open-source, frictionless and secure way to share and manage app secrets across teams.
 </p>
 
 <p align="center">
