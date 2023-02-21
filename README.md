@@ -28,7 +28,7 @@
 <h2 id="community">Community</h2>
 We have a discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
 
-[Join the Envless Discord](https://discord.gg/XEDCq7nS)
+[Join the Envless Discord](https://discord.gg/3H4xkDDwWj)
 
 ## 🛡️ License
 
