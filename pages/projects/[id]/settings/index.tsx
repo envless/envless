@@ -1,5 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
+import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import ProjectSettings from "@/components/projects/ProjectSettings";
@@ -16,25 +17,26 @@ import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
- * @param {Props} props - The props for the component.
+ * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
  */
 
-interface Props {
-  projects: Project[];
-  currentProject: Project;
-}
+export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
+  const props = { projects, currentProject };
 
-export const SettingsPage = ({ projects, currentProject }: Props) => {
   return (
-    <ProjectLayout
-      tab="settings"
-      projects={projects}
-      currentProject={currentProject}
-    >
-      <h1>SettingsPage for {currentProject.name}</h1>
-      <ProjectSettings />
+    <ProjectLayout tab="settings" {...props}>
+      <ProjectSettings {...props}>
+        <Input
+          name="name"
+          label="Hello"
+          placeholder=""
+          defaultValue=""
+          required={true}
+          register={() => "sdsdf"}
+        />
+      </ProjectSettings>
     </ProjectLayout>
   );
 };
