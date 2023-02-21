@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
-import { Container, Nav } from "@/components/theme";
+import { Container, Hr, Nav } from "@/components/theme";
 
 interface Props {
   tab?: string;
@@ -24,7 +24,7 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
             projects={projects}
           />
         </Container>
-
+        <Hr />
         <Tabs projectId={currentProject?.id} active={tab || "project"} />
 
         <Container>

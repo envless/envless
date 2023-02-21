@@ -2,6 +2,16 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+import ProjectSettings from "@/components/projects/ProjectSettings";
+import Tabs from "@/components/settings/Tabs";
+import {
+  Button,
+  Container,
+  Hr,
+  Input,
+  Paragraph,
+  Toggle,
+} from "@/components/theme";
 import prisma from "@/lib/prisma";
 
 /**
@@ -24,6 +34,7 @@ export const SettingsPage = ({ projects, currentProject }: Props) => {
       currentProject={currentProject}
     >
       <h1>SettingsPage for {currentProject.name}</h1>
+      <ProjectSettings />
     </ProjectLayout>
   );
 };
