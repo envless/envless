@@ -17,6 +17,12 @@
   <a href="https://github.com/envless/envless/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/envless/envless?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
   </a>
+  <a href="https://dub.sh/envless-slack">
+    <img src="https://img.shields.io/badge/Slack-Join%20us%20on%20Slack-purple" alt="Join us on Slack" />
+  </a>
+  <a href="https://dub.sh/envless-discord">
+    <img src="https://img.shields.io/badge/Discord-Join%20us%20on%20Discord-blue" alt="Join us on Discord" />
+  </a>
 </p>
 
 
