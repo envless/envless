@@ -37,9 +37,13 @@
 
 <h2 id="about">💡 About </h2>
 
-+ .envless is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams. With .envless, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security. .envless uses state-of-the-art encryption and access control features to ensure that your secrets are only accessible to authorized team members.
-+ .envless is designed to be easy to use and integrate into your existing workflow. It supports a wide range of programming languages and deployment environments, including containers, serverless functions, and traditional servers. Whether you're a small team or a large enterprise, Envless can help you simplify your secret management and reduce the risk of data breaches.
-+ To get started with .envless, check out the <a href="https://envless.dev">website</a>. You can also join our community on Discord or Slack to ask questions and share feedback.
++ **What is `.envless` ?** It is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams. 
++ With **`.envless`**, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security. 
++ **`.envless`** uses state-of-the-art encryption and access control features to ensure that your secrets are only accessible to authorized team members.
++ **`.envless`** is designed to be easy to use and integrate into your existing workflow. It supports a wide range of programming languages and deployment environments, including containers, serverless functions, and traditional servers. 
++ Whether you're a small team or a large enterprise, Envless can help you simplify your secret management and reduce the risk of data breaches.
++ To get started with **`.envless`**, check out the <a href="https://envless.dev">website</a>. 
++ You can also join our community on Discord or Slack to ask questions and share feedback.
 
 
 
@@ -53,16 +57,16 @@ We have Slack and Discord where we discuss about out updates, features, requests
   <thead>
     <tr>
       <th>Platform</th>
-      <th>Links</th>
+      <th>Link</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><strong><em>Discord</em></strong></td>
+      <td>Discord</td>
       <td><a href="https://dub.sh/envless-discord"><img src="https://cdn.worldvectorlogo.com/logos/discord-6.svg" title="Discord" alt="Discord Community" width="40"/></a></td>
     </tr>
     <tr>
-      <td><strong><em>Slack</em></strong></td>
+      <td>Slack</td>
       <td><a href="https://dub.sh/envless-slack"><img src="https://cdn.worldvectorlogo.com/logos/slack-new-logo.svg" title="Slack" alt="Slack Account" width="40"/></a></td>
     </tr>
   </tbody>
@@ -81,7 +85,8 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 
 <h2 id="contributors">✨ Contributors</h2>
 
-We ❤️ contributors! Feel free to contribute to this project!. We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
++ We ❤️ contributors! Feel free to contribute to this project!. 
++ We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
 
 <a href="https://github.com/envless/envless/graphs/contributors">
   <p>
