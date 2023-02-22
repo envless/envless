@@ -1,15 +1,55 @@
-import log from "@/lib/log";
+import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import prisma from "@/lib/prisma";
-import { useRouter } from "next/router";
+import { useState } from "react";
+import { trpc } from "@/utils/trpc";
+import clsx from "clsx";
+import { addHours, isAfter } from "date-fns";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Hr } from "@/components/theme";
-import TwoFactorForm from "@/components/twoFactorForm";
-import { type GetServerSidePropsContext } from "next";
-import { type ProjectInvite } from "@prisma/client";
+import { Button, Input, LoadingIcon } from "@/components/theme";
+import prisma from "@/lib/prisma";
 
-const ProjectInvitePage = (expired: boolean) => {
-  const router = useRouter();
+interface ProjectInviteForm {
+  name: string;
+  email: string;
+  password: string;
+}
+
+const ProjectInvitePage = (props: {
+  token: string;
+  expired: boolean;
+  accepted?: boolean;
+  project?: { id: string; name: string };
+}) => {
+  const [complete, setComplete] = useState(false);
+  const { token, expired, accepted, project } = props;
+
+  const {
+    reset,
+    setError,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const acceptInviteMutation = trpc.members.acceptInvite.useMutation({
+    onSuccess: (_data) => {
+      setComplete(true);
+    },
+
+    onError: (error) => {
+      setError("password", {
+        type: "custom",
+        message: error.message,
+      });
+    },
+  });
+
+  const acceptInvite: SubmitHandler<ProjectInviteForm> = async (data) => {
+    const { name, email, password } = data;
+    acceptInviteMutation.mutate({ token, name, email, password });
+  };
 
   return (
     <>
@@ -27,46 +67,118 @@ const ProjectInvitePage = (expired: boolean) => {
             src="/logo.png"
             alt="Your Company"
           />
+          {expired || accepted ? (
+            <>
+              <h2 className="mt-6 text-center text-2xl">
+                Invalid invite link!
+              </h2>
 
-          {
-            expired == true ? (
-              <>
-                <h2 className="mt-6 text-center text-2xl">
-                  Invalid Invitation
-                </h2>
-                <p className="mt-2 text-center text-sm text-light">
-                  Two factor authentication is required to continue. Please enter the
-                  code from your authenticator app.
-                </p>
-                <Hr className="my-8" />
+              <p className="mt-2 text-center text-sm text-light">
+                Please ask your project owner to send you a new invitation link.
+              </p>
+            </>
+          ) : (
+            <>
+              {complete ? (
+                <>
+                  <h2 className="mt-6 text-center text-2xl">
+                    You are good to go!
+                  </h2>
 
-                <TwoFactorForm
-                  onConfirm={() => {
-                    log("2fa confirmed on the page, redirecting...");
-                    router.push("/projects");
-                  }}
-                />
-              </>
+                  <p className="mt-2 text-center text-sm text-light">
+                    You have successfully accepted the invite, you can now join
+                    the project after you have logged in.
+                  </p>
+
+                  <Button
+                    href="/auth"
+                    type="submit"
+                    className={clsx("mt-10")}
+                    full={true}
+                  >
+                    Go to login page
+                  </Button>
+                </>
               ) : (
-              <>
-                <h2 className="mt-6 text-center text-2xl">
-                  Accept Invitation
-                </h2>
-                <p className="mt-2 text-center text-sm text-light">
-                  Two factor authentication is required to continue. Please enter the
-                  code from your authenticator app.
-                </p>
-                <Hr className="my-8" />
+                <>
+                  <h2 className="mt-6 text-center text-2xl">
+                    Accept an invitation
+                  </h2>
 
-                <TwoFactorForm
-                  onConfirm={() => {
-                    log("2fa confirmed on the page, redirecting...");
-                    router.push("/projects");
-                  }}
-                />
-              </>
-            )
-          }
+                  <p className="mt-2 text-center text-sm text-light">
+                    Please enter your email address and one-time password to
+                    join {project?.name || "the project"}.
+                  </p>
+
+                  <Hr className="my-8" />
+
+                  <form onSubmit={handleSubmit(acceptInvite)}>
+                    <Input
+                      name="name"
+                      type="text"
+                      label="Your name"
+                      required={true}
+                      full={true}
+                      register={register}
+                      errors={errors}
+                      validationSchema={{
+                        required: "Name is required",
+                      }}
+                    />
+
+                    <Input
+                      name="email"
+                      type="email"
+                      label="Email address"
+                      required={true}
+                      full={true}
+                      register={register}
+                      errors={errors}
+                      validationSchema={{
+                        required: "Email is required",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Invalid email address",
+                        },
+                      }}
+                    />
+
+                    <Input
+                      name="password"
+                      type="password"
+                      label="One-time password"
+                      required={true}
+                      full={true}
+                      register={register}
+                      errors={errors}
+                      validationSchema={{
+                        required: "One-time password is required",
+                        pattern: {
+                          value: /^[ A-Za-z0-9_@./#&+-]*$/,
+                          message: "Invalid one-time password",
+                        },
+                      }}
+                    />
+
+                    <Button
+                      type="submit"
+                      disabled={acceptInviteMutation.isLoading}
+                      className={clsx(
+                        "mt-10",
+                        acceptInviteMutation.isLoading && "cursor-not-allowed",
+                      )}
+                      full={true}
+                    >
+                      {acceptInviteMutation.isLoading && (
+                        <LoadingIcon className="h-4 w-4 text-dark" />
+                      )}
+                      Accept invitation
+                    </Button>
+                  </form>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
     </>
@@ -80,23 +192,39 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     where: {
       invitationToken: token,
     },
-  })
 
-  if(!invite) {
+    select: {
+      invitationToken: true,
+      createdAt: true,
+      accepted: true,
+      project: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
+    },
+  });
+
+  if (!invite) {
     return {
       props: {
         expired: true,
       },
-    }
+    };
   }
 
-  const expired = new Date(invite.expires).getTime() <= Date.now();
+  const expiresAt = addHours(invite.createdAt, 48);
+  const expired = isAfter(new Date(), new Date(expiresAt));
 
   return {
     props: {
-      expired
+      token,
+      expired,
+      accepted: invite.accepted,
+      project: invite.project,
     },
-  }
+  };
 }
 
 export default ProjectInvitePage;

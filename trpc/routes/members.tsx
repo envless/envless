@@ -1,20 +1,14 @@
 import React from "react";
-import argon2 from 'argon2';
 import InviteLink from "@/emails/InviteLink";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
+import argon2 from "argon2";
 import { randomBytes } from "crypto";
+import { addHours, isAfter } from "date-fns";
 import sendMail from "emails";
-import { generate } from "generate-passphrase";
+import generatePassword from "omgopass";
 import { z } from "zod";
 import Audit from "@/lib/audit";
-import { encrypt } from "@/lib/encryption";
-
-type PassPhraseType = {
-  iv: string;
-  tag: string;
-  ciphertext: string;
-};
 
 export const members = createRouter({
   invite: withAuth
@@ -26,23 +20,8 @@ export const members = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user;
       const { projectId, email, role } = input;
-      const passphrase = generate({
-        length: 4,
-        separator: "-",
-        titlecase: true,
-        numbers: true,
-      });
-
-      const encryptedPassphrase = await encrypt({
-        plaintext: passphrase,
-        key: String(process.env.ENCRYPTION_KEY),
-      });
-
-      const hashedPassphrase = await argon2.hash(passphrase);
-
-      console.log(`hashed passphrase for ${passphrase}`, hashedPassphrase);
-
       const invited = await ctx.prisma.projectInvite.findFirst({
         where: {
           AND: [{ email }, { projectId }],
@@ -50,33 +29,46 @@ export const members = createRouter({
       });
 
       if (invited) {
-        const expired = new Date(invited.expires).getTime() <= Date.now();
-
-        if (!expired) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "You have already invited this member",
-          });
-        }
-
-        await ctx.prisma.projectInvite.delete({
-          where: {
-            id: invited.id as string,
-          },
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You have already invited this member",
         });
       }
 
       const invitationToken = randomBytes(32).toString("hex");
+      const password = await generatePassword();
+      const hashedPassword = await argon2.hash(password);
+
       const record = await ctx.prisma.projectInvite.create({
         data: {
           projectId,
           email,
           role,
           invitationToken,
-          encryptedPassphrase: encryptedPassphrase as PassPhraseType,
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          hashedPassword,
+          invitedById: ctx.session?.user?.id as string,
         },
       });
+
+      if (record) {
+        await Audit.create({
+          projectId,
+          createdById: user.id,
+          action: "invite.created",
+          data: {
+            invite: {
+              id: record.id,
+              email: email,
+              role: role,
+            },
+          },
+        });
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong",
+        });
+      }
 
       const project = await ctx.prisma.project.findUnique({
         where: {
@@ -98,11 +90,12 @@ export const members = createRouter({
             body={
               <>
                 You have been invited to join the project <b>{project?.name}</b>{" "}
-                on Envless. You will need this passphrase to join the project.
+                on Envless. You will need this One-time password. Please note
+                that this invitation link will expire in 48 hours.
                 <br />
                 <br />
                 <code>
-                  <pre>{passphrase}</pre>
+                  <pre>{password}</pre>
                 </code>
               </>
             }
@@ -111,6 +104,147 @@ export const members = createRouter({
             buttonLink={`${process.env.BASE_URL}/auth/invite/${invitationToken}`}
           />
         ),
+      });
+    }),
+
+  acceptInvite: withAuth
+    .input(
+      z.object({
+        token: z.string(),
+        name: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user;
+      const { token, email, name, password } = input;
+
+      const invite = await ctx.prisma.projectInvite.findFirst({
+        where: {
+          invitationToken: token,
+        },
+      });
+
+      if (!invite) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid invite token",
+        });
+      }
+
+      if (invite.email !== email) {
+        throw new TRPCError({
+          cause: {
+            code: "BAD_REQUEST",
+            message: "Invalid email address",
+          },
+          code: "BAD_REQUEST",
+          message: "Email does not match invite",
+        });
+      }
+
+      const expiresAt = addHours(invite.createdAt, 48);
+      const expired = isAfter(new Date(), new Date(expiresAt));
+
+      if (expired) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invite link has expired",
+        });
+      }
+
+      const valid = await argon2.verify(invite.hashedPassword, password);
+
+      if (!valid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid One-time password",
+        });
+      }
+
+      const userExist = await ctx.prisma.user.findFirst({
+        where: {
+          email,
+        },
+      });
+
+      if (userExist) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User already exists",
+        });
+      }
+
+      const newUser = await ctx.prisma.user.create({
+        data: {
+          name,
+          email,
+        },
+      });
+
+      if (!newUser) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to create user",
+        });
+      }
+
+      const access = await ctx.prisma.access.create({
+        data: {
+          userId: newUser.id,
+          projectId: invite.projectId,
+          role: invite.role,
+        },
+      });
+
+      if (!access) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to create access",
+        });
+      }
+
+      const accepted = await ctx.prisma.projectInvite.update({
+        where: {
+          id: invite.id,
+        },
+        data: {
+          accepted: true,
+        },
+      });
+
+      if (!accepted) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to accept invite",
+        });
+      }
+
+      await Audit.create({
+        projectId: invite.projectId,
+        createdById: newUser.id,
+        action: "invite.accepted",
+        data: {
+          invite: {
+            id: invite.id,
+            email: email,
+            role: invite.role,
+          },
+        },
+      });
+
+      await Audit.create({
+        createdById: user.id,
+        createdForId: newUser.id,
+        projectId: invite.projectId,
+        action: "access.created",
+        data: {
+          access: {
+            id: access.id,
+            role: access.role,
+          },
+        },
       });
     }),
 

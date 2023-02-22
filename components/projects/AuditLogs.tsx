@@ -2,6 +2,8 @@ import Link from "next/link";
 import { clsx } from "clsx";
 import {
   GitBranchPlus,
+  MailCheck,
+  MailPlus,
   Settings2,
   Shield,
   ShieldCheck,
@@ -15,28 +17,40 @@ const isVowel = (word) => {
 
 const actions = [
   {
-    type: "created.project",
+    type: "project.created",
     icon: ShieldCheck,
     bg: "bg-teal-100",
     color: "text-teal-500",
   },
   {
-    type: "created.access",
+    type: "access.created",
     icon: UserPlus,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
   },
   {
-    type: "updated.account",
+    type: "account.updated",
     icon: Settings2,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
   },
   {
-    type: "created.branch",
+    type: "branch.created",
     icon: GitBranchPlus,
     bg: "bg-orange-100",
     color: "text-orange-500",
+  },
+  {
+    type: "invite.created",
+    icon: MailPlus,
+    bg: "bg-emerald-100",
+    color: "text-emerald-500",
+  },
+  {
+    type: "invite.accepted",
+    icon: MailCheck,
+    bg: "bg-emerald-100",
+    color: "text-emerald-500",
   },
 ];
 
@@ -75,9 +89,9 @@ export default function AuditLogs({ logs, user }) {
     );
 
     switch (log.action) {
-      case "created.project":
+      case "project.created":
         return <>created {projectLink()} project</>;
-      case "created.branch":
+      case "branch.created":
         return (
           <>
             created a{" "}
@@ -85,7 +99,7 @@ export default function AuditLogs({ logs, user }) {
             on {projectLink()} project
           </>
         );
-      case "created.access":
+      case "access.created":
         const role = log.data.access.role;
         const name =
           createdFor.id === user.id
@@ -98,7 +112,7 @@ export default function AuditLogs({ logs, user }) {
             {projectLink()} project
           </>
         );
-      case "updated.account":
+      case "account.updated":
         return (
           <>
             updated your{" "}

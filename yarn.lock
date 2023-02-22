@@ -3496,6 +3496,11 @@ data-urls@^3.0.2:
     whatwg-mimetype "^3.0.0"
     whatwg-url "^11.0.0"
 
+date-fns@^2.29.3:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
+
 dayjs@^1.10.4:
   version "1.11.7"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.7.tgz#4b296922642f70999544d1144a2c25730fce63e2"
@@ -4791,11 +4796,6 @@ gauge@^3.0.0:
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
-
-generate-passphrase@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/generate-passphrase/-/generate-passphrase-1.2.0.tgz#d520e3485fa8c48d5e7129956d960993749fd6ae"
-  integrity sha512-RZZdKMlE+0baX3ukATStWAOBOJPPzvpoF1+5SdYt9DSLogF91FPx+ARaAjpkX/b7xqD4/uUGNCkBdFcl1PS9FQ==
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
@@ -7555,6 +7555,11 @@ mkdirp@^1.0.3:
   resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+moment@^2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
+
 mri@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mri/-/mri-1.2.0.tgz#6721480fec2a11a4889861115a48b6cbe7cc8f0b"
@@ -7884,6 +7889,11 @@ oidc-token-hash@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.0.1.tgz"
   integrity sha512-EvoOtz6FIEBzE+9q253HsLCVRiK/0doEJ2HCvvqMQb3dHZrP3WlJKYtJ55CRTw4jmYomzH4wkPuCj/I3ZvpKxQ==
+
+omgopass@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/omgopass/-/omgopass-3.2.1.tgz#6ebdde17775017e2c5eef272d935f435731af053"
+  integrity sha512-Q0QqwwL3ag1Pyjhx6vfieaz73pHNLa3v59qhRcTCUINmJOwdcLu0kNKncBSF2ylnzrqmZw9VRgOEdAwvCSxffA==
 
 once@^1.3.0, once@^1.3.1, once@^1.4.0:
   version "1.4.0"

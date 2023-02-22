@@ -32,7 +32,7 @@ const AddMemberModal = ({ user, projectId }) => {
   } = useForm({
     resolver: zodResolver(
       z.object({
-        role: z.enum(["guest", "developer", "mantainer", "admin"]),
+        role: z.enum(["guest", "developer", "mantainer", "owner"]),
         email: z.string().email("Please enter a valid email address"),
       }),
     ),
