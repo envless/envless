@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -12,6 +12,11 @@ const Nav = ({ ...props }) => {
   const router = useRouter();
   const { user, currentProject, projects, layout } = props;
   const [projectList, setProjectList] = useState(projects);
+
+  useEffect(() => {
+    setProjectList(projects);
+  }, [projects]);
+
   const { name, email, image } = user;
   const initials = name
     ? name

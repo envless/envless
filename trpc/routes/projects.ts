@@ -1,4 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
+import { Project } from "@prisma/client";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -89,5 +90,67 @@ export const projects = createRouter({
       }
 
       return newProject;
+    }),
+  update: withAuth
+    .input(
+      z.object({
+        project: z.object({ name: z.string(), id: z.string() }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { user } = ctx.session;
+      const { project } = input;
+
+      const updatedProduct = await prisma.project.update({
+        where: {
+          id: project.id,
+        },
+        data: {
+          name: project.name,
+        },
+      });
+
+      const access = await prisma.access.findMany({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          project: {
+            select: {
+              id: true,
+              name: true,
+              updatedAt: true,
+            },
+          },
+        },
+      });
+
+      const projects = access.map((a) => a.project) as Project[];
+      const currentProject = projects.find(
+        (p) => p.id === updatedProduct.id,
+      ) as Project;
+      return { projects, currentProject };
+    }),
+
+  delete: withAuth
+    .input(
+      z.object({
+        project: z.object({ name: z.string(), id: z.string() }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { user } = ctx.session;
+      const { project } = input;
+
+      const deletedProject = await prisma.project.delete({
+        where: {
+          id: project.id,
+        },
+      });
+
+      return deletedProject;
     }),
 });

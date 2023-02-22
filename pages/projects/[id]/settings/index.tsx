@@ -1,19 +1,13 @@
 import { type GetServerSidePropsContext } from "next";
+import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
-import Tabs from "@/components/settings/Tabs";
-import {
-  Button,
-  Container,
-  Hr,
-  Input,
-  Paragraph,
-  Toggle,
-} from "@/components/theme";
+import { Button, Input } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
 /**
@@ -23,7 +17,17 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
-export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
+export const SettingsPage = ({
+  projects: initialProjects,
+  currentProject: initialCurrentProject,
+}: SettingProps) => {
+  const [projectDetails, setProjectDetails] = useState({
+    projects: initialProjects || [],
+    currentProject: initialCurrentProject || [],
+  });
+
+  const { projects, currentProject } = projectDetails;
+
   const props = { projects, currentProject };
 
   const {
@@ -33,8 +37,35 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const submitForm = (data) => {
-    console.log(data, "hello");
+
+  const { mutate: generalMutate, isLoading } = trpc.projects.update.useMutation(
+    {
+      onSuccess: (data) => {
+        showToast({
+          type: "success",
+          title: "Project Setting Updated successfully",
+          subtitle: "",
+        });
+        const { projects: newProjects, currentProject: newProject } = data;
+        setProjectDetails({
+          projects: newProjects,
+          currentProject: newProject,
+        });
+      },
+      onError: (error) => {
+        showToast({
+          type: "success",
+          title: "Project Setting Update failed",
+          subtitle: error.message,
+        });
+      },
+    },
+  );
+
+  const submitForm = (values) => {
+    generalMutate({
+      project: { ...currentProject, name: values.name },
+    });
   };
 
   return (
@@ -44,7 +75,7 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
         <div className="w-full lg:w-3/5">
           <form onSubmit={handleSubmit(submitForm)}>
             <Input
-              name="project_name"
+              name="name"
               label="Project Name"
               placeholder=""
               defaultValue={currentProject.name || ""}
@@ -55,7 +86,7 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
                 required: "Project name is required",
               }}
             />
-            <Button type="submit" disabled={false}>
+            <Button type="submit" disabled={isLoading || false}>
               Save project settings
             </Button>
           </form>
