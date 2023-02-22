@@ -28,9 +28,10 @@
 - <a href="#License">License</a>
 
 <h2 id="community">🚀 Community</h2>
-We have a discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
+We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
 
-[Join the Envless Discord](https://discord.gg/3H4xkDDwWj)
+* [Join Envless on Slack](https://dub.sh/envless-slack)
+* [Join Envless on Discord](https://dub.sh/envless-discord)
 
 <h2 id="Contributing">🤝 Contributing</h2>
 
@@ -44,7 +45,7 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 
 <h2 id="contributors">✨ Contributors</h2>
 
-We ❤️ contributors! Feel free to contribute to this project!. We also welcome you to join our [Discord](https://discord.gg/3H4xkDDwWj) community for either support or contributing guidance.
+We ❤️ contributors! Feel free to contribute to this project!. We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
 
 <a href="https://github.com/envless/envless/graphs/contributors">
   <p>
