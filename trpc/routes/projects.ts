@@ -151,6 +151,21 @@ export const projects = createRouter({
         },
       });
 
+      /** @todo: audit log on some case **/
+
+      // if(hello.id){
+      //   await Audit.create({
+      //     createdById: user.id,
+      //     projectId: hello.id,
+      //     action: "created.branch",
+      //     data: {
+      //       branch: {
+      //         id: newBranch.id,
+      //         name: newBranch.name,
+      //       },
+      //     },
+      //   });
+      // }
       return deletedProject;
     }),
 });
