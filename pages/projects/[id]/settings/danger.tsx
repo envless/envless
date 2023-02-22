@@ -1,19 +1,15 @@
 import { type GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import Tabs from "@/components/settings/Tabs";
-import {
-  Button,
-  Container,
-  Hr,
-  Input,
-  Paragraph,
-  Toggle,
-} from "@/components/theme";
+import { Button, Paragraph } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
 /**
@@ -24,23 +20,63 @@ import prisma from "@/lib/prisma";
  */
 
 export const DangerZone = ({ projects, currentProject }: SettingProps) => {
+  const router = useRouter();
+
   const props = { projects, currentProject };
 
-  const {
-    reset,
-    setError,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const submitForm = (data) => {
-    console.log(data, "hello");
+  const { mutate: generalMutate, isLoading } = trpc.projects.delete.useMutation(
+    {
+      onSuccess: () => {
+        showToast({
+          type: "success",
+          title: "Project Deleted successfully",
+          subtitle: "",
+        });
+        router.push("/projects");
+      },
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Project Delete failed",
+          subtitle: error.message,
+        });
+      },
+    },
+  );
+
+  const submitForm = () => {
+    /** @todo: confirmation popup here **/
+    generalMutate({
+      project: currentProject,
+    });
   };
 
   return (
     <ProjectLayout tab="settings" {...props}>
       <ProjectSettings active="danger" {...props}>
-        {/* UI here */}
+        <h3 className="mb-7 text-lg text-red-400">Danger</h3>
+        <div className="flex w-full flex-row items-center justify-between  lg:w-[65%]">
+          <div className="flex-1">
+            <Paragraph size="sm" className="font-semibold">
+              Delete this project
+            </Paragraph>
+            <Paragraph size="sm" className="mt-4 text-sm font-light">
+              Once you delete a project, there is no going back. Please be
+              certain.
+            </Paragraph>
+          </div>
+          <div className="flex-2 ml-10">
+            <Button
+              className=""
+              type="button"
+              small
+              disabled={isLoading || false}
+              onClick={submitForm}
+            >
+              Delete this project
+            </Button>
+          </div>
+        </div>
       </ProjectSettings>
     </ProjectLayout>
   );
