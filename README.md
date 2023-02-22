@@ -28,16 +28,46 @@
 
 ## 📖 Table of contents
 
+- <a href="#about">About</a>
 - <a href="#community">Community</a>
 - <a href="#contributors">Contributors</a>
 - <a href="#Contributing">Contributing</a>
 - <a href="#License">License</a>
 
-<h2 id="community">🚀 Community</h2>
-We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
 
-* [Join Envless on Slack](https://dub.sh/envless-slack)
-* [Join Envless on Discord](https://dub.sh/envless-discord)
+<h2 id="about">💡 About </h2>
+
++ .envless is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams. With .envless, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security. .envless uses state-of-the-art encryption and access control features to ensure that your secrets are only accessible to authorized team members.
++ .envless is designed to be easy to use and integrate into your existing workflow. It supports a wide range of programming languages and deployment environments, including containers, serverless functions, and traditional servers. Whether you're a small team or a large enterprise, Envless can help you simplify your secret management and reduce the risk of data breaches.
++ To get started with .envless, check out the <a href="https://envless.dev">website</a>. You can also join our community on Discord or Slack to ask questions and share feedback.
+
+
+
+<h2 id="community">🚀 Community</h2>
+
+We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
+.
+.
+
+<table>
+  <thead>
+    <tr>
+      <th>Platform</th>
+      <th>Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong><em>Discord</em></strong></td>
+      <td><a href="https://dub.sh/envless-discord"><img src="https://cdn.worldvectorlogo.com/logos/discord-6.svg" title="Discord" alt="Discord Community" width="40"/></a></td>
+    </tr>
+    <tr>
+      <td><strong><em>Slack</em></strong></td>
+      <td><a href="https://dub.sh/envless-slack"><img src="https://cdn.worldvectorlogo.com/logos/slack-new-logo.svg" title="Slack" alt="Slack Account" width="40"/></a></td>
+    </tr>
+  </tbody>
+</table>
+
 
 <h2 id="Contributing">🤝 Contributing</h2>
 
