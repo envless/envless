@@ -20,23 +20,31 @@
 </p>
 
 
-## Table of contents
+## 📖 Table of contents
 
 - <a href="#community">Community</a>
 - <a href="#contributors">Contributors</a>
+- <a href="#Contributing">Contributing</a>
+- <a href="#License">License</a>
 
-<h2 id="community">Community</h2>
+<h2 id="community">🚀 Community</h2>
 We have a discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
 
 [Join the Envless Discord](https://discord.gg/3H4xkDDwWj)
 
-## 🛡️ License
+<h2 id="Contributing">🤝 Contributing</h2>
+
+Whether you are a community member or not, we would love your point of view! Feel free to first check out our
+- [Contribution Guidelines](https://github.com/envless/envless/blob/main/CONTRIBUTING.md) 
+- The guide outlines the process for **creating an issue** and **submitting a pull request.**
+
+<h2 id="License">🛡️ License</h2>
 
 Envless is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE](https://github.com/envless/envless/blob/main/LICENSE) file for details.
 
-<h2 id="contributors">Contributors</h2>
+<h2 id="contributors">✨ Contributors</h2>
 
-We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Discord](https://discord.gg/3H4xkDDwWj) community for either support or contributing guidance.
+We ❤️ contributors! Feel free to contribute to this project!. We also welcome you to join our [Discord](https://discord.gg/3H4xkDDwWj) community for either support or contributing guidance.
 
 <a href="https://github.com/envless/envless/graphs/contributors">
   <p>
