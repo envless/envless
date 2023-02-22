@@ -37,12 +37,12 @@
 
 <h2 id="about">💡 About </h2>
 
-+ **What is `.envless` ?** It is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams. 
-+ With **`.envless`**, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security. 
-+ **`.envless`** uses state-of-the-art encryption and access control features to ensure that your secrets are only accessible to authorized team members.
-+ **`.envless`** is designed to be easy to use and integrate into your existing workflow. It supports a wide range of programming languages and deployment environments, including containers, serverless functions, and traditional servers. 
++ **What is `Envless` ?** It is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams. 
++ With **`Envless`**, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security. 
++ **`Envless`** uses state-of-the-art encryption and access control features to ensure that your secrets are only accessible to authorized team members.
++ **`Envless`** is designed to be easy to use and integrate into your existing workflow. It supports a wide range of programming languages and deployment environments, including containers, serverless functions, and traditional servers. 
 + Whether you're a small team or a large enterprise, Envless can help you simplify your secret management and reduce the risk of data breaches.
-+ To get started with **`.envless`**, check out the <a href="https://envless.dev">website</a>. 
++ To get started with **`Envless`**, check out the <a href="https://envless.dev">website</a>. 
 + You can also join our community on Discord or Slack to ask questions and share feedback.
 
 
