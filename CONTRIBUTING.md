@@ -130,24 +130,23 @@ Then, make a commit and push your code to your github fork and make a pull-reque
 
 Thanks for contributing. Much ❤️
 
+## Tests
+
+For more information on how to help with tests (e2e, or unit tests), please see the [create an issue](https://github.com/envless/envless/issues/new).
+
+## Translations
+
+For more information on how to help with translation, please see the [create an issue](https://github.com/envless/envless/issues/new).
+
 <h2 id="contributors">Contributors</h2>
 
-We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Discord](https://discord.gg/XEDCq7nS) community for either support or contributing guidance.
+We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
 
 <a href="https://github.com/envless/envless/graphs/contributors">
   <p>
     <img src="https://contrib.rocks/image?repo=envless/envless" alt="A table of avatars from the project's contributors" />
   </p>
 </a>
-
-
-## Tests
-
-For more information on how to help with tests (e2e, or unit tests), please see the [create an issue](https://github.com/envless/envless/issues/new).
-
-## i18n
-
-For more information on how to help with translation, please see the [create an issue](https://github.com/envless/envless/issues/new).
 
 ## Credits
 
