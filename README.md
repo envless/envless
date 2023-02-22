@@ -32,10 +32,10 @@ We have a discord where we discuss about out updates, features, requests, best p
 
 [Join the Envless Discord](https://discord.gg/3H4xkDDwWj)
 
-<h2 id="Contributing">🧰 Contributing</h2>
+<h2 id="Contributing">🤝 Contributing</h2>
 
 Whether you are a community member or not, we would love your point of view! Feel free to first check out our
-- [contribution guidelines](https://github.com/envless/envless/blob/main/CONTRIBUTING.md) 
+- [Contribution Guidelines](https://github.com/envless/envless/blob/main/CONTRIBUTING.md) 
 - The guide outlines the process for **creating an issue** and **submitting a pull request.**
 
 <h2 id="License">🛡️ License</h2>
