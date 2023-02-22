@@ -1,6 +1,6 @@
 import React from "react";
 import InviteLink from "@/emails/InviteLink";
-import { createRouter, withAuth } from "@/trpc/router";
+import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
 import { randomBytes } from "crypto";
@@ -107,7 +107,7 @@ export const members = createRouter({
       });
     }),
 
-  acceptInvite: withAuth
+  acceptInvite: withoutAuth
     .input(
       z.object({
         token: z.string(),
@@ -117,7 +117,6 @@ export const members = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = ctx.session.user;
       const { token, email, name, password } = input;
 
       const invite = await ctx.prisma.projectInvite.findFirst({
@@ -235,7 +234,7 @@ export const members = createRouter({
       });
 
       await Audit.create({
-        createdById: user.id,
+        createdById: invite.invitedById as string,
         createdForId: newUser.id,
         projectId: invite.projectId,
         action: "access.created",

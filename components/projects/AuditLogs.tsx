@@ -66,6 +66,7 @@ const renderIcon = (log) => {
       )}
     >
       <Icon
+        strokeWidth={2.5}
         className={clsx(action?.color, "h-5 w-5 text-darkest")}
         aria-hidden="true"
       />
@@ -124,6 +125,8 @@ export default function AuditLogs({ logs, user }) {
             </Link>
           </>
         );
+      case "invite.created":
+        return <>invited bla to join {projectLink()} project</>;
       default:
         return null;
     }
