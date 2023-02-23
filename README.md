@@ -49,10 +49,17 @@
 
 <h2 id="community">🚀 Community</h2>
 
-We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. Please join us.
+We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. **Please join us.**
 .
 .
 
+
+| *Click Below* | *Click Below* |
+| -------- | -------- |
+| [![Image 1](https://github.com/the-amazing-atharva/envless/blob/main/.github/images/Discord-Banner-1-1500x680.png)](https://dub.sh/envless-discord) | [![Image 2](https://github.com/the-amazing-atharva/envless/blob/main/.github/images/slack%20art.jpg)](https://dub.sh/envless-slack) |
+
+
+<!--
 <table>
   <thead>
     <tr>
@@ -71,7 +78,7 @@ We have Slack and Discord where we discuss about out updates, features, requests
     </tr>
   </tbody>
 </table>
-
+-->
 
 <h2 id="Contributing">🤝 Contributing</h2>
 
