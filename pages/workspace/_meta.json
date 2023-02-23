@@ -4,7 +4,7 @@
   "protected-branches": "Protected Branches",
   "pull-requests": "Pull Requests",
   "members": "Members",
-  "Integrations": "Integrations",
+  "integrations": "Integrations",
   "audits": "Audit Logs",
   "settings": "Settings"
 }
