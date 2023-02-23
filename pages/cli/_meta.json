@@ -1,0 +1,10 @@
+{
+  "index": "Quickstart",
+  "login": "Login to Envless",
+  "init": "Initialize Envless",
+  "start": "Inject ENV variables",
+  "project": "Project commands",
+  "branches": "Branches commands",
+  "members": "Members commands",
+  "security": "Security disclosure"
+}
