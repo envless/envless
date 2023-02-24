@@ -1,5 +1,7 @@
-import { Fragment } from "react";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import { ColumnFiltersState, RowData, Table } from "@tanstack/react-table";
+import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
 
 const sortOptions = [
@@ -26,10 +28,6 @@ const selectedOptions = {
   status: [{ value: "open", label: "Open" }],
   sort: { name: "Newest", key: "createdAt.asc" },
 };
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const Filter = (key, option) => {
   return (
@@ -60,7 +58,21 @@ const Filter = (key, option) => {
   );
 };
 
-export default function Filters() {
+interface FilterProps<T extends RowData> {
+  columnFilters: ColumnFiltersState;
+  table: Table<T>;
+}
+
+export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
+  const [filter, setFilter] = useState("");
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      table.setGlobalFilter(filter);
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [filter, table]);
+
   return (
     <div className="">
       {/* Filters */}
@@ -104,7 +116,7 @@ export default function Filters() {
                             onClick={() => {
                               console.log("Sort by", option.key);
                             }}
-                            className={classNames(
+                            className={clsx(
                               active ? "w-full bg-dark text-left" : "",
                               "block px-4 py-2 text-xs text-lighter",
                             )}
@@ -152,7 +164,7 @@ export default function Filters() {
                             onClick={() => {
                               console.log("Sort by", option.key);
                             }}
-                            className={classNames(
+                            className={clsx(
                               active ? "w-full bg-dark text-left" : "",
                               "block px-4 py-2 text-xs text-lighter",
                             )}
@@ -173,6 +185,8 @@ export default function Filters() {
                 type="text"
                 className="input-primary float-right max-w-md py-1.5 text-sm"
                 placeholder="Search by branch name"
+                onChange={(e) => setFilter(String(e.target.value))}
+                value={filter}
               />
             </div>
           </div>

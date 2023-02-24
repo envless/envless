@@ -1,93 +1,33 @@
 import { useState } from "react";
 import {
+  ColumnDef,
   ColumnFiltersState,
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Copy, GitBranch } from "lucide-react";
-import { Badge, Button, Label } from "@/components/theme";
+import clsx from "clsx";
 import Filters from "./Filters";
 
-type Branch = {
-  id: number;
-  name: string;
-  description: string;
-  base: string;
-};
+interface TableProps<T extends object> {
+  data: T[];
+  hasFilters?: boolean;
+  variant?: "dark" | "darker";
+  columns: ColumnDef<T>[];
+}
 
-const allBranches: Branch[] = [
-  {
-    id: 1,
-    name: "feat/image-upload",
-    description: "Create 2 days ago by John Doe",
-    base: "Open",
-  },
-
-  {
-    id: 2,
-    name: "feat/send-transactional-email",
-    description: "Create 2 days ago by John Doe",
-    base: "Closed",
-  },
-
-  {
-    id: 3,
-    name: "fix/center-the-div",
-    description: "Create 2 days ago by John Doe",
-    base: "Merged",
-  },
-
-  {
-    id: 4,
-    name: "chore/update-readme",
-    description: "Create 2 days ago by John Doe",
-    base: "Merged",
-  },
-];
-const Table = () => {
-  const columnHelper = createColumnHelper<Branch>();
+function Table<T extends object>({
+  hasFilters = true,
+  variant = "dark",
+  data,
+  columns,
+}: TableProps<T>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
 
-  const columns = [
-    columnHelper.display({
-      id: "detail",
-      cell: (props) => (
-        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-          <div className="flex items-center">
-            <div className="h-10 w-10 flex-shrink-0">
-              <Badge type="info">
-                <GitBranch className="h-6 w-6" strokeWidth={2} />
-              </Badge>
-            </div>
-            <div className="ml-4">
-              <button className="inline-flex cursor-copy font-medium">
-                <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
-
-                {props.row.original.name}
-              </button>
-              <div className="text-light">{props.row.original.description}</div>
-            </div>
-          </div>
-        </td>
-      ),
-    }),
-    columnHelper.display({
-      id: "action",
-      cell: (props) => (
-        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-          <Button secondary={true} small className="float-right border-lighter">
-            Open pull request
-          </Button>
-        </td>
-      ),
-    }),
-  ];
-
   const table = useReactTable({
-    data: allBranches,
+    data,
     columns,
     state: {
       columnFilters,
@@ -96,23 +36,34 @@ const Table = () => {
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
     <div className="inline-block min-w-full py-4 align-middle">
       <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-        <div className="min-w-full rounded-t bg-darker pt-3">
-          <Filters />
-        </div>
+        {hasFilters && (
+          <div className="min-w-full rounded-t bg-darker pt-3">
+            <Filters columnFilters={columnFilters} table={table} />
+          </div>
+        )}
         <table className="min-w-full divide-y divide-light">
-          <tbody className="bg-dark">
+          <tbody
+            className={clsx({
+              "bg-dark": variant === "dark",
+              "bg-darker": variant === "darker",
+            })}
+          >
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
-                {row
-                  .getVisibleCells()
-                  .map((cell) =>
-                    flexRender(cell.column.columnDef.cell, cell.getContext()),
-                  )}
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    key={cell.id}
+                    className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
@@ -120,6 +71,6 @@ const Table = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Table;
