@@ -50,7 +50,7 @@
 <h2 id="community">🚀 Community</h2>
 
 - We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. 
-- **Please click on the banners bewlow and join us.**
+- **Please click on the banners below and join us.**
 .
 .
 
