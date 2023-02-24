@@ -49,14 +49,26 @@
 
 <h2 id="community">🚀 Community</h2>
 
-We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. **Please join us.**
+- We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything. 
+- **Please click on the banners bewlow and join us.**
 .
 .
 
 
-| *Click Below* | *Click Below* |
-| -------- | -------- |
-| [![Image 1](https://github.com/the-amazing-atharva/envless/blob/main/.github/images/Discord-Banner-1-1500x680.png)](https://dub.sh/envless-discord) | [![Image 2](https://github.com/the-amazing-atharva/envless/blob/main/.github/images/slack%20art.jpg)](https://dub.sh/envless-slack) |
+<table>
+  <tr>
+     <td style="text-align: center;">
+      <a href="https://dub.sh/envless-discord">
+        <img src="https://github.com/the-amazing-atharva/envless/blob/main/.github/images/Discord-Banner-1-1500x680.png" width=380 alt="discord banner invite banner">
+      </a>
+    </td>
+     <td style="text-align: center;">
+      <a href="https://dub.sh/envless-slack">
+        <img src="https://github.com/the-amazing-atharva/envless/blob/main/.github/images/slack%20art.jpg" width=380 alt="slack invite banner">
+      </a>
+    </td>
+  </tr>
+</table>
 
 
 <!--
