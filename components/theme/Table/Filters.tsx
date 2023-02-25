@@ -1,8 +1,9 @@
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ColumnFiltersState, RowData, Table } from "@tanstack/react-table";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
+import SearchInput from "./SearchInput";
 
 const sortOptions = [
   { key: "createdAt.asc", value: "Newest" },
@@ -179,14 +180,11 @@ export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
               </Transition>
             </Menu>
 
-            {/* Author */}
-            <div className="w-full">
-              <input
-                type="text"
-                className="input-primary float-right max-w-md py-1.5 text-sm"
-                placeholder="Search by branch name"
-                onChange={(e) => setFilter(String(e.target.value))}
-                value={filter}
+            <div className="flex flex-1 justify-end">
+              <SearchInput
+                table={table}
+                filter={filter}
+                setFilter={setFilter}
               />
             </div>
           </div>
