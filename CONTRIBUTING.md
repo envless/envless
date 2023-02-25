@@ -138,6 +138,10 @@ For more information on how to help with tests (e2e, or unit tests), please see 
 
 For more information on how to help with translation, please see the [create an issue](https://github.com/envless/envless/issues/new).
 
+## Credits
+
+This documentation was inspired by the contributing guidelines for [t3-oss/create-t3-app](https://github.com/t3-oss/create-t3-app/blob/next/CONTRIBUTING.md).
+
 <h2 id="contributors">Contributors</h2>
 
 We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
@@ -147,7 +151,3 @@ We ❤️ contributors! Feel free to contribute to this project but **please rea
     <img src="https://contrib.rocks/image?repo=envless/envless" alt="A table of avatars from the project's contributors" />
   </p>
 </a>
-
-## Credits
-
-This documentation was inspired by the contributing guidelines for [t3-oss/create-t3-app](https://github.com/t3-oss/create-t3-app/blob/next/CONTRIBUTING.md).
