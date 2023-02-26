@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
@@ -33,6 +34,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({} as SettingProps);
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+  const router = useRouter();
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (_data) => {
@@ -42,6 +44,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
         title: "Account settings",
         subtitle: "Successfully updated account settings.",
       });
+      router.replace(router.asPath);
     },
 
     onError: (error) => {

@@ -75,11 +75,15 @@ model Branch {
   id        String   @id @default(cuid())
   projectId String
   name      String
+  createdById String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
   envs      Env[]
 
+  @@index([createdById])
   @@index([projectId])
   @@unique([name, projectId])
 }
@@ -162,6 +166,7 @@ model User {
   access            Access[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
+  branchesCreatedBy Branch[]  @relation(name: "createdBy")
 
   // Two factor authentication
   twoFactor         Json?

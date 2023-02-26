@@ -4,10 +4,18 @@ import { z } from "zod";
 import Audit from "@/lib/audit";
 
 export const branches = createRouter({
-  getAll: withAuth.query(({ ctx }) => {
-    // return ctx.prisma.projects.findMany();
-    return [];
-  }),
+  getAll: withAuth
+    .input(z.object({ projectId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.branch.findMany({
+        include: {
+          createdBy: true,
+        },
+        where: {
+          projectId: input.projectId,
+        },
+      });
+    }),
 
   getOne: withAuth
     .input(z.object({ id: z.number() }))
@@ -79,6 +87,7 @@ export const branches = createRouter({
         data: {
           name: branch.name,
           projectId: branch.projectId,
+          createdById: userId,
         },
       });
 
