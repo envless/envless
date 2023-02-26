@@ -164,6 +164,11 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
+  const branchesColumnVisibility = {
+    details: true,
+    author: false,
+  };
+
   return (
     <ProjectLayout
       tab="branches"
@@ -212,7 +217,11 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          <Table columns={branchesColumns} data={branchQuery.data || []} />
+          <Table
+            visibleColumns={branchesColumnVisibility}
+            columns={branchesColumns}
+            data={branchQuery.data || []}
+          />
         </div>
       </div>
     </ProjectLayout>

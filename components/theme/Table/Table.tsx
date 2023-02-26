@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,9 +16,11 @@ interface TableProps<T extends object> {
   hasFilters?: boolean;
   variant?: "dark" | "darker";
   columns: ColumnDef<T>[];
+  visibleColumns?: VisibilityState | undefined;
 }
 
 function Table<T extends object>({
+  visibleColumns = {},
   hasFilters = true,
   variant = "dark",
   data,
@@ -35,9 +38,7 @@ function Table<T extends object>({
       globalFilter,
     },
     initialState: {
-      columnVisibility: {
-        author: false,
-      },
+      columnVisibility: visibleColumns,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnFiltersChange: setColumnFilters,
