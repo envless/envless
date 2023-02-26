@@ -1,8 +1,11 @@
 import { type GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
+import { Branch, Project, User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
 import {
   CheckCheck,
   Copy,
@@ -11,8 +14,9 @@ import {
   Settings2,
   ShieldCheck,
 } from "lucide-react";
-import Filters from "@/components/branches/Filters";
-import { Badge, Button, Label } from "@/components/theme";
+import DateTimeAgo from "@/components/DateTimeAgo";
+import { Badge, Button } from "@/components/theme";
+import Table from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
 
 /**
@@ -29,6 +33,15 @@ interface Props {
 
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [copied, setCopied] = useState("");
+  const router = useRouter();
+  const branchQuery = trpc.branches.getAll.useQuery(
+    {
+      projectId: router.query.id as string,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const copyToClipboard = (value: string) => {
     navigator.clipboard.writeText(value);
@@ -66,35 +79,97 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const allBranches = [
+  const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
     {
-      id: 1,
-      name: "feat/image-upload",
-      description: "Create 2 days ago by John Doe",
-      base: "Open",
+      id: "author",
+      accessorFn: (row) => row.createdBy.name,
+    },
+    {
+      id: "details",
+      accessorFn: (row) => `${row.name}`,
+      header: "Details",
+      cell: (info) => (
+        <div className="flex items-center">
+          <div className="h-10 w-10 flex-shrink-0">
+            <Badge type="info">
+              <GitBranch className="h-6 w-6" strokeWidth={2} />
+            </Badge>
+          </div>
+          <div className="ml-4">
+            <button className="inline-flex cursor-copy font-medium">
+              <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
+              {info.row.original.name}
+            </button>
+            <div className="text-light">
+              Created by {info.row.original.createdBy.name}{" "}
+              <DateTimeAgo date={info.row.original.createdAt} />
+            </div>
+          </div>
+        </div>
+      ),
     },
 
     {
-      id: 2,
-      name: "feat/send-transactional-email",
-      description: "Create 2 days ago by John Doe",
-      base: "Closed",
-    },
-
-    {
-      id: 3,
-      name: "fix/center-the-div",
-      description: "Create 2 days ago by John Doe",
-      base: "Merged",
-    },
-
-    {
-      id: 4,
-      name: "chore/update-readme",
-      description: "Create 2 days ago by John Doe",
-      base: "Merged",
+      id: "actions",
+      header: "Action",
+      cell: () => (
+        <Button secondary={true} small className="float-right border-lighter">
+          Open pull request
+        </Button>
+      ),
     },
   ];
+
+  const protectedBranchesColumns: ColumnDef<(typeof protectedBranches)[0]>[] = [
+    {
+      id: "name",
+      header: "name",
+      cell: (info) => (
+        <div className="flex items-center">
+          <div className="h-10 w-10 flex-shrink-0">
+            <Badge type="success">
+              <ShieldCheck className="h-6 w-6" strokeWidth={2} />
+            </Badge>
+          </div>
+          <div className="ml-4">
+            <button
+              onClick={() => {
+                copyToClipboard(info.row.original.name as string);
+              }}
+              className="inline-flex cursor-copy font-medium"
+            >
+              {copied === info.row.original.name ? (
+                <CheckCheck
+                  className="mr-2 h-4 w-4 text-teal-400"
+                  strokeWidth={2}
+                />
+              ) : (
+                <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
+              )}
+
+              {info.row.original.name}
+            </button>
+            <div className="text-light">{info.row.original.description}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: (info) => (
+        <a href="#" className="float-right pr-4 hover:text-teal-400">
+          <Settings2 className="h-5 w-5" strokeWidth={2} />
+          <span className="sr-only">, {info.row.original.name}</span>
+        </a>
+      ),
+    },
+  ];
+
+  const branchesColumnVisibility = {
+    details: true,
+    author: false,
+  };
 
   return (
     <ProjectLayout
@@ -120,60 +195,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
         </div>
 
         <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-darker">
-                  {protectedBranches.map((pr) => (
-                    <tr key={pr.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <Badge type="success">
-                              <ShieldCheck
-                                className="h-6 w-6"
-                                strokeWidth={2}
-                              />
-                            </Badge>
-                          </div>
-                          <div className="ml-4">
-                            <button
-                              onClick={() => {
-                                copyToClipboard(pr.name as string);
-                              }}
-                              className="inline-flex cursor-copy font-medium"
-                            >
-                              {copied === pr.name ? (
-                                <CheckCheck
-                                  className="mr-2 h-4 w-4 text-teal-400"
-                                  strokeWidth={2}
-                                />
-                              ) : (
-                                <Copy
-                                  className="mr-2 h-4 w-4"
-                                  strokeWidth={2}
-                                />
-                              )}
-
-                              {pr.name}
-                            </button>
-                            <div className="text-light">{pr.description}</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <a href="#" className="float-right hover:text-teal-400">
-                          <Settings2 className="h-5 w-5" strokeWidth={2} />
-                          <span className="sr-only">, {pr.name}</span>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Table
+            variant="darker"
+            hasFilters={false}
+            columns={protectedBranchesColumns}
+            data={protectedBranches}
+          />
         </div>
 
         <div className="mt-8 grid grid-cols-12 gap-2">
@@ -192,63 +219,11 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <div className="min-w-full rounded-t bg-darker pt-3">
-                <Filters />
-              </div>
-              <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-dark">
-                  {allBranches.map((pr) => (
-                    <tr key={pr.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            <Badge type="info">
-                              <GitBranch className="h-6 w-6" strokeWidth={2} />
-                            </Badge>
-                          </div>
-                          <div className="ml-4">
-                            <button
-                              onClick={() => {
-                                copyToClipboard(pr.name as string);
-                              }}
-                              className="inline-flex cursor-copy font-medium"
-                            >
-                              {copied === pr.name ? (
-                                <CheckCheck
-                                  className="mr-2 h-4 w-4 text-teal-400"
-                                  strokeWidth={2}
-                                />
-                              ) : (
-                                <Copy
-                                  className="mr-2 h-4 w-4"
-                                  strokeWidth={2}
-                                />
-                              )}
-
-                              {pr.name}
-                            </button>
-                            <div className="text-light">{pr.description}</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <Button
-                          secondary={true}
-                          small
-                          className="float-right border-lighter"
-                        >
-                          Open pull request
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Table
+            visibleColumns={branchesColumnVisibility}
+            columns={branchesColumns}
+            data={branchQuery.data || []}
+          />
         </div>
       </div>
     </ProjectLayout>
@@ -288,17 +263,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   });
 
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.id === id);
+  const currentProject = projects.find((project) => project.id === id);
 
   if (!currentProject) {
     return {

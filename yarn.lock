@@ -1625,6 +1625,18 @@
     "@tanstack/query-core" "4.24.9"
     use-sync-external-store "^1.2.0"
 
+"@tanstack/react-table@^8.7.9":
+  version "8.7.9"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.7.9.tgz#9efcd168fb0080a7e0bc213b5eac8b55513babf4"
+  integrity sha512-6MbbQn5AupSOkek1+6IYu+1yZNthAKTRZw9tW92Vi6++iRrD1GbI3lKTjJalf8lEEKOqapPzQPE20nywu0PjCA==
+  dependencies:
+    "@tanstack/table-core" "8.7.9"
+
+"@tanstack/table-core@8.7.9":
+  version "8.7.9"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.7.9.tgz#0e975f8a5079972f1827a569079943d43257c42f"
+  integrity sha512-4RkayPMV1oS2SKDXfQbFoct1w5k+pvGpmX18tCXMofK/VDRdA2hhxfsQlMvsJ4oTX8b0CI4Y3GDKn5T425jBCw==
+
 "@testing-library/dom@^8.5.0":
   version "8.20.0"
   resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.20.0.tgz#914aa862cef0f5e89b98cc48e3445c4c921010f6"
@@ -1686,17 +1698,17 @@
   resolved "https://registry.npmjs.org/@trpc/client/-/client-10.9.0.tgz"
   integrity sha512-id6318qpgqllNOuBp7nuciXFPXCe+zae5d4r1hze6Eyp5fFFNO58TqA+4Q44KIcHgpfWyW2egs6iPeql3PrdKA==
 
-"@trpc/next@^10.6.0":
-  version "10.9.0"
-  resolved "https://registry.npmjs.org/@trpc/next/-/next-10.9.0.tgz"
-  integrity sha512-h/W8VHMki/fw7vHNMs1Ku7bLqccjpiKCE1wkqbvHfBOO1ARDmarRbuK6dLqJilip/f7jkFXcrxwB+eNgK4+6Wg==
+"@trpc/next@^10.10.0":
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/@trpc/next/-/next-10.12.0.tgz#e00e47ccfd34f3452a4e9c8d90882c7f9e4e737c"
+  integrity sha512-Ux6jKkRfmeL8csfhQFUBs9or0MCXeA/S1rbf2OY22GUwldhfaXQXhlaQy9Ae0f/D8Xqlip0i6BVYaG4isKejwA==
   dependencies:
     react-ssr-prepass "^1.5.0"
 
-"@trpc/react-query@^10.6.0":
-  version "10.9.0"
-  resolved "https://registry.npmjs.org/@trpc/react-query/-/react-query-10.9.0.tgz"
-  integrity sha512-I7xtdFj/AETwc9HfY2bGxKINij39r26LvfIiTBfz2pBj1ELrcgucWmPeI2eS6pon/uI1E9Nqa6fQCg/zkg764Q==
+"@trpc/react-query@^10.10.0":
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-10.12.0.tgz#efca20783b4716d1fe514633b4e89e48643f7dea"
+  integrity sha512-f8RmXy8kPqel6nVLRykE3f7wk0dkVveGK+nyaO29jXViRPnTtn8HI94PaHZGEyqpi5VBcc+FGlMgk1ckkFNjQA==
 
 "@trpc/server@^10.10.0":
   version "10.12.0"
@@ -6532,10 +6544,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lucide-react@^0.105.0-alpha.4:
-  version "0.105.0"
-  resolved "https://registry.npmjs.org/lucide-react/-/lucide-react-0.105.0.tgz"
-  integrity sha512-iHaIkd4Wq6aNIVrFMXt3If8E/+2lnJd4WlCyntoJNIzZ8nWhdSSHWpsw7XM4rlw2319LZ2t4WLdnM8Z0ECDTOQ==
+lucide-react@^0.109.0:
+  version "0.109.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.109.0.tgz#c6160954f64f1955f1ab00ade2f5fdf90a0bd87f"
+  integrity sha512-CXBQnHSd/EHaSN+Bs9T73jgCbjb/0IVykFG7NvWjk+kG2skiEgXeIIJjpkta2DVSORy8u6RXN2WZuryiuNmC0Q==
 
 lz-string@^1.4.4:
   version "1.4.4"
@@ -7580,10 +7592,10 @@ negotiator@0.6.3:
   resolved "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
-next-auth@^4.18.8:
-  version "4.18.8"
-  resolved "https://registry.npmjs.org/next-auth/-/next-auth-4.18.8.tgz"
-  integrity sha512-USP8ihmvB7iCGtkS0+toe2QPrzdbZfkydQZX56JOI9Ft5n/BardOXh3D4wQ2An+vpq/jDKojGlgfv21wVElW7A==
+next-auth@^4.19.2:
+  version "4.19.2"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.19.2.tgz#8dbdc4886d4f006e7c67c77ab56e0aec5693064d"
+  integrity sha512-6V2YG3IJQVhgCAH7mvT3yopTW92gMdUrcwGX7NQ0dCreT/+axGua/JmVdarjec0C/oJukKpIYRgjMlV+L5ZQOQ==
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@panva/hkdf" "^1.0.1"

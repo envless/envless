@@ -39,6 +39,7 @@ export const projects = createRouter({
           branches: {
             create: {
               name: "main",
+              createdById: user.id,
             },
           },
         },
