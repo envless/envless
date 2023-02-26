@@ -14,6 +14,7 @@ import {
   Settings2,
   ShieldCheck,
 } from "lucide-react";
+import DateTimeAgo from "@/components/DateTimeAgo";
 import { Badge, Button } from "@/components/theme";
 import Table from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
@@ -100,7 +101,8 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               {info.row.original.name}
             </button>
             <div className="text-light">
-              Created by {info.row.original.createdBy.name} ago
+              Created by {info.row.original.createdBy.name}{" "}
+              <DateTimeAgo date={info.row.original.createdAt} />
             </div>
           </div>
         </div>

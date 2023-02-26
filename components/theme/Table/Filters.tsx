@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ColumnFiltersState, RowData, Table } from "@tanstack/react-table";
-import Button from "../Button";
 import FilterMenu from "./FilterMenu";
 import SearchInput from "./SearchInput";
 
@@ -108,10 +107,16 @@ export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
         <div className="border-b border-dark pb-4">
           <div className="mx-auto flex max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Sort */}
-            <FilterMenu filterType="sort" table={table} options={sortOptions} />
+            <FilterMenu
+              buttonText="Sort"
+              filterType="sort"
+              table={table}
+              options={sortOptions}
+            />
 
             {/* Status */}
             <FilterMenu
+              buttonText="Status"
               filterType="filter"
               table={table}
               options={statusOptions}

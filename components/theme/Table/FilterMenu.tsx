@@ -8,9 +8,11 @@ interface FilterMenuProps<T extends RowData> {
   filterType: "filter" | "sort";
   options: any;
   table: Table<T>;
+  buttonText: string;
 }
 
 export default function FilterMenu<T extends RowData>({
+  buttonText,
   filterType,
   options,
   table,
@@ -19,7 +21,7 @@ export default function FilterMenu<T extends RowData>({
     <Menu as="div" className="relative mr-6 hidden text-left sm:inline-block">
       <div>
         <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light hover:text-lighter">
-          Status
+          {buttonText}
           <ChevronDown
             className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light group-hover:text-lighter"
             aria-hidden="true"
