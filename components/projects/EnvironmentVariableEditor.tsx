@@ -5,7 +5,6 @@ import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
-import CreateBranchModal from "../branches/CreateBranchModal";
 
 export interface EnvVariable {
   envKey: string;
@@ -15,7 +14,6 @@ export interface EnvVariable {
 
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
   const pastingInputIndex = useRef(0);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
