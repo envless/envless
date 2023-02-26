@@ -34,7 +34,7 @@
     "@trpc/client": "^10.6.0",
     "@trpc/next": "^10.6.0",
     "@trpc/react-query": "^10.6.0",
-    "@trpc/server": "^10.6.0",
+    "@trpc/server": "^10.10.0",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.11",
