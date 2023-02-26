@@ -1693,10 +1693,10 @@
   dependencies:
     react-ssr-prepass "^1.5.0"
 
-"@trpc/react-query@^10.6.0":
-  version "10.9.0"
-  resolved "https://registry.npmjs.org/@trpc/react-query/-/react-query-10.9.0.tgz"
-  integrity sha512-I7xtdFj/AETwc9HfY2bGxKINij39r26LvfIiTBfz2pBj1ELrcgucWmPeI2eS6pon/uI1E9Nqa6fQCg/zkg764Q==
+"@trpc/react-query@^10.10.0":
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-10.12.0.tgz#efca20783b4716d1fe514633b4e89e48643f7dea"
+  integrity sha512-f8RmXy8kPqel6nVLRykE3f7wk0dkVveGK+nyaO29jXViRPnTtn8HI94PaHZGEyqpi5VBcc+FGlMgk1ckkFNjQA==
 
 "@trpc/server@^10.6.0":
   version "10.9.0"
