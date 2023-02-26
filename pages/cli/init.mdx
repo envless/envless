@@ -1,9 +1,20 @@
+import { Tab, Tabs } from "nextra-theme-docs";
+
 ## Initialize Envless
 
+Learn ho to initialize Envless in your project.
 
-`Work in progress`
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless init ```</Tab>
+</Tabs>
 
-Please help us write documentation. Open an issue or join us on Slack/Discord to get started.
+Before you run this command, please cd into your project's root directory. This CLI command will create a `.envless` file with project ID and current branch you are working on.
 
-- [Join Envless on Slack](https://dub.sh/envless-slack)
-- [Join Envless on Discord](https://dub.sh/envless-discord)
+Example:-
+
+```json
+{
+  "projectId": "xxxxxxxxxxxxxx",
+  "branch": "development"
+}
+```

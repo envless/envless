@@ -1,9 +1,30 @@
+import { Tab, Tabs } from "nextra-theme-docs";
+
 ## Get started with Envless CLI
 
+Envless CLI works with any programming language, frameworks, hosting platforms and infrastructures, CI/CD pipelines
 
-`Work in progress`
+### Installation
 
-Please help us write documentation. Open an issue or join us on Slack/Discord to get started.
+<Tabs items={["npm", "yarn", "brew"]}>
+  <Tab>``` npm i -g envless ```</Tab>
+  <Tab>``` yarn global add envless ```</Tab>
+  <Tab>``` brew install envless ```</Tab>
+</Tabs>
 
-- [Join Envless on Slack](https://dub.sh/envless-slack)
-- [Join Envless on Discord](https://dub.sh/envless-discord)
+### Authentication
+
+Envless CLI provides authentication methods from the command line. Both login and signup happens using the same command.
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless auth ```</Tab>
+</Tabs>
+
+{/* TODO - needs some  ♥️ */}
+
+- This will open `/cli/auth` page
+- Will ask you for email
+- Email you a secure login link
+- Signup - If you do not have an existing account, will ask you to create public/private encryption key.
+- This private key will be saved securely on your device for other CLI usages.
+- Login - If you already have an account, the auth process will complete.

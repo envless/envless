@@ -13,12 +13,12 @@ const config: DocsThemeConfig = {
       <path
         d="M2225 1311C2225 1068.33 2128.6 835.592 1957 663.997C1785.41 492.401 1552.67 395.999 1310 395.999C1067.33 395.999 834.593 492.401 662.997 663.996C491.402 835.592 395 1068.33 395 1311L1310 1311H2225Z"
         stroke="currentColor"
-        stroke-width="302"
+        strokeWidth="302"
       />
       <path
         d="M512.287 1766.95C594.182 1905.12 711.004 2019.3 851.011 2098.01C991.019 2176.72 1149.28 2217.19 1309.88 2215.35C1470.49 2213.51 1627.78 2169.43 1765.95 2087.54C1904.12 2005.64 2018.3 1888.82 2097.01 1748.81"
         stroke="currentColor"
-        stroke-width="302"
+        strokeWidth="302"
       />
     </svg>
   ),
@@ -50,9 +50,9 @@ const config: DocsThemeConfig = {
 
   useNextSeoProps() {
     return {
-      titleTemplate: '%s – Envless Docs'
-    }
-  }
+      titleTemplate: "%s – Envless Docs",
+    };
+  },
 };
 
 export default config;
