@@ -80,8 +80,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
 
   const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
     {
+      id: "author",
+      accessorFn: (row) => row.createdBy.name,
+    },
+    {
       id: "details",
-      accessorFn: (row) => `${row.name} ${row.createdBy.name}`,
+      accessorFn: (row) => `${row.name}`,
       header: "Details",
       cell: (info) => (
         <div className="flex items-center">

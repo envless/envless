@@ -24,6 +24,7 @@ function Table<T extends object>({
   columns,
 }: TableProps<T>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState({});
   const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
@@ -33,6 +34,12 @@ function Table<T extends object>({
       columnFilters,
       globalFilter,
     },
+    initialState: {
+      columnVisibility: {
+        author: false,
+      },
+    },
+    onColumnVisibilityChange: setColumnVisibility,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
