@@ -59,38 +59,16 @@
   <tr>
      <td style="text-align: center;">
       <a href="https://dub.sh/envless-discord">
-        <img src="https://github.com/the-amazing-atharva/envless/blob/main/.github/images/Discord-Banner-1-1500x680.png" width=380 alt="discord banner invite banner">
+        <img src="./.github/images/discord-banner.png" width="380" alt="Discord invite banner">
       </a>
     </td>
      <td style="text-align: center;">
       <a href="https://dub.sh/envless-slack">
-        <img src="https://github.com/the-amazing-atharva/envless/blob/main/.github/images/slack%20art.jpg" width=380 alt="slack invite banner">
+        <img src="./.github/images/slack-banner.png" width="380" alt="Slack invite banner">
       </a>
     </td>
   </tr>
 </table>
-
-
-<!--
-<table>
-  <thead>
-    <tr>
-      <th>Platform</th>
-      <th>Link</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Discord</td>
-      <td><a href="https://dub.sh/envless-discord"><img src="https://cdn.worldvectorlogo.com/logos/discord-6.svg" title="Discord" alt="Discord Community" width="40"/></a></td>
-    </tr>
-    <tr>
-      <td>Slack</td>
-      <td><a href="https://dub.sh/envless-slack"><img src="https://cdn.worldvectorlogo.com/logos/slack-new-logo.svg" title="Slack" alt="Slack Account" width="40"/></a></td>
-    </tr>
-  </tbody>
-</table>
--->
 
 <h2 id="Contributing">🤝 Contributing</h2>
 
