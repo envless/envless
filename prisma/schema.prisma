@@ -77,6 +77,7 @@ model Branch {
   name        String
   description String?
   protected   Boolean @default(false)
+  status      BranchStatus?
 
   createdById String
   createdAt   DateTime @default(now())
@@ -90,6 +91,12 @@ model Branch {
   @@index([projectId])
   @@unique([name, projectId])
   @@index([protected])
+}
+
+enum BranchStatus {
+  open
+  closed
+  merged
 }
 
 model Env {
