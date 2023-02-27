@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import type { SettingProps } from "@/types/projectSettingTypes";
@@ -17,16 +18,8 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
-export const SettingsPage = ({
-  projects: initialProjects,
-  currentProject: initialCurrentProject,
-}: SettingProps) => {
-  const [projectDetails, setProjectDetails] = useState({
-    projects: initialProjects || [],
-    currentProject: initialCurrentProject || [],
-  });
-
-  const { projects, currentProject } = projectDetails;
+export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
+  const router = useRouter();
 
   const props = { projects, currentProject };
 
@@ -43,19 +36,15 @@ export const SettingsPage = ({
       onSuccess: (data) => {
         showToast({
           type: "success",
-          title: "Project Setting Updated successfully",
+          title: "Project setting updated successfully",
           subtitle: "",
         });
-        const { projects: newProjects, currentProject: newProject } = data;
-        setProjectDetails({
-          projects: newProjects,
-          currentProject: newProject,
-        });
+        router.push(router.asPath);
       },
       onError: (error) => {
         showToast({
-          type: "success",
-          title: "Project Setting Update failed",
+          type: "error",
+          title: "Project setting update failed",
           subtitle: error.message,
         });
       },
