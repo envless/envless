@@ -99,7 +99,6 @@ export const projects = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
       const { project } = input;
 
       const updatedProduct = await prisma.project.update({
@@ -123,6 +122,7 @@ export const projects = createRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
+      console.log(user, "hello");
       const { project } = input;
 
       const deletedProject = await prisma.project.delete({

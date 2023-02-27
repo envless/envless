@@ -1,13 +1,12 @@
 import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
-import { Button, Input } from "@/components/theme";
+import { Button, Input, Paragraph, Toggle } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
@@ -52,8 +51,10 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
   );
 
   const submitForm = (values) => {
+    const { name, auth_2fa } = values;
+    console.log(values);
     generalMutate({
-      project: { ...currentProject, name: values.name },
+      project: { ...currentProject, name },
     });
   };
 
@@ -65,7 +66,7 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
           <form onSubmit={handleSubmit(submitForm)}>
             <Input
               name="name"
-              label="Project Name"
+              label="Project name"
               placeholder=""
               defaultValue={currentProject.name || ""}
               required={true}
@@ -75,6 +76,27 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
                 required: "Project name is required",
               }}
             />
+            <div className="mb-6 rounded border-2 border-dark p-3">
+              <div className="flex items-center justify-between">
+                <label className="cursor-pointer" htmlFor="auth_2fa">
+                  <h3 className="mb-1 text-sm font-semibold">
+                    Enforce two-factor authentication
+                  </h3>
+                  <Paragraph color="light" size="sm" className="mr-4">
+                    After enabling this feature, all team members should enable
+                    their two-factor authentication to access this project.
+                  </Paragraph>
+                </label>
+
+                <Toggle
+                  // checked={user.notification}
+                  name="auth_2fa"
+                  register={register}
+                  validationSchema={{}}
+                />
+              </div>
+            </div>
+
             <Button type="submit" disabled={isLoading || false}>
               Save project settings
             </Button>
