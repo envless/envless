@@ -125,7 +125,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 
           <div className="mb-6 rounded border-2 border-dark p-3">
             <div className="mb-4 flex items-center justify-between">
-              <label htmlFor="notification">
+              <label className="cursor-pointer" htmlFor="notification">
                 <h3 className="text-sm font-semibold">Notifications</h3>
                 <Paragraph color="light" size="sm" className="mr-4">
                   Be notified about activity within your account and projects.
@@ -143,7 +143,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
             <Hr />
 
             <div className="mb-4 flex items-center justify-between pt-3">
-              <label htmlFor="marketing">
+              <label className="cursor-pointer" htmlFor="marketing">
                 <h3 className="text-sm font-semibold">Product updates</h3>
                 <Paragraph color="light" size="sm" className="mr-4">
                   Receive product updates and announcements.
