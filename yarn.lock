@@ -8453,10 +8453,10 @@ react-embed@^3.6.0:
     react-youtube "^7.13.1"
     scriptjs "^2.5.9"
 
-react-hook-form@^7.41.1:
-  version "7.42.1"
-  resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.42.1.tgz"
-  integrity sha512-2UIGqwMZksd5HS55crTT1ATLTr0rAI4jS7yVuqTaoRVDhY2Qc4IyjskCmpnmdYqUNOYFy04vW253tb2JRVh+IQ==
+react-hook-form@^7.43.2:
+  version "7.43.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.43.2.tgz#d8ff71956dc3de258dce19d4b1c7e1c6a0188e67"
+  integrity sha512-NvD3Oe2Y9hhqo2R4I4iJigDzSLpdMnzUpNMxlnzTbdiT7NT3BW0GxWCzEtwPudZMUPbZhNcSy1EcGAygyhDORg==
 
 react-hot-toast@^2.4.0:
   version "2.4.0"
