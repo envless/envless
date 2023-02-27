@@ -72,20 +72,24 @@ model Access {
 }
 
 model Branch {
-  id        String   @id @default(cuid())
-  projectId String
-  name      String
-  createdById String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  description String?
+  protected   Boolean @default(false)
 
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdBy User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  envs      Env[]
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  envs        Env[]
 
   @@index([createdById])
   @@index([projectId])
   @@unique([name, projectId])
+  @@index([protected])
 }
 
 model Env {
