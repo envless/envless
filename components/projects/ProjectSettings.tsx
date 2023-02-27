@@ -16,17 +16,17 @@ const ProjectSettings = ({
     () => [
       {
         id: "general",
-        name: "General",
+        name: "General settings",
         href: `/projects/${currentProject.id}/settings`,
       },
       {
         id: "branches",
-        name: "Protected Branches",
+        name: "Protected branches",
         href: `/projects/${currentProject.id}/settings/protected-branch`,
       },
       {
         id: "danger",
-        name: "Danger Zone",
+        name: "Danger zone",
         href: `/projects/${currentProject.id}/settings/danger`,
       },
     ],

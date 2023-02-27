@@ -111,27 +111,7 @@ export const projects = createRouter({
         },
       });
 
-      const access = await prisma.access.findMany({
-        where: {
-          userId: user.id,
-        },
-        select: {
-          id: true,
-          project: {
-            select: {
-              id: true,
-              name: true,
-              updatedAt: true,
-            },
-          },
-        },
-      });
-
-      const projects = access.map((a) => a.project) as Project[];
-      const currentProject = projects.find(
-        (p) => p.id === updatedProduct.id,
-      ) as Project;
-      return { projects, currentProject };
+      return updatedProduct;
     }),
 
   delete: withAuth
