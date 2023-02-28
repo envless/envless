@@ -83,6 +83,8 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 <h2 id="contributors">✨ Contributors</h2>
 
 + We ❤️ contributors! Feel free to contribute to this project!. 
++ Any contributions you make are truly appreciated.
++ Let's continue contributing to keep the community active and growing.
 + We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
 
 <a href="https://github.com/envless/envless/graphs/contributors">
@@ -90,3 +92,8 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
     <img src="https://contrib.rocks/image?repo=envless/envless" alt="A table of avatars from the project's contributors" />
   </p>
 </a>
+<h2>🙏 Support</h2>
+<p>
+Don't forget to leave a star ⭐️
+</p>
+<image src="/Enveless.gif">
