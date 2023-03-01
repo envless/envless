@@ -17,9 +17,12 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
-export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
+export const SettingsPage = ({
+  projects,
+  currentProject,
+  projectSetting,
+}: SettingProps) => {
   const router = useRouter();
-
   const props = { projects, currentProject };
 
   const {
@@ -51,10 +54,15 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
   );
 
   const submitForm = (values) => {
-    const { name, auth_2fa } = values;
+    const { name, enforce_2fa_for_all_users } = values;
     console.log(values);
     generalMutate({
-      project: { ...currentProject, name },
+      project: {
+        ...currentProject,
+        name,
+        enforce_2fa_for_all_users,
+        projectSettingId: projectSetting.id,
+      },
     });
   };
 
@@ -89,10 +97,9 @@ export const SettingsPage = ({ projects, currentProject }: SettingProps) => {
                 </label>
 
                 <Toggle
-                  // checked={user.notification}
-                  name="auth_2fa"
+                  checked={projectSetting.enforce_2fa_for_all_users || false}
+                  name="enforce_2fa_for_all_users"
                   register={register}
-                  validationSchema={{}}
                 />
               </div>
             </div>
@@ -152,6 +159,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const projects = access.map((a) => a.project);
   const currentProject = projects.find((p) => p.id === id);
 
+  const projectSettings = await prisma.projectSetting.findMany({
+    where: {
+      projectId: id,
+    },
+  });
+
   if (!currentProject) {
     return {
       redirect: {
@@ -165,6 +178,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
+      projectSetting: projectSettings.length
+        ? JSON.parse(JSON.stringify(projectSettings[0]))
+        : null,
     },
   };
 }

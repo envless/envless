@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GitBranch, Users } from "lucide-react";
+import { GitBranch, Lock, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 
@@ -11,11 +11,16 @@ const Projects = ({ ...props }) => {
   });
 
   const Card = ({ project }) => {
+    const twoFactorAuth = project.projectSettings[0].enforce_2fa_for_all_users;
+
     return (
       <Link href={`/projects/${project.id}`} className="cursor-pointer">
-        <div className="w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
+        <div className="relative w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
+          {twoFactorAuth && (
+            <Lock className="absolute right-5 inline-block h-5 w-5 text-lighter" />
+          )}
           <h5
-            title={project?.name}
+            title={project.name}
             className="line-clamp-1 text-base leading-5 text-lightest"
           >
             {project?.name}
@@ -24,7 +29,6 @@ const Projects = ({ ...props }) => {
             Created {""}
             <DateTimeAgo date={project.createdAt} />
           </p>
-
           <div className="mt-8 grid grid-cols-2 gap-8 text-xs">
             <div>
               <div className="inline-block">

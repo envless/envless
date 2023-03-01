@@ -4,7 +4,10 @@ import Tabs from "@/components/settings/Tabs";
 
 type ActiveType = "general" | "branches" | "danger";
 
-type Props = { active: ActiveType; children: React.ReactNode } & SettingProps;
+type Props = { active: ActiveType; children: React.ReactNode } & Omit<
+  SettingProps,
+  "projectSetting"
+>;
 
 const ProjectSettings = ({
   projects,

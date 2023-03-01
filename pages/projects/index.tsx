@@ -84,7 +84,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       where: {
         id: userId,
       },
-
       include: {
         access: {
           include: {
@@ -94,6 +93,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                   select: {
                     access: true,
                     branches: true,
+                  },
+                },
+                projectSettings: {
+                  select: {
+                    enforce_2fa_for_all_users: true,
                   },
                 },
               },

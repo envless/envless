@@ -50,6 +50,7 @@ model ProjectSetting {
   enforce_2fa_for_all_users Boolean @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  @@index([projectId])
 }
 
 model ProjectInvite {
