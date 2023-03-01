@@ -42,13 +42,13 @@ Then, install the project's dependencies:
 yarn install
 ```
 
-Then, copy `.env.example` to `.env.local`
+Then, copy `.env.example` to `.env`
 
 > Of-course this will change and we no longer will need .env files once we are ready to go live.
 
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
 <h2 id="setup">Setting up databases</h2>
@@ -70,7 +70,7 @@ After installation I had to go through these steps
   * `CREATE DATABASE envless;`
   * `CREATE DATABASE envless_shadow;`
 
-* Copy/paste these env variables to .env.local file. Of-course this will change and we no longer will need .env files once we are ready to go live.
+* Copy/paste these env variables to .env file. Of-course this will change and we no longer will need .env files once we are ready to go live.
 
 ```
 DATABASE_URL="mysql://root:password@localhost:3306/envless"
@@ -88,7 +88,7 @@ SHADOW_DATABASE_URL="mysql://root:password@localhost:3306/envless_shadow"
 
 <h3 id="redis">Setup Upstash Redis</h3>
 
-Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env.local` file.
+Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env` file.
 
 ![upstash](./.github/images/upstash.png)
 
