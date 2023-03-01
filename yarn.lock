@@ -1456,10 +1456,10 @@
     "@radix-ui/react-use-layout-effect" "1.0.0"
     "@radix-ui/react-visually-hidden" "1.0.1"
 
-"@radix-ui/react-tooltip@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-tooltip/-/react-tooltip-1.0.3.tgz#a8c7e7b2b542cdfe7e94122af79079f7de3f90ff"
-  integrity sha512-cmc9qV4KpgqdXVTn1K8KN8MnuSXvw+E719pKwyvpCGrQ+0AA2qTjcIL3uxCj4jc4k3sDR36RF7R3H7N5hPybBQ==
+"@radix-ui/react-tooltip@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-tooltip/-/react-tooltip-1.0.4.tgz#195c8526686dfe009a44733387dd4f3101718b7f"
+  integrity sha512-2h0BvJipRSv7nszzOCdAqb8fH7+Igz24GV1M4aCb/3UPfeMQ+clb1UM5/z2msW3Khir795OCQw2G74YGxjueWw==
   dependencies:
     "@babel/runtime" "^7.13.10"
     "@radix-ui/primitive" "1.0.0"
@@ -2100,10 +2100,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.0.27":
-  version "18.0.27"
-  resolved "https://registry.npmjs.org/@types/react/-/react-18.0.27.tgz"
-  integrity sha512-3vtRKHgVxu3Jp9t718R9BuzoD4NcQ8YJ5XRzsSKxNDiDonD2MXIT1TmSkenxuCycZJoQT5d2vE8LwWJxBC1gmA==
+"@types/react@*", "@types/react@18.0.28":
+  version "18.0.28"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.28.tgz#accaeb8b86f4908057ad629a26635fe641480065"
+  integrity sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -8164,7 +8164,7 @@ postcss-selector-parser@6.0.10:
     cssesc "^3.0.0"
     util-deprecate "^1.0.2"
 
-postcss-selector-parser@^6.0.10:
+postcss-selector-parser@^6.0.10, postcss-selector-parser@^6.0.11:
   version "6.0.11"
   resolved "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.0.11.tgz"
   integrity sha512-zbARubNdogI9j7WY4nQJBiNqQf3sLS3wCP4WfOidu+p28LofJqDH1tcXypGrcmMHhDk2t9wGhCsYe/+szLTy1g==
@@ -8186,7 +8186,7 @@ postcss@8.4.14:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-postcss@^8.4.16, postcss@^8.4.18, postcss@^8.4.21:
+postcss@^8.0.9, postcss@^8.4.16, postcss@^8.4.21:
   version "8.4.21"
   resolved "https://registry.npmjs.org/postcss/-/postcss-8.4.21.tgz"
   integrity sha512-tP7u/Sn/dVxK2NnruI4H9BG+x+Wxz6oeZ1cJ8P6G/PZY0IKk4k/63TDsQf2kQq3+qoJeLm2kIBUNlZe3zgb4Zg==
@@ -8453,10 +8453,10 @@ react-embed@^3.6.0:
     react-youtube "^7.13.1"
     scriptjs "^2.5.9"
 
-react-hook-form@^7.41.1:
-  version "7.42.1"
-  resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.42.1.tgz"
-  integrity sha512-2UIGqwMZksd5HS55crTT1ATLTr0rAI4jS7yVuqTaoRVDhY2Qc4IyjskCmpnmdYqUNOYFy04vW253tb2JRVh+IQ==
+react-hook-form@^7.43.2:
+  version "7.43.2"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.43.2.tgz#d8ff71956dc3de258dce19d4b1c7e1c6a0188e67"
+  integrity sha512-NvD3Oe2Y9hhqo2R4I4iJigDzSLpdMnzUpNMxlnzTbdiT7NT3BW0GxWCzEtwPudZMUPbZhNcSy1EcGAygyhDORg==
 
 react-hot-toast@^2.4.0:
   version "2.4.0"
@@ -8508,10 +8508,10 @@ react-markdown@^8.0.5:
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
-react-medium-image-zoom@^5.1.2:
-  version "5.1.2"
-  resolved "https://registry.npmjs.org/react-medium-image-zoom/-/react-medium-image-zoom-5.1.2.tgz"
-  integrity sha512-Lk9TDqd+vUpQVP77p45jXgh1LGjClLfyLJnTemCfpI+5Zp3X7MX7iGP5VmSdLGXy9mhdlZiByHOyp4Irf4N8vg==
+react-medium-image-zoom@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/react-medium-image-zoom/-/react-medium-image-zoom-5.1.3.tgz#f45484096ecfbc69477d5fccf70ba5e39beced70"
+  integrity sha512-/d/J3DA49wUi2NY53ix7HNzIp8zPNxrp+1Yz3Eej9oqxUwmZhmWU4TV2obwm8aLKMdD22ffGVuXBk2vSWA46Zw==
 
 react-player@^1.15.3:
   version "1.15.3"
@@ -9458,10 +9458,10 @@ tailwind-scrollbar@^2.1.0:
   resolved "https://registry.yarnpkg.com/tailwind-scrollbar/-/tailwind-scrollbar-2.1.0.tgz#46e0b8788cef75387f9d163a5ec82b8cacd66c44"
   integrity sha512-zpvY5mDs0130YzYjZKBiDaw32rygxk5RyJ4KmeHjGnwkvbjm/PszON1m4Bbt2DkMRIXlXsfNevykAESgURN4KA==
 
-tailwindcss@^3.1.8, tailwindcss@^3.2.4:
-  version "3.2.4"
-  resolved "https://registry.npmjs.org/tailwindcss/-/tailwindcss-3.2.4.tgz"
-  integrity sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==
+tailwindcss@^3.1.8, tailwindcss@^3.2.7:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.2.7.tgz#5936dd08c250b05180f0944500c01dce19188c07"
+  integrity sha512-B6DLqJzc21x7wntlH/GsZwEXTBttVSl1FtCzC8WP4oBc/NKef7kaax5jeihkkCEWc831/5NDJ9gRNDK6NEioQQ==
   dependencies:
     arg "^5.0.2"
     chokidar "^3.5.3"
@@ -9477,12 +9477,12 @@ tailwindcss@^3.1.8, tailwindcss@^3.2.4:
     normalize-path "^3.0.0"
     object-hash "^3.0.0"
     picocolors "^1.0.0"
-    postcss "^8.4.18"
+    postcss "^8.0.9"
     postcss-import "^14.1.0"
     postcss-js "^4.0.0"
     postcss-load-config "^3.1.4"
     postcss-nested "6.0.0"
-    postcss-selector-parser "^6.0.10"
+    postcss-selector-parser "^6.0.11"
     postcss-value-parser "^4.2.0"
     quick-lru "^5.1.1"
     resolve "^1.22.1"
