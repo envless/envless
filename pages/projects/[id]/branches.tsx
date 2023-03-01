@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import { Badge, Button } from "@/components/theme";
-import Table from "@/components/theme/Table/Table";
+import {type FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
 
 /**
@@ -49,40 +49,34 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     setTimeout(() => setCopied(""), 2000);
   };
 
-  const protectedBranches = [
-    {
-      id: 1,
-      name: "production",
-      description: "Used for production environemnts",
-      base: "Open",
-    },
+  const protectedBranches = branchQuery.data
+    ? branchQuery.data.filter((branch) => branch.protected === true)
+    : [];
 
-    {
-      id: 2,
-      name: "staging",
-      description: "Used for staging environemnts",
-      base: "Closed",
-    },
-
-    {
-      id: 3,
-      name: "review",
-      description: "Used by review apps",
-      base: "Merged",
-    },
-
-    {
-      id: 4,
-      name: "public",
-      description: "Used by developers and open source contributors",
-      base: "Merged",
-    },
-  ];
+  const branchesColumnVisibility = {
+    details: true,
+    author: false,
+    createdAt: false,
+    updatedAt: false,
+    status: false,
+  };
 
   const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
     {
       id: "author",
       accessorFn: (row) => row.createdBy.name,
+    },
+    {
+      id: "createdAt",
+      accessorFn: (row) => row.createdAt,
+    },
+    {
+      id: "updatedAt",
+      accessorFn: (row) => row.updatedAt,
+    },
+    {
+      id: "status",
+      accessorFn: (row) => row.status,
     },
     {
       id: "details",
@@ -166,9 +160,18 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const branchesColumnVisibility = {
-    details: true,
-    author: false,
+  const filterOptions: FilterOptions = {
+    status: [
+      { value: "open", label: "Open" },
+      { value: "closed", label: "Closed" },
+      { value: "merged", label: "Merged" },
+    ],
+    sort: [
+      { label: "Newest", value: "createdAt", order: "desc" },
+      { label: "Oldest", value: "createdAt", order: "asc" },
+      { label: "Recently Updated", value: "updatedAt", order: "desc" },
+      { label: "Least recently updated", value: "updatedAt", order: "asc" },
+    ],
   };
 
   return (
@@ -223,6 +226,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
             visibleColumns={branchesColumnVisibility}
             columns={branchesColumns}
             data={branchQuery.data || []}
+            filterOptions={filterOptions}
           />
         </div>
       </div>
