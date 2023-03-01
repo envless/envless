@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "BranchStatus" AS ENUM ('open', 'closed', 'merged');
+
 -- CreateTable
 CREATE TABLE "Audit" (
     "id" TEXT NOT NULL,
@@ -19,6 +22,17 @@ CREATE TABLE "Project" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProjectSetting" (
+    "id" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "enforce_2fa_for_all_users" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ProjectSetting_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -48,6 +62,10 @@ CREATE TABLE "Branch" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "description" TEXT,
+    "protected" BOOLEAN NOT NULL DEFAULT false,
+    "status" "BranchStatus",
+    "createdById" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -167,7 +185,13 @@ CREATE INDEX "Access_projectId_idx" ON "Access"("projectId");
 CREATE UNIQUE INDEX "Access_userId_projectId_key" ON "Access"("userId", "projectId");
 
 -- CreateIndex
+CREATE INDEX "Branch_createdById_idx" ON "Branch"("createdById");
+
+-- CreateIndex
 CREATE INDEX "Branch_projectId_idx" ON "Branch"("projectId");
+
+-- CreateIndex
+CREATE INDEX "Branch_protected_idx" ON "Branch"("protected");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Branch_name_projectId_key" ON "Branch"("name", "projectId");
