@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { GitBranch, Lock, Users } from "lucide-react";
+import { AlertCircle, GitBranch, Lock, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../theme";
 
 const Projects = ({ ...props }) => {
   const { projects } = props;
@@ -17,7 +23,21 @@ const Projects = ({ ...props }) => {
       <Link href={`/projects/${project.id}`} className="cursor-pointer">
         <div className="relative w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
           {twoFactorAuth && (
-            <Lock className="absolute right-5 inline-block h-5 w-5 text-lighter" />
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Lock className="absolute right-5 inline-block h-5 w-5 text-lighter" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="flex space-x-4">
+                    <AlertCircle className="h-6 w-6 shrink-0 text-teal-300" />
+                    <p className="text-xs">
+                      This Project is 2Factor authenticated
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           <h5
             title={project.name}
