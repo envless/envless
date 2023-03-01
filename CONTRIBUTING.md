@@ -42,53 +42,40 @@ Then, install the project's dependencies:
 yarn install
 ```
 
-Then, copy `.env.example` to `.env.local`
+Then, copy `.env.example` to `.env`
 
 > Of-course this will change and we no longer will need .env files once we are ready to go live.
 
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
 <h2 id="setup">Setting up databases</h2>
 
-* <a href="#mysql">Setup MySQL Database</a>
-* <a href="#redis">Setup Upstash Redis</a>
+* <a href="#postgres">Setup Postgres Database</a>
+* <a href="#redis">Setup Redis Database</a>
 
-<h3 id="mysql">Setup MySQL Database</h3>
-This project uses MySQL database. Every environment and OS has a different way to setup MySQL. Here is how I setup on my MacOS machines.
+<h3 id="postgres">Setup Postgres Database</h3>
 
-* `brew install mysql`
+* [How to setup Postgres on Mac](/setup/postgres-on-mac.md)
+* [How to setup Postgres on Linux](/setup/postgres-on-linux.md)
+* [How to setup Postgres on Windows / WSL](/setup/postgres-on-windows.md)
 
-After installation I had to go through these steps
-* Run `mysql_secure_installation`
-* This steps prompts you to create root user/password
-* Login using `root` user `mysql -u root -p`
-* Create `envless` and `envless_shadow` databases
+For a quickstart, you can setup Postgres database on [Supabase](https://supabase.com/) or [Neon](https://neon.tech/) as well.
 
-  * `CREATE DATABASE envless;`
-  * `CREATE DATABASE envless_shadow;`
-
-* Copy/paste these env variables to .env.local file. Of-course this will change and we no longer will need .env files once we are ready to go live.
+Copy/paste these env variables to .env file.
 
 ```
-DATABASE_URL="mysql://root:password@localhost:3306/envless"
-SHADOW_DATABASE_URL="mysql://root:password@localhost:3306/envless_shadow"
+DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
+SHADOW_DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless_shadow"
 ```
-> Note: please change user/password if your setup has different user/password combination
+> Note: please change username, password and port (default port is 5432) as according to your setup.
 
-### MySQL commands
-> Some MySQL commands with homebrew that might come handy
-* `brew services start mysql`
-* `brew services restart mysql`
-* `brew services stop mysql`
-
-> If you are working with different OS, please submit a pull-request with MySQL setup instructions.
 
 <h3 id="redis">Setup Upstash Redis</h3>
 
-Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env.local` file.
+Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env` file.
 
 ![upstash](./.github/images/upstash.png)
 
