@@ -1,71 +1,34 @@
 import { useEffect, useState } from "react";
-import { ColumnFiltersState, RowData, Table } from "@tanstack/react-table";
+import {
+  ColumnFilter,
+  ColumnFiltersState,
+  ColumnSort,
+  RowData,
+  Table,
+} from "@tanstack/react-table";
 import FilterMenu from "./FilterMenu";
 import SearchInput from "./SearchInput";
+import { FilterOption, FilterOptions } from "./Table";
 
-const sortOptions = [
-  { key: "createdAt.asc", value: "Newest" },
-  { key: "createdAt.desc", value: "Oldest" },
-  { key: "updatedAt.asc", value: "Recently updated" },
-  { key: "updatedAt.desc", value: "Least recently updated" },
-];
+interface FilterTableProps {
+  option: FilterOption & { id: string };
+  filterType: string;
+}
 
-const statusOptions = [
-  { key: "open", value: "Open" },
-  { key: "closed", value: "Closed" },
-  { key: "merged", value: "Merged" },
-];
-
-const authorsOptions = [
-  { id: 111, label: "John Doe" },
-  { id: 222, label: "Jane Doe" },
-  { id: 333, label: "Will Smith" },
-];
-
-const selectedOptions = {
-  author: { id: 111, name: "John Doe" },
-  status: [{ value: "open", label: "Open" }],
-  sort: { name: "Newest", key: "createdAt.asc" },
-};
-
-const Filter = (key, option) => {
-  return (
-    <span
-      key={option.id || option.key || option.value}
-      className="m-1 inline-flex items-center rounded-full border border-dark bg-darkest py-1.5 pl-3 pr-2 text-xs text-lighter"
-    >
-      <span>
-        {key}: {option.value || option.name}
-      </span>
-      <button
-        type="button"
-        className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-light hover:bg-dark hover:text-lighter"
-      >
-        <span className="sr-only">
-          Remove filter for {option.value || option.name}
-        </span>
-        <svg
-          className="h-2 w-2"
-          stroke="currentColor"
-          fill="none"
-          viewBox="0 0 8 8"
-        >
-          <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
-        </svg>
-      </button>
-    </span>
-  );
-};
-
-const FilterTable = (option) => {
+function FilterPill({ option, filterType }: FilterTableProps) {
   return (
     <span className="m-1 inline-flex items-center rounded-full border border-dark bg-darkest py-1.5 pl-3 pr-2 text-xs text-lighter">
-      <span>
-        {option.id}: {option.value}
-      </span>
+      {filterType === "sort" ? (
+        <span>sort: {option.label}</span>
+      ) : (
+        <span>
+          {option.id}: {option.label}
+        </span>
+      )}
       <button
         type="button"
         className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-light hover:bg-dark hover:text-lighter"
+        onClick={() => {}}
       >
         <span className="sr-only">Remove filter for {option.value}</span>
         <svg
@@ -79,14 +42,18 @@ const FilterTable = (option) => {
       </button>
     </span>
   );
-};
+}
 
 interface FilterProps<T extends RowData> {
   columnFilters: ColumnFiltersState;
   table: Table<T>;
+  filterOptions?: FilterOptions;
 }
 
-export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
+export default function Filters<T extends RowData>({
+  table,
+  filterOptions,
+}: FilterProps<T>) {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
@@ -95,6 +62,57 @@ export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
     }, 300);
     return () => clearTimeout(timeout);
   }, [filter, table]);
+
+  const filterWithColumn = (columnFilter: ColumnFilter) => {
+    let option: FilterOption & { id: string } = {
+      id: columnFilter.id,
+      label: "",
+      order: "",
+      value: columnFilter.value as string,
+    };
+
+    option = mergeColumnAndFilter(option)[0];
+
+    console.log(option);
+
+    return option;
+  };
+
+  const sortWithColumn = (columnSort: ColumnSort) => {
+    let option: FilterOption & { id: string } = {
+      id: columnSort.id,
+      label: "",
+      order: columnSort.desc ? "desc" : "asc",
+      value: columnSort.id,
+    };
+
+    option = mergeColumnAndFilter(option)[0];
+
+    return option;
+  };
+
+  const mergeColumnAndFilter = (option) => {
+    return Object.keys(filterOptions ?? []).map((key) => {
+      let options = filterOptions && filterOptions[option.id];
+      const columnId = option.id;
+
+      if (option.order) {
+        options = filterOptions && filterOptions["sort"];
+        option = options?.filter(
+          (o) => o.value === option.value && o.order === option.order,
+        )[0] as FilterOption & { id: string };
+      } else {
+        options = filterOptions && filterOptions[option.id];
+        option = options?.filter(
+          (o) => o.value === option.value,
+        )[0] as FilterOption & { id: string };
+      }
+
+      option.id = columnId;
+
+      return option;
+    });
+  };
 
   return (
     <div>
@@ -106,21 +124,19 @@ export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
 
         <div className="border-b border-dark pb-4">
           <div className="mx-auto flex max-w-7xl px-4 sm:px-6 lg:px-8">
-            {/* Sort */}
-            <FilterMenu
-              buttonText="Sort"
-              filterType="sort"
-              table={table}
-              options={sortOptions}
-            />
+            {Object.keys(filterOptions ?? []).map((key) => {
+              const options = filterOptions && filterOptions[key];
 
-            {/* Status */}
-            <FilterMenu
-              buttonText="Status"
-              filterType="filter"
-              table={table}
-              options={statusOptions}
-            />
+              return (
+                <FilterMenu
+                  key={key}
+                  buttonText={key}
+                  filterType={key === "sort" ? "sort" : "filter"}
+                  table={table}
+                  options={options ?? []}
+                />
+              );
+            })}
 
             <div className="flex flex-1 justify-end">
               <SearchInput
@@ -148,7 +164,25 @@ export default function Filters<T extends RowData>({ table }: FilterProps<T>) {
             <div className="mt-2 sm:mt-0 sm:ml-4">
               <div className="-m-1 flex flex-wrap items-center">
                 {table.getState().columnFilters.map((columnFilter, index) => {
-                  return <div key={index}>{FilterTable(columnFilter)}</div>;
+                  return (
+                    <div key={index}>
+                      <FilterPill
+                        filterType="filter"
+                        option={filterWithColumn(columnFilter)}
+                      />
+                    </div>
+                  );
+                })}
+
+                {table.getState().sorting.map((sort, index) => {
+                  return (
+                    <div key={index}>
+                      <FilterPill
+                        filterType="sort"
+                        option={sortWithColumn(sort)}
+                      />
+                    </div>
+                  );
                 })}
               </div>
             </div>
