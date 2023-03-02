@@ -35,7 +35,11 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
 
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
-      <CreateBranchModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <CreateBranchModal
+        onSuccessCreation={() => {}}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
 
       <div className="w-full rounded bg-dark px-5 py-6">
         <div className="flex flex-col md:flex-row md:space-x-1">
