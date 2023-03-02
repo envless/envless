@@ -44,8 +44,6 @@ export function Table<T extends object>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  console.log(filterOptions);
-
   const table = useReactTable({
     data,
     columns,

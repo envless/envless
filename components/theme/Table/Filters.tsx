@@ -10,12 +10,17 @@ import FilterMenu from "./FilterMenu";
 import SearchInput from "./SearchInput";
 import { FilterOption, FilterOptions } from "./Table";
 
-interface FilterTableProps {
+interface FilterTableProps<T extends RowData> {
   option: FilterOption & { id: string };
   filterType: string;
+  table: Table<T>;
 }
 
-function FilterPill({ option, filterType }: FilterTableProps) {
+function FilterPill<T extends RowData>({
+  option,
+  filterType,
+  table,
+}: FilterTableProps<T>) {
   return (
     <span className="m-1 inline-flex items-center rounded-full border border-dark bg-darkest py-1.5 pl-3 pr-2 text-xs text-lighter">
       {filterType === "sort" ? (
@@ -28,7 +33,15 @@ function FilterPill({ option, filterType }: FilterTableProps) {
       <button
         type="button"
         className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-light hover:bg-dark hover:text-lighter"
-        onClick={() => {}}
+        onClick={() => {
+          if (filterType === "sort") {
+            table.resetSorting();
+          } else if (filterType === "filter") {
+            table.setColumnFilters((updater) => [
+              ...updater.filter((filter) => filter.id !== option.id),
+            ]);
+          }
+        }}
       >
         <span className="sr-only">Remove filter for {option.value}</span>
         <svg
@@ -72,8 +85,6 @@ export default function Filters<T extends RowData>({
     };
 
     option = mergeColumnAndFilter(option)[0];
-
-    console.log(option);
 
     return option;
   };
@@ -167,6 +178,7 @@ export default function Filters<T extends RowData>({
                   return (
                     <div key={index}>
                       <FilterPill
+                        table={table}
                         filterType="filter"
                         option={filterWithColumn(columnFilter)}
                       />
@@ -178,6 +190,7 @@ export default function Filters<T extends RowData>({
                   return (
                     <div key={index}>
                       <FilterPill
+                        table={table}
                         filterType="sort"
                         option={sortWithColumn(sort)}
                       />
