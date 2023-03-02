@@ -8,7 +8,3 @@ export const formatDateTime = (date: Date) => {
     hour12: true,
   });
 };
-
-export const capitalizeText = (text: string) => {
-  return `${text.charAt(0).toUpperCase()}${text.slice(1)}`
-}

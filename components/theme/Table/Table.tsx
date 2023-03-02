@@ -44,7 +44,7 @@ export function Table<T extends object>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([]);
 
-console.log(filterOptions)
+  console.log(filterOptions);
 
   const table = useReactTable({
     data,
@@ -72,7 +72,11 @@ console.log(filterOptions)
       <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
         {hasFilters && (
           <div className="min-w-full rounded-t bg-darker pt-3">
-            <Filters filterOptions={filterOptions} columnFilters={columnFilters} table={table} />
+            <Filters
+              filterOptions={filterOptions}
+              columnFilters={columnFilters}
+              table={table}
+            />
           </div>
         )}
         <table className="min-w-full divide-y divide-light">

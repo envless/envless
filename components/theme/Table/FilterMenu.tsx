@@ -1,8 +1,8 @@
 import { Fragment } from "react";
-import { capitalizeText } from "@/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { RowData, Table } from "@tanstack/react-table";
 import clsx from "clsx";
+import { capitalize } from "lodash";
 import { ChevronDown } from "lucide-react";
 import { FilterOption } from "./Table";
 
@@ -23,7 +23,7 @@ export default function FilterMenu<T extends RowData>({
     <Menu as="div" className="relative mr-6 hidden text-left sm:inline-block">
       <div>
         <Menu.Button className="group inline-flex justify-center text-sm font-medium text-light hover:text-lighter">
-          {capitalizeText(buttonText)}
+          {capitalize(buttonText)}
           <ChevronDown
             className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-light group-hover:text-lighter"
             aria-hidden="true"

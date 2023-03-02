@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import { Badge, Button } from "@/components/theme";
-import {type FilterOptions, Table } from "@/components/theme/Table/Table";
+import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
 
 /**
