@@ -1,23 +1,23 @@
 ## Start your server
 
-{/* TODO - add a description and diff language/framework's example */}
-This CLI command will securely inject ENV variables for your project.
+To securely inject ENV variables for your project, use the `envless -r` command followed by the command that you would normally use to start your server.
 
-Example:-
+Here's an example of how to start your server using Envless:
 
 {/* TODO - please add other languages and frameworks */}
-| language/framework | before | after |
+| Language/Framework | Before | After |
 |:---|:---|:---|
-| node | `npm start` | `envless -r npm start` |
-| laravel | `php artisan serve` | `envless -r php artisan serve` |
+| Node.js | `npm start` | `envless -r npm start` |
+| Laravel | `php artisan serve` | `envless -r php artisan serve` |
 | Ruby on Rails | `rails start` | `envless -r rails start` |
-| Add others 🙏 | `please add` | `please add` |
 
-{/* TODO - please improve these steps */}
+Note that this is just a small sample of the many languages and frameworks that Envless works with. To get started with other languages or frameworks, please refer to their respective documentation.
 
 ### How it works?
+When you run the `envless -r` command, Envless CLI will:
 
-- Pull down encrypted ENV variables from our EDGE Network API.
-- Decrypt these this End to end encrypted variables with your private key.
-- Inject ENV variables to your system / runtime.
-- Start the prject with given command.
+1. Pull down encrypted ENV variables from our EDGE Network API.
+2. Decrypt these this End to end encrypted variables with your private key.
+3. Inject ENV variables and start your application.
+
+By following these simple steps, you can easily and securely start your server with the ENV variables that you need for your project.

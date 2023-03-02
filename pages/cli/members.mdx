@@ -1,5 +1,18 @@
-## CLI commands for members
+import { Tab, Tabs } from "nextra-theme-docs";
 
-- `envless member list`
-- `envless member add --name="{FULL NAME}" --email="{EMAIL}"`
-- `envless member remove --email="{EMAIL}"`
+## CLI commands for members
+The Envless CLI provides a set of commands to manage the members of your project. These commands allow you to easily manage access to your project and collaborate with team members.
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless member list ```</Tab>
+</Tabs>
+Displays a list of all members in your project.
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless member add --name="{FULL NAME}" --email="{EMAIL}" ```</Tab>
+</Tabs>
+Adds a new member to your project with the given name and email address.
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless member remove --email="{EMAIL}" ```</Tab>
+</Tabs>
+Removes the member with the given email address from your project.

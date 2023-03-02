@@ -1,5 +1,19 @@
-## CLI commands for branches
+import { Tab, Tabs } from "nextra-theme-docs";
 
-- `envless branch get {CURRENT_BRANCH}` - Branch name is optional
-- `envless branch list`
-- `envless branch create {BRANCH_NAME}`
+## Branch Management
+Envless CLI allows you to manage branches for your project with the following commands:
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless branch get {BRANCH_NAME} ```</Tab>
+</Tabs>
+Retrieves the environment variables for a specific branch. If `{BRANCH_NAME}` is not provided, it will default to the current branch.
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless branch list ```</Tab>
+</Tabs>
+Lists all the branches associated with your project.
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless branch create {BRANCH_NAME} ```</Tab>
+</Tabs>
+Creates a new branch for your project with the name `{BRANCH_NAME}`. Once created, you can update the environment variables for this branch with the Envless [env commands](/docs/cli/env).
