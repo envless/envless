@@ -34,6 +34,7 @@ const sendInviteRequest = async (params: SendVerificationRequestParams) => {
       id: projectId,
     },
   });
+
   const invitationToken = randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + ONE_WEEK_IN_SECONDS * 1000);
   await prisma.projectInvite.create({
@@ -99,6 +100,7 @@ export const authOptions: NextAuthOptions = {
         });
       },
     }),
+
     EmailProvider({
       id: "invite",
       sendVerificationRequest: sendInviteRequest,

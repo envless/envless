@@ -48,7 +48,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const logs = await Audit.logs({
     createdById: userId,
-    actions: ["updated.account"],
+    actions: ["account.updated"],
     projectIds: projectIds,
   });
 

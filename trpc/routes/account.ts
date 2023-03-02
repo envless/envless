@@ -57,7 +57,7 @@ export const account = createRouter({
         await Audit.create({
           createdById: user.id,
           createdForId: user.id,
-          action: "updated.account",
+          action: "account.updated",
           data: {
             before: {
               ...(name != currentUser?.name && { name: currentUser?.name }),

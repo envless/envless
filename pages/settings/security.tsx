@@ -228,7 +228,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
       select: {
         email: true,
-        twoFactor: true,
+        encryptedTwoFactorSecret: true,
         twoFactorEnabled: true,
       },
     });
@@ -247,12 +247,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           id: sessionUser.id,
         },
         data: {
-          twoFactor: encryptedSecret,
+          encryptedTwoFactorSecret: encryptedSecret,
         },
 
         select: {
           email: true,
-          twoFactor: true,
+          encryptedTwoFactorSecret: true,
           twoFactorEnabled: true,
         },
       });
@@ -265,7 +265,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
 
     if (!user?.twoFactorEnabled) {
-      const encrypted = Object.assign({}, user?.twoFactor) as {
+      const encrypted = Object.assign({}, user?.encryptedTwoFactorSecret) as {
         ciphertext: string;
         iv: string;
         tag: string;

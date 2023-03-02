@@ -8,6 +8,7 @@ export { default as Badge } from "./Badge";
 export { default as Label } from "./Label";
 export { default as Toast } from "./Toast";
 export { default as Button } from "./Button";
+export { default as Select } from "./Select";
 export { default as Toggle } from "./Toggle";
 export { default as Popover } from "./Popover";
 export { default as Dropdown } from "./Dropdown";

@@ -89,7 +89,6 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
         onConfirm={() => {
           setTwoFactorRequired(false);
           handleSubmit(saveSettings(formData));
-          reset();
         }}
       />
 

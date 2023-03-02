@@ -117,7 +117,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const projectIds = projects.map((project: any) => project.id);
     const logs = await Audit.logs({
       createdById: userRecord.id,
-      actions: ["updated.account"],
+      actions: ["account.updated"],
       projectIds: projectIds,
       limit: 10,
     });

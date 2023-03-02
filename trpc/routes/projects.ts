@@ -54,7 +54,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "created.project",
+          action: "project.created",
         });
 
         // @ts-ignore
@@ -66,7 +66,7 @@ export const projects = createRouter({
           createdById: user.id,
           createdForId: user.id,
           projectId: newProject.id,
-          action: "created.access",
+          action: "access.created",
           data: {
             access: {
               id: access.id,
@@ -78,7 +78,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "created.branch",
+          action: "branch.created",
           data: {
             branch: {
               id: branch.id,

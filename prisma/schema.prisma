@@ -53,17 +53,23 @@ model ProjectSetting {
 }
 
 model ProjectInvite {
-  email       String
-  expires     DateTime
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId   String
-  createdAt   DateTime @default(now())
-  invitationToken String
-  role        String @default("developer")
-  @@unique([email, projectId])
+  id                  String    @id @default(cuid())
+  email               String
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String
+  createdAt           DateTime @default(now())
+  invitationToken     String
+  hashedPassword      String 
+  retryCount          Int @default(0)
+  invitedById         String?
+  role                String @default("developer")
+  accepted            Boolean @default(false)
+
+  @@unique(fields: [email, projectId], name: "uniq_email_project")
   @@unique([invitationToken])
   @@index([projectId])
   @@index([invitationToken])
+  @@index([email, invitationToken])
 }
 
 model Access {
@@ -190,7 +196,7 @@ model User {
   branchesCreatedBy Branch[]  @relation(name: "createdBy")
 
   // Two factor authentication
-  twoFactor         Json?
+  encryptedTwoFactorSecret    Json?
   twoFactorEnabled  Boolean   @default(false)
 
   marketing         Boolean   @default(true)

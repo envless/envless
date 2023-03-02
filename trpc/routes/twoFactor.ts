@@ -21,7 +21,7 @@ export const twoFactor = createRouter({
           id: user.id,
         },
         select: {
-          twoFactor: true,
+          encryptedTwoFactorSecret: true,
         },
       });
 
@@ -35,7 +35,7 @@ export const twoFactor = createRouter({
 
       const isValid = await verifyTwoFactor({
         code,
-        secret: userRecord.twoFactor,
+        secret: userRecord.encryptedTwoFactorSecret,
       });
 
       if (!isValid) {
@@ -65,7 +65,7 @@ export const twoFactor = createRouter({
         id: user.id,
       },
       data: {
-        twoFactor: {},
+        encryptedTwoFactorSecret: {},
         twoFactorEnabled: false,
       },
     });
@@ -87,7 +87,7 @@ export const twoFactor = createRouter({
           id: user.id,
         },
         select: {
-          twoFactor: true,
+          encryptedTwoFactorSecret: true,
         },
       });
 
@@ -101,7 +101,7 @@ export const twoFactor = createRouter({
 
       const isValid = await verifyTwoFactor({
         code,
-        secret: userRecord.twoFactor,
+        secret: userRecord.encryptedTwoFactorSecret,
       });
 
       if (!isValid) {
