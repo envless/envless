@@ -15,6 +15,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
+import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
@@ -33,7 +34,9 @@ interface Props {
 
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [copied, setCopied] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const utils = trpc.useContext();
   const branchQuery = trpc.branches.getAll.useQuery(
     {
       projectId: router.query.id as string,
@@ -180,6 +183,14 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       projects={projects}
       currentProject={currentProject}
     >
+      <CreateBranchModal
+        onSuccessCreation={() => {
+          utils.branches.getAll.invalidate();
+        }}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
@@ -212,10 +223,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
 
           <div className="col-span-6">
-            <Button
-              className="float-right"
-              onClick={() => console.log("Invite")}
-            >
+            <Button className="float-right" onClick={() => setIsOpen(true)}>
               <GitBranchPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
               Create new branch
             </Button>

@@ -26,9 +26,14 @@ interface Project {
 interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  onSuccessCreation: () => void;
 }
 
-const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
+const CreateBranchModal = ({
+  isOpen,
+  setIsOpen,
+  onSuccessCreation,
+}: BranchModalProps) => {
   const router = useRouter();
 
   const schema = z.object({
@@ -66,6 +71,8 @@ const CreateBranchModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
       });
       setIsOpen(false);
       reset();
+
+      onSuccessCreation();
     },
 
     onError: (error) => {
