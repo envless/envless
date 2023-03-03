@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 colors.enable();
 
-const createProjects = async (count: number = 10) => {
+const seedProjects = async (count: number = 10) => {
   const projects: ProjectType[] = [];
 
   for (let i = 0; i < count; i++) {
@@ -26,4 +26,4 @@ const createProjects = async (count: number = 10) => {
   return records;
 };
 
-export default createProjects;
+export default seedProjects;

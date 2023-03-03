@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
-import createAccess from "./seeds/access";
-import createProjects from "./seeds/projects";
-import createUsers from "./seeds/users";
+import seedAccesses from "./seeds/access";
+import seedBranches from "./seeds/branches";
+import seedProjects from "./seeds/projects";
+import seedUsers from "./seeds/users";
 
 const { Confirm } = require("enquirer");
 
@@ -30,9 +31,10 @@ const seed = async () => {
 
     console.log("Seeding database".underline.cyan);
     return prisma.$transaction(async () => {
-      await createUsers(100);
-      await createProjects(50);
-      await createAccess();
+      await seedUsers(100);
+      await seedProjects(50);
+      await seedAccesses();
+      await seedBranches();
     });
   } else {
     throw new Error("Seeding aborted");

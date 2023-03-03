@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 colors.enable();
 
-const createAccess = async () => {
+const seedAccesses = async () => {
   const audits: AuditType[] = [];
   const accesses: AccessType[] = [];
 
@@ -76,4 +76,4 @@ const createAccess = async () => {
   return records;
 };
 
-export default createAccess;
+export default seedAccesses;
