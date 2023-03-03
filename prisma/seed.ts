@@ -1,10 +1,14 @@
 const { Confirm } = require('enquirer');
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
-import { UserType, ProjectType, AccessType } from "./seeds/types"
 
 import colors from 'colors';
 colors.enable();
+
+if (process.env.NODE_ENV === 'production') {
+  console.log('❌ You cannot run this command on production'.red);
+  process.exit(0);
+}
 
 import createUsers from "./seeds/users";
 import createProjects from "./seeds/projects";
