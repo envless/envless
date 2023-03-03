@@ -9,13 +9,11 @@ export const projects = createRouter({
     return [];
   }),
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-      return { id };
-    }),
+    return { id };
+  }),
 
   create: withAuth
     .input(
@@ -139,7 +137,6 @@ export const projects = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
       const { project } = input;
 
       const deletedProject = await prisma.project.delete({
