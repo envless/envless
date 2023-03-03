@@ -140,7 +140,6 @@ export const projects = createRouter({
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
-      console.log(user, "hello");
       const { project } = input;
 
       const deletedProject = await prisma.project.delete({
@@ -148,22 +147,6 @@ export const projects = createRouter({
           id: project.id,
         },
       });
-
-      /** @todo: audit log on some case **/
-
-      // if(hello.id){
-      //   await Audit.create({
-      //     createdById: user.id,
-      //     projectId: hello.id,
-      //     action: "created.branch",
-      //     data: {
-      //       branch: {
-      //         id: newBranch.id,
-      //         name: newBranch.name,
-      //       },
-      //     },
-      //   });
-      // }
       return deletedProject;
     }),
 });
