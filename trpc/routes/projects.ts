@@ -9,13 +9,11 @@ export const projects = createRouter({
     return [];
   }),
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-      return { id };
-    }),
+    return { id };
+  }),
 
   create: withAuth
     .input(
@@ -55,7 +53,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "created.project",
+          action: "project.create",
         });
 
         // @ts-ignore
@@ -67,7 +65,7 @@ export const projects = createRouter({
           createdById: user.id,
           createdForId: user.id,
           projectId: newProject.id,
-          action: "created.access",
+          action: "access.create",
           data: {
             access: {
               id: access.id,
@@ -79,7 +77,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "created.branch",
+          action: "branch.create",
           data: {
             branch: {
               id: branch.id,
@@ -139,7 +137,6 @@ export const projects = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
       const { project } = input;
 
       const deletedProject = await prisma.project.delete({

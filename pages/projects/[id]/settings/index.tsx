@@ -25,16 +25,10 @@ export const SettingsPage = ({
   const router = useRouter();
   const props = { projects, currentProject };
 
-  const {
-    reset,
-    setError,
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit } = useForm();
 
-  const { mutate: generalMutate, isLoading } = trpc.projects.update.useMutation(
-    {
+  const { mutate: projectGeneralMutation, isLoading } =
+    trpc.projects.update.useMutation({
       onSuccess: (data) => {
         showToast({
           type: "success",
@@ -50,13 +44,12 @@ export const SettingsPage = ({
           subtitle: error.message,
         });
       },
-    },
-  );
+    });
 
   const submitForm = (values) => {
     const { name, enforce_2fa_for_all_users } = values;
-    console.log(values);
-    generalMutate({
+
+    projectGeneralMutation({
       project: {
         ...currentProject,
         name,

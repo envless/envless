@@ -15,25 +15,25 @@ const isVowel = (word) => {
 
 const actions = [
   {
-    type: "created.project",
+    type: "project.create",
     icon: ShieldCheck,
     bg: "bg-teal-100",
     color: "text-teal-500",
   },
   {
-    type: "created.access",
+    type: "access.create",
     icon: UserPlus,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
   },
   {
-    type: "updated.account",
+    type: "account.update",
     icon: Settings2,
     bg: "bg-indigo-100",
     color: "text-indigo-500",
   },
   {
-    type: "created.branch",
+    type: "branch.create",
     icon: GitBranchPlus,
     bg: "bg-orange-100",
     color: "text-orange-500",
@@ -75,9 +75,9 @@ export default function AuditLogs({ logs, user }) {
     );
 
     switch (log.action) {
-      case "created.project":
+      case "project.create":
         return <>created {projectLink()} project</>;
-      case "created.branch":
+      case "branch.create":
         return (
           <>
             created a{" "}
@@ -85,7 +85,7 @@ export default function AuditLogs({ logs, user }) {
             on {projectLink()} project
           </>
         );
-      case "created.access":
+      case "access.create":
         const role = log.data.access.role;
         const name =
           createdFor.id === user.id
@@ -98,7 +98,7 @@ export default function AuditLogs({ logs, user }) {
             {projectLink()} project
           </>
         );
-      case "updated.account":
+      case "account.update":
         return (
           <>
             updated your{" "}
