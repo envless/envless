@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
@@ -8,6 +9,7 @@ import {
   GitPullRequestClosed,
   Settings2,
 } from "lucide-react";
+import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import Filters from "@/components/pulls/Filters";
 import { Badge, Button, Label } from "@/components/theme";
 import prisma from "@/lib/prisma";
@@ -25,6 +27,7 @@ interface Props {
 }
 
 export const PullRequestPage = ({ projects, currentProject }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
   const pullRequests = [
     {
       id: 1,
@@ -50,6 +53,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
 
   return (
     <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+      <CreatePullRequestModal isOpen={isOpen} setIsOpen={setIsOpen} />
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
@@ -57,10 +61,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
           </div>
 
           <div className="col-span-6">
-            <Button
-              className="float-right"
-              onClick={() => console.log("Invite")}
-            >
+            <Button className="float-right" onClick={() => setIsOpen(true)}>
               <GitPullRequest className="mr-2 h-4 w-4 " strokeWidth={2} />
               Open pull request
             </Button>
