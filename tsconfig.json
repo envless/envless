@@ -45,5 +45,10 @@
     "jest.setup.js"
   ],
   "types": ["node", "jest", "@testing-library/jest-dom"],
-  "exclude": ["node_modules", "cypress.config.ts"]
+  "exclude": ["node_modules", "cypress.config.ts"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }
