@@ -39,7 +39,7 @@ const ProjectSettings = ({
   return (
     <>
       <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
-        <Tabs active={active} tabData={tabData} />
+        <Tabs active={active} options={tabData} />
       </div>
 
       <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-2/3">
