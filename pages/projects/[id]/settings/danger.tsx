@@ -24,8 +24,8 @@ export const DangerZone = ({ projects, currentProject }: SettingProps) => {
 
   const props = { projects, currentProject };
 
-  const { mutate: generalMutate, isLoading } = trpc.projects.delete.useMutation(
-    {
+  const { mutate: projectDeleteMutation, isLoading } =
+    trpc.projects.delete.useMutation({
       onSuccess: () => {
         showToast({
           type: "success",
@@ -41,12 +41,11 @@ export const DangerZone = ({ projects, currentProject }: SettingProps) => {
           subtitle: error.message,
         });
       },
-    },
-  );
+    });
 
   const submitForm = () => {
     /** @todo: confirmation popup here **/
-    generalMutate({
+    projectDeleteMutation({
       project: currentProject,
     });
   };
