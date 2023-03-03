@@ -1,11 +1,13 @@
 import { type GetServerSidePropsContext } from "next";
+import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
+import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Project, User } from "@prisma/client";
+import { Project } from "@prisma/client";
+import clsx from "clsx";
 import { Lock, Settings2, Unlock, UserPlus } from "lucide-react";
 import AddMemberModal from "@/components/members/AddMemberModal";
-import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
 /**
@@ -18,8 +20,8 @@ import prisma from "@/lib/prisma";
 interface Props {
   projects: Project[];
   currentProject: Project;
-  members: User[];
-  user: any;
+  members: UserType[];
+  user: UserType;
 }
 
 export const MembersPage = ({
@@ -28,6 +30,14 @@ export const MembersPage = ({
   currentProject,
   user,
 }: Props) => {
+  const [tab, setTab] = useState("active");
+  const [team, setTeam] = useState<UserType[]>(members);
+
+  useEffect(() => {
+    // setTeam beased on setTab state
+    console.log("Setting up the team based on tab state");
+  }, [tab]);
+
   return (
     <ProjectLayout
       tab="members"
@@ -50,26 +60,41 @@ export const MembersPage = ({
             <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
               <div className="min-w-full rounded-t bg-darker p-5">
                 <nav className="flex" aria-label="Tabs">
-                  <a
-                    href="#"
-                    className="rounded-md bg-dark px-3 py-1 text-sm font-medium text-teal-300"
+                  <button
+                    onClick={() => setTab("active")}
+                    className={clsx(
+                      "rounded-md px-3 py-1 text-sm font-medium",
+                      tab === "active"
+                        ? "bg-dark text-teal-300"
+                        : "text-light hover:text-lighter",
+                    )}
                   >
                     Active
-                  </a>
+                  </button>
 
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                  <button
+                    onClick={() => setTab("pending")}
+                    className={clsx(
+                      "rounded-md px-3 py-1 text-sm font-medium",
+                      tab === "pending"
+                        ? "bg-dark text-teal-300"
+                        : "text-light hover:text-lighter",
+                    )}
                   >
                     Pending
-                  </a>
+                  </button>
 
-                  <a
-                    href="#"
-                    className="rounded-md px-3 py-1 text-sm font-medium text-light hover:text-lighter"
+                  <button
+                    onClick={() => setTab("inactive")}
+                    className={clsx(
+                      "rounded-md px-3 py-1 text-sm font-medium",
+                      tab === "inactive"
+                        ? "bg-dark text-teal-300"
+                        : "text-light hover:text-lighter",
+                    )}
                   >
                     Inactive
-                  </a>
+                  </button>
 
                   <div className="flex-1">
                     <input

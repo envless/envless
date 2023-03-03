@@ -83,11 +83,11 @@ const AddMemberModal = ({ user, projectId }) => {
       button={
         <Button className="float-right">
           <UserPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
-          <span className="hidden sm:block">Invite a team member</span>
+          <span className="hidden sm:block">Invite team member</span>
           <span className="block sm:hidden">Invite member</span>
         </Button>
       }
-      title="Invite a team member"
+      title="Invite team member"
     >
       <TwoFactorModal
         open={twoFactorRequired}
@@ -142,8 +142,12 @@ const AddMemberModal = ({ user, projectId }) => {
                   roles
                 </Link>
                 . You can also invite team members and do lot more using{" "}
-                <Link href="#" className="text-teal-400">
-                  envless CLI
+                <Link
+                  href="https://envless.dev/docs/cli/members"
+                  target={"_blank"}
+                  className="text-teal-400"
+                >
+                  Envless CLI
                 </Link>{" "}
                 commands.
               </p>

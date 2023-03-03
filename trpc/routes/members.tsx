@@ -247,7 +247,7 @@ export const members = createRouter({
       });
     }),
 
-  getActiveMembers: withAuth
+  getInvites: withAuth
     .input(
       z.object({
         projectId: z.string(),
@@ -255,14 +255,35 @@ export const members = createRouter({
     )
     .query(async ({ ctx, input }) => {
       const { projectId } = input;
+      const invites = await ctx.prisma.projectInvite.findMany({
+        where: {
+          projectId,
+          accepted: false,
+        },
+      });
+
+      return invites;
+    }),
+
+  getMembers: withAuth
+    .input(
+      z.object({
+        active: z.boolean().optional(),
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { projectId, active } = input;
       const accesses = await ctx.prisma.access.findMany({
         where: {
-          projectId: projectId,
+          projectId,
+          active: active ?? true,
         },
         include: {
           user: true,
         },
       });
+
       return accesses.map((access) => {
         return {
           id: access.user.id,
