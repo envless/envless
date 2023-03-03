@@ -95,7 +95,7 @@ export const branches = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: branch.projectId,
-          action: "branch.create",
+          action: "branch.created",
           data: {
             branch: {
               id: newBranch.id,
