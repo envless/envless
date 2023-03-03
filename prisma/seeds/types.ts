@@ -21,7 +21,7 @@ export type AuditType = {
   createdById: string;
   createdForId?: string;
   projectId?: string;
-  role: "owner" | "mentainer" | "developer" | "guest";
+  role: "owner" | "mantainer" | "developer" | "guest";
 };
 
 export type BranchType = {
