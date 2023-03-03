@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 colors.enable();
 
-const createUsers = async (count: number = 10) => {
+const seedUsers = async (count: number = 10) => {
   const users: UserType[] = [
     {
       name: faker.name.fullName(),
@@ -32,4 +32,4 @@ const createUsers = async (count: number = 10) => {
   return records;
 };
 
-export default createUsers;
+export default seedUsers;
