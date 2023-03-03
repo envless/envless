@@ -1,28 +1,66 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-import { AccessType } from "./types"
-import { sample } from 'lodash'
+import { PrismaClient } from "@prisma/client";
+import colors from "colors";
+import { sample } from "lodash";
+import { AccessType, AuditType } from "./types";
 
-import colors from 'colors';
+const prisma = new PrismaClient();
+
 colors.enable();
 
 const createAccess = async () => {
-  const accesses: AccessType[] = []
+  const audits: AuditType[] = [];
+  const accesses: AccessType[] = [];
+
   const users = await prisma.user.findMany({
-    select: { id: true }
-  })
+    select: { id: true },
+  });
 
   const projects = await prisma.project.findMany({
-    select: { id: true }
-  })
+    select: { id: true },
+  });
+
+  const projectOwner = {};
+
+  for (const project of projects) {
+    projectOwner[project.id] = sample(users)?.id;
+  }
 
   for (let i = 0; i < users.length; i++) {
     for (let j = 0; j < projects.length; j++) {
+      const user = users[i];
+      const project = projects[j];
+      const role =
+        projectOwner[project.id] === user.id
+          ? "owner"
+          : (sample([
+              "maintainer",
+              "developer",
+              "guest",
+            ]) as AccessType["role"]);
+
       accesses.push({
-        userId: users[i].id as string,
-        projectId: projects[j].id as string,
-        role: sample(['owner', 'mentainer', 'developer', 'guest']) as AccessType['role']
-      })
+        userId: user.id as string,
+        projectId: project.id as string,
+        role,
+      });
+
+      if (role === "owner") {
+        audits.push({
+          createdById: user.id,
+          projectId: project.id,
+          action: "project.created",
+        });
+      }
+
+      audits.push({
+        createdById: projectOwner[project.id],
+        createdForId: user.id,
+        projectId: project.id,
+        action: "access.created",
+        data: {
+          access: { role },
+        },
+      });
     }
   }
 
@@ -30,10 +68,12 @@ const createAccess = async () => {
 
   const records = await prisma.access.createMany({
     data: accesses,
-  })
+    skipDuplicates: true,
+  });
+  await prisma.audit.createMany({ data: audits, skipDuplicates: true });
 
   console.log(`🎉 Seeded ${records.count} accesses`.green);
   return records;
-}
+};
 
 export default createAccess;
