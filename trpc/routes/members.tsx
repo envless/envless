@@ -269,7 +269,7 @@ export const members = createRouter({
   getMembers: withAuth
     .input(
       z.object({
-        active: z.boolean().optional(),
+        active: z.boolean().optional().default(true),
         projectId: z.string(),
       }),
     )
