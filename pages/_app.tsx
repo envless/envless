@@ -4,6 +4,7 @@ import { Inter } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import NextNProgress from "nextjs-progressbar";
+import "@/styles/balloon.css";
 import "@/styles/globals.css";
 import "@/styles/primary.css";
 import "@/styles/zoom.css";
