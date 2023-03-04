@@ -1,6 +1,8 @@
 import { type GetServerSidePropsContext } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
@@ -33,9 +35,10 @@ interface Props {
 }
 
 export const BranchesPage = ({ projects, currentProject }: Props) => {
-  const [copied, setCopied] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [protectedBranches, setProtectedBranches] = useState<any>([]);
   const router = useRouter();
+  const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
   const branchQuery = trpc.branches.getAll.useQuery(
     {
@@ -46,15 +49,13 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-  const copyToClipboard = (value: string) => {
-    navigator.clipboard.writeText(value);
-    setCopied(value);
-    setTimeout(() => setCopied(""), 2000);
-  };
-
-  const protectedBranches = branchQuery.data
-    ? branchQuery.data.filter((branch) => branch.protected === true)
-    : [];
+  useEffect(() => {
+    setProtectedBranches(
+      branchQuery.data
+        ? branchQuery.data.filter((branch) => branch.protected === true)
+        : [],
+    );
+  }, [branchQuery.data]);
 
   const branchesColumnVisibility = {
     details: true,
@@ -94,7 +95,23 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
           <div className="ml-4">
             <button className="inline-flex cursor-copy font-medium">
-              <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
+              {copiedValue === info.row.original.name ? (
+                <CheckCheck
+                  className="mr-2 h-4 w-4 text-teal-400"
+                  strokeWidth={2}
+                />
+              ) : (
+                <Copy
+                  onClick={() => {
+                    copy(info.row.original.name as string);
+                    setTimeout(() => {
+                      setCopiedValue("");
+                    }, 2000);
+                  }}
+                  className="mr-2 h-4 w-4"
+                  strokeWidth={2}
+                />
+              )}
               {info.row.original.name}
             </button>
             <div className="text-light">
@@ -131,11 +148,14 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           <div className="ml-4">
             <button
               onClick={() => {
-                copyToClipboard(info.row.original.name as string);
+                copy(info.row.original.name as string);
+                setTimeout(() => {
+                  setCopiedValue("");
+                }, 2000);
               }}
               className="inline-flex cursor-copy font-medium"
             >
-              {copied === info.row.original.name ? (
+              {copiedValue === info.row.original.name ? (
                 <CheckCheck
                   className="mr-2 h-4 w-4 text-teal-400"
                   strokeWidth={2}
@@ -146,6 +166,10 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
 
               {info.row.original.name}
             </button>
+            <div className="text-light">
+              Created by {info.row.original.createdBy.name}{" "}
+              <DateTimeAgo date={info.row.original.createdAt} />
+            </div>
             <div className="text-light">{info.row.original.description}</div>
           </div>
         </div>
@@ -155,10 +179,13 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       id: "actions",
       header: "Actions",
       cell: (info) => (
-        <a href="#" className="float-right pr-4 hover:text-teal-400">
+        <Link
+          href={`/project/${info.row.original.projectId}/settings/protected-branches`}
+          className="float-right pr-4 hover:text-teal-400"
+        >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
           <span className="sr-only">, {info.row.original.name}</span>
-        </a>
+        </Link>
       ),
     },
   ];
@@ -219,7 +246,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
 
         <div className="mt-8 grid grid-cols-12 gap-2">
           <div className="col-span-6">
-            <h1 className="text-lg">All branches</h1>
+            <h1 className="text-lg">All other branches</h1>
           </div>
 
           <div className="col-span-6">
