@@ -1,4 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
+import { Project } from "@prisma/client";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -8,13 +9,11 @@ export const projects = createRouter({
     return [];
   }),
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-      return { id };
-    }),
+    return { id };
+  }),
 
   create: withAuth
     .input(
@@ -89,5 +88,52 @@ export const projects = createRouter({
       }
 
       return newProject;
+    }),
+  update: withAuth
+    .input(
+      z.object({
+        project: z.object({
+          name: z.string(),
+          id: z.string(),
+          enforce2FA: z.boolean(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { project } = input;
+      const enforce2FA = project.enforce2FA || false;
+
+      const updatedProduct = await prisma.project.update({
+        where: {
+          id: project.id,
+        },
+        data: {
+          name: project.name,
+          settings: {
+            enforce2FA: project.enforce2FA,
+          },
+        },
+      });
+
+      return updatedProduct;
+    }),
+
+  delete: withAuth
+    .input(
+      z.object({
+        project: z.object({ name: z.string(), id: z.string() }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { project } = input;
+
+      const deletedProject = await prisma.project.delete({
+        where: {
+          id: project.id,
+        },
+      });
+      return deletedProject;
     }),
 });

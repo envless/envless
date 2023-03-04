@@ -84,7 +84,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       where: {
         id: userId,
       },
-
       include: {
         access: {
           include: {

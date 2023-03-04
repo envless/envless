@@ -2,9 +2,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { clsx } from "clsx";
 
-const Tabs = ({ active }) => {
+const Tabs = ({ active, options }) => {
   const router = useRouter();
-  const tabs = [
+  const tabs = options || [
     {
       id: "account",
       name: "Account",
