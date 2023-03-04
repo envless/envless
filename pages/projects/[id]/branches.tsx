@@ -37,6 +37,7 @@ interface Props {
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [protectedBranches, setProtectedBranches] = useState<any>([]);
+  const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
@@ -55,6 +56,11 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
         ? branchQuery.data.filter((branch) => branch.protected === true)
         : [],
     );
+    setAllOtherBranches(
+      branchQuery.data
+        ? branchQuery.data.filter((branch) => branch.protected === false)
+        : [],
+    );
   }, [branchQuery.data]);
 
   const branchesColumnVisibility = {
@@ -63,12 +69,17 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     createdAt: false,
     updatedAt: false,
     status: false,
+    protected: false,
   };
 
   const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
     {
       id: "author",
       accessorFn: (row) => row.createdBy.name,
+    },
+    {
+      id: "protected",
+      accessorFn: (row) => row.protected,
     },
     {
       id: "createdAt",
@@ -243,7 +254,11 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           <div className="col-span-6">
             <Button
               className="float-right"
-              onClick={() => console.log("Invite")}
+              onClick={() => {
+                router.push(
+                  `/project/${router.query.id}/settings/protected-branches`,
+                );
+              }}
             >
               <GitBranchPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
               Protect branches
@@ -273,12 +288,30 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          <Table
-            visibleColumns={branchesColumnVisibility}
-            columns={branchesColumns}
-            data={branchQuery.data || []}
-            filterOptions={filterOptions}
-          />
+          {allOtherBranches.length > 0 ? (
+            <Table
+              visibleColumns={branchesColumnVisibility}
+              columns={branchesColumns}
+              data={allOtherBranches || []}
+              filterOptions={filterOptions}
+            />
+          ) : (
+            <div className="mx-auto mt-10 w-full max-w-screen-xl border-2 border-darker px-5 py-8 transition duration-300 lg:py-12 xl:px-16">
+              <div className="text-center">
+                <GitBranchPlus className="mx-auto h-8 w-8" />
+                <h3 className="mt-2 text-xl">No other branches yet.</h3>
+                <p className="mx-auto mt-1 max-w-md text-sm text-light">
+                  You can get started by{" "}
+                  <span
+                    onClick={() => setIsOpen(true)}
+                    className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
+                  >
+                    creating a new branch.
+                  </span>
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </ProjectLayout>
