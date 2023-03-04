@@ -1,5 +1,6 @@
 import React from "react";
 import InviteLink from "@/emails/InviteLink";
+import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
@@ -247,7 +248,7 @@ export const members = createRouter({
       });
     }),
 
-  getActiveMembers: withAuth
+  getInvites: withAuth
     .input(
       z.object({
         projectId: z.string(),
@@ -255,23 +256,27 @@ export const members = createRouter({
     )
     .query(async ({ ctx, input }) => {
       const { projectId } = input;
-      const accesses = await ctx.prisma.access.findMany({
+      const invites = await ctx.prisma.projectInvite.findMany({
         where: {
-          projectId: projectId,
-        },
-        include: {
-          user: true,
+          projectId,
+          accepted: false,
         },
       });
-      return accesses.map((access) => {
-        return {
-          id: access.user.id,
-          name: access.user.name,
-          email: access.user.email,
-          image: access.user.image,
-          twoFactorEnabled: access.user.twoFactorEnabled,
-          role: access.role,
-        };
-      });
+
+      return invites;
+    }),
+
+  getMembers: withAuth
+    .input(
+      z.object({
+        active: z.boolean().optional().default(true),
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { projectId, active } = input;
+      const isActive = active === undefined ? true : active;
+      const members = await Member.getMany(projectId, isActive);
+      return members;
     }),
 });

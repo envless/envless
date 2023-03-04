@@ -1,11 +1,5 @@
+import { UserType } from "@/types/resources";
 import NextAuth, { DefaultSession } from "next-auth";
-
-interface UserType {
-  id: string;
-  name: string;
-  email: string;
-  twoFactorEnabled: boolean;
-}
 
 declare module "next-auth" {
   /**

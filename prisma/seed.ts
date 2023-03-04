@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 import seedAccesses from "./seeds/access";
 import seedBranches from "./seeds/branches";
+import seedInactiveUsers from "./seeds/inactiveUsers";
+import seedInvites from "./seeds/invites";
 import seedProjects from "./seeds/projects";
 import seedUsers from "./seeds/users";
 
@@ -35,6 +37,8 @@ const seed = async () => {
       await seedProjects(50);
       await seedAccesses();
       await seedBranches();
+      await seedInactiveUsers(25);
+      await seedInvites(25);
     });
   } else {
     throw new Error("Seeding aborted");
