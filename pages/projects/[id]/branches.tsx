@@ -94,26 +94,34 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
             </Badge>
           </div>
           <div className="ml-4">
-            <button className="inline-flex cursor-copy font-medium">
+            <div className="flex items-center">
               {copiedValue === info.row.original.name ? (
-                <CheckCheck
-                  className="mr-2 h-4 w-4 text-teal-400"
-                  strokeWidth={2}
-                />
+                <button
+                  aria-label="Copied!"
+                  data-balloon-pos="down"
+                  className="inline-flex cursor-copy font-medium"
+                >
+                  <CheckCheck
+                    className="mr-2 h-4 w-4 text-teal-400"
+                    strokeWidth={2}
+                  />
+                </button>
               ) : (
-                <Copy
-                  onClick={() => {
-                    copy(info.row.original.name as string);
-                    setTimeout(() => {
-                      setCopiedValue("");
-                    }, 2000);
-                  }}
-                  className="mr-2 h-4 w-4"
-                  strokeWidth={2}
-                />
+                <button className="inline-flex cursor-copy font-medium">
+                  <Copy
+                    onClick={() => {
+                      copy(info.row.original.name as string);
+                      setTimeout(() => {
+                        setCopiedValue("");
+                      }, 2000);
+                    }}
+                    className="mr-2 h-4 w-4"
+                    strokeWidth={2}
+                  />
+                </button>
               )}
               {info.row.original.name}
-            </button>
+            </div>
             <div className="text-light">
               Created by {info.row.original.createdBy.name}{" "}
               <DateTimeAgo date={info.row.original.createdAt} />
@@ -146,26 +154,34 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
             </Badge>
           </div>
           <div className="ml-4">
-            <button
-              onClick={() => {
-                copy(info.row.original.name as string);
-                setTimeout(() => {
-                  setCopiedValue("");
-                }, 2000);
-              }}
-              className="inline-flex cursor-copy font-medium"
-            >
+            <div className="flex items-center">
               {copiedValue === info.row.original.name ? (
-                <CheckCheck
-                  className="mr-2 h-4 w-4 text-teal-400"
-                  strokeWidth={2}
-                />
+                <button
+                  aria-label="Copied!"
+                  data-balloon-pos="down"
+                  className="inline-flex cursor-copy font-medium"
+                >
+                  <CheckCheck
+                    className="mr-2 h-4 w-4 text-teal-400"
+                    strokeWidth={2}
+                  />
+                </button>
               ) : (
-                <Copy className="mr-2 h-4 w-4" strokeWidth={2} />
+                <button className="inline-flex cursor-copy font-medium">
+                  <Copy
+                    onClick={() => {
+                      copy(info.row.original.name as string);
+                      setTimeout(() => {
+                        setCopiedValue("");
+                      }, 2000);
+                    }}
+                    className="mr-2 h-4 w-4"
+                    strokeWidth={2}
+                  />
+                </button>
               )}
-
               {info.row.original.name}
-            </button>
+            </div>
             <div className="text-light">
               Created by {info.row.original.createdBy.name}{" "}
               <DateTimeAgo date={info.row.original.createdAt} />
