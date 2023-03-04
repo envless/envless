@@ -22,7 +22,7 @@ const Projects = ({ ...props }) => {
   });
 
   const Card = ({ project }) => {
-    const twoFactorAuth = project.projectSettings[0].enforce_2fa_for_all_users;
+    const twoFactorAuth = project.settings.enforce2FA;
 
     return (
       <>

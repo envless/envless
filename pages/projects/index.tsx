@@ -95,11 +95,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                     branches: true,
                   },
                 },
-                projectSettings: {
-                  select: {
-                    enforce_2fa_for_all_users: true,
-                  },
-                },
               },
             },
           },

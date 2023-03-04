@@ -85,12 +85,6 @@ export const projects = createRouter({
             },
           },
         });
-
-        await prisma.projectSetting.create({
-          data: {
-            projectId: newProject.id,
-          },
-        });
       }
 
       return newProject;
@@ -101,14 +95,14 @@ export const projects = createRouter({
         project: z.object({
           name: z.string(),
           id: z.string(),
-          enforce_2fa_for_all_users: z.boolean(),
-          projectSettingId: z.string(),
+          enforce2FA: z.boolean(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { project } = input;
+      const enforce2FA = project.enforce2FA || false;
 
       const updatedProduct = await prisma.project.update({
         where: {
@@ -116,16 +110,12 @@ export const projects = createRouter({
         },
         data: {
           name: project.name,
+          settings: {
+            enforce2FA: project.enforce2FA,
+          },
         },
       });
-      await prisma.projectSetting.update({
-        where: {
-          id: project.projectSettingId,
-        },
-        data: {
-          enforce_2fa_for_all_users: project.enforce_2fa_for_all_users,
-        },
-      });
+
       return updatedProduct;
     }),
 

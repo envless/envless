@@ -1,6 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
-import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import { useForm } from "react-hook-form";
@@ -23,7 +22,15 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
-export const ProtectedBranch = ({ projects, currentProject }: SettingProps) => {
+interface ProtectedBranchPageProps {
+  projects: Project[];
+  currentProject: Project;
+}
+
+export const ProtectedBranch = ({
+  projects,
+  currentProject,
+}: ProtectedBranchPageProps) => {
   const props = { projects, currentProject };
 
   const {

@@ -36,21 +36,11 @@ model Project {
   name      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  settings  Json      @default("{}")
   branches  Branch[]
   access    Access[]
   audits    Audit[]
   invites   ProjectInvite[]
-  projectSettings ProjectSetting[]
-}
-
-model ProjectSetting {
-  id        String    @id @default(cuid())
-  projectId String
-  project     Project?  @relation(fields: [projectId], references: [id])
-  enforce_2fa_for_all_users Boolean @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  @@index([projectId])
 }
 
 model ProjectInvite {

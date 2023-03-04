@@ -1,20 +1,22 @@
 import React from "react";
-import type { SettingProps } from "@/types/projectSettingTypes";
+import { Project } from "@prisma/client";
 import Tabs from "@/components/settings/Tabs";
 
 type ActiveType = "general" | "branches" | "danger";
 
-type Props = { active: ActiveType; children: React.ReactNode } & Omit<
-  SettingProps,
-  "projectSetting"
->;
+interface SettingsProps {
+  projects: Project[];
+  currentProject: Project;
+  active: ActiveType;
+  children?: React.ReactNode;
+}
 
 const ProjectSettings = ({
   projects,
   currentProject,
   active,
   children,
-}: Props) => {
+}: SettingsProps) => {
   const tabData = React.useMemo(
     () => [
       {

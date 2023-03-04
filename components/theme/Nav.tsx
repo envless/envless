@@ -11,6 +11,7 @@ import log from "@/lib/log";
 const Nav = ({ ...props }) => {
   const router = useRouter();
   const { user, currentProject, projects, layout } = props;
+
   const [projectList, setProjectList] = useState(projects);
 
   useEffect(() => {

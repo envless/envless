@@ -2,9 +2,9 @@ import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
-import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
+import { Project } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import Tabs from "@/components/settings/Tabs";
@@ -19,7 +19,12 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
-export const DangerZone = ({ projects, currentProject }: SettingProps) => {
+interface DangerPageProps {
+  projects: Project[];
+  currentProject: Project;
+}
+
+export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
   const router = useRouter();
 
   const props = { projects, currentProject };

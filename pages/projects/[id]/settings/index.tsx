@@ -1,9 +1,9 @@
 import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
-import type { SettingProps } from "@/types/projectSettingTypes";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
+import { Project } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
@@ -17,11 +17,15 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
+interface SettingsPageProps {
+  projects: Project[];
+  currentProject: Project;
+}
+
 export const SettingsPage = ({
   projects,
   currentProject,
-  projectSetting,
-}: SettingProps) => {
+}: SettingsPageProps) => {
   const router = useRouter();
   const props = { projects, currentProject };
 
@@ -47,61 +51,67 @@ export const SettingsPage = ({
     });
 
   const submitForm = (values) => {
-    const { name, enforce_2fa_for_all_users } = values;
+    const { name, enforce2FA } = values;
 
     projectGeneralMutation({
       project: {
         ...currentProject,
         name,
-        enforce_2fa_for_all_users,
-        projectSettingId: projectSetting.id,
+        enforce2FA,
       },
     });
   };
 
   return (
-    <ProjectLayout tab="settings" {...props}>
-      <ProjectSettings active="general" {...props}>
-        <h3 className="mb-8 text-lg">General</h3>
-        <div className="w-full lg:w-3/5">
-          <form onSubmit={handleSubmit(submitForm)}>
-            <Input
-              name="name"
-              label="Project name"
-              placeholder=""
-              defaultValue={currentProject.name || ""}
-              required={true}
-              register={register}
-              className="w-full"
-              validationSchema={{
-                required: "Project name is required",
-              }}
-            />
-            <div className="mb-6 rounded border-2 border-dark p-3">
-              <div className="flex items-center justify-between">
-                <label className="cursor-pointer" htmlFor="auth_2fa">
-                  <h3 className="mb-1 text-sm font-semibold">
-                    Enforce two-factor authentication
-                  </h3>
-                  <Paragraph color="light" size="sm" className="mr-4">
-                    After enabling this feature, all team members should enable
-                    their two-factor authentication to access this project.
-                  </Paragraph>
-                </label>
+    <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+      <ProjectSettings
+        active="general"
+        projects={projects}
+        currentProject={currentProject}
+      >
+        <>
+          <h3 className="mb-8 text-lg">General</h3>
+          <div className="w-full lg:w-3/5">
+            <form onSubmit={handleSubmit(submitForm)}>
+              <Input
+                name="name"
+                label="Project name"
+                placeholder=""
+                defaultValue={currentProject.name || ""}
+                required={true}
+                register={register}
+                className="w-full"
+                validationSchema={{
+                  required: "Project name is required",
+                }}
+              />
+              <div className="mb-6 rounded border-2 border-dark p-3">
+                <div className="flex items-center justify-between">
+                  <label className="cursor-pointer" htmlFor="auth_2fa">
+                    <h3 className="mb-1 text-sm font-semibold">
+                      Enforce two-factor authentication
+                    </h3>
+                    <Paragraph color="light" size="sm" className="mr-4">
+                      After enabling this feature, all team members should
+                      enable their two-factor authentication to access this
+                      project.
+                    </Paragraph>
+                  </label>
 
-                <Toggle
-                  checked={projectSetting.enforce_2fa_for_all_users || false}
-                  name="enforce_2fa_for_all_users"
-                  register={register}
-                />
+                  <Toggle
+                    checked={currentProject.settings?.enforce2FA || false}
+                    name="enforce2FA"
+                    register={register}
+                  />
+                </div>
               </div>
-            </div>
 
-            <Button type="submit" disabled={isLoading || false}>
-              Save project settings
-            </Button>
-          </form>
-        </div>
+              <Button type="submit" disabled={isLoading || false}>
+                Save project settings
+              </Button>
+            </form>
+          </div>
+        </>
       </ProjectSettings>
     </ProjectLayout>
   );
@@ -152,12 +162,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const projects = access.map((a) => a.project);
   const currentProject = projects.find((p) => p.id === id);
 
-  const projectSettings = await prisma.projectSetting.findMany({
-    where: {
-      projectId: id,
-    },
-  });
-
   if (!currentProject) {
     return {
       redirect: {
@@ -171,9 +175,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
-      projectSetting: projectSettings.length
-        ? JSON.parse(JSON.stringify(projectSettings[0]))
-        : null,
     },
   };
 }
