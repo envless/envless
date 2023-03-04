@@ -1,5 +1,6 @@
 import React from "react";
 import InviteLink from "@/emails/InviteLink";
+import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
@@ -274,25 +275,8 @@ export const members = createRouter({
     )
     .query(async ({ ctx, input }) => {
       const { projectId, active } = input;
-      const accesses = await ctx.prisma.access.findMany({
-        where: {
-          projectId,
-          active: active ?? true,
-        },
-        include: {
-          user: true,
-        },
-      });
-
-      return accesses.map((access) => {
-        return {
-          id: access.user.id,
-          name: access.user.name,
-          email: access.user.email,
-          image: access.user.image,
-          twoFactorEnabled: access.user.twoFactorEnabled,
-          role: access.role,
-        };
-      });
+      const isActive = active === undefined ? true : active;
+      const members = await Member.many(projectId, isActive);
+      return members;
     }),
 });

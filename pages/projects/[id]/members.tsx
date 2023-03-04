@@ -1,6 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
+import Member from "@/models/member";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
@@ -34,7 +35,6 @@ export const MembersPage = ({
   const [team, setTeam] = useState<UserType[]>(members);
 
   useEffect(() => {
-    // setTeam beased on setTab state
     console.log("Setting up the team based on tab state");
   }, [tab]);
 
@@ -108,7 +108,7 @@ export const MembersPage = ({
 
               <table className="min-w-full divide-y divide-dark">
                 <tbody className=" bg-dark">
-                  {members.map((member) => (
+                  {team.map((member) => (
                     <tr key={member.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                         <div className="flex items-center">
@@ -213,48 +213,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
+  const members = await Member.getMany(currentProject.id);
+
   return {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
       user: user,
-      members: [
-        {
-          id: 1,
-          name: "Becky Russell",
-          email: "becky@example.com",
-          role: "developer",
-          image: "https://randomuser.me/api/portraits/women/60.jpg",
-          twoFactorEnabled: true,
-        },
-
-        {
-          id: 2,
-          name: "Glen Hughes",
-          email: "glen@example.com",
-          role: "mantainer",
-          image: "https://randomuser.me/api/portraits/men/54.jpg",
-          twoFactorEnabled: false,
-        },
-
-        {
-          id: 3,
-          name: "Marion Miles",
-          email: "marion@example.com",
-          role: "owner",
-          image: "https://randomuser.me/api/portraits/women/18.jpg",
-          twoFactorEnabled: true,
-        },
-
-        {
-          id: 4,
-          name: "Gene May",
-          email: "gene@example.com",
-          role: "mantainer",
-          image: "https://randomuser.me/api/portraits/men/31.jpg",
-          twoFactorEnabled: false,
-        },
-      ],
+      members,
     },
   };
 }

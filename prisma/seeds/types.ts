@@ -9,10 +9,20 @@ export type ProjectType = {
   name: string;
 };
 
+export type ProjectInviteType = {
+  id?: string;
+  email: string;
+  projectId: string;
+  invitationToken: string;
+  hashedPassword: string;
+  createdAt?: Date;
+};
+
 export type AccessType = {
   userId: string;
   projectId: string;
   role: "owner" | "maintainer" | "developer" | "guest";
+  active?: boolean;
 };
 
 export type AuditType = {
@@ -21,7 +31,6 @@ export type AuditType = {
   createdById: string;
   createdForId?: string;
   projectId?: string;
-  role: "owner" | "maintainer" | "developer" | "guest";
 };
 
 export type BranchType = {
