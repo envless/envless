@@ -51,6 +51,8 @@ const nuke = async () => {
     await prisma.user.deleteMany();
     await prisma.project.deleteMany();
     await prisma.access.deleteMany();
+    await prisma.branch.deleteMany();
+    await prisma.projectInvite.deleteMany();
   });
 };
 
