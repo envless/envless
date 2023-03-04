@@ -301,13 +301,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
                 <GitBranchPlus className="mx-auto h-8 w-8" />
                 <h3 className="mt-2 text-xl">No other branches yet.</h3>
                 <p className="mx-auto mt-1 max-w-md text-sm text-light">
-                  You can create a new branch by clicking on the new branch
-                  button or{" "}
+                  You can get started by{" "}
                   <span
                     onClick={() => setIsOpen(true)}
                     className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
                   >
-                    click here.
+                    creating a new branch.
                   </span>
                 </p>
               </div>
