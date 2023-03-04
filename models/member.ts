@@ -31,9 +31,26 @@ const getMany = async (projectId: string, active: boolean = true) => {
   });
 };
 
+const getPending = async (projectId: string) => {
+  const invites = await prisma.projectInvite.findMany({
+    where: {
+      AND: [{ projectId }, { accepted: false }],
+    },
+
+    select: {
+      id: true,
+      email: true,
+      role: true,
+    },
+  });
+
+  return invites;
+};
+
 const Member = {
   getOne,
   getMany,
+  getPending,
 };
 
 export default Member;

@@ -4,7 +4,7 @@ import argon2 from "argon2";
 import colors from "colors";
 import { randomBytes } from "crypto";
 import { sub } from "date-fns";
-import { random } from "lodash";
+import { random, toLower } from "lodash";
 import generatePassword from "omgopass";
 import { ProjectInviteType } from "./types";
 
@@ -19,18 +19,18 @@ const seedInvites = async (count: number = 10) => {
   });
 
   const inviteArray: ProjectInviteType[] = [];
+  const password = await generatePassword();
+  const hashedPassword = await argon2.hash(password);
 
-  projects.forEach(async (project) => {
+  projects.forEach((project) => {
     for (let i = 0; i < count; i++) {
       const invitationToken = randomBytes(32).toString("hex");
-      const password = await generatePassword();
-      const hashedPassword = await argon2.hash(password);
       const createdAt = sub(new Date(), {
         days: random(1, 30),
       });
 
       inviteArray.push({
-        email: faker.internet.email(),
+        email: toLower(faker.internet.email()),
         projectId: project.id,
         invitationToken,
         hashedPassword,
@@ -41,9 +41,10 @@ const seedInvites = async (count: number = 10) => {
 
   const records = await prisma.projectInvite.createMany({
     data: inviteArray,
+    skipDuplicates: true,
   });
 
-  console.log(`🎉 Seeded ${count} invites for each project.`.green);
+  console.log(`🎉 Seeded ${records.count} invites.`.green);
 };
 
 export default seedInvites;
