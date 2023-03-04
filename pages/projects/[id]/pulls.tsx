@@ -17,17 +17,6 @@ import Filters from "@/components/pulls/Filters";
 import { Badge, Button, Label } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
-interface Props {
-  branches: any;
-  setBranches: any;
-  selectedBranch: any;
-  setSelectedBranch: any;
-  outlined?: boolean;
-  fullWidth?: boolean;
-  buttonText?: string;
-  zIndex?: 10 | 20 | 30 | 40 | 50;
-}
-
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
