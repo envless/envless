@@ -13,6 +13,7 @@
     "db:reset": "npx prisma migrate reset",
     "db:studio": "npx prisma studio",
     "db:seed": "ts-node prisma/seed.ts",
+    "seed:factory": "ts-node prisma/seeds/seed-factory.ts",
     "format": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "test": "jest --watch",
     "e2e": "cypress open",
