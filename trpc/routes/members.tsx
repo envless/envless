@@ -276,7 +276,7 @@ export const members = createRouter({
     .query(async ({ ctx, input }) => {
       const { projectId, active } = input;
       const isActive = active === undefined ? true : active;
-      const members = await Member.many(projectId, isActive);
+      const members = await Member.getMany(projectId, isActive);
       return members;
     }),
 });
