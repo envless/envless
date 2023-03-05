@@ -13,9 +13,7 @@ const font = fetch(new URL("./Inter-SemiBold.otf", import.meta.url)).then(
 
 export default async function (req) {
   const inter = await font;
-
   const { searchParams } = new URL(req.url);
-
   const hasTitle = searchParams.has("title");
   const hasPage = searchParams.has("page");
   const page = hasPage ? searchParams.get("page") : "envless.dev";
@@ -82,11 +80,10 @@ export default async function (req) {
             textShadow: "0 2px 30px #000",
             backgroundImage: "linear-gradient(90deg, #fff 40%, #aaa)",
             backgroundClip: "text",
-            "-webkit-background-clip": "text",
             color: "transparent",
           }}
         >
-          {truncate(title, { length: 65 })}
+          {truncate(title as string, { length: 65 })}
         </h1>
       </div>
     ),
