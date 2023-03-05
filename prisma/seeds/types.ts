@@ -42,3 +42,16 @@ export type BranchType = {
   createdById: string;
   projectId: string;
 };
+
+export type PullRequestType = {
+  id?: string;
+  prId: string;
+  title: string;
+  status: PullRequestStatusType;
+  createdById: string;
+  projectId: string;
+};
+
+export type PullRequestStatusType = {
+  status: "open" | "closed" | "merged";
+};
