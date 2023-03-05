@@ -34,23 +34,16 @@ export const BranchPopover = ({
         <button
           type="button"
           className={clsx(
-            "inline-flex w-full items-center justify-between space-x-4 rounded border border-dark px-3 py-2 text-sm  transition-colors duration-75 hover:bg-darker",
+            "inline-flex w-full items-center rounded border border-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker",
+            "w-[200px] max-w-[200px] truncate",
             outlined ? "ring-1 ring-light/50" : "bg-dark",
           )}
         >
-          <span className="flex flex-row items-center">
-            <div>
-              <GitBranch className="h-4 w-4" />
-            </div>
-            <span className="ml-2 text-xs text-light">{buttonText}</span>
-          </span>
+          <GitBranch className="h-4 w-4 shrink-0 mr-2" />
+          <span className="text-xs text-light">{buttonText}</span>
 
-          <div className="flex flex-1 items-center justify-end space-x-2">
-            <span className="w-full max-w-[125px] truncate font-semibold">
-              {selectedBranch.name}
-            </span>
-            <ChevronDown className="h-4 w-4" />
-          </div>
+          <span className="ml-1 text-xs w-full truncate max-w-[100px]">{selectedBranch.name}</span>
+          <ChevronDown className="h-4 w-4 flex-shrink-0" />
         </button>
       }
     >
@@ -106,7 +99,7 @@ function BranchList({ branches, setSelectedBranch, setBranches }) {
   };
 
   return (
-    <ul className="flex w-full flex-col">
+    <ul className="flex max-h-60 w-full flex-col overflow-y-auto">
       {branches.map((branch) => (
         <button
           key={branch.id}
