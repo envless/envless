@@ -111,7 +111,7 @@ enum BranchStatus {
 model PullRequest {
   id String @id @default(cuid())
   title String
-  prNumber String
+  prId String
   status PullRequestStatus
   projectId String
   createdById String
@@ -129,9 +129,9 @@ model PullRequest {
   mergedBy User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
   closedBy User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
 
-  @@unique([prNumber, projectId])
+  @@unique([prId, projectId])
   @@index([projectId, status]) 
-  @@index([projectId, prNumber])
+  @@index([projectId, prId])
 }
 
 
@@ -221,9 +221,9 @@ model User {
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
   branchesCreatedBy Branch[]  @relation(name: "createdBy")
-  pullRequestsCreatedBy PullRequest[] @relation(name: "createdBy")
-  pullRequestsMergedBy PullRequest[] @relation(name: "mergedBy")
-  pullRequestsClosedBy PullRequest[] @relation(name: "closedBy")
+  createdPRs PullRequest[] @relation(name: "createdBy")
+  mergedPRs PullRequest[] @relation(name: "mergedBy")
+  closedPRs PullRequest[] @relation(name: "closedBy")
 
 
   // Two factor authentication
