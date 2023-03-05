@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient, PullRequest } from "@prisma/client";
 import colors from "colors";
-import { parseInt, random, sample } from "lodash";
+import { sample } from "lodash";
 import { PullRequestStatusType, PullRequestType } from "./types";
 
 const prisma = new PrismaClient();
@@ -21,24 +21,18 @@ const seedPullRequests = async () => {
 
   console.log(`Seeding Pull Requests for ${projects.length} projects`.blue);
 
-  let prCounter = 1;
-
-  for (let i = 0; i < users.length; i++) {
-    for (let j = 0; j < projects.length; j++) {
-      pullRequests.push({
-        title: `${faker.lorem.sentence(10)}`,
-        prId: `#${prCounter}`,
-        status: sample([
-          "open",
-          "closed",
-          "merged",
-        ]) as unknown as PullRequestStatusType,
-        projectId: projects[j].id,
-        createdById: users[i].id,
-      });
-
-      prCounter++;
-    }
+  for (let j = 0; j < projects.length; j++) {
+    pullRequests.push({
+      title: `${faker.lorem.sentence(10)}`,
+      prId: `#${j + 1}`,
+      status: sample([
+        "open",
+        "closed",
+        "merged",
+      ]) as unknown as PullRequestStatusType,
+      projectId: projects[j].id,
+      createdById: sample([...users.map((user) => user.id)]) as string,
+    });
   }
 
   const records = await prisma.pullRequest.createMany({
