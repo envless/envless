@@ -11,6 +11,24 @@ type Props = {
 };
 
 const Settings: React.FC<Props> = ({ tab, user, children }) => {
+  const options = [
+    {
+      id: "account",
+      name: "Account",
+      href: "/settings",
+    },
+    {
+      id: "security",
+      name: "Security",
+      href: "/settings/security",
+    },
+    {
+      id: "audit",
+      name: "Audit logs",
+      href: "/settings/audits",
+    },
+  ];
+
   return (
     <>
       <Container>
@@ -22,7 +40,7 @@ const Settings: React.FC<Props> = ({ tab, user, children }) => {
       <Container>
         <div className="my-12 flex flex-wrap">
           <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
-            <Tabs active={tab} />
+            <Tabs active={tab} options={options} />
           </div>
 
           <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-2/3">

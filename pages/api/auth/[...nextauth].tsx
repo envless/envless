@@ -1,79 +1,14 @@
 import MagicLink from "@/emails/MagicLink";
 import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { randomBytes } from "crypto";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
-import { SendVerificationRequestParams } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
 import prisma from "@/lib/prisma";
 
-const ONE_WEEK_IN_SECONDS = 604800;
 const development = !!process.env.VERCEL_URL;
-
-const sendInviteRequest = async (params: SendVerificationRequestParams) => {
-  const { identifier, url, provider } = params;
-
-  if (typeof provider.from !== "string") {
-    throw new Error(`Email missing`);
-  }
-  const [root, searchParams] = url.split("?");
-  const sparams = new URLSearchParams(searchParams);
-
-  const cb = sparams.get("callbackUrl") as string;
-  const [cbUrl, projectIdAndRole] = cb.split("?projectId=") as [string, string];
-  const [projectId, role] = projectIdAndRole.split("&role=") as [
-    string,
-    string,
-  ];
-
-  const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
-
-  const invitationToken = randomBytes(32).toString("hex");
-  const expires = new Date(Date.now() + ONE_WEEK_IN_SECONDS * 1000);
-  await prisma.projectInvite.create({
-    data: {
-      email: identifier,
-      expires,
-      projectId: projectId,
-      invitationToken: invitationToken,
-      role: role,
-    },
-  });
-
-  // rebuild the params
-  const newParams = {
-    callbackUrl: `${cbUrl}?${new URLSearchParams({ invitationToken })}`,
-    token: sparams.get("token"),
-    email: sparams.get("email"),
-  } as Record<string, string>;
-  // rebuild the link url
-  const inviteUrl = `${root}?&${new URLSearchParams(newParams).toString()}`;
-  sendMail({
-    subject: "Your Envless login link",
-    to: identifier,
-    component: (
-      <MagicLink
-        greeting="Hi there,"
-        subText="If you don't accept the invite you can safely ignore it."
-        body={
-          <>
-            You have been invited to the project <b>{project?.name}</b>
-          </>
-        }
-        buttonText="Accept Invite"
-        headline="Invitation to collaborate on a project"
-        buttonLink={inviteUrl}
-      />
-    ),
-  });
-};
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -99,11 +34,6 @@ export const authOptions: NextAuthOptions = {
           ),
         });
       },
-    }),
-
-    EmailProvider({
-      id: "invite",
-      sendVerificationRequest: sendInviteRequest,
     }),
 
     GithubProvider({

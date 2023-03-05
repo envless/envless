@@ -4,23 +4,6 @@ import { clsx } from "clsx";
 
 const Tabs = ({ active, options }) => {
   const router = useRouter();
-  const tabs = options || [
-    {
-      id: "account",
-      name: "Account",
-      href: "/settings",
-    },
-    {
-      id: "security",
-      name: "Security",
-      href: "/settings/security",
-    },
-    {
-      id: "audit",
-      name: "Audit logs",
-      href: "/settings/audits",
-    },
-  ];
 
   return (
     <>
@@ -34,15 +17,17 @@ const Tabs = ({ active, options }) => {
           name="tabs"
           className="block rounded border-dark bg-dark text-sm"
           // @ts-ignore
-          defaultValue={tabs.find((tab) => tab.id === active).name}
+          defaultValue={options.find((tab) => tab.id === active).name}
           onChange={(e) => {
-            const selectedTab = tabs.find((tab) => tab.name === e.target.value);
+            const selectedTab = options.find(
+              (tab) => tab.name === e.target.value,
+            );
 
             // @ts-ignore
             router.push(selectedTab.href);
           }}
         >
-          {tabs.map((tab) => (
+          {options.map((tab) => (
             <option key={tab.id} className="text-sm">
               {tab.name}
             </option>
@@ -50,7 +35,7 @@ const Tabs = ({ active, options }) => {
         </select>
       </div>
       <ul className="-ml-3 hidden sm:block">
-        {tabs.map((tab) => (
+        {options.map((tab) => (
           <Link href={tab.href} key={tab.id}>
             <li
               className={clsx(
