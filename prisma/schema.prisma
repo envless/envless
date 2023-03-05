@@ -41,6 +41,7 @@ model Project {
   access    Access[]
   audits    Audit[]
   invites   ProjectInvite[]
+  pullRequests PullRequest[]
 }
 
 model ProjectInvite {
@@ -106,6 +107,40 @@ enum BranchStatus {
   closed
   merged
 }
+
+model PullRequest {
+  id String @id @default(cuid())
+  title String
+  prNumber String
+  status PullRequestStatus
+  projectId String
+  createdById String
+  mergedById  String?
+  closedById  String?
+  baseBranchId String?
+  currentBranchId String?
+  createdAt DateTime @default(now())
+  mergedAt DateTime?
+  closedAt DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdBy User @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  mergedBy User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
+  closedBy User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+
+  @@unique([prNumber, projectId])
+  @@index([projectId, status]) 
+  @@index([projectId, prNumber])
+}
+
+
+enum PullRequestStatus {
+  open
+  merged
+  closed
+}
+
 
 model Env {
   id        String   @id @default(cuid())
@@ -186,6 +221,10 @@ model User {
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
   branchesCreatedBy Branch[]  @relation(name: "createdBy")
+  pullRequestsCreatedBy PullRequest[] @relation(name: "createdBy")
+  pullRequestsMergedBy PullRequest[] @relation(name: "mergedBy")
+  pullRequestsClosedBy PullRequest[] @relation(name: "closedBy")
+
 
   // Two factor authentication
   encryptedTwoFactorSecret    Json?
