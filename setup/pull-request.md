@@ -7,12 +7,15 @@
 -   createdById not null
 -   closedById  nullable
 -   mergedById  nullable
+-   baseBranchId --> envs -> parse to JSON
+-   currentBranchId --> envs --> parse to JSON
 -   createdAt timestamp default(@now())
--   updatedAt timestamp default(@now())
+-   mergedAt timestamp default(null)
+-   closedAt timestamp default(null)
+
 - @unique([prNumber, projectId])
-- @index([projectId, createdById])
-- @index([title])
-- @index([prNumber])
+- @index([projectId, status])
+- @index([projectId, prNumber])
 
 feat:  added hover call for pull request title
 dahal merged 2 commits into main from feat/hover-card-for-pull-reques-title 17 hours ago
@@ -20,3 +23,5 @@ dahal merged 2 commits into main from feat/hover-card-for-pull-reques-title 17 h
 
 Commits
 Diff (base branch and current branch)
+
+ENV blob
