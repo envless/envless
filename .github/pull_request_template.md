@@ -1,36 +1,36 @@
-<!-- If your PR fixes an open issue, use `Closes #999` to link your PR with the issue. #999 stands for the issue number you are fixing -->
+# Description
 
-## Fixes Issue
+> Please include a summary of the changes and the related issue. Please also include relevant motivation and context. List any dependencies that are required for this change.
 
-<!-- Remove this section if not applicable -->
+Fixes # (issue)
 
-<!-- Example: Closes #31 -->
+## Type of change
 
-## Changes proposed
+> Please delete options that are not relevant.
 
-<!-- List all the proposed changes in your PR -->
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] This change requires a documentation update
 
-<!-- Mark all the applicable boxes. To mark the box as done follow the following conventions -->
-<!--
-[x] - Correct; marked as done
-[X] - Correct; marked as done
+# How Has This Been Tested?
 
-[ ] - Not correct; marked as **not** done
--->
+> Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
 
-## Check List (Check all the applicable boxes) <!-- Follow the above conventions to check the box -->
+- [ ] Test A
+- [ ] Test B
 
-- [ ] My code follows the code style of this project.
-- [ ] My change requires changes to the documentation.
-- [ ] I have updated the documentation accordingly.
-- [ ] All new and existing tests passed.
-- [ ] This PR does not contain plagiarized content.
-- [ ] The title of my pull request is a short description of the requested changes.
+**Test Configuration**:
+* OS with version:
+* Browser with version:
+* SDK / CLI with version:
+# Checklist:
 
-## Screenshots
-
-<!-- Add all the screenshots which support your changes -->
-
-## Note to reviewers
-
-<!-- Add notes to reviewers if applicable -->
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my code
+- [ ] I documented my code, particularly in hard-to-understand areas
+- [ ] I have made corresponding changes to the documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
+- [ ] Any dependent changes have been merged and published in downstream modules
