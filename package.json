@@ -68,7 +68,7 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-embed": "^3.6.0",
-    "react-hook-form": "^7.43.2",
+    "react-hook-form": "^7.43.4",
     "react-hot-toast": "^2.4.0",
     "react-markdown": "^8.0.5",
     "react-medium-image-zoom": "^5.1.3",
