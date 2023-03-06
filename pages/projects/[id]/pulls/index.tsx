@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -67,7 +68,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
       id: "title",
       accessorFn: (row) => row.title,
       cell: (info) => (
-        <div className="flex items-center">
+        <div className="flex max-w-3xl items-center">
           <div className="h-10 w-10 flex-shrink-0">
             {info.row.original.status === PullRequestStatus.open && (
               <Badge type="success">
@@ -87,7 +88,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
               </Badge>
             )}
           </div>
-          <div className="ml-4">
+          <div className="ml-4 truncate">
             <PullRequestTitleHoverCard
               triggerComponent={
                 <Link
@@ -98,14 +99,12 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
                 </Link>
               }
             />
-            <div className="text-light"></div>
+            <div className="text-light">
+              #205 opened 3 hours ago by chetannn
+            </div>
           </div>
         </div>
       ),
-    },
-    {
-      id: "createdBy",
-      accessorFn: (row) => row.createdBy.name,
     },
     {
       id: "status",
@@ -163,6 +162,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
           columns={pullRequestColumns}
           data={pullRequestQuery.data ?? []}
           filterOptions={filterOptions}
+          visibleColumns={{ title: true, status: true }}
         />
       </div>
     </ProjectLayout>
