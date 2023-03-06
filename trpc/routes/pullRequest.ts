@@ -2,6 +2,18 @@ import { createRouter, withAuth } from "@/trpc/router";
 import { z } from "zod";
 
 export const pullRequest = createRouter({
+  getAll: withAuth
+    .input(z.object({ projectId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.pullRequest.findMany({
+        include: {
+          createdBy: true,
+        },
+        where: {
+          projectId: input.projectId,
+        },
+      });
+    }),
   create: withAuth
     .input(
       z.object({

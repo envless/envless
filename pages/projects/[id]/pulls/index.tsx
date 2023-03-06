@@ -1,23 +1,17 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Project } from "@prisma/client";
-import * as HoverCard from "@radix-ui/react-hover-card";
-import {
-  ArrowLeft,
-  GitMerge,
-  GitPullRequest,
-  GitPullRequestClosed,
-  Settings2,
-} from "lucide-react";
+import { Project, PullRequest, PullRequestStatus, User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
+import { GitMerge, GitPullRequest, GitPullRequestClosed } from "lucide-react";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
-import Filters from "@/components/pulls/Filters";
 import PullRequestTitleHoverCard from "@/components/pulls/PullRequestTitleHoverCard";
 import { Badge, Button, Label } from "@/components/theme";
+import { FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
 
 /**
@@ -35,6 +29,14 @@ interface Props {
 export const PullRequestPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const pullRequestQuery = trpc.pullRequest.getAll.useQuery(
+    {
+      projectId: router.query.id as string,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
   const pullRequests = [
     {
       id: 1,
@@ -60,6 +62,86 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
 
   const projectId = router.query.id as string;
 
+  const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
+    {
+      id: "title",
+      accessorFn: (row) => row.title,
+      cell: (info) => (
+        <div className="flex items-center">
+          <div className="h-10 w-10 flex-shrink-0">
+            {info.row.original.status === PullRequestStatus.open && (
+              <Badge type="success">
+                <GitPullRequest className="h-6 w-6" strokeWidth={2} />
+              </Badge>
+            )}
+
+            {info.row.original.status === PullRequestStatus.closed && (
+              <Badge type="danger">
+                <GitPullRequestClosed className="h-6 w-6" strokeWidth={2} />
+              </Badge>
+            )}
+
+            {info.row.original.status === PullRequestStatus.merged && (
+              <Badge type="info">
+                <GitMerge className="h-6 w-6" strokeWidth={2} />
+              </Badge>
+            )}
+          </div>
+          <div className="ml-4">
+            <PullRequestTitleHoverCard
+              triggerComponent={
+                <Link
+                  href={`/projects/${projectId}/pulls/${info.row.original.id}`}
+                  className="font-medium"
+                >
+                  {info.row.original.title}
+                </Link>
+              }
+            />
+            <div className="text-light"></div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "createdBy",
+      accessorFn: (row) => row.createdBy.name,
+    },
+    {
+      id: "status",
+      accessorFn: (row) => row.status,
+      cell: (info) => (
+        <>
+          {info.row.original.status === PullRequestStatus.open && (
+            <Label type="success">{info.row.original.status}</Label>
+          )}
+
+          {info.row.original.status === PullRequestStatus.closed && (
+            <Label type="danger">{info.row.original.status}</Label>
+          )}
+
+          {info.row.original.status === PullRequestStatus.merged && (
+            <Label type="info">{info.row.original.status}</Label>
+          )}
+        </>
+      ),
+    },
+  ];
+
+  const filterOptions: FilterOptions = {
+    status: [
+      { value: "open", label: "Open" },
+      { value: "closed", label: "Closed" },
+      { value: "merged", label: "Merged" },
+    ],
+    sort: [
+      { label: "Newest", value: "createdAt", order: "desc" },
+      { label: "Oldest", value: "createdAt", order: "asc" },
+      { label: "Recently Updated", value: "updatedAt", order: "desc" },
+      { label: "Least recently updated", value: "updatedAt", order: "asc" },
+    ],
+  };
+
   return (
     <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
       <CreatePullRequestModal isOpen={isOpen} setIsOpen={setIsOpen} />
@@ -77,79 +159,11 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
 
-        <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
-              <div className="min-w-full rounded-t bg-darker pt-3">
-                <Filters />
-              </div>
-              <table className="min-w-full divide-y divide-light">
-                <tbody className="bg-dark">
-                  {pullRequests.map((pr) => (
-                    <tr key={pr.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            {pr.status === "Open" && (
-                              <Badge type="success">
-                                <GitPullRequest
-                                  className="h-6 w-6"
-                                  strokeWidth={2}
-                                />
-                              </Badge>
-                            )}
-
-                            {pr.status === "Closed" && (
-                              <Badge type="danger">
-                                <GitPullRequestClosed
-                                  className="h-6 w-6"
-                                  strokeWidth={2}
-                                />
-                              </Badge>
-                            )}
-
-                            {pr.status === "Merged" && (
-                              <Badge type="info">
-                                <GitMerge className="h-6 w-6" strokeWidth={2} />
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <PullRequestTitleHoverCard
-                              triggerComponent={
-                                <Link
-                                  href={`/projects/${projectId}/pulls/${pr.id}`}
-                                  className="font-medium"
-                                >
-                                  {pr.title}
-                                </Link>
-                              }
-                            />
-                            <div className="text-light">{pr.subtitle}</div>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="relative mt-3 hidden whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
-                        {pr.status === "Open" && (
-                          <Label type="success">{pr.status}</Label>
-                        )}
-
-                        {pr.status === "Closed" && (
-                          <Label type="danger">{pr.status}</Label>
-                        )}
-
-                        {pr.status === "Merged" && (
-                          <Label type="info">{pr.status}</Label>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <Table
+          columns={pullRequestColumns}
+          data={pullRequestQuery.data ?? []}
+          filterOptions={filterOptions}
+        />
       </div>
     </ProjectLayout>
   );
