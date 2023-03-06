@@ -28,12 +28,15 @@ const Button = (props: {
   target?: string;
   className?: string;
   small?: boolean;
+  primary: boolean;
   secondary: boolean;
   disabled?: boolean;
+  outlined?: boolean;
   children: React.ReactNode;
 }) => {
   const {
     type = "button",
+    primary = true,
     sr,
     onClick,
     href,
@@ -44,6 +47,7 @@ const Button = (props: {
     disabled,
     secondary,
     children,
+    outlined,
   } = props;
 
   if (href) {
@@ -73,10 +77,13 @@ const Button = (props: {
           className,
           full ? "w-full" : "w-fit",
           small ? "py-1.5 text-xs" : "py-2 text-sm",
+          primary
+            ? "bg-lightest text-darkest hover:bg-lighter"
+            : "bg-transparent",
           secondary
             ? "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
-            : "bg-lightest text-darkest hover:bg-lighter",
-
+            : "",
+          outlined ? "border-dark ring-1 ring-light/50" : "",
           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
         )}
         onClick={onClick}
@@ -93,8 +100,10 @@ Button.defaultProps = {
   full: false,
   type: "button",
   disablad: false,
+  primary: true,
   secondary: false,
   small: false,
+  outlined: false,
 };
 
 export default Button;
