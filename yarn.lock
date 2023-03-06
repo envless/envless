@@ -6647,10 +6647,10 @@ lz-string@^1.4.4:
   resolved "https://registry.yarnpkg.com/lz-string/-/lz-string-1.4.4.tgz#c0d8eaf36059f705796e1e344811cf4c498d3a26"
   integrity sha512-0ckx7ZHRPqb0oUm8zNr+90mtf9DQB60H1wMCjBtfi62Kl3a7JbHob6gA2bC+xRvZoOL+1hzUK8jeuEIQE8svEQ==
 
-mailing-core@^0.9.10, mailing-core@^0.9.8:
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.10.tgz#352b0555b0ec29e978ef216fe39378d1c538d369"
-  integrity sha512-9Bxkwvg8Qo2QV6QS/77Vy1exYBQ4LvlGnBzbJKAsKMDrhmpiD3saPe3xrmk/9S0eHB8nYZkTL3W4fHif9/iE8Q==
+mailing-core@^0.9.10, mailing-core@^0.9.12:
+  version "0.9.12"
+  resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.12.tgz#af5706282d44a7aec183d568d9e559e256ff13d2"
+  integrity sha512-x8KZT6F6j9EnlL+wM4dEGzipH5RVpHkPrb4XfDPSdzIgevMoHD+s0cgs4DVfHHbBkPfOVNRK1BWNaLDWV8CqHA==
   dependencies:
     chalk "^4.1.2"
     fs-extra "^10.1.0"
