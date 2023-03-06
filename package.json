@@ -58,7 +58,7 @@
     "next-auth": "^4.19.2",
     "next-seo": "^5.14.1",
     "nextjs-progressbar": "^0.0.16",
-    "node-html-parser": "^6.1.4",
+    "node-html-parser": "^6.1.5",
     "nodemailer": "^6.9.1",
     "octokit": "^2.0.14",
     "omgopass": "^3.2.1",
