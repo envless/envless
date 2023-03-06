@@ -129,6 +129,10 @@ model PullRequest {
   mergedBy User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
   closedBy User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
 
+  @@index([createdById])
+  @@index([mergedById])
+  @@index([closedById])
+
   @@unique([prId, projectId])
   @@index([projectId, status]) 
   @@index([projectId, prId])
