@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION generate_prId()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.prId := (SELECT COALESCE((SELECT MAX(prId) FROM "PullRequest" WHERE projectId = NEW.projectId), 0) + 1);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_prId
+BEFORE INSERT ON "PullRequest"
+FOR EACH ROW
+EXECUTE FUNCTION generate_prId();
