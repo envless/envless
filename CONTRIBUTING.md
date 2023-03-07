@@ -68,7 +68,6 @@ Copy/paste these env variables to .env file.
 
 ```
 DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
-SHADOW_DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless_shadow"
 ```
 > Note: please change username, password and port (default port is 5432) as according to your setup.
 
