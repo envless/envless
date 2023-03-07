@@ -6,7 +6,6 @@ Encrypts a plaintext with the given public keys using OpenPGP.
 @param publicKeys - An array of public keys to use for encryption.
 @returns The encrypted message as a string.
 */
-
 export const encrypt = async (plaintext: string, publicKeys: string[]) => {
   const readPublicKeys = await Promise.all(
     publicKeys.map((armoredKey) => openpgp.readKey({ armoredKey })),
@@ -28,7 +27,6 @@ Decrypts an OpenPGP-encrypted message with the given private key.
 @param privateKey - The private key to use for decryption.
 @returns The decrypted message as a string.
 */
-
 export const decrypt = async (encrypted: string, privateKey: string) => {
   const readPrivateKey = await openpgp.readPrivateKey({
     armoredKey: privateKey,
@@ -48,7 +46,7 @@ export const decrypt = async (encrypted: string, privateKey: string) => {
 
 /**
 Revokes OpenPGP key used to encrypt/decrypt a plaintext.
-@param publicKey - The public key to generate the revocation certificate for.
+@param publicKey - The public key used for encryption.
 @param revocationCertificate - The revocation certificate to use.
 @returns The revoked key as an armored string.
 */
@@ -66,9 +64,9 @@ export const revokeKey = async (
 };
 
 /**
-Generates a new OpenPGP key pair.
-@param name - The name to use for the key owner.
-@param email - The email address to use for the key owner.
+Generates a new OpenPGP key pair and revocationCertificate.
+@param name - The name of the user this key pair belongs to.
+@param email - The email address of the user thiskey pair belongs to.
 @returns An object containing the generated public key, private key, and revocation certificate.
 */
 export const generageKeyPair = async (name: string, email: string) => {
