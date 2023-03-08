@@ -76,10 +76,9 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
       {error && <p className="px-3 pt-1 text-xs text-red-400/75">{error}</p>}
 
       <Button
-        type="submit"
         disabled={loading}
         className={clsx("mt-10", loading && "cursor-not-allowed")}
-        full={true}
+        width="full"
       >
         {loading && <LoadingIcon className="h-4 w-4 text-dark" />}
         Confirm and continue

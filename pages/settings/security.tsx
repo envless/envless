@@ -110,7 +110,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
         {enabled ? (
           <Button
-            secondary={true}
+            variant="secondary"
             onClick={() => {
               disableWithTwoFactor(false);
             }}
@@ -123,7 +123,9 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
         ) : (
           <Modal
             button={
-              <Button secondary={true}>Enable two-factor authentication</Button>
+              <Button variant="secondary">
+                Enable two-factor authentication
+              </Button>
             }
             title="Activate two-factor authentication"
           >

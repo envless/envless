@@ -18,7 +18,7 @@ const AuditSettings = ({ user, logs }: AuditSettingsProps) => {
 
       <div className="w-full lg:w-3/5">
         <AuditLogs logs={logs} user={user} />
-        <Button small={true} secondary={true} className="mt-8">
+        <Button size="sm" variant="secondary" className="mt-8">
           Load More
         </Button>
       </div>
