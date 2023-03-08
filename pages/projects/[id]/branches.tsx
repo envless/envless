@@ -146,7 +146,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       id: "actions",
       header: "Action",
       cell: () => (
-        <Button secondary={true} small className="float-right border-lighter">
+        <Button variant="primary-outline" size="sm" className="float-right">
           Open pull request
         </Button>
       ),

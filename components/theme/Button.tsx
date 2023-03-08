@@ -6,18 +6,24 @@ import {
   forwardRef,
 } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
-import { clsx } from "clsx";
 
 const button = cva(
   [
-    "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+    "transition-colors focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
   ],
   {
     variants: {
       variant: {
         primary: ["bg-lightest text-darkest hover:bg-lighter"],
         secondary: [
-          "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60",
+          "border-dark bg-dark text-lightest hover:bg-dark/60 shadow-xl",
+        ],
+        danger: ["bg-red-500 border-red-500 text-lightest hover:bg-red-600"],
+        "primary-outline": [
+          "border-light hover:border-lighter hover:bg-darker",
+        ],
+        "danger-outline": [
+          "border-2 border-dark hover:border-red-500 text-red-500",
         ],
       },
       size: {
@@ -34,7 +40,12 @@ const button = cva(
 
 type ButtonProps = {
   type?: "submit" | "button" | "reset";
-  variant?: "primary" | "secondary";
+  variant?:
+    | "primary"
+    | "secondary"
+    | "danger"
+    | "primary-outline"
+    | "danger-outline";
   size?: "sm" | "md";
   width?: "full" | "fit";
   sr?: string;
@@ -83,6 +94,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
           type={type}
           className={button({ variant, size, className })}
           ref={ref as MutableRefObject<HTMLButtonElement>}
+          onClick={onClick}
           {...props}
         >
           {children}
@@ -92,75 +104,5 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
     }
   },
 );
-
-// const Button2 = (props: {
-//   type?: "submit" | "button" | "reset";
-//   sr?: string;
-//   onClick?: () => void;
-//   href?: string;
-//   full?: boolean;
-//   target?: string;
-//   className?: string;
-//   small?: boolean;
-//   secondary: boolean;
-//   disabled?: boolean;
-//   children: React.ReactNode;
-// }) => {
-//   const {
-//     type = "button",
-//     disabled = false,
-//     sr,
-//     onClick,
-//     href,
-//     full,
-//     target,
-//     className,
-//     small,
-//     secondary,
-//     children,
-//   } = props;
-
-//   if (href) {
-//     return (
-//       <Link
-//         href={href}
-//         className={clsx(
-//           className,
-//           full ? "w-full" : "w-fit",
-//           small ? "py-1.5 text-xs" : "py-2 text-sm",
-//           secondary
-//             ? " border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
-//             : "bg-lightest text-darkest hover:bg-lighter",
-
-//           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
-//         )}
-//       >
-//         {children}
-//         {sr && <span className="sr-only">{sr}</span>}
-//       </Link>
-//     );
-//   } else {
-//     return (
-//       <button
-//         type={type}
-//         className={clsx(
-//           className,
-//           full ? "w-full" : "w-fit",
-//           small ? "py-1.5 text-xs" : "py-2 text-sm",
-//           secondary
-//             ? "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
-//             : "bg-lightest text-darkest hover:bg-lighter",
-
-//           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
-//         )}
-//         onClick={onClick}
-//         disabled={disabled}
-//       >
-//         {children}
-//         {sr && <span className="sr-only">{sr}</span>}
-//       </button>
-//     );
-//   }
-// };
 
 export default Button;

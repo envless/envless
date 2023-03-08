@@ -209,7 +209,7 @@ export const IntegrationsPage = ({ projects, currentProject }: Props) => {
                 </p>
               </div>
             </div>
-            <Button small={true} secondary={true} className="mt-5">
+            <Button size="sm" variant="secondary" className="mt-5">
               Configure
             </Button>
           </div>

@@ -94,7 +94,7 @@ const ProjectInvitePage = (props: {
                     href="/auth"
                     type="submit"
                     className={clsx("mt-10")}
-                    full={true}
+                    width="full"
                   >
                     Go to login page
                   </Button>
@@ -167,7 +167,7 @@ const ProjectInvitePage = (props: {
                         "mt-10",
                         acceptInviteMutation.isLoading && "cursor-not-allowed",
                       )}
-                      full={true}
+                      width="full"
                     >
                       {acceptInviteMutation.isLoading && (
                         <LoadingIcon className="h-4 w-4 text-dark" />

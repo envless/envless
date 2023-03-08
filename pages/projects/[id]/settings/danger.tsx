@@ -71,9 +71,8 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           </div>
           <div className="flex-2 ml-10">
             <Button
-              className=""
               type="button"
-              small
+              variant="danger-outline"
               disabled={isLoading || false}
               onClick={submitForm}
             >
