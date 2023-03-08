@@ -1,100 +1,166 @@
 import Link from "next/link";
-import * as React from "react";
+import {
+  MouseEventHandler,
+  MutableRefObject,
+  ReactNode,
+  forwardRef,
+} from "react";
+import { type VariantProps, cva } from "class-variance-authority";
 import { clsx } from "clsx";
 
-/**
- * Button is a component that renders either a button or a link, depending on the provided `href` prop.
- * If `href` is provided, the component renders a link. Otherwise, it renders a button.
- *
- * @param {string} [type] - The type of the button to render, if the component should render a button.
- * @param {string} [sr] - The text to use for screen reader accessibility, if provided.
- * @param {() => void} [onClick] - The callback to be invoked when the user clicks on the button or link.
- * @param {string} [href] - The URL to link to, if the component should render a link.
- * @param {boolean} [full] - Whether the button should take up the full width of its container.
- * @param {boolean} [secondary] - Whether the button should be secondaryd.
- * @param {boolean} [disablad] - Whether on not the button should be disabled.
- * @param {string} [target] - The target attribute for the link, if the component should render a link.
- * @param {string} [className] - The class name to apply to the button or link.
- * @param {boolean} [small] - Whether the button should be small.
- * @param {React.ReactNode} children - The content to render inside the button or link.
- */
+const button = cva(
+  [
+    "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+  ],
+  {
+    variants: {
+      variant: {
+        primary: ["bg-lightest text-darkest hover:bg-lighter"],
+        secondary: [
+          "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60",
+        ],
+      },
+      size: {
+        sm: ["py-1.5 text-xs"],
+        md: ["py-2 text-sm"],
+      },
+      width: {
+        full: ["w-full"],
+        fit: ["w-fit"],
+      },
+    },
+  },
+);
 
-const Button = (props: {
+type ButtonProps = {
   type?: "submit" | "button" | "reset";
+  variant?: "primary" | "secondary";
+  size?: "sm" | "md";
+  width?: "full" | "fit";
   sr?: string;
-  onClick?: () => void;
+  onClick?: MouseEventHandler;
   href?: string;
-  full?: boolean;
   target?: string;
   className?: string;
   small?: boolean;
-  secondary: boolean;
   disabled?: boolean;
-  children: React.ReactNode;
-}) => {
-  const {
-    type = "button",
-    sr,
-    onClick,
-    href,
-    full,
-    target,
-    className,
-    small,
-    disabled,
-    secondary,
-    children,
-  } = props;
+  children: ReactNode;
+} & VariantProps<typeof button>;
 
-  if (href) {
-    return (
-      <Link
-        href={href}
-        className={clsx(
-          className,
-          full ? "w-full" : "w-fit",
-          small ? "py-1.5 text-xs" : "py-2 text-sm",
-          secondary
-            ? " border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
-            : "bg-lightest text-darkest hover:bg-lighter",
+const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+  (
+    {
+      variant = "primary",
+      type = "submit",
+      size = "md",
+      width = "fit",
+      sr,
+      onClick,
+      href,
+      target,
+      className,
+      small,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    if (href) {
+      return (
+        <Link
+          className={button({ variant, size, className })}
+          ref={ref as MutableRefObject<HTMLAnchorElement>}
+          href={href}
+          {...props}
+        >
+          {children}
+          {sr && <span className="sr-only">{sr}</span>}
+        </Link>
+      );
+    } else {
+      return (
+        <button
+          type={type}
+          className={button({ variant, size, className })}
+          ref={ref as MutableRefObject<HTMLButtonElement>}
+          {...props}
+        >
+          {children}
+          {sr && <span className="sr-only">{sr}</span>}
+        </button>
+      );
+    }
+  },
+);
 
-          "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
-        )}
-      >
-        {children}
-        {sr && <span className="sr-only">{sr}</span>}
-      </Link>
-    );
-  } else {
-    return (
-      <button
-        type={type}
-        className={clsx(
-          className,
-          full ? "w-full" : "w-fit",
-          small ? "py-1.5 text-xs" : "py-2 text-sm",
-          secondary
-            ? "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
-            : "bg-lightest text-darkest hover:bg-lighter",
+// const Button2 = (props: {
+//   type?: "submit" | "button" | "reset";
+//   sr?: string;
+//   onClick?: () => void;
+//   href?: string;
+//   full?: boolean;
+//   target?: string;
+//   className?: string;
+//   small?: boolean;
+//   secondary: boolean;
+//   disabled?: boolean;
+//   children: React.ReactNode;
+// }) => {
+//   const {
+//     type = "button",
+//     disabled = false,
+//     sr,
+//     onClick,
+//     href,
+//     full,
+//     target,
+//     className,
+//     small,
+//     secondary,
+//     children,
+//   } = props;
 
-          "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
-        )}
-        onClick={onClick}
-        disabled={disabled}
-      >
-        {children}
-        {sr && <span className="sr-only">{sr}</span>}
-      </button>
-    );
-  }
-};
+//   if (href) {
+//     return (
+//       <Link
+//         href={href}
+//         className={clsx(
+//           className,
+//           full ? "w-full" : "w-fit",
+//           small ? "py-1.5 text-xs" : "py-2 text-sm",
+//           secondary
+//             ? " border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
+//             : "bg-lightest text-darkest hover:bg-lighter",
 
-Button.defaultProps = {
-  full: false,
-  type: "button",
-  disablad: false,
-  secondary: false,
-  small: false,
-};
+//           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+//         )}
+//       >
+//         {children}
+//         {sr && <span className="sr-only">{sr}</span>}
+//       </Link>
+//     );
+//   } else {
+//     return (
+//       <button
+//         type={type}
+//         className={clsx(
+//           className,
+//           full ? "w-full" : "w-fit",
+//           small ? "py-1.5 text-xs" : "py-2 text-sm",
+//           secondary
+//             ? "border-2 border-dark bg-dark text-lightest shadow-xl hover:bg-dark/60"
+//             : "bg-lightest text-darkest hover:bg-lighter",
+
+//           "focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+//         )}
+//         onClick={onClick}
+//         disabled={disabled}
+//       >
+//         {children}
+//         {sr && <span className="sr-only">{sr}</span>}
+//       </button>
+//     );
+//   }
+// };
 
 export default Button;

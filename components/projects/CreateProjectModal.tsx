@@ -77,7 +77,7 @@ const CreateProjectModal = () => {
         />
 
         <div className="float-right">
-          <Button type="submit" disabled={loading}>
+          <Button disabled={loading}>
             Save and continue
             <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
           </Button>
