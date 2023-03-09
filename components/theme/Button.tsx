@@ -7,7 +7,7 @@ import {
 } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
 
-const button = cva(
+const buttonStyles = cva(
   [
     "transition-colors focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
   ],
@@ -56,7 +56,7 @@ type ButtonProps = {
   small?: boolean;
   disabled?: boolean;
   children: ReactNode;
-} & VariantProps<typeof button>;
+} & VariantProps<typeof buttonStyles>;
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
   (
@@ -79,7 +79,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
     if (href) {
       return (
         <Link
-          className={button({ variant, size, className })}
+          className={buttonStyles({ variant, size, width, className })}
           ref={ref as MutableRefObject<HTMLAnchorElement>}
           href={href}
           {...props}
@@ -92,7 +92,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       return (
         <button
           type={type}
-          className={button({ variant, size, className })}
+          className={buttonStyles({ variant, size, width, className })}
           ref={ref as MutableRefObject<HTMLButtonElement>}
           onClick={onClick}
           {...props}
