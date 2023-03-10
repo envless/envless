@@ -207,7 +207,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       header: "Actions",
       cell: (info) => (
         <Link
-          href={`/project/${info.row.original.projectId}/settings/protected-branches`}
+          href={`/projects/${info.row.original.projectId}/settings/protected-branches`}
           className="float-right pr-4 hover:text-teal-400"
         >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
