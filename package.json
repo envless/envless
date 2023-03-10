@@ -49,6 +49,7 @@
     "base64-loader": "^1.0.0",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
+    "crypto": "^1.0.1",
     "date-fns": "^2.29.3",
     "device-detector-js": "^3.0.3",
     "fuse.js": "^6.6.2",

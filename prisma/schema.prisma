@@ -227,24 +227,25 @@ model Session {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  name              String?
-  email             String    @unique
-  emailVerified     DateTime?
-  image             String?
-  salt              String?
-  verifier          String?
-  accounts          Account[]
-  sessions          Session[]
-  sessionHistories  SessionHistory[]
-  access            Access[]
-  publicKeys        PublicKey[]
-  auditsCreatedBy   Audit[]   @relation(name: "createdBy")
-  auditsCreatedFor  Audit[]   @relation(name: "createdFor")
-  branchesCreatedBy Branch[]  @relation(name: "createdBy")
-  createdPRs PullRequest[] @relation(name: "createdBy")
-  mergedPRs PullRequest[] @relation(name: "mergedBy")
-  closedPRs PullRequest[] @relation(name: "closedBy")
+  id                  String    @id @default(cuid())
+  name                String?
+  email               String    @unique
+  emailVerified       DateTime?
+  image               String?
+  salt                String?
+  verifier            String?
+  accounts            Account[]
+  sessions            Session[]
+  sessionHistories    SessionHistory[]
+  access              Access[]
+  publicKeys          PublicKey[]
+  auditsCreatedBy     Audit[]       @relation(name: "createdBy")
+  auditsCreatedFor    Audit[]       @relation(name: "createdFor")
+  branchesCreatedBy   Branch[]      @relation(name: "createdBy")
+  createdPRs          PullRequest[] @relation(name: "createdBy")
+  mergedPRs           PullRequest[] @relation(name: "mergedBy")
+  closedPRs           PullRequest[] @relation(name: "closedBy")
+  verificationTokens  String[]
 
   // Two factor authentication
   encryptedTwoFactorSecret    Json?
@@ -255,9 +256,13 @@ model User {
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  userId        String?
+  projectId     String?
+  encryptedOtp  String?
+  type          String?
+  token         String   @unique
+  expires       DateTime
 
-  @@unique([identifier, token])
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project       Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }

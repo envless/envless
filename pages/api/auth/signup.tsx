@@ -1,9 +1,9 @@
-import jsrp from "jsrp";
-import prisma from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "@/lib/prisma";
 
 type Data = {
-  message: string;
+  error?: string;
+  message?: string;
 };
 
 export default async function handler(
@@ -16,10 +16,12 @@ export default async function handler(
     where: {
       email,
     },
-  })
+  });
 
   if (user) {
-    res.status(400).json({ message: "User already exists" });
+    res.status(400).json({
+      error: "User already exist with that email, please login instead.",
+    });
     return;
   }
 
@@ -29,11 +31,11 @@ export default async function handler(
       salt,
       verifier,
     },
-  })
+  });
 
   if (user) {
     res.status(200).json({ message: "Successfully signed up!" });
   } else {
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ error: "Something went wrong" });
   }
 }

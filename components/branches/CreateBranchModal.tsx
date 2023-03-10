@@ -15,8 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/theme";
-import BaseModal from "../theme/BaseModal";
-import { showToast } from "../theme/showToast";
+import BaseModal from "@/components/theme/BaseModal";
+import { showToast } from "@/components/theme/showToast";
 import { BranchPopover } from "./BranchPopover";
 
 interface Project {

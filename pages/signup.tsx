@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import zxcvbn from "zxcvbn";
 import { Button, Input } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 const Signup = ({ csrfToken }) => {
   const router = useRouter();
@@ -29,54 +30,54 @@ const Signup = ({ csrfToken }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    // setLoading(true);
+    setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
     const { email, password } = data;
-    
-    client.init({
-      username: email,
-      password,
-    }, () => {
-      client.createVerifier(async (error, result) => {
-        if (error) {
-          setLoading(false);
-          return;
-        }
 
-        const { salt, verifier } = result;
+    client.init(
+      {
+        username: email,
+        password,
+      },
+      () => {
+        client.createVerifier(async (error, result) => {
+          if (error) {
+            setLoading(false);
+            return;
+          }
 
-        const res = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            salt,
-            verifier,
-          }),
+          const { salt, verifier } = result;
+
+          const res = await fetch("/api/auth/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email,
+              salt,
+              verifier,
+            }),
+          });
+
+          const json = await res.json();
+
+          if (res.ok) {
+            showToast({
+              type: "success",
+              title: "Successfully signed up!",
+              subtitle: json.message,
+            });
+          } else {
+            reset();
+            setLoading(false);
+            showToast({
+              type: "error",
+              title: "Oops! there is an error.",
+              subtitle: json.error,
+            });
+          }
         });
-      })
-    });
-
-    // const res = await fetch("/api/auth/signup", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({
-    //     email,
-    //     passwordSalt
-    //   }),
-    // });
-
-    // if (res.status === 200) {
-    //   debounce(() => {
-    //     router.reload();
-    //   }, 3000)();
-    // } else {
-    //   const json = await res.json();
-    //   if (json?.error) {
-    //     log("error", json.error);
-    //   }
-    // }
-    // reset();
+      },
+    );
   };
 
   const secondsToString = (seconds: number) => {
@@ -111,9 +112,17 @@ const Signup = ({ csrfToken }) => {
             src="/logo.png"
             alt="Your Company"
           />
+
           <h2 className="mt-6 text-center text-2xl">
             Get started with Envless
           </h2>
+
+          <p className="text-center text-sm text-lighter">
+            Already have an account?{" "}
+            <Link href="/login" className="text-teal-400">
+              Login
+            </Link>
+          </p>
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
