@@ -38,7 +38,7 @@ function FilterPill<T extends RowData>({
             table.resetSorting();
           } else if (filterType === "filter") {
             table.setColumnFilters((updater) => [
-              ...updater.filter((filter) => filter.id !== option.id),
+              ...updater.filter((filter) => filter.value !== option.value),
             ]);
           }
         }}
