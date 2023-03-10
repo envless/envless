@@ -42,6 +42,7 @@ model Project {
   invites   ProjectInvite[]
   pullRequests PullRequest[]
   privateKeys PublicKey[]
+  verificationTokens  VerificationToken[]
 }
 
 model PublicKey {
@@ -245,7 +246,7 @@ model User {
   createdPRs          PullRequest[] @relation(name: "createdBy")
   mergedPRs           PullRequest[] @relation(name: "mergedBy")
   closedPRs           PullRequest[] @relation(name: "closedBy")
-  verificationTokens  String[]
+  verificationTokens  VerificationToken[]
 
   // Two factor authentication
   encryptedTwoFactorSecret    Json?
@@ -263,6 +264,6 @@ model VerificationToken {
   token         String   @unique
   expires       DateTime
 
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project       Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user          User? @relation(fields: [userId], references: [id])
+  project       Project? @relation(fields: [projectId], references: [id])
 }
