@@ -232,6 +232,8 @@ model User {
   email             String    @unique
   emailVerified     DateTime?
   image             String?
+  salt              String?
+  verifier          String?
   accounts          Account[]
   sessions          Session[]
   sessionHistories  SessionHistory[]
@@ -243,7 +245,6 @@ model User {
   createdPRs PullRequest[] @relation(name: "createdBy")
   mergedPRs PullRequest[] @relation(name: "mergedBy")
   closedPRs PullRequest[] @relation(name: "closedBy")
-
 
   // Two factor authentication
   encryptedTwoFactorSecret    Json?

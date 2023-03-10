@@ -4,18 +4,18 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { getServerSideSession } from "@/utils/session";
-import { debounce } from "lodash";
+import clsx from "clsx";
+import jsrp from "jsrp";
 import { getCsrfToken } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import zxcvbn from "zxcvbn";
 import { Button, Input } from "@/components/theme";
-import log from "@/lib/log";
-import clsx from "clsx";
 
 const Signup = ({ csrfToken }) => {
   const router = useRouter();
   const { query } = useRouter();
+  const client = new jsrp.client();
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordHelper, setPasswordHelper] = useState("");
@@ -29,26 +29,54 @@ const Signup = ({ csrfToken }) => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    setLoading(true);
+    // setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
+    const { email, password } = data;
+    
+    client.init({
+      username: email,
+      password,
+    }, () => {
+      client.createVerifier(async (error, result) => {
+        if (error) {
+          setLoading(false);
+          return;
+        }
 
-    const res = await fetch("/api/auth/signin/email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+        const { salt, verifier } = result;
+
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            salt,
+            verifier,
+          }),
+        });
+      })
     });
 
-    if (res.status === 200) {
-      debounce(() => {
-        router.reload();
-      }, 3000)();
-    } else {
-      const json = await res.json();
-      if (json?.error) {
-        log("error", json.error);
-      }
-    }
-    reset();
+    // const res = await fetch("/api/auth/signup", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     email,
+    //     passwordSalt
+    //   }),
+    // });
+
+    // if (res.status === 200) {
+    //   debounce(() => {
+    //     router.reload();
+    //   }, 3000)();
+    // } else {
+    //   const json = await res.json();
+    //   if (json?.error) {
+    //     log("error", json.error);
+    //   }
+    // }
+    // reset();
   };
 
   const secondsToString = (seconds: number) => {
@@ -135,6 +163,7 @@ const Signup = ({ csrfToken }) => {
                 full={true}
                 register={register}
                 errors={errors}
+                defaultValue="envless.dev@example.com1A"
                 validationSchema={{
                   required: "Password is required",
                   minLength: {
@@ -146,10 +175,11 @@ const Signup = ({ csrfToken }) => {
                     message: "Password must be at most 128 characters",
                   },
                   pattern: {
-                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
                     message:
                       "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
-                  }
+                  },
                 }}
                 onKeyUp={(e) => {
                   const inputPassword = e.target.value;
@@ -165,12 +195,17 @@ const Signup = ({ csrfToken }) => {
                     setPasswordScore(result.score);
                     setPasswordHelper(humanized);
 
-                    if (passwordScore >= 3 ) {
+                    if (passwordScore >= 3) {
                       setLoading(false);
                     } else {
                       setLoading(true);
                     }
-                    console.log("Score", passwordScore, "Loading status", loading);
+                    console.log(
+                      "Score",
+                      passwordScore,
+                      "Loading status",
+                      loading,
+                    );
                   }
                 }}
               />
@@ -178,19 +213,17 @@ const Signup = ({ csrfToken }) => {
               {password.length > 1 && (
                 <div className="flex h-1 w-full overflow-hidden rounded-full bg-dark">
                   <div
-                    className={
-                      clsx(
-                        passwordScore === 0 && "bg-red-400",
-                        passwordScore === 1 && "bg-orange-400",
-                        passwordScore === 2 && "bg-yellow-400",
-                        passwordScore === 3 && "bg-lime-400",
-                        passwordScore === 4 && "bg-teal-400",
-                        "flex flex-col justify-center overflow-hidden"
-                      )
-                    }
+                    className={clsx(
+                      passwordScore === 0 && "bg-red-400",
+                      passwordScore === 1 && "bg-orange-400",
+                      passwordScore === 2 && "bg-yellow-400",
+                      passwordScore === 3 && "bg-lime-400",
+                      passwordScore === 4 && "bg-teal-400",
+                      "flex flex-col justify-center overflow-hidden",
+                    )}
                     role="progressbar"
                     style={{
-                      width: `${(passwordScore + 1) * 20}%`
+                      width: `${(passwordScore + 1) * 20}%`,
                     }}
                   ></div>
                 </div>
@@ -215,11 +248,11 @@ const Signup = ({ csrfToken }) => {
 
             <p className="mt-8 text-xs text-light">
               By continuing, you agree to our{" "}
-              <Link className="hover:text-gray-200 underline" href="/terms">
+              <Link className="underline hover:text-gray-200" href="/terms">
                 Terms of service
               </Link>{" "}
               and{" "}
-              <Link className="hover:text-gray-200 underline" href="/privacy">
+              <Link className="underline hover:text-gray-200" href="/privacy">
                 Privacy policy
               </Link>
             </p>
