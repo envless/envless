@@ -3,6 +3,7 @@ import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
@@ -12,6 +13,36 @@ const development = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "Email",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+          placeholder: "Password",
+        },
+      },
+
+      async authorize(credentials, req) {
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        } else {
+          return user;
+        }
+      },
+    }),
+
     EmailProvider({
       sendVerificationRequest({ identifier, url }) {
         sendMail({
@@ -52,8 +83,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/auth",
-    signOut: "/auth",
+    signIn: "/login",
+    signOut: "/signup",
   },
 
   adapter: PrismaAdapter(prisma),

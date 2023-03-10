@@ -35,6 +35,7 @@ interface InputProps {
   defaultValue?: string;
   className?: string;
   validationSchema?: object;
+  onKeyUp?: (e: any) => void;
 }
 
 const Input = ({ ...props }: InputProps) => {
@@ -53,6 +54,7 @@ const Input = ({ ...props }: InputProps) => {
     defaultValue,
     className,
     validationSchema,
+    onKeyUp,
   } = props;
 
   return (
@@ -72,6 +74,7 @@ const Input = ({ ...props }: InputProps) => {
           disabled={disabled}
           placeholder={placeholder}
           defaultValue={defaultValue}
+          onKeyUp={onKeyUp}
           {...register(name, validationSchema)}
           className={clsx(
             className,

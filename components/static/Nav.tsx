@@ -53,7 +53,7 @@ const Nav: React.FC<Props> = ({ menu }) => {
             Projects
           </Button>
         ) : (
-          <Button sr="Signup or Login" href="/auth">
+          <Button sr="Signup or Login" href="/signup">
             Get started
           </Button>
         )}
