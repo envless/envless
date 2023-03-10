@@ -18,9 +18,14 @@ interface PullRequestType {
 interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  onSuccessCreation: (pullRequest: PullRequest) => void;
 }
 
-const CreatePullRequestModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
+const CreatePullRequestModal = ({
+  isOpen,
+  setIsOpen,
+  onSuccessCreation,
+}: BranchModalProps) => {
   const defaultBranches = [
     { id: 1, name: "main", isSelected: true },
     { id: 2, name: "staging", isSelected: false },
@@ -53,6 +58,8 @@ const CreatePullRequestModal = ({ isOpen, setIsOpen }: BranchModalProps) => {
       });
       setIsOpen(false);
       reset();
+
+      onSuccessCreation(data);
     },
   });
 

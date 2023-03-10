@@ -157,7 +157,15 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
 
   return (
     <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
-      <CreatePullRequestModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <CreatePullRequestModal
+        onSuccessCreation={(pullRequest) => {
+          router.push(
+            `/projects/${pullRequest.projectId}/pulls/${pullRequest.id}`,
+          );
+        }}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">

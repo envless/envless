@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
+import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
@@ -36,6 +37,7 @@ interface Props {
 
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPrModalOpen, setIsPrModalOpen] = useState(false);
   const [protectedBranches, setProtectedBranches] = useState<any>([]);
   const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
@@ -146,7 +148,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       id: "actions",
       header: "Action",
       cell: () => (
-        <Button variant="primary-outline" size="sm" className="float-right">
+        <Button
+          onClick={() => setIsPrModalOpen(true)}
+          variant="primary-outline"
+          size="sm"
+          className="float-right"
+        >
           Open pull request
         </Button>
       ),
@@ -243,6 +250,16 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+      />
+
+      <CreatePullRequestModal
+        onSuccessCreation={(pullRequest) => {
+          router.push(
+            `/projects/${pullRequest.projectId}/pulls/${pullRequest.id}`,
+          );
+        }}
+        isOpen={isPrModalOpen}
+        setIsOpen={setIsPrModalOpen}
       />
 
       <div className="w-full">
