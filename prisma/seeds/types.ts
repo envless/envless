@@ -7,6 +7,7 @@ export type UserType = {
 export type ProjectType = {
   id?: string;
   name: string;
+  slug: string;
 };
 
 export type ProjectInviteType = {

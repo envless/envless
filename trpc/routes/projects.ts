@@ -1,5 +1,4 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { Project } from "@prisma/client";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -8,17 +7,27 @@ export const projects = createRouter({
     // return ctx.prisma.projects.findMany();
     return [];
   }),
-
   getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
     const { id } = input;
 
     return { id };
   }),
-
+  checkSlugAvailability: withAuth.input(z.object({slug: z.string()})).query(async ({ctx, input}) => {
+      const { slug } = input;
+      const exists = await ctx.prisma.project.findFirst({
+        where: {
+          slug,
+        },
+      });
+      if (exists) {
+        return false
+      }
+      return true;
+  }),
   create: withAuth
     .input(
       z.object({
-        project: z.object({ name: z.string() }),
+        project: z.object({ name: z.string(), slug: z.string() }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -29,6 +38,7 @@ export const projects = createRouter({
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
+          slug: project.slug,
           access: {
             create: {
               userId: user.id,
