@@ -79,7 +79,6 @@ const CreateProjectModal = () => {
   }, [watchSlug, setValue, clearErrors]);
 
   useEffect(() => {
-    // Check for slug availability after 500 milliseconds of typing
     const timeoutId = setTimeout(async () => {
       if (kebabSlug) {
         const isSlugAvailable = await projects.checkSlugAvailability.fetch({
