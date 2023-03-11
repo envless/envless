@@ -43,9 +43,10 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
+  const projectId = router.query.id as string;
   const branchQuery = trpc.branches.getAll.useQuery(
     {
-      projectId: router.query.id as string,
+      projectId,
     },
     {
       refetchOnWindowFocus: false,
@@ -289,6 +290,17 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
             hasFilters={false}
             columns={protectedBranchesColumns}
             data={protectedBranches}
+            emptyStateProps={{
+              title: "No protected branches yet.",
+              icon: GitBranchPlus,
+              description: "You can start protecting your branches",
+              actionText: "from project settings page.",
+              onActionClick: () => {
+                router.push(
+                  `/project/${projectId}/settings/protected-branches`,
+                );
+              },
+            }}
           />
         </div>
 
@@ -305,30 +317,18 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          {allOtherBranches.length > 0 ? (
-            <Table
-              visibleColumns={branchesColumnVisibility}
-              columns={branchesColumns}
-              data={allOtherBranches || []}
-              filterOptions={filterOptions}
-            />
-          ) : (
-            <div className="mx-auto mt-10 w-full max-w-screen-xl border-2 border-darker px-5 py-8 transition duration-300 lg:py-12 xl:px-16">
-              <div className="text-center">
-                <GitBranchPlus className="mx-auto h-8 w-8" />
-                <h3 className="mt-2 text-xl">No other branches yet.</h3>
-                <p className="mx-auto mt-1 max-w-md text-sm text-light">
-                  You can get started by{" "}
-                  <span
-                    onClick={() => setIsOpen(true)}
-                    className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
-                  >
-                    creating a new branch.
-                  </span>
-                </p>
-              </div>
-            </div>
-          )}
+          <Table
+            visibleColumns={branchesColumnVisibility}
+            columns={branchesColumns}
+            data={allOtherBranches || []}
+            filterOptions={filterOptions}
+            emptyStateProps={{
+              title: "No branches yet.",
+              icon: GitBranchPlus,
+              actionText: "creating a new branch.",
+              onActionClick: () => setIsOpen(true),
+            }}
+          />
         </div>
       </div>
     </ProjectLayout>

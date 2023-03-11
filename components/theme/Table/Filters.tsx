@@ -133,7 +133,7 @@ export default function Filters<T extends RowData>({
           Filters
         </h2>
 
-        <div className="border-b border-dark pb-4">
+        <div className="pb-4">
           <div className="mx-auto flex max-w-7xl px-4 sm:px-6 lg:px-8">
             {Object.keys(filterOptions ?? []).map((key) => {
               const options = filterOptions && filterOptions[key];
