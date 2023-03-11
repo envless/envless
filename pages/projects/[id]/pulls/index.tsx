@@ -190,6 +190,12 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
             author: true,
             createdAt: false,
           }}
+          emptyStateProps={{
+            title: "No pull requests yet.",
+            icon: GitPullRequest,
+            actionText: "creating a pull request",
+            onActionClick: () => setIsOpen(true),
+          }}
         />
       </div>
     </ProjectLayout>
