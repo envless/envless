@@ -19,13 +19,14 @@ const CreateProjectModal = () => {
     register,
     handleSubmit,
     formState: { errors },
+    clearErrors,
     setValue,
     watch,
   } = useForm();
   const [loading, setLoading] = useState(false);
   const [kebabSlug, setKebabSlug] = useState("");
-  const name = watch("name");
-  const slug = watch("slug");
+  const watchName = watch("name");
+  const watchSlug = watch("slug");
 
   const { projects } = trpc.useContext();
 
@@ -60,30 +61,34 @@ const CreateProjectModal = () => {
     reset();
   };
 
-  // Rewrites the slug field to hold a kebab case version of the name field whenever the name field changes.
   useEffect(() => {
-    const kebabName = kebabCase(name);
+    if (!watchName) {
+      setValue("slug", "");
+      return;
+    }
+    const kebabName = kebabCase(watchName);
     setKebabSlug(kebabName);
     setValue("slug", kebabName);
-  }, [name, setValue]);
+  }, [watchName, setValue]);
 
-  // Rewrites the slug field to hold a kebab case version of itself whenever the slug field changes.
   useEffect(() => {
-    const kebabSlug = kebabCase(slug);
+    if (!watchSlug) clearErrors(["slug"]);
+    const kebabSlug = kebabCase(watchSlug);
+
     setKebabSlug(kebabSlug);
-  }, [slug]);
+  }, [watchSlug, setValue, clearErrors]);
 
   useEffect(() => {
     // Check for slug availability after 500 milliseconds of typing
     const timeoutId = setTimeout(async () => {
-      if (kebabSlug !== "") {
-        const isAvailable = await projects.checkSlugAvailability.fetch({
+      if (kebabSlug) {
+        const isSlugAvailable = await projects.checkSlugAvailability.fetch({
           slug: kebabSlug,
         });
-        if (!isAvailable) {
+        if (!isSlugAvailable) {
           setError("slug", { message: "This slug is not available" });
         } else {
-          setError("slug", {});
+          clearErrors(["slug"]);
         }
       }
     }, 500);
@@ -119,7 +124,6 @@ const CreateProjectModal = () => {
           name="slug"
           label="Slug"
           placeholder="Untitled"
-          defaultValue={""}
           required={true}
           full={true}
           register={register}

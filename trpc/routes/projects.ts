@@ -16,15 +16,12 @@ export const projects = createRouter({
     .input(z.object({ slug: z.string() }))
     .query(async ({ ctx, input }) => {
       const { slug } = input;
-      const exists = await ctx.prisma.project.findFirst({
+      const existingProject = await ctx.prisma.project.findUnique({
         where: {
           slug,
         },
       });
-      if (exists) {
-        return false;
-      }
-      return true;
+      return existingProject ? false : true;
     }),
   create: withAuth
     .input(
