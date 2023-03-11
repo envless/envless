@@ -33,6 +33,7 @@ model Audit {
 model Project {
   id        String    @id @default(cuid())
   name      String
+  slug      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   settings  Json      @default("{}")
@@ -42,6 +43,9 @@ model Project {
   invites   ProjectInvite[]
   pullRequests PullRequest[]
   privateKeys PublicKey[]
+
+  @@index([slug])
+  @@unique([slug])
 }
 
 model PublicKey {

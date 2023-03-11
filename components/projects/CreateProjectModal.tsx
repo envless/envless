@@ -1,12 +1,14 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
+import { kebabCase } from "lodash";
 import { ArrowRight, Plus } from "lucide-react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
 
 interface Project {
   name: string;
+  slug: string;
 }
 
 const CreateProjectModal = () => {
@@ -17,8 +19,16 @@ const CreateProjectModal = () => {
     register,
     handleSubmit,
     formState: { errors },
+    clearErrors,
+    setValue,
+    watch,
   } = useForm();
   const [loading, setLoading] = useState(false);
+  const [kebabSlug, setKebabSlug] = useState("");
+  const watchName = watch("name");
+  const watchSlug = watch("slug");
+
+  const { projects } = trpc.useContext();
 
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
@@ -39,17 +49,51 @@ const CreateProjectModal = () => {
   });
 
   const createNewProject: SubmitHandler<Project> = async (data) => {
-    const { name } = data;
+    const { name, slug } = data;
     setLoading(true);
 
-    if (!name) {
+    if (!name || !slug) {
       setLoading(false);
       return;
     }
 
-    projectMutation.mutate({ project: { name: name } });
+    projectMutation.mutate({ project: { name, slug } });
     reset();
   };
+
+  useEffect(() => {
+    if (!watchName) {
+      setValue("slug", "");
+      return;
+    }
+    const kebabName = kebabCase(watchName);
+    setKebabSlug(kebabName);
+    setValue("slug", kebabName);
+  }, [watchName, setValue]);
+
+  useEffect(() => {
+    if (!watchSlug) clearErrors(["slug"]);
+    const kebabSlug = kebabCase(watchSlug);
+
+    setKebabSlug(kebabSlug);
+  }, [watchSlug, setValue, clearErrors]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (kebabSlug) {
+        const isSlugAvailable = await projects.checkSlugAvailability.fetch({
+          slug: kebabSlug,
+        });
+        if (!isSlugAvailable) {
+          setError("slug", { message: "This slug is not available" });
+        } else {
+          clearErrors(["slug"]);
+        }
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kebabSlug, setError]);
 
   return (
     <Modal
@@ -73,6 +117,18 @@ const CreateProjectModal = () => {
           errors={errors}
           validationSchema={{
             required: "Project name is required",
+          }}
+        />
+        <Input
+          name="slug"
+          label="Slug"
+          placeholder="Untitled"
+          required={true}
+          full={true}
+          register={register}
+          errors={errors}
+          validationSchema={{
+            required: "Project slug is required",
           }}
         />
 
