@@ -12,7 +12,9 @@ export const projects = createRouter({
 
     return { id };
   }),
-  checkSlugAvailability: withAuth.input(z.object({slug: z.string()})).query(async ({ctx, input}) => {
+  checkSlugAvailability: withAuth
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ ctx, input }) => {
       const { slug } = input;
       const exists = await ctx.prisma.project.findFirst({
         where: {
@@ -20,10 +22,10 @@ export const projects = createRouter({
         },
       });
       if (exists) {
-        return false
+        return false;
       }
       return true;
-  }),
+    }),
   create: withAuth
     .input(
       z.object({

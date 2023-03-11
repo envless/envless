@@ -1,8 +1,8 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
-import { ProjectType } from "./types";
 import { kebabCase } from "lodash";
+import { ProjectType } from "./types";
 
 const prisma = new PrismaClient();
 
@@ -17,7 +17,7 @@ const seedProjects = async (count: number = 10) => {
 
     projects.push({
       name,
-      slug
+      slug,
     });
   }
 

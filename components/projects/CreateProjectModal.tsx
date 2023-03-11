@@ -74,7 +74,7 @@ const CreateProjectModal = () => {
   }, [slug]);
 
   useEffect(() => {
-   // Check for slug availability after 500 milliseconds of typing
+    // Check for slug availability after 500 milliseconds of typing
     const timeoutId = setTimeout(async () => {
       if (kebabSlug !== "") {
         const isAvailable = await projects.checkSlugAvailability.fetch({
@@ -88,7 +88,7 @@ const CreateProjectModal = () => {
       }
     }, 500);
     return () => clearTimeout(timeoutId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kebabSlug, setError]);
 
   return (
