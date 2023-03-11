@@ -43,9 +43,10 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
+  const projectId = router.query.id as string;
   const branchQuery = trpc.branches.getAll.useQuery(
     {
-      projectId: router.query.id as string,
+      projectId,
     },
     {
       refetchOnWindowFocus: false,
@@ -296,7 +297,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               actionText: "from project settings page.",
               onActionClick: () => {
                 router.push(
-                  `/project/${router.query.id}/settings/protected-branches`,
+                  `/project/${projectId}/settings/protected-branches`,
                 );
               },
             }}
