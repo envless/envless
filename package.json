@@ -12,7 +12,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:reset": "npx prisma migrate reset",
     "db:studio": "npx prisma studio",
-    "db:seed": " ts-node -r tsconfig-paths/register prisma/seed.ts",
+    "db:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
     "format": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "test": "jest --watch",
     "e2e": "cypress open",
