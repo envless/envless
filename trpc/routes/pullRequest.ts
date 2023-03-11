@@ -1,3 +1,4 @@
+import { getNextPrId } from "@/models/pullRequest";
 import { createRouter, withAuth } from "@/trpc/router";
 import { z } from "zod";
 
@@ -31,10 +32,12 @@ export const pullRequest = createRouter({
       const projectId = pullRequest.projectId as string;
       const userId = user.id as string;
 
+      const prId = await getNextPrId(projectId);
+
       const pr = await prisma.pullRequest.create({
         data: {
           title: pullRequest.title,
-          prId: "123",
+          prId,
           status: "open",
           projectId: projectId,
           createdById: userId,

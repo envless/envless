@@ -1,3 +1,4 @@
+import { getNextPrId } from "@/models/pullRequest";
 import { faker } from "@faker-js/faker";
 import { PrismaClient, PullRequest } from "@prisma/client";
 import colors from "colors";
@@ -24,7 +25,7 @@ const seedPullRequests = async () => {
   for (let j = 0; j < projects.length; j++) {
     pullRequests.push({
       title: `${faker.lorem.sentence(10)}`,
-      prId: `#${j + 1}`,
+      prId: await getNextPrId(projects[j].id),
       status: sample([
         "open",
         "closed",

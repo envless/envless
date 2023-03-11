@@ -45,7 +45,7 @@ export type BranchType = {
 
 export type PullRequestType = {
   id?: string;
-  prId: string;
+  prId: number;
   title: string;
   status: PullRequestStatusType;
   createdById: string;
