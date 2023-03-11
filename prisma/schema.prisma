@@ -125,7 +125,7 @@ enum BranchStatus {
 model PullRequest {
   id String @id @default(cuid())
   title String
-  prId String
+  prId Int
   status PullRequestStatus
   projectId String
   createdById String
@@ -146,6 +146,7 @@ model PullRequest {
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
+  @@index([createdAt])
 
   @@unique([prId, projectId])
   @@index([projectId, status]) 

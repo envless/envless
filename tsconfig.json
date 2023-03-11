@@ -47,8 +47,9 @@
   "types": ["node", "jest", "@testing-library/jest-dom"],
   "exclude": ["node_modules", "cypress.config.ts"],
   "ts-node": {
+    "require": ["tsconfig-paths/register"],
     "compilerOptions": {
-      "module": "CommonJS"
+      "module": "commonjs"
     }
   }
 }
