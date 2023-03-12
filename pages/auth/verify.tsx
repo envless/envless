@@ -10,6 +10,7 @@ import log from "@/lib/log";
 
 export default function VerifyAuth({ sessionId }) {
   const router = useRouter();
+  const [status, setStatus] = useState("verify");
 
   const verifyMutation = trpc.auth.verify.useMutation({
     onSuccess: (res: any) => {
