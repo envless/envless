@@ -17,3 +17,14 @@ export const getNextPrId = async (projectId: string) => {
     ? pullRequestWithLatestPrId.prId + 1
     : 1;
 };
+
+export const getOne = async (id: string) => {
+  return await prisma.pullRequest.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      createdBy: true,
+    },
+  });
+};

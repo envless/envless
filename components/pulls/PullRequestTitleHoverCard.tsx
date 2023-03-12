@@ -5,10 +5,18 @@ import { ArrowLeft, GitPullRequest } from "lucide-react";
 
 interface PullRequestHoverCardProps {
   triggerComponent: ReactNode;
+  projectId: string;
+  projectName: string;
+  pullRequestTitle: string;
+  pullRequestStatus: string;
 }
 
 export default function PullRequestTitleHoverCard({
   triggerComponent,
+  projectName,
+  projectId,
+  pullRequestTitle,
+  pullRequestStatus,
 }: PullRequestHoverCardProps) {
   return (
     <HoverCard.Root openDelay={200} closeDelay={200}>
@@ -21,8 +29,8 @@ export default function PullRequestTitleHoverCard({
         >
           <div className="flex w-full flex-col gap-[10px] px-3 py-4">
             <div className="text-light">
-              <Link href={"#"} className="underline">
-                envless/envless
+              <Link href={`/projects/${projectId}`} className="underline">
+                {projectName}
               </Link>{" "}
               on Feb 22
             </div>
@@ -33,17 +41,14 @@ export default function PullRequestTitleHoverCard({
               </div>
 
               <div className="flex flex-col">
-                <p className="text-md font-bold">
-                  feat: additional security - ask users to provide OTP for one
-                  last time before they disable two factor auth{" "}
-                </p>
+                <p className="text-md font-bold">{pullRequestTitle} </p>
                 <div className="mt-2 inline-flex items-center gap-2">
                   <span className="max-w-[6rem] truncate rounded bg-dark px-1 py-0.5 text-light">
                     envless:main
                   </span>
                   <ArrowLeft className="h-4 w-4 shrink-0 text-lighter" />
                   <span className="max-w-[6rem] truncate rounded bg-dark px-1 py-0.5 text-light">
-                    samyogdhital:proj...
+                    some-feature-name
                   </span>
                 </div>
               </div>

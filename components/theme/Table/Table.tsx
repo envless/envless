@@ -76,7 +76,7 @@ export function Table<T extends object>({
 
   return (
     <div className="inline-block min-w-full py-4 align-middle">
-      <div className="overflow-hidden shadow ring-1 ring-darker ring-opacity-5 md:rounded">
+      <div className="shadow ring-1 ring-darker ring-opacity-5 md:rounded">
         {hasFilters && (
           <div className="min-w-full rounded-t bg-darker pt-3">
             <Filters

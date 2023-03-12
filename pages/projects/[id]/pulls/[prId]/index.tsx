@@ -1,5 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
+import { getOne as getSinglePr } from "@/models/pullRequest";
 import { getServerSideSession } from "@/utils/session";
 import { GitPullRequestClosed } from "lucide-react";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
@@ -7,7 +8,11 @@ import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
-export default function PullRequestDetailPage({ projects, currentProject }) {
+export default function PullRequestDetailPage({
+  projects,
+  currentProject,
+  pullRequest,
+}) {
   const oldCode = `
   # SMTP
   EMAIL_SERVER=smtp://username:password@smtp.example.com:587
@@ -25,10 +30,10 @@ EMAIL_FROM=email@example.com
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-10">
             <DetailedPrTitle
-              author="John"
-              title="Some PR Title"
-              prId={20}
-              status="open"
+              author={pullRequest.createdBy.name}
+              title={pullRequest.title}
+              prId={pullRequest.prId}
+              status={pullRequest.status}
               base="main"
               current="feat/something"
             />
@@ -66,7 +71,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { id, prId } = context.params;
 
   if (!user) {
     return {
@@ -103,6 +108,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
+  const pullRequest = await getSinglePr(prId);
+
   const projects = access.map((a) => a.project);
   const currentProject = projects.find((p) => p.id === id);
 
@@ -119,6 +126,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
+      pullRequest: JSON.parse(JSON.stringify(pullRequest)),
     },
   };
 }

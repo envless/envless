@@ -49,7 +49,7 @@ export default function FilterMenu<T extends RowData>({
                     onClick={() => {
                       if (filterType === "filter") {
                         table.setColumnFilters((filters) => [
-                          ...filters,
+                          ...filters.filter((filter) => filter.value !== option.value),
                           { id: buttonText, value: option.value },
                         ]);
                       } else if (filterType === "sort") {

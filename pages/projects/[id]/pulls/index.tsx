@@ -14,6 +14,7 @@ import {
   GitPullRequest,
   GitPullRequestClosed,
 } from "lucide-react";
+import DateTimeAgo from "@/components/DateTimeAgo";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import PullRequestTitleHoverCard from "@/components/pulls/PullRequestTitleHoverCard";
 import { Badge, Button, Label } from "@/components/theme";
@@ -44,28 +45,6 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-  const pullRequests = [
-    {
-      id: 1,
-      title: "Add NODE_ENV, REDIS_URL and others",
-      subtitle: "#60 opened 2 minutes ago by Lindsay Walton",
-      status: "Open",
-    },
-
-    {
-      id: 2,
-      title: "Remove GITHUB_ACCESS_TOKEN",
-      subtitle: "#59 closed 1 day ago by John Doe",
-      status: "Closed",
-    },
-
-    {
-      id: 3,
-      title: "Rotate ENCRYPTON_KEY",
-      subtitle: "#58 merged 2 days ago by Jane Doe",
-      status: "Merged",
-    },
-  ];
 
   const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
     {
@@ -94,6 +73,10 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
           </div>
           <div className="ml-4 truncate">
             <PullRequestTitleHoverCard
+              projectId={currentProject.id}
+              projectName={currentProject.name}
+              pullRequestStatus={info.row.original.status as string}
+              pullRequestTitle={info.row.original.title}
               triggerComponent={
                 <Link
                   href={`/projects/${projectId}/pulls/${info.row.original.id}`}
@@ -104,7 +87,9 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
               }
             />
             <div className="text-light">
-              #205 opened 3 hours ago by chetannn
+              #{info.row.original.prId} opened by{" "}
+              {info.row.original.createdBy.name}{" "}
+              <DateTimeAgo date={info.row.original.createdAt} />
             </div>
           </div>
         </div>
