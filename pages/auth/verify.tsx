@@ -20,7 +20,8 @@ export default function VerifyAuth({ sessionId }) {
       }
 
       log("Redirecting after success", res);
-      router.push("/projects");
+      // router.push("/projects");
+      router.push("/auth/encryption");
     },
 
     onError: (error) => {

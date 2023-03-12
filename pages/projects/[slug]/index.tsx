@@ -7,7 +7,7 @@ import { GitBranchPlus, TerminalSquare } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
-import { Button } from "@/components/theme";
+import { Banner, Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
 /**
@@ -39,21 +39,11 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
         setIsOpen={setIsOpen}
       />
 
-      <div className="w-full rounded bg-dark px-5 py-6">
-        <div className="flex flex-col md:flex-row md:space-x-1">
-          <TerminalSquare className="h-8 w-8 shrink-0 text-teal-300" />
-          <div className="mt-2 px-0 md:mt-0 md:px-4">
-            <h3 className="text-sm leading-relaxed text-white">
-              This project does not have a production branch
-            </h3>
-            <p className="mt-1 text-sm font-light text-gray-500">
-              Production branches are protected. You cannot update it directly
-              without making a pull request.You can unprotect production
-              branches by going to settings page.
-            </p>
-          </div>
-        </div>
-      </div>
+      <Banner
+        title="This project does not have a production branch"
+        message="Production branches are protected. You cannot update it directly without making a pull request.You can unprotect production branches by going to settings page."
+        icon={<TerminalSquare className="h-8 w-8 shrink-0 text-teal-300" />}
+      />
 
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
