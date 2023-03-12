@@ -18,10 +18,19 @@ export const getNextPrId = async (projectId: string) => {
     : 1;
 };
 
-export const getOne = async (id: string) => {
+export const getOne = async ({
+  prId,
+  projectId,
+}: {
+  projectId: string;
+  prId: number;
+}) => {
   return await prisma.pullRequest.findUnique({
     where: {
-      id,
+      prId_projectId: {
+        prId,
+        projectId,
+      },
     },
     include: {
       createdBy: true,
