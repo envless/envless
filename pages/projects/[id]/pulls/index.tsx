@@ -45,7 +45,6 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-
   const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
     {
       id: "title",
@@ -79,7 +78,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
               pullRequestTitle={info.row.original.title}
               triggerComponent={
                 <Link
-                  href={`/projects/${projectId}/pulls/${info.row.original.id}`}
+                  href={`/projects/${projectId}/pulls/${info.row.original.prId}`}
                   className="font-medium"
                 >
                   {info.row.original.title}
@@ -145,7 +144,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.projectId}/pulls/${pullRequest.id}`,
+            `/projects/${pullRequest.projectId}/pulls/${pullRequest.prId}`,
           );
         }}
         isOpen={isOpen}

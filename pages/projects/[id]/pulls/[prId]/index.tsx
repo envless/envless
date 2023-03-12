@@ -71,7 +71,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id, prId } = context.params;
+  const { id: projectId, prId } = context.params;
 
   if (!user) {
     return {
@@ -108,10 +108,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const pullRequest = await getSinglePr(prId);
+  const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.id === id);
+  const currentProject = projects.find((p) => p.id === projectId);
 
   if (!currentProject) {
     return {
