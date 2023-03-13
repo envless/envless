@@ -205,15 +205,10 @@
   resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.18.9.tgz"
   integrity sha512-9uJveS9eY9DJ0t64YbIBZICtJy8a5QrDEVdiLCG97fVLpDTpGX7t8mMSb6OWw6Lrnjqj4O8zwjELX3dhoMgiBg==
 
-"@babel/parser@^7.1.0", "@babel/parser@^7.14.7":
+"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.17.3", "@babel/parser@^7.17.8", "@babel/parser@^7.18.11", "@babel/parser@^7.20.13", "@babel/parser@^7.20.7":
   version "7.20.15"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.20.15.tgz#eec9f36d8eaf0948bb88c87a46784b5ee9fd0c89"
   integrity sha512-DI4a1oZuf8wC+oAJA9RW6ga3Zbe8RZFt7kD9i4qAspz3I/yHet1VvC3DiSy/fsUvv5pvJuNPh0LPOdCcqinDPg==
-
-"@babel/parser@^7.17.3", "@babel/parser@^7.17.8", "@babel/parser@^7.18.11", "@babel/parser@^7.20.13", "@babel/parser@^7.20.7":
-  version "7.20.13"
-  resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.20.13.tgz"
-  integrity sha512-gFDLKMfpiXCsjt4za2JA9oTMn70CeseCehb11kRZgvd7+F67Hih3OHOK24cRrWECJ/ljfPGac6ygXAs/C8kIvw==
 
 "@babel/plugin-syntax-async-generators@^7.8.4":
   version "7.8.4"
@@ -2281,14 +2276,7 @@
   resolved "https://registry.npmjs.org/@types/yargs-parser/-/yargs-parser-21.0.0.tgz"
   integrity sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA==
 
-"@types/yargs@^17.0.10":
-  version "17.0.20"
-  resolved "https://registry.npmjs.org/@types/yargs/-/yargs-17.0.20.tgz"
-  integrity sha512-eknWrTHofQuPk2iuqDm1waA7V6xPlbgBoaaXEgYkClhLOnB0TtbW+srJaOToAgawPxPlHQzwypFA2bhZaUGP5A==
-  dependencies:
-    "@types/yargs-parser" "*"
-
-"@types/yargs@^17.0.8":
+"@types/yargs@^17.0.10", "@types/yargs@^17.0.8":
   version "17.0.22"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.22.tgz#7dd37697691b5f17d020f3c63e7a45971ff71e9a"
   integrity sha512-pet5WJ9U8yPVRhkwuEIp5ktAeAqRZOq4UdAyWLWzxbtpyXnzbtLdKiXAjJzi/KLmPGS9wk86lUFWZFN6sISo4g==
@@ -6797,7 +6785,7 @@ lz-string@^1.4.4:
   resolved "https://registry.yarnpkg.com/lz-string/-/lz-string-1.4.4.tgz#c0d8eaf36059f705796e1e344811cf4c498d3a26"
   integrity sha512-0ckx7ZHRPqb0oUm8zNr+90mtf9DQB60H1wMCjBtfi62Kl3a7JbHob6gA2bC+xRvZoOL+1hzUK8jeuEIQE8svEQ==
 
-mailing-core@^0.9.10, mailing-core@^0.9.12:
+mailing-core@^0.9.12:
   version "0.9.12"
   resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.12.tgz#af5706282d44a7aec183d568d9e559e256ff13d2"
   integrity sha512-x8KZT6F6j9EnlL+wM4dEGzipH5RVpHkPrb4XfDPSdzIgevMoHD+s0cgs4DVfHHbBkPfOVNRK1BWNaLDWV8CqHA==
@@ -6811,10 +6799,10 @@ mailing-core@^0.9.10, mailing-core@^0.9.12:
     open "^8.4.0"
     posthog-node "^2.0.2"
 
-mailing@^0.9.10:
-  version "0.9.10"
-  resolved "https://registry.yarnpkg.com/mailing/-/mailing-0.9.10.tgz#8e8df68c04f9ffea61e540f04456fb61c8e3e4df"
-  integrity sha512-hLG76FSs8NLmLHOsnhEE1WpN6jVAgks/bJTeQafrp5jW2jZsUqUN1Vot06VVNRQHzg/MC/PC+g5G8PPOB/AE7A==
+mailing@^0.9.12:
+  version "0.9.12"
+  resolved "https://registry.yarnpkg.com/mailing/-/mailing-0.9.12.tgz#df888f7374c49cb4356d417927c4288a33001829"
+  integrity sha512-zU7d9WMRipZWrULuku8Lw9s+atQkihUDiQTfIt4QGPcAH0mfQyuBLoa+D8R7xhPszAaQJ3LrWrS2s7a6K3T4pw==
   dependencies:
     "@babel/parser" "^7.18.11"
     "@prisma/client" "^4.4.0"
@@ -6845,7 +6833,7 @@ mailing@^0.9.10:
     html-minifier-terser "^7.0.0"
     iron-session "^6.2.1"
     lodash "^4.17.21"
-    mailing-core "^0.9.10"
+    mailing-core "^0.9.12"
     mjml "^4.12.0"
     mjml-react "^2.0.7"
     node-fetch "^2.6.7"
