@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import { buildSendMail } from "mailing-core";
 import nodemailer from "nodemailer";
 
