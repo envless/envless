@@ -1,10 +1,11 @@
+import { env } from "@/env/server.mjs";
 import { Client } from "@notionhq/client";
 
 /**
  * The main Notion client.
  */
 const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
+  auth: env.NOTION_TOKEN,
 });
 
 /**

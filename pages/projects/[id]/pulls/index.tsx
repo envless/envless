@@ -45,7 +45,6 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-
   const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
     {
       id: "title",

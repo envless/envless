@@ -27,7 +27,8 @@
       "@/hooks/*": ["hooks/*"],
       "@/layouts/*": ["layouts/*"],
       "@/models/*": ["models/*"],
-      "@/components/*": ["components/*"]
+      "@/components/*": ["components/*"],
+      "@/env/*": ["env/*"]
     },
     "strict": false
   },
@@ -36,6 +37,7 @@
     "node_modules/cypress",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.mjs",
     "emails/index.ts",
     "pages/auth/index.js",
     "components/blog/ContentBlock.js",
