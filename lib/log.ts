@@ -1,9 +1,7 @@
-import { env } from "@/env/server.mjs";
-
-const dev = env.NODE_ENV !== "production";
+import { env } from "@/env/index.mjs";
 
 const log = (...args) => {
-  if (dev && env.DEV_LOG) console.debug(args);
+  if (env.NEXT_PUBLIC_DEV_LOG) console.debug(args);
 };
 
 export default log;
