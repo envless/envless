@@ -1,7 +1,6 @@
+import { env } from "@/env/server.mjs";
 import { authenticator } from "otplib";
 import { decrypt } from "@/lib/encryption";
-
-const ENCRYPTION_KEY = String(process.env.ENCRYPTION_KEY);
 
 interface VerifyType {
   code: string;
@@ -17,7 +16,7 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
 
   const decrypted = await decrypt({
     ...encrypted,
-    key: ENCRYPTION_KEY,
+    key: env.ENCRYPTION_KEY,
   });
 
   const isValid = await authenticator.verify({

@@ -1,4 +1,5 @@
 import MagicLink from "@/emails/MagicLink";
+import { env } from "@/env/server.mjs";
 import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import sendMail from "emails";
@@ -7,8 +8,6 @@ import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
 import prisma from "@/lib/prisma";
-
-const development = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -37,13 +36,13 @@ export const authOptions: NextAuthOptions = {
     }),
 
     GithubProvider({
-      clientId: String(process.env.GITHUB_CLIENT_ID) || "",
-      clientSecret: String(process.env.GITHUB_CLIENT_SECRET) || "",
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
 
     GitlabProvider({
-      clientId: String(process.env.GITLAB_CLIENT_ID) || "",
-      clientSecret: String(process.env.GITLAB_CLIENT_SECRET) || "",
+      clientId: env.GITLAB_CLIENT_ID,
+      clientSecret: env.GITLAB_CLIENT_SECRET,
     }),
   ],
 
@@ -110,7 +109,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
-  debug: process.env.NODE_ENV === "development",
+  debug: env.NODE_ENV === "development",
 };
 
 export default NextAuth(authOptions);
