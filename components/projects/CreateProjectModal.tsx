@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { kebabCase } from "lodash";
 import { ArrowRight, Plus } from "lucide-react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
 
 interface Project {
@@ -110,7 +110,6 @@ const CreateProjectModal = () => {
           name="name"
           label="Project name"
           placeholder="Untitled"
-          defaultValue="Untitled"
           required={true}
           full={true}
           register={register}
