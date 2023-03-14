@@ -1,8 +1,8 @@
+import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import Audit from "@/lib/audit";
-import Project from "@/models/projects";
 
 export const branches = createRouter({
   getAll: withAuth

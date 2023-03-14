@@ -13,7 +13,12 @@ export const projects = createRouter({
     return { id };
   }),
   checkSlugOrNameAvailability: withAuth
-    .input(z.object({ slug: z.string().trim().optional(), name: string().trim().optional() }))
+    .input(
+      z.object({
+        slug: z.string().trim().optional(),
+        name: string().trim().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const { slug, name } = input;
 

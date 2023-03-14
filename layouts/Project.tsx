@@ -1,8 +1,8 @@
+import type { Project } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
 import { Container, Nav } from "@/components/theme";
-import type { Project } from "@prisma/client";
 
 interface Props {
   tab?: string;

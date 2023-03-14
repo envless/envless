@@ -1,5 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
+import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
 import { getServerSideSession } from "@/utils/session";
 import { GitPullRequestClosed } from "lucide-react";
@@ -7,7 +8,6 @@ import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
-import Project from "@/models/projects";
 
 export default function PullRequestDetailPage({
   projects,

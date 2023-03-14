@@ -46,8 +46,8 @@ export const pullRequest = createRouter({
           createdById: userId,
         },
         include: {
-          project: true
-        }
+          project: true,
+        },
       });
 
       return pr;

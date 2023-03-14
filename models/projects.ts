@@ -1,14 +1,14 @@
-import prisma from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
+import prisma from "@/lib/prisma";
 
 const findBySlug = async (slug: string) => {
   const project = await prisma.project.findFirst({
-    where: { 
-        slug
-    } ,
+    where: {
+      slug,
+    },
   });
 
-  if(!project) {
+  if (!project) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "The project does not exist",
@@ -18,9 +18,8 @@ const findBySlug = async (slug: string) => {
   return project;
 };
 
-
 const Project = {
-  findBySlug
+  findBySlug,
 };
 
 export default Project;
