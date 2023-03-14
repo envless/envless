@@ -1,6 +1,6 @@
 import React from "react";
 import InviteLink from "@/emails/InviteLink";
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
