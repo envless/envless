@@ -33,7 +33,7 @@ const CreateProjectModal = () => {
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
       const { slug } = data;
-      router.push(`/projects/${ slug }`);
+      router.push(`/projects/${slug}`);
     },
 
     onError: (error) => {
@@ -80,15 +80,21 @@ const CreateProjectModal = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
-      if (kebabSlug) {
-        const isSlugAvailable = await projects.checkSlugAvailability.fetch({
-          slug: kebabSlug,
-          name: watchName
-        });
-        if (!isSlugAvailable) {
+      if (kebabSlug || watchName) {
+        const { conflictField } =
+          await projects.checkSlugOrNameAvailability.fetch({
+            slug: kebabSlug,
+            name: watchName,
+          });
+
+        if (conflictField === "slug") {
           setError("slug", { message: "This slug is not available" });
-        } else {
+          clearErrors(["name"]);
+        } else if (conflictField === "name") {
+          setError("name", { message: "This name is not available" });
           clearErrors(["slug"]);
+        } else {
+          clearErrors(["slug", "name"]);
         }
       }
     }, 500);

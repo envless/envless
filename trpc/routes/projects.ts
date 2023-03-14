@@ -12,20 +12,30 @@ export const projects = createRouter({
 
     return { id };
   }),
-  checkSlugAvailability: withAuth
-    .input(z.object({ slug: z.string(), name: z.string() }))
+  checkSlugOrNameAvailability: withAuth
+    .input(
+      z.union([z.object({ slug: z.string() }), z.object({ name: z.string() })]),
+    )
     .query(async ({ ctx, input }) => {
-      const { slug, name } = input;
-      const existingProject = await ctx.prisma.project.findUnique({
-        where: {
-          name_slug: {
-            slug,
-            name
-          }
-        },
-      });
-      return existingProject ? false : true;
+      let where = {};
+      if ("slug" in input) {
+        where = {
+          slug: input.slug,
+        };
+      } else if ("name" in input) {
+        where = {
+          name: input.name,
+        };
+      }
+      const existingProject = await ctx.prisma.project.findFirst({ where });
+      if (existingProject) {
+        const conflictField = "slug" in input ? "slug" : "name";
+        return { conflictField };
+      } else {
+        return {};
+      }
     }),
+
   create: withAuth
     .input(
       z.object({
