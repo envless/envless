@@ -1,5 +1,6 @@
 import React from "react";
 import InviteLink from "@/emails/InviteLink";
+import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
@@ -102,7 +103,7 @@ export const members = createRouter({
             }
             subText="If you did not request this email you can safely ignore it."
             buttonText={`Join ${project?.name}`}
-            buttonLink={`${process.env.BASE_URL}/auth/invite/${invitationToken}`}
+            buttonLink={`${env.BASE_URL}/auth/invite/${invitationToken}`}
           />
         ),
       });

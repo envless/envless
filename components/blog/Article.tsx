@@ -4,8 +4,6 @@ import { RenderBlocks } from "@/components/blog/ContentBlock";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
 
-export const databaseId = process.env.NOTION_DATABASE_ID as string;
-
 type Props = {
   post: any;
   blocks: any;

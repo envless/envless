@@ -1,8 +1,7 @@
-const dev = process.env.NODE_ENV !== "production";
-const devLog = process.env.DEV_LOG === "true";
+import { env } from "@/env/index.mjs";
 
 const log = (...args) => {
-  if (dev && devLog) console.debug(args);
+  if (env.NEXT_PUBLIC_DEV_LOG) console.debug(args);
 };
 
 export default log;

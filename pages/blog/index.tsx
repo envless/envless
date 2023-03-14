@@ -1,11 +1,10 @@
+import { env } from "@/env/index.mjs";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
 import { getNotionData } from "@/lib/notion";
-
-export const databaseId = process.env.NOTION_DATABASE_ID as string;
 
 type Props = {
   posts: Array<PostProps>;
@@ -97,7 +96,7 @@ const Blog: React.FC<Props> = ({ posts }) => {
 };
 
 export const getStaticProps = async () => {
-  const database = await getNotionData(databaseId);
+  const database = await getNotionData(env.NOTION_DATABASE_ID);
   return {
     props: {
       posts: database,

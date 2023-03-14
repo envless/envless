@@ -1,6 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { env } from "@/env/index.mjs";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
@@ -239,7 +240,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       const secret = await authenticator.generateSecret(20);
       const encryptedSecret = await encrypt({
         plaintext: secret,
-        key: String(process.env.ENCRYPTION_KEY),
+        key: env.ENCRYPTION_KEY,
       });
 
       // @ts-ignore
@@ -275,7 +276,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
       const decrypted = await decrypt({
         ...encrypted,
-        key: String(process.env.ENCRYPTION_KEY),
+        key: env.ENCRYPTION_KEY,
       });
 
       const keyUri = authenticator.keyuri(

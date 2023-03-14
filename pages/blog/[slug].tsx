@@ -1,7 +1,8 @@
+import { env } from "@/env/index.mjs";
 import Article from "@/components/blog/Article";
 import { getBlocks, getNotionData, getPage } from "@/lib/notion";
 
-export const databaseId = process.env.NOTION_DATABASE_ID as string;
+export const databaseId = env.NOTION_DATABASE_ID;
 
 type Props = {
   post: any;
