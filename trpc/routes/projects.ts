@@ -1,5 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { z } from "zod";
+import { string, z } from "zod";
 import Audit from "@/lib/audit";
 
 export const projects = createRouter({
@@ -13,23 +13,23 @@ export const projects = createRouter({
     return { id };
   }),
   checkSlugOrNameAvailability: withAuth
-    .input(
-      z.union([z.object({ slug: z.string() }), z.object({ name: z.string() })]),
-    )
+    .input(z.object({ slug: z.string().trim().optional(), name: string().trim().optional() }))
     .query(async ({ ctx, input }) => {
-      let where = {};
-      if ("slug" in input) {
-        where = {
-          slug: input.slug,
-        };
-      } else if ("name" in input) {
-        where = {
-          name: input.name,
-        };
-      }
-      const existingProject = await ctx.prisma.project.findFirst({ where });
+      const { slug, name } = input;
+
+      const existingProject = await ctx.prisma.project.findFirst({
+        where: {
+          OR: [
+            {
+              name,
+            },
+            { slug },
+          ],
+        },
+      });
+
       if (existingProject) {
-        const conflictField = "slug" in input ? "slug" : "name";
+        const conflictField = existingProject.slug === slug ? "slug" : "name";
         return { conflictField };
       } else {
         return {};
@@ -39,7 +39,7 @@ export const projects = createRouter({
   create: withAuth
     .input(
       z.object({
-        project: z.object({ name: z.string(), slug: z.string() }),
+        project: z.object({ name: z.string().trim(), slug: z.string().trim() }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
