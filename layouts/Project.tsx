@@ -2,11 +2,12 @@ import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
 import { Container, Nav } from "@/components/theme";
+import type { Project } from "@prisma/client";
 
 interface Props {
   tab?: string;
-  projects: any;
-  currentProject: any;
+  projects: Project[];
+  currentProject: Project;
   children: React.ReactNode;
 }
 

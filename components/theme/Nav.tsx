@@ -109,7 +109,7 @@ const Nav = ({ ...props }) => {
                     {projectList.map((project) => (
                       <Link
                         className=""
-                        href={`/projects/${project.id}`}
+                        href={`/projects/${project.slug}`}
                         key={project.id}
                       >
                         <li

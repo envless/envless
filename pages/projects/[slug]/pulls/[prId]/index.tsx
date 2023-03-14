@@ -96,6 +96,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
           id: true,
           name: true,
+          slug: true,
           updatedAt: true,
         },
       },
