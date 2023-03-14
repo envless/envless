@@ -1,5 +1,5 @@
 import MagicLink from "@/emails/MagicLink";
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import sendMail from "emails";

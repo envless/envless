@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import { authenticator } from "otplib";
 import { decrypt } from "@/lib/encryption";
 

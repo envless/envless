@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 import seedAccesses from "./seeds/access";
