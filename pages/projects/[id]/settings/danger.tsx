@@ -1,15 +1,10 @@
 import { type GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
-import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
-import { trpc } from "@/utils/trpc";
 import { Project } from "@prisma/client";
-import { useForm } from "react-hook-form";
+import DeleteProjectModal from "@/components/projects/DeleteProjectModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
-import Tabs from "@/components/settings/Tabs";
-import { Button, Paragraph } from "@/components/theme";
-import { showToast } from "@/components/theme/showToast";
+import { Paragraph } from "@/components/theme";
 import prisma from "@/lib/prisma";
 
 /**
@@ -25,35 +20,7 @@ interface DangerPageProps {
 }
 
 export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
-  const router = useRouter();
-
   const props = { projects, currentProject };
-
-  const { mutate: projectDeleteMutation, isLoading } =
-    trpc.projects.delete.useMutation({
-      onSuccess: () => {
-        showToast({
-          type: "success",
-          title: "Project Deleted successfully",
-          subtitle: "",
-        });
-        router.push("/projects");
-      },
-      onError: (error) => {
-        showToast({
-          type: "error",
-          title: "Project Delete failed",
-          subtitle: error.message,
-        });
-      },
-    });
-
-  const submitForm = () => {
-    /** @todo: confirmation popup here **/
-    projectDeleteMutation({
-      project: currentProject,
-    });
-  };
 
   return (
     <ProjectLayout tab="settings" {...props}>
@@ -70,14 +37,7 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
             </Paragraph>
           </div>
           <div className="flex-2 ml-10">
-            <Button
-              type="button"
-              variant="danger-outline"
-              disabled={isLoading || false}
-              onClick={submitForm}
-            >
-              Delete this project
-            </Button>
+            <DeleteProjectModal project={currentProject} />
           </div>
         </div>
       </ProjectSettings>
