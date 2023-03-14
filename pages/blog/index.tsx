@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
 import Post from "@/components/blog/Post";

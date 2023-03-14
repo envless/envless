@@ -1,4 +1,4 @@
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import Article from "@/components/blog/Article";
 import { getBlocks, getNotionData, getPage } from "@/lib/notion";
 

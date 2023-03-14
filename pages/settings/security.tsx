@@ -1,7 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { env } from "@/env/server.mjs";
+import { env } from "@/env/index.mjs";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
