@@ -32,8 +32,8 @@ const CreateProjectModal = () => {
 
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
-      const { id } = data;
-      router.push(`/projects/${id}`);
+      const { slug } = data;
+      router.push(`/projects/${ slug }`);
     },
 
     onError: (error) => {
@@ -83,6 +83,7 @@ const CreateProjectModal = () => {
       if (kebabSlug) {
         const isSlugAvailable = await projects.checkSlugAvailability.fetch({
           slug: kebabSlug,
+          name: watchName
         });
         if (!isSlugAvailable) {
           setError("slug", { message: "This slug is not available" });
@@ -93,7 +94,7 @@ const CreateProjectModal = () => {
     }, 500);
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kebabSlug, setError]);
+  }, [kebabSlug, watchName, setError]);
 
   return (
     <Modal

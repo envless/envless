@@ -43,10 +43,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
-  const projectId = router.query.id as string;
+
+  const projectSlug = router.query.slug as string;
+
   const branchQuery = trpc.branches.getAll.useQuery(
     {
-      projectId,
+      projectId: currentProject.id,
     },
     {
       refetchOnWindowFocus: false,
@@ -215,7 +217,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       header: "Actions",
       cell: (info) => (
         <Link
-          href={`/projects/${info.row.original.projectId}/settings/protected-branches`}
+          href={`/projects/${info.row.original.project.slug}/settings/protected-branches`}
           className="float-right pr-4 hover:text-teal-400"
         >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
@@ -256,7 +258,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.projectId}/pulls/${pullRequest.id}`,
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.id}`,
           );
         }}
         isOpen={isPrModalOpen}
@@ -297,7 +299,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               actionText: "from project settings page.",
               onActionClick: () => {
                 router.push(
-                  `/project/${projectId}/settings/protected-branches`,
+                  `/project/${projectSlug}/settings/protected-branches`,
                 );
               },
             }}

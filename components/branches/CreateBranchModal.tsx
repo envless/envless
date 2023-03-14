@@ -91,9 +91,9 @@ const CreateBranchModal = ({
       return;
     }
 
-    const projectId = router.query.id as string;
+    const projectSlug = router.query.id as string;
 
-    branchMutation.mutate({ branch: { name: name, projectId } });
+    branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
 
   return (

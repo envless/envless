@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PullRequest } from "@prisma/client";
+import { Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
@@ -12,13 +12,12 @@ import { showToast } from "../theme/showToast";
 
 interface PullRequestType {
   title: string;
-  projectId: string;
 }
 
 interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  onSuccessCreation: (pullRequest: PullRequest) => void;
+  onSuccessCreation: (pullRequest: PullRequest & { project: Project }) => void;
 }
 
 const CreatePullRequestModal = ({
@@ -50,7 +49,7 @@ const CreatePullRequestModal = ({
   });
 
   const pullRequestMutation = trpc.pullRequest.create.useMutation({
-    onSuccess: (data: PullRequest) => {
+    onSuccess: (data) => {
       showToast({
         type: "success",
         title: "Pull Request successfully created",
@@ -70,9 +69,9 @@ const CreatePullRequestModal = ({
       return;
     }
 
-    const projectId = router.query.id as string;
+    const projectSlug = router.query.slug as string;
 
-    pullRequestMutation.mutate({ pullRequest: { title, projectId } });
+    pullRequestMutation.mutate({ pullRequest: { title, projectSlug } });
   };
 
   return (

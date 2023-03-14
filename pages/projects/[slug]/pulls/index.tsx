@@ -38,7 +38,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
   const router = useRouter();
   const pullRequestQuery = trpc.pullRequest.getAll.useQuery(
     {
-      projectId: router.query.id as string,
+      projectId: currentProject.id,
     },
     {
       refetchOnWindowFocus: false,
@@ -72,13 +72,13 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
           </div>
           <div className="ml-4 truncate">
             <PullRequestTitleHoverCard
-              projectId={currentProject.id}
+              projectSlug={currentProject.slug}
               projectName={currentProject.name}
               pullRequestStatus={info.row.original.status as string}
               pullRequestTitle={info.row.original.title}
               triggerComponent={
                 <Link
-                  href={`/projects/${projectId}/pulls/${info.row.original.prId}`}
+                  href={`/projects/${projectSlug}/pulls/${info.row.original.prId}`}
                   className="font-medium"
                 >
                   {info.row.original.title}
@@ -123,7 +123,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const projectId = router.query.id as string;
+  const projectSlug = router.query.slug as string;
 
   const filterOptions: FilterOptions = {
     status: [
@@ -144,7 +144,7 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.projectId}/pulls/${pullRequest.prId}`,
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.prId}`,
           );
         }}
         isOpen={isOpen}

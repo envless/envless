@@ -13,12 +13,15 @@ export const projects = createRouter({
     return { id };
   }),
   checkSlugAvailability: withAuth
-    .input(z.object({ slug: z.string() }))
+    .input(z.object({ slug: z.string(), name: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { slug } = input;
+      const { slug, name } = input;
       const existingProject = await ctx.prisma.project.findUnique({
         where: {
-          slug,
+          name_slug: {
+            slug,
+            name
+          }
         },
       });
       return existingProject ? false : true;

@@ -7,6 +7,7 @@ import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
 import prisma from "@/lib/prisma";
+import Project from "@/models/projects";
 
 export default function PullRequestDetailPage({
   projects,
@@ -71,7 +72,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id: projectId, prId } = context.params;
+  const { slug: projectSlug, prId } = context.params;
+  const project = await Project.findBySlug(projectSlug);
+  const projectId = project.id;
 
   if (!user) {
     return {
