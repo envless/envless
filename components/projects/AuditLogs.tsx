@@ -83,7 +83,7 @@ export default function AuditLogs({ logs, user }) {
     const projectLink = () => (
       <Link
         className="text-xs text-teal-300 hover:underline"
-        href={`/projects/${project.id}`}
+        href={`/projects/${project.slug}`}
       >
         {project.name}
       </Link>

@@ -6,7 +6,7 @@ export const getNextPrId = async (projectId: string) => {
       prId: true,
     },
     where: {
-      projectId: projectId,
+      projectId,
     },
     orderBy: {
       createdAt: "desc",

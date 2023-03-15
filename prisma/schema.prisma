@@ -44,8 +44,7 @@ model Project {
   pullRequests PullRequest[]
   privateKeys PublicKey[]
 
-  @@index([slug])
-  @@unique([slug])
+  @@unique([name, slug])
 }
 
 model PublicKey {

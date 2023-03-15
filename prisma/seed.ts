@@ -1,4 +1,3 @@
-import { env } from "@/env/index.mjs";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 import seedAccesses from "./seeds/access";
@@ -15,7 +14,7 @@ const prisma = new PrismaClient();
 
 colors.enable();
 
-if (env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   console.log("❌ You cannot run this command on production".red);
   process.exit(0);
 }

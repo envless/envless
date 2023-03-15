@@ -43,10 +43,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
-  const projectId = router.query.id as string;
+
+  const projectSlug = router.query.slug as string;
+
   const branchQuery = trpc.branches.getAll.useQuery(
     {
-      projectId,
+      projectId: currentProject.id,
     },
     {
       refetchOnWindowFocus: false,
@@ -215,7 +217,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       header: "Actions",
       cell: (info) => (
         <Link
-          href={`/projects/${info.row.original.projectId}/settings/protected-branches`}
+          href={`/projects/${info.row.original.project.slug}/settings/protected-branches`}
           className="float-right pr-4 hover:text-teal-400"
         >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
@@ -256,7 +258,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.projectId}/pulls/${pullRequest.id}`,
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.id}`,
           );
         }}
         isOpen={isPrModalOpen}
@@ -274,7 +276,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               className="float-right"
               onClick={() => {
                 router.push(
-                  `/project/${router.query.id}/settings/protected-branches`,
+                  `/project/${router.query.slug}/settings/protected-branches`,
                 );
               }}
             >
@@ -297,7 +299,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               actionText: "from project settings page.",
               onActionClick: () => {
                 router.push(
-                  `/project/${projectId}/settings/protected-branches`,
+                  `/project/${projectSlug}/settings/protected-branches`,
                 );
               },
             }}
@@ -340,7 +342,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -361,6 +363,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       project: {
         select: {
           id: true,
+          slug: true,
           name: true,
           updatedAt: true,
         },
@@ -369,7 +372,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.id === id);
+  const currentProject = projects.find((project) => project.slug === slug);
 
   if (!currentProject) {
     return {

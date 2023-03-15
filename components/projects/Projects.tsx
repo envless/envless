@@ -1,13 +1,8 @@
 import Link from "next/link";
-import { AlertCircle, ArrowRight, GitBranch, Lock, Users } from "lucide-react";
-import QRCode from "react-qr-code";
+import { AlertCircle, GitBranch, Lock, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import {
-  Button,
-  Input,
-  Modal,
-  Paragraph,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -26,7 +21,7 @@ const Projects = ({ ...props }) => {
 
     return (
       <>
-        <Link href={`/projects/${project.id}`} className="cursor-pointer">
+        <Link href={`/projects/${project.slug}`} className="cursor-pointer">
           <div className="relative w-full rounded-md border-2 border-darker bg-darker p-5 hover:border-teal-300/70">
             {twoFactorAuth && (
               <TooltipProvider delayDuration={200}>
