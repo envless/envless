@@ -44,6 +44,8 @@
     "@upstash/redis": "^1.20.1",
     "@vercel/analytics": "^0.1.6",
     "@vercel/og": "^0.3.0",
+    "@zag-js/react": "^0.3.10",
+    "@zag-js/toast": "^0.2.14",
     "argon2": "^0.30.3",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
