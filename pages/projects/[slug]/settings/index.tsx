@@ -122,7 +122,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -144,6 +144,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
           id: true,
           name: true,
+          slug: true,
           updatedAt: true,
         },
       },
@@ -160,7 +161,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.id === id);
+  const currentProject = projects.find((p) => p.slug === slug);
 
   if (!currentProject) {
     return {

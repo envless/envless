@@ -1,3 +1,4 @@
+import Project from "@/models/projects";
 import { getNextPrId } from "@/models/pullRequest";
 import { createRouter, withAuth } from "@/trpc/router";
 import { z } from "zod";
@@ -20,7 +21,7 @@ export const pullRequest = createRouter({
       z.object({
         pullRequest: z.object({
           title: z.string(),
-          projectId: z.string(),
+          projectSlug: z.string(),
         }),
       }),
     )
@@ -29,7 +30,9 @@ export const pullRequest = createRouter({
       const { user } = ctx.session;
       const { pullRequest } = input;
 
-      const projectId = pullRequest.projectId as string;
+      const project = await Project.findBySlug(pullRequest.projectSlug);
+
+      const projectId = project.id;
       const userId = user.id as string;
 
       const prId = await getNextPrId(projectId);
@@ -41,6 +44,9 @@ export const pullRequest = createRouter({
           status: "open",
           projectId: projectId,
           createdById: userId,
+        },
+        include: {
+          project: true,
         },
       });
 

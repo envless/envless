@@ -17,12 +17,12 @@ function classNames(...classes) {
 
 interface Props {
   active: String;
-  projectId: String;
+  projectSlug: String;
 }
 
-export default function Tabs({ active, projectId }: Props) {
+export default function Tabs({ active, projectSlug }: Props) {
   const router = useRouter();
-  const projectUrl = `/projects/${projectId}`;
+  const projectUrl = `/projects/${projectSlug}`;
   const tabs = [
     {
       id: "project",

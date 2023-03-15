@@ -51,7 +51,7 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
 
                   <Button
                     small={true}
-                    secondary={true}
+                    variant="secondary"
                     className="mt-8"
                     href="/settings/audits"
                   >

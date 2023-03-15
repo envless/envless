@@ -5,7 +5,7 @@ import { ArrowLeft, GitPullRequest } from "lucide-react";
 
 interface PullRequestHoverCardProps {
   triggerComponent: ReactNode;
-  projectId: string;
+  projectSlug: string;
   projectName: string;
   pullRequestTitle: string;
   pullRequestStatus: string;
@@ -14,7 +14,7 @@ interface PullRequestHoverCardProps {
 export default function PullRequestTitleHoverCard({
   triggerComponent,
   projectName,
-  projectId,
+  projectSlug,
   pullRequestTitle,
   pullRequestStatus,
 }: PullRequestHoverCardProps) {
@@ -29,7 +29,7 @@ export default function PullRequestTitleHoverCard({
         >
           <div className="flex w-full flex-col gap-[10px] px-3 py-4">
             <div className="text-light">
-              <Link href={`/projects/${projectId}`} className="underline">
+              <Link href={`/projects/${projectSlug}`} className="underline">
                 {projectName}
               </Link>{" "}
               on Feb 22

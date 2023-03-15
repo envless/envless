@@ -1,3 +1,4 @@
+import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -10,6 +11,7 @@ export const branches = createRouter({
       return ctx.prisma.branch.findMany({
         include: {
           createdBy: true,
+          project: true,
         },
         where: {
           projectId: input.projectId,
@@ -36,7 +38,7 @@ export const branches = createRouter({
               /^[a-z0-9][a-z0-9-]{0,}[a-z0-9]$/,
               "Name can only contain lowercase alphanumeric characters and dashes, cannot start or end with a dash, and must be at least two characters.",
             ),
-          projectId: z.string(),
+          projectSlug: z.string(),
         }),
       }),
     )
@@ -45,14 +47,16 @@ export const branches = createRouter({
       const { user } = ctx.session;
       const { branch } = input;
 
-      const projectId = branch.projectId as string;
+      const projectSlug = branch.projectSlug as string;
+      const project = await Project.findBySlug(projectSlug);
+
       const userId = user.id as string;
 
       const projectAccess = await prisma.access.findUnique({
         where: {
           userId_projectId: {
             userId,
-            projectId,
+            projectId: project.id,
           },
         },
         select: {
@@ -71,7 +75,7 @@ export const branches = createRouter({
         where: {
           name_projectId: {
             name: branch.name,
-            projectId: projectId,
+            projectId: project.id,
           },
         },
       });
@@ -86,7 +90,7 @@ export const branches = createRouter({
       const newBranch = await prisma.branch.create({
         data: {
           name: branch.name,
-          projectId: branch.projectId,
+          projectId: project.id,
           createdById: userId,
         },
       });
@@ -94,7 +98,7 @@ export const branches = createRouter({
       if (newBranch.id) {
         await Audit.create({
           createdById: user.id,
-          projectId: branch.projectId,
+          projectId: project.id,
           action: "branch.created",
           data: {
             branch: {

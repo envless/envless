@@ -1,12 +1,13 @@
+import type { Project } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
-import { Container, Hr, Nav } from "@/components/theme";
+import { Container, Nav } from "@/components/theme";
 
 interface Props {
   tab?: string;
-  projects: any;
-  currentProject: any;
+  projects: Project[];
+  currentProject: Project;
   children: React.ReactNode;
 }
 
@@ -24,7 +25,7 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
             projects={projects}
           />
         </Container>
-        <Tabs projectId={currentProject?.id} active={tab || "project"} />
+        <Tabs projectSlug={currentProject?.slug} active={tab || "project"} />
 
         <Container>
           <div className="my-10 flex flex-wrap">{children}</div>

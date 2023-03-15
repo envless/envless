@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { kebabCase } from "lodash";
 import { ArrowRight, Plus } from "lucide-react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Modal } from "@/components/theme";
 
 interface Project {
@@ -32,8 +32,8 @@ const CreateProjectModal = () => {
 
   const projectMutation = trpc.projects.create.useMutation({
     onSuccess: (data) => {
-      const { id } = data;
-      router.push(`/projects/${id}`);
+      const { slug } = data;
+      router.push(`/projects/${slug}`);
     },
 
     onError: (error) => {
@@ -80,20 +80,27 @@ const CreateProjectModal = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(async () => {
-      if (kebabSlug) {
-        const isSlugAvailable = await projects.checkSlugAvailability.fetch({
-          slug: kebabSlug,
-        });
-        if (!isSlugAvailable) {
+      if (kebabSlug || watchName) {
+        const { conflictField } =
+          await projects.checkSlugOrNameAvailability.fetch({
+            slug: kebabSlug,
+            name: watchName,
+          });
+
+        if (conflictField === "slug") {
           setError("slug", { message: "This slug is not available" });
-        } else {
+          clearErrors(["name"]);
+        } else if (conflictField === "name") {
+          setError("name", { message: "This name is not available" });
           clearErrors(["slug"]);
+        } else {
+          clearErrors(["slug", "name"]);
         }
       }
     }, 500);
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kebabSlug, setError]);
+  }, [kebabSlug, watchName, setError]);
 
   return (
     <Modal
@@ -110,7 +117,6 @@ const CreateProjectModal = () => {
           name="name"
           label="Project name"
           placeholder="Untitled"
-          defaultValue="Untitled"
           required={true}
           full={true}
           register={register}

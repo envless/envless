@@ -22,20 +22,20 @@ const ProjectSettings = ({
       {
         id: "general",
         name: "General settings",
-        href: `/projects/${currentProject.id}/settings`,
+        href: `/projects/${currentProject.slug}/settings`,
       },
       {
         id: "branches",
         name: "Protected branches",
-        href: `/projects/${currentProject.id}/settings/protected-branch`,
+        href: `/projects/${currentProject.slug}/settings/protected-branch`,
       },
       {
         id: "danger",
         name: "Danger zone",
-        href: `/projects/${currentProject.id}/settings/danger`,
+        href: `/projects/${currentProject.slug}/settings/danger`,
       },
     ],
-    [currentProject.id],
+    [currentProject.slug],
   );
 
   return (

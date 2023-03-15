@@ -1,5 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
+import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
 import { getServerSideSession } from "@/utils/session";
 import { GitPullRequestClosed } from "lucide-react";
@@ -71,7 +72,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id: projectId, prId } = context.params;
+  const { slug: projectSlug, prId } = context.params;
+  const project = await Project.findBySlug(projectSlug);
+  const projectId = project.id;
 
   if (!user) {
     return {
@@ -93,6 +96,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
           id: true,
           name: true,
+          slug: true,
           updatedAt: true,
         },
       },
