@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
+import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 import prisma from "@/lib/prisma";
@@ -36,14 +37,18 @@ interface Props {
 
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPrModalOpen, setIsPrModalOpen] = useState(false);
   const [protectedBranches, setProtectedBranches] = useState<any>([]);
   const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
+
+  const projectSlug = router.query.slug as string;
+
   const branchQuery = trpc.branches.getAll.useQuery(
     {
-      projectId: router.query.id as string,
+      projectId: currentProject.id,
     },
     {
       refetchOnWindowFocus: false,
@@ -146,7 +151,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       id: "actions",
       header: "Action",
       cell: () => (
-        <Button secondary={true} small className="float-right border-lighter">
+        <Button
+          onClick={() => setIsPrModalOpen(true)}
+          variant="primary-outline"
+          size="sm"
+          className="float-right"
+        >
           Open pull request
         </Button>
       ),
@@ -207,7 +217,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       header: "Actions",
       cell: (info) => (
         <Link
-          href={`/project/${info.row.original.projectId}/settings/protected-branches`}
+          href={`/projects/${info.row.original.project.slug}/settings/protected-branches`}
           className="float-right pr-4 hover:text-teal-400"
         >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
@@ -245,6 +255,16 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
         setIsOpen={setIsOpen}
       />
 
+      <CreatePullRequestModal
+        onSuccessCreation={(pullRequest) => {
+          router.push(
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.id}`,
+          );
+        }}
+        isOpen={isPrModalOpen}
+        setIsOpen={setIsPrModalOpen}
+      />
+
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
@@ -256,7 +276,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               className="float-right"
               onClick={() => {
                 router.push(
-                  `/project/${router.query.id}/settings/protected-branches`,
+                  `/project/${router.query.slug}/settings/protected-branches`,
                 );
               }}
             >
@@ -272,6 +292,17 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
             hasFilters={false}
             columns={protectedBranchesColumns}
             data={protectedBranches}
+            emptyStateProps={{
+              title: "No protected branches yet.",
+              icon: GitBranchPlus,
+              description: "You can start protecting your branches",
+              actionText: "from project settings page.",
+              onActionClick: () => {
+                router.push(
+                  `/project/${projectSlug}/settings/protected-branches`,
+                );
+              },
+            }}
           />
         </div>
 
@@ -288,30 +319,18 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
           </div>
         </div>
         <div className="mt-3 flex flex-col">
-          {allOtherBranches.length > 0 ? (
-            <Table
-              visibleColumns={branchesColumnVisibility}
-              columns={branchesColumns}
-              data={allOtherBranches || []}
-              filterOptions={filterOptions}
-            />
-          ) : (
-            <div className="mx-auto mt-10 w-full max-w-screen-xl border-2 border-darker px-5 py-8 transition duration-300 lg:py-12 xl:px-16">
-              <div className="text-center">
-                <GitBranchPlus className="mx-auto h-8 w-8" />
-                <h3 className="mt-2 text-xl">No other branches yet.</h3>
-                <p className="mx-auto mt-1 max-w-md text-sm text-light">
-                  You can get started by{" "}
-                  <span
-                    onClick={() => setIsOpen(true)}
-                    className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
-                  >
-                    creating a new branch.
-                  </span>
-                </p>
-              </div>
-            </div>
-          )}
+          <Table
+            visibleColumns={branchesColumnVisibility}
+            columns={branchesColumns}
+            data={allOtherBranches || []}
+            filterOptions={filterOptions}
+            emptyStateProps={{
+              title: "No branches yet.",
+              icon: GitBranchPlus,
+              actionText: "creating a new branch.",
+              onActionClick: () => setIsOpen(true),
+            }}
+          />
         </div>
       </div>
     </ProjectLayout>
@@ -323,7 +342,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -344,6 +363,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       project: {
         select: {
           id: true,
+          slug: true,
           name: true,
           updatedAt: true,
         },
@@ -352,7 +372,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.id === id);
+  const currentProject = projects.find((project) => project.slug === slug);
 
   if (!currentProject) {
     return {

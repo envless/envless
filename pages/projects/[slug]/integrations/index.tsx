@@ -209,7 +209,7 @@ export const IntegrationsPage = ({ projects, currentProject }: Props) => {
                 </p>
               </div>
             </div>
-            <Button small={true} secondary={true} className="mt-5">
+            <Button size="sm" variant="secondary" className="mt-5">
               Configure
             </Button>
           </div>
@@ -224,7 +224,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -246,6 +246,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
           id: true,
           name: true,
+          slug: true,
           updatedAt: true,
         },
       },
@@ -262,7 +263,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.id === id);
+  const currentProject = projects.find((project) => project.slug === slug);
 
   if (!currentProject) {
     return {

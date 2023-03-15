@@ -2,11 +2,13 @@ export type UserType = {
   id?: string;
   name: string;
   email: string;
+  image?: string;
 };
 
 export type ProjectType = {
   id?: string;
   name: string;
+  slug: string;
 };
 
 export type ProjectInviteType = {
@@ -45,7 +47,7 @@ export type BranchType = {
 
 export type PullRequestType = {
   id?: string;
-  prId: string;
+  prId: number;
   title: string;
   status: PullRequestStatusType;
   createdById: string;

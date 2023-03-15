@@ -1,16 +1,17 @@
+import { env } from "@/env/index.mjs";
 import { buildSendMail } from "mailing-core";
 import nodemailer from "nodemailer";
 
 const sendMail = buildSendMail({
   transport: nodemailer.createTransport({
-    host: String(process.env.SMTP_HOST) || "localhost",
-    port: Number(process.env.SMTP_PORT) || 1025,
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
     auth: {
-      user: String(process.env.SMTP_USERNAME) || "username",
-      pass: String(process.env.SMTP_PASSWORD) || "password",
+      user: env.SMTP_USERNAME,
+      pass: env.SMTP_PASSWORD,
     },
   }),
-  defaultFrom: String(process.env.EMAIL_FROM) || "",
+  defaultFrom: env.EMAIL_FROM,
   configPath: "../mailing.config.json",
 });
 

@@ -158,7 +158,7 @@ export function EnvironmentVariableEditor() {
           ))}
 
           <div className="float-right mt-4 inline-flex gap-3 ">
-            <Button secondary onClick={() => handleAddMoreEnvClick()}>
+            <Button variant="secondary" onClick={() => handleAddMoreEnvClick()}>
               Add more
             </Button>
             <Button onClick={() => handleAddMoreEnvClick()}>

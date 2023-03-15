@@ -8,7 +8,6 @@ generator client {
 datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
   relationMode      = "prisma"
 }
 
@@ -34,6 +33,7 @@ model Audit {
 model Project {
   id        String    @id @default(cuid())
   name      String
+  slug      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   settings  Json      @default("{}")
@@ -42,6 +42,23 @@ model Project {
   audits    Audit[]
   invites   ProjectInvite[]
   pullRequests PullRequest[]
+  privateKeys PublicKey[]
+
+  @@unique([name, slug])
+}
+
+model PublicKey {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  key       String
+  userId    String
+  projectId String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([projectId])
 }
 
 model ProjectInvite {
@@ -111,7 +128,7 @@ enum BranchStatus {
 model PullRequest {
   id String @id @default(cuid())
   title String
-  prId String
+  prId Int
   status PullRequestStatus
   projectId String
   createdById String
@@ -120,6 +137,7 @@ model PullRequest {
   baseBranchId String?
   currentBranchId String?
   createdAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   mergedAt DateTime?
   closedAt DateTime?
 
@@ -132,6 +150,7 @@ model PullRequest {
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
+  @@index([createdAt])
 
   @@unique([prId, projectId])
   @@index([projectId, status]) 
@@ -222,6 +241,7 @@ model User {
   sessions          Session[]
   sessionHistories  SessionHistory[]
   access            Access[]
+  publicKeys        PublicKey[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
   branchesCreatedBy Branch[]  @relation(name: "createdBy")

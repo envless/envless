@@ -1,9 +1,8 @@
 import { NextApiRequest } from "next";
-import { authOptions } from "@/api/auth/[...nextauth]";
+import { getServerSideSession } from "@/utils/session";
 import { type inferAsyncReturnType } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
-import { unstable_getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 
 type CreateContextOptions = {
@@ -31,8 +30,7 @@ export const createContextInner = async (opts: CreateContextOptions) => {
 export const createContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await unstable_getServerSession(req, res, authOptions);
+  const session = await getServerSideSession(opts);
 
   return await createContextInner({
     req,

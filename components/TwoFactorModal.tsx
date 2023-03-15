@@ -153,7 +153,7 @@ const TwoFactorModal = (props: Props) => {
                         type="submit"
                         disabled={loading}
                         className="mt-10"
-                        full={true}
+                        width="full"
                       >
                         Confirm and continue
                       </Button>

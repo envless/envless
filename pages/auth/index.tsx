@@ -113,7 +113,7 @@ const Login = ({ csrfToken }) => {
               <Button
                 sr="Send magic link"
                 type="submit"
-                full={true}
+                width="full"
                 disabled={loading}
               >
                 Send magic link
@@ -137,8 +137,8 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Github"
                   onClick={() => signIn("github")}
                   disabled={loading}
-                  secondary={true}
-                  full={true}
+                  variant="secondary"
+                  width="full"
                 >
                   <svg
                     className="h-5 w-5"
@@ -158,8 +158,8 @@ const Login = ({ csrfToken }) => {
                   sr="Sign in with Gitlab"
                   onClick={() => signIn("gitlab")}
                   disabled={loading}
-                  secondary={true}
-                  full={true}
+                  variant="secondary"
+                  width="full"
                 >
                   <svg
                     className="h-5 w-5"

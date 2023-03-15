@@ -1,13 +1,10 @@
 import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Project } from "@prisma/client";
-import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
-import Tabs from "@/components/settings/Tabs";
 import { Button, Paragraph } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
@@ -71,9 +68,8 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           </div>
           <div className="flex-2 ml-10">
             <Button
-              className=""
               type="button"
-              small
+              variant="danger-outline"
               disabled={isLoading || false}
               onClick={submitForm}
             >
@@ -91,7 +87,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -113,6 +109,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
           id: true,
           name: true,
+          slug: true,
           updatedAt: true,
         },
       },
@@ -129,7 +126,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.id === id);
+  const currentProject = projects.find((p) => p.slug === slug);
 
   if (!currentProject) {
     return {

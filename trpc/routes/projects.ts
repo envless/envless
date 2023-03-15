@@ -1,6 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { Project } from "@prisma/client";
-import { z } from "zod";
+import { string, z } from "zod";
 import Audit from "@/lib/audit";
 
 export const projects = createRouter({
@@ -8,17 +7,44 @@ export const projects = createRouter({
     // return ctx.prisma.projects.findMany();
     return [];
   }),
-
   getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
     const { id } = input;
 
     return { id };
   }),
+  checkSlugOrNameAvailability: withAuth
+    .input(
+      z.object({
+        slug: z.string().trim().optional(),
+        name: string().trim().optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { slug, name } = input;
+
+      const existingProject = await ctx.prisma.project.findFirst({
+        where: {
+          OR: [
+            {
+              name,
+            },
+            { slug },
+          ],
+        },
+      });
+
+      if (existingProject) {
+        const conflictField = existingProject.slug === slug ? "slug" : "name";
+        return { conflictField };
+      } else {
+        return {};
+      }
+    }),
 
   create: withAuth
     .input(
       z.object({
-        project: z.object({ name: z.string() }),
+        project: z.object({ name: z.string().trim(), slug: z.string().trim() }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -29,6 +55,7 @@ export const projects = createRouter({
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
+          slug: project.slug,
           access: {
             create: {
               userId: user.id,

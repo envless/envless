@@ -4,7 +4,7 @@ import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
 import { GitBranchPlus, TerminalSquare } from "lucide-react";
-import { BranchPopover } from "@/components/branches/BranchPopover";
+import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
@@ -13,9 +13,7 @@ import prisma from "@/lib/prisma";
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
- * @param {Projects} props.projects - The projects the user has access to.
- * @param {currentProject} props.currentProject - The current project.
- */
+ * @param {Projects} props.projects - The projects the user has access to. @param {currentProject} props.currentProject - The current project. */
 
 interface Props {
   projects: Project[];
@@ -30,7 +28,7 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
     { id: 3, name: "production", isSelected: false },
     { id: 4, name: "feat/upload-env-file", isSelected: false },
   ];
-  const [seletedBranch, setSelectedBranch] = useState(defaultBranches[0]);
+  const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
   const [branches, setBranches] = useState(defaultBranches);
 
   return (
@@ -59,11 +57,11 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
 
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
-          <BranchPopover
+          <BranchDropdown
             branches={branches}
-            selectedBranch={seletedBranch}
-            setSelectedBranch={setSelectedBranch}
             setBranches={setBranches}
+            selectedBranch={selectedBranch}
+            setSelectedBranch={setSelectedBranch}
           />
 
           <Button
@@ -87,7 +85,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = session?.user;
 
   // @ts-ignore
-  const { id } = context.params;
+  const { slug } = context.params;
 
   if (!user) {
     return {
@@ -108,6 +106,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       project: {
         select: {
           id: true,
+          slug: true,
           name: true,
           updatedAt: true,
         },
@@ -125,7 +124,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.id === id);
+  const currentProject = projects.find((project) => project.slug === slug);
 
   if (!currentProject) {
     return {
