@@ -63,7 +63,11 @@ export const SettingsPage = ({
   };
 
   return (
-    <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+    <ProjectLayout
+      tab="settings"
+      projects={projects}
+      currentProject={currentProject}
+    >
       <ProjectSettings
         active="general"
         projects={projects}
