@@ -1,6 +1,6 @@
 import { env } from "@/env/index.mjs";
 import { authenticator } from "otplib";
-import { decrypt } from "@/lib/encryption";
+import { decrypt } from "@/lib/encryption/aes";
 
 interface VerifyType {
   code: string;

@@ -13,6 +13,7 @@ const Input = forwardRef<HTMLInputElement, Props>(function BaseInput(
     <input
       {...props}
       ref={ref}
+      disabled={disabled}
       className={clsx(
         className,
         disabled && "cursor-not-allowed bg-light/40",

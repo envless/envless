@@ -13,7 +13,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
 import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
-import { decrypt, encrypt } from "@/lib/encryption";
+import { decrypt, encrypt } from "@/lib/encryption/aes";
 import log from "@/lib/log";
 import prisma from "@/lib/prisma";
 

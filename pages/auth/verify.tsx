@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Shield } from "lucide-react";
@@ -8,20 +8,17 @@ import { Container, EmptyState, LoadingIcon } from "@/components/theme";
 import { getFingerprint } from "@/lib/fingerprint";
 import log from "@/lib/log";
 
-export default function VerifyAuth({ sessionId }) {
+export default function VerifyAuth({ sessionId }: { sessionId: string }) {
   const router = useRouter();
-  const [status, setStatus] = useState("verify");
 
   const verifyMutation = trpc.auth.verify.useMutation({
-    onSuccess: (res: any) => {
+    onSuccess: async (res: any) => {
       if (res.name === "TRPCError") {
         signOut();
         return;
       }
 
-      log("Redirecting after success", res);
-      // router.push("/projects");
-      router.push("/auth/encryption");
+      router.push("/projects");
     },
 
     onError: (error) => {
@@ -53,9 +50,17 @@ export default function VerifyAuth({ sessionId }) {
 }
 
 export async function getServerSideProps(context) {
-  const { req } = context;
   const session = await getServerSideSession(context);
   const sessionId = session?.id as string;
+
+  if (!session || !session.user) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
