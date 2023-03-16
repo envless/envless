@@ -149,6 +149,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           id: true,
           name: true,
           slug: true,
+          settings: true,
           updatedAt: true,
         },
       },
