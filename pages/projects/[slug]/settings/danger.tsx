@@ -1,9 +1,17 @@
 import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
+import { SetStateAction, useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Project } from "@prisma/client";
+import {
+  FieldValues,
+  RegisterOptions,
+  UseFormRegisterReturn,
+  useForm,
+} from "react-hook-form";
+import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Paragraph } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
@@ -22,9 +30,19 @@ interface DangerPageProps {
 }
 
 export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const router = useRouter();
-
   const props = { projects, currentProject };
+
+  const {
+    register,
+    formState: { errors },
+    watch,
+    setError,
+    clearErrors,
+  } = useForm();
+
+  const slug = watch("slug");
 
   const { mutate: projectDeleteMutation, isLoading } =
     trpc.projects.delete.useMutation({
@@ -40,17 +58,20 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
         showToast({
           type: "error",
           title: "Project Delete failed",
-          subtitle: error.message,
+          subtitle: "",
+        });
+        setError("slug", {
+          message: "Check that the slug you entred is correct",
         });
       },
     });
 
-  const submitForm = () => {
-    /** @todo: confirmation popup here **/
+  const onConfirm = useCallback(() => {
+    clearErrors(["slug"]);
     projectDeleteMutation({
-      project: currentProject,
+      project: { ...currentProject, slug },
     });
-  };
+  }, [clearErrors, currentProject, projectDeleteMutation, slug]);
 
   return (
     <ProjectLayout tab="settings" {...props}>
@@ -71,11 +92,31 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
               type="button"
               variant="danger-outline"
               disabled={isLoading || false}
-              onClick={submitForm}
+              onClick={() => {
+                setIsConfirmationModalOpen(true);
+              }}
             >
               Delete this project
             </Button>
           </div>
+          <ConfirmationModal
+            title={"Delete Project"}
+            description={
+              "Once you delete a project, there is no going back. Please be certain."
+            }
+            onConfirmAction={onConfirm}
+            open={isConfirmationModalOpen}
+            setOpen={setIsConfirmationModalOpen}
+            validationInputProps={{
+              name: "slug",
+              type: "text",
+              errorText: "Required",
+              placeholder: "Enter project slug",
+              validationText: currentProject.slug,
+            }}
+            register={register}
+            errors={errors}
+          />
         </div>
       </ProjectSettings>
     </ProjectLayout>
