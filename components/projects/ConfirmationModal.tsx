@@ -1,21 +1,26 @@
-import { Dispatch, Fragment, SetStateAction } from "react";
-import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
-import { Button, Input, Paragraph } from "@/components/theme";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { useForm } from "react-hook-form";
+import { BaseInput, Button, Paragraph } from "@/components/theme";
 import BaseModal from "../theme/BaseModal";
 
 interface ConfirmationModalProps {
   title: string;
-  description: string;
+  descriptionComponent: ReactNode;
   onConfirmAction: () => void;
   cancelButtonText?: string;
   confirmButtonText?: string;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  register?: UseFormRegister<FieldValues>;
-  errors?: FieldErrors<FieldValues>;
   validationInputProps?: {
     name: string;
     placeholder: string;
+    label: string;
     type: string;
     errorText: string;
     validationText: string;
@@ -24,56 +29,84 @@ interface ConfirmationModalProps {
 
 const ConfirmationModal = ({
   title,
-  description,
+  descriptionComponent,
   onConfirmAction,
-  cancelButtonText = "Cancel",
   confirmButtonText = "Confirm",
   open,
   setOpen,
   validationInputProps,
-  register,
-  errors,
 }: ConfirmationModalProps) => {
+  const {
+    register,
+    setFocus,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const [isDisabled, setIsDisabled] = useState(true);
+
+  // This is not working and is subject to change.
+  useEffect(() => {
+    if (validationInputProps) {
+      setFocus(validationInputProps.name);
+    }
+  }, [setFocus, validationInputProps]);
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (
+        value[validationInputProps?.name as string] ===
+        String(validationInputProps?.validationText)
+      ) {
+        setIsDisabled(false);
+      } else {
+        setIsDisabled(true);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
   return (
     <BaseModal isOpen={open} setIsOpen={setOpen} title={title}>
-      <div className="flex flex-col items-stretch text-center">
-        <Paragraph
-          size="sm"
-          className="mt-4 mb-3 text-center text-sm font-light"
-        >
-          {description}
+      <div className="flex w-full flex-col items-center">
+        <div className="mb-2 w-full rounded-md bg-dark py-2 px-2 text-left text-xs">
+          <p className="font-semibold text-teal-400">
+            Unexpected bad things will happen if you don't read this!
+          </p>
+        </div>
+        <Paragraph size="sm" color="light" className="my-3">
+          {descriptionComponent}
         </Paragraph>
         {validationInputProps && (
-          <Fragment>
-            <Paragraph size="sm" className="rounded-md bg-red-500/40 px-2 py-1">
-              {validationInputProps.validationText}
-            </Paragraph>
-            <Input
-              type={validationInputProps.type}
-              name={validationInputProps.name}
-              register={register}
-              required
+          <form onSubmit={handleSubmit(onConfirmAction)} className="w-full">
+            <label
+              htmlFor={validationInputProps.name}
+              className="my-2 block w-full text-left text-xs font-semibold text-lighter"
+            >
+              {validationInputProps.label}
+            </label>
+            <BaseInput
               full
-              errors={errors}
-              className="mt-0 w-full text-center rounded-md border border-gray-300 py-2 px-3"
+              type={validationInputProps.type}
+              id={validationInputProps.name}
               placeholder={validationInputProps.placeholder}
-              validationSchema={{
-                required: validationInputProps.errorText,
-              }}
+              {...register(validationInputProps.name, { required: true })}
             />
-          </Fragment>
+
+            {errors && errors[validationInputProps.name] != null && (
+              <p className="mt-1 text-xs text-red-400/75">
+                {errors[validationInputProps.name]?.message as string}
+              </p>
+            )}
+          </form>
         )}
-        <div className="mt-3 flex justify-center gap-4">
-          <Button
-            variant="primary-outline"
-            className="w-1/3"
-            onClick={() => setOpen(false)}
-          >
-            {cancelButtonText}
-          </Button>
+        <div className="mt-6 flex w-full justify-center gap-2">
           <Button
             variant="danger-outline"
-            className="w-1/3"
+            className="w-full"
+            type="submit"
+            disabled={isDisabled}
             onClick={onConfirmAction}
           >
             {confirmButtonText}

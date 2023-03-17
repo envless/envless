@@ -101,21 +101,30 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           </div>
           <ConfirmationModal
             title={"Delete Project"}
-            description={
-              "Please enter the project slug to confirm that you want to delete the project."
+            descriptionComponent={
+              <span className="leading-normal">
+                This action{" "}
+                <strong className="font-bold text-lighter">CANNOT</strong> be
+                undone. This will permanently delete the{" "}
+                <strong className="font-bold text-lighter">
+                  {currentProject.slug}
+                </strong>{" "}
+                project, env keys, branches, pull requests and remove all
+                collaborator associations.
+              </span>
             }
             onConfirmAction={onConfirm}
             open={isConfirmationModalOpen}
             setOpen={setIsConfirmationModalOpen}
+            confirmButtonText="I understand, delete this project"
             validationInputProps={{
               name: "slug",
               type: "text",
+              label: "Please type in the slug of the project to confirm.",
               errorText: "Required",
               placeholder: "Enter project slug",
               validationText: currentProject.slug,
             }}
-            register={register}
-            errors={errors}
           />
         </div>
       </ProjectSettings>
