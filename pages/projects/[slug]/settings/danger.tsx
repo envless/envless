@@ -61,7 +61,7 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           subtitle: "",
         });
         setError("slug", {
-          message: "Check that the slug you entred is correct",
+          message: "Please ensure that the entered slug is correct.",
         });
       },
     });
@@ -102,7 +102,7 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           <ConfirmationModal
             title={"Delete Project"}
             description={
-              "Once you delete a project, there is no going back. Please be certain."
+              "Please enter the project slug to confirm that you want to delete the project."
             }
             onConfirmAction={onConfirm}
             open={isConfirmationModalOpen}

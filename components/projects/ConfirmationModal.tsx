@@ -55,7 +55,7 @@ const ConfirmationModal = ({
               required
               full
               errors={errors}
-              className="mt-0 w-full rounded-md border border-gray-300 py-2 px-3"
+              className="mt-0 w-full text-center rounded-md border border-gray-300 py-2 px-3"
               placeholder={validationInputProps.placeholder}
               validationSchema={{
                 required: validationInputProps.errorText,
@@ -63,11 +63,19 @@ const ConfirmationModal = ({
             />
           </Fragment>
         )}
-        <div className="flex justify-center mt-3 gap-4">
-          <Button variant="primary-outline" className="w-1/3" onClick={() => setOpen(false)}>
+        <div className="mt-3 flex justify-center gap-4">
+          <Button
+            variant="primary-outline"
+            className="w-1/3"
+            onClick={() => setOpen(false)}
+          >
             {cancelButtonText}
           </Button>
-          <Button variant="danger-outline" className="w-1/3" onClick={onConfirmAction}>
+          <Button
+            variant="danger-outline"
+            className="w-1/3"
+            onClick={onConfirmAction}
+          >
             {confirmButtonText}
           </Button>
         </div>

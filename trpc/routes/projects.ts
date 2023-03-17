@@ -161,8 +161,8 @@ export const projects = createRouter({
         where: {
           name_slug: {
             name: project.name,
-            slug: project.slug
-          }
+            slug: project.slug,
+          },
         },
       });
       return deletedProject;
