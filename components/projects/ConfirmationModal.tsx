@@ -76,7 +76,7 @@ const ConfirmationModal = ({
       <div className="flex w-full flex-col items-center">
         <div className="mb-2 w-full rounded-md bg-dark py-1 px-2 text-left text-xs">
           <p className="font-semibold text-amber-600">
-            Unexpected bad things will happen if you don't read this!
+            Unexpected bad things will happen if you don&apos;t read this!
           </p>
         </div>
         <Paragraph size="sm" color="light" className="my-3">
