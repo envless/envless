@@ -70,8 +70,8 @@ const ConfirmationModal = ({
   return (
     <BaseModal isOpen={open} setIsOpen={setOpen} title={title}>
       <div className="flex w-full flex-col items-center">
-        <div className="mb-2 w-full rounded-md bg-dark py-2 px-2 text-left text-xs">
-          <p className="font-semibold text-teal-400">
+        <div className="mb-2 w-full rounded-md bg-dark py-1 px-2 text-left text-xs">
+          <p className="font-semibold text-amber-600">
             Unexpected bad things will happen if you don't read this!
           </p>
         </div>
