@@ -5,7 +5,6 @@ import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project, PullRequest, User } from "@prisma/client";
 import { ShieldCheck } from "lucide-react";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import ProjectSettings from "@/components/projects/ProjectSettings";
@@ -32,18 +31,11 @@ export const ProtectedBranch = ({
 }: ProtectedBranchPageProps) => {
   const props = { projects, currentProject };
 
-  // const {
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm();
-
   const schema = z.object({
     description: z.string(),
   });
   const {
-    reset,
     handleSubmit,
-    register,
     formState: { errors },
   } = useZodForm({
     schema,
@@ -94,7 +86,6 @@ export const ProtectedBranch = ({
           </form>
         </div>
       </ProjectSettings>
-      {/* TODO: Full Page Table Here with protected-branches list*/}
       <div className="mt-6 w-full">
         <Table
           data={[]}
