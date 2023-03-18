@@ -58,6 +58,8 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
       <div className="mt-8 w-full">
         <div className="flex w-full items-center justify-between">
           <BranchDropdown
+            label="Current Branch"
+            dropdownLabel="Switch between branches"
             branches={branches}
             setBranches={setBranches}
             selectedBranch={selectedBranch}

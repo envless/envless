@@ -5,6 +5,8 @@ import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 interface BranchDropdownProps {
+  label: string;
+  dropdownLabel?: string;
   branches: any;
   setSelectedBranch: any;
   selectedBranch: any;
@@ -12,6 +14,8 @@ interface BranchDropdownProps {
 }
 
 export default function BranchDropdown({
+  label,
+  dropdownLabel,
   branches,
   setSelectedBranch,
   selectedBranch,
@@ -33,14 +37,15 @@ export default function BranchDropdown({
   const { register } = useForm();
 
   return (
-    <Menu as="div" className="relative mt-4 inline-block w-full max-w-[200px]">
+    <Menu
+      as="div"
+      className="relative z-10 mt-4 inline-block w-full max-w-[200px]"
+    >
       <div className="w-full">
         <Menu.Button className="inline-flex w-full items-center truncate rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker">
           <div className="flex items-center">
             <GitBranch className="mr-2 h-4 w-4 shrink-0" />
-            <span className="mr-2 block text-xs text-light">
-              Current Branch
-            </span>
+            <span className="mr-2 block text-xs text-light">{label}</span>
           </div>
 
           <div className="flex items-center space-x-2 justify-self-end">
@@ -65,9 +70,8 @@ export default function BranchDropdown({
       >
         <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left rounded-md bg-darker shadow-xl ring-2 ring-dark focus:outline-none ">
           <div className="border-b border-dark px-3 py-3 text-xs">
-            <p className="font-semibold">Switch between branches</p>
+            <p className="font-semibold">{dropdownLabel}</p>
           </div>
-
           <form>
             <div className="mt-1 flex items-center border-b border-dark px-3 text-xs">
               <Search className="absolute mb-1.5 h-4 w-4 text-light" />

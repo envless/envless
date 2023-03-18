@@ -65,6 +65,7 @@ const Input = ({ ...props }: InputProps) => {
 
       <div className="my-2">
         <input
+          id={name}
           name={name}
           type={type}
           inputMode={inputMode}

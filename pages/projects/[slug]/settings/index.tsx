@@ -73,49 +73,46 @@ export const SettingsPage = ({
         projects={projects}
         currentProject={currentProject}
       >
-        <>
-          <h3 className="mb-8 text-lg">General</h3>
-          <div className="w-full lg:w-3/5">
-            <form onSubmit={handleSubmit(submitForm)}>
-              <Input
-                name="name"
-                label="Project name"
-                placeholder=""
-                defaultValue={currentProject.name || ""}
-                required={true}
-                register={register}
-                className="w-full"
-                validationSchema={{
-                  required: "Project name is required",
-                }}
-              />
-              <div className="mb-6 rounded border-2 border-dark p-3">
-                <div className="flex items-center justify-between">
-                  <label className="cursor-pointer" htmlFor="auth_2fa">
-                    <h3 className="mb-1 text-sm font-semibold">
-                      Enforce two-factor authentication
-                    </h3>
-                    <Paragraph color="light" size="sm" className="mr-4">
-                      After enabling this feature, all team members should
-                      enable their two-factor authentication to access this
-                      project.
-                    </Paragraph>
-                  </label>
+        <h3 className="mb-8 text-lg">General</h3>
+        <div className="w-full lg:w-3/5">
+          <form onSubmit={handleSubmit(submitForm)}>
+            <Input
+              name="name"
+              label="Project name"
+              placeholder=""
+              defaultValue={currentProject.name || ""}
+              required={true}
+              register={register}
+              className="w-full"
+              validationSchema={{
+                required: "Project name is required",
+              }}
+            />
+            <div className="mb-6 rounded border-2 border-dark p-3">
+              <div className="flex items-center justify-between">
+                <label className="cursor-pointer" htmlFor="auth_2fa">
+                  <h3 className="mb-1 text-sm font-semibold">
+                    Enforce two-factor authentication
+                  </h3>
+                  <Paragraph color="light" size="sm" className="mr-4">
+                    After enabling this feature, all team members should enable
+                    their two-factor authentication to access this project.
+                  </Paragraph>
+                </label>
 
-                  <Toggle
-                    checked={currentProject.settings?.enforce2FA || false}
-                    name="enforce2FA"
-                    register={register}
-                  />
-                </div>
+                <Toggle
+                  checked={currentProject.settings!.enforce2FA || false}
+                  name="enforce2FA"
+                  register={register}
+                />
               </div>
+            </div>
 
-              <Button type="submit" disabled={isLoading || false}>
-                Save project settings
-              </Button>
-            </form>
-          </div>
-        </>
+            <Button type="submit" disabled={isLoading || false}>
+              Save project settings
+            </Button>
+          </form>
+        </div>
       </ProjectSettings>
     </ProjectLayout>
   );
