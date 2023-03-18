@@ -74,7 +74,9 @@ const AddMemberModal = ({ user, projectId }) => {
       return;
     } else {
       setTwoFactorRequired(false);
-      handleSubmit(inviteMembers(data as MemberProps) as SubmitHandler<MemberProps>);
+      handleSubmit(
+        inviteMembers(data as MemberProps) as SubmitHandler<MemberProps>,
+      );
     }
   };
 
@@ -95,7 +97,11 @@ const AddMemberModal = ({ user, projectId }) => {
         onConfirm={() => {
           setTwoFactorRequired(false);
           // handleSubmit(inviteMembers(formData));
-          handleSubmit(inviteMembers(formData as MemberProps) as SubmitHandler<MemberProps>);
+          handleSubmit(
+            inviteMembers(
+              formData as MemberProps,
+            ) as SubmitHandler<MemberProps>,
+          );
           reset();
         }}
       />

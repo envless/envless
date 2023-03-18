@@ -17,7 +17,6 @@ import {
 } from "@/components/theme";
 import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
-import { BranchPopover } from "./BranchPopover";
 import BranchComboBox from "./BranchComboBox";
 
 interface Project {
@@ -137,9 +136,8 @@ const CreateBranchModal = ({
           )}
         </div>
 
-
         <div className="mb-4">
-        <BranchComboBox />
+          <BranchComboBox inputLabel="Base Branch" />
         </div>
 
         <div className="float-right">

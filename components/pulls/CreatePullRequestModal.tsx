@@ -6,6 +6,7 @@ import { Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
+import BranchComboBox from "../branches/BranchComboBox";
 import { BranchPopover } from "../branches/BranchPopover";
 import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
@@ -90,28 +91,11 @@ const CreatePullRequestModal = ({
         </div>
 
         <div className="mb-4 w-full">
-          <BranchPopover
-            zIndex={30}
-            outlined
-            fullWidth
-            buttonText="Current Branch"
-            branches={branches}
-            setBranches={setBranches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
-          />
+          <BranchComboBox inputPadding="lg" inputLabel="Current Branch" />
         </div>
 
         <div className="mb-4 w-full">
-          <BranchPopover
-            outlined
-            fullWidth
-            buttonText="Base Branch"
-            branches={branches}
-            setBranches={setBranches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
-          />
+          <BranchComboBox inputLabel="Base Branch" />
         </div>
 
         <div className="float-right">
