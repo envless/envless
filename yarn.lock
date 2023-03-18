@@ -1817,10 +1817,10 @@
     javascript-natural-sort "0.7.1"
     lodash "4.17.21"
 
-"@trpc/client@^10.6.0":
-  version "10.9.0"
-  resolved "https://registry.npmjs.org/@trpc/client/-/client-10.9.0.tgz"
-  integrity sha512-id6318qpgqllNOuBp7nuciXFPXCe+zae5d4r1hze6Eyp5fFFNO58TqA+4Q44KIcHgpfWyW2egs6iPeql3PrdKA==
+"@trpc/client@^10.12.0":
+  version "10.16.0"
+  resolved "https://registry.yarnpkg.com/@trpc/client/-/client-10.16.0.tgz#665fc51f849808090ed21b3467190b0d1e7089d9"
+  integrity sha512-Hxxi3mOcUyszosj6xpPDIIBV1TOhXKpZ191BW/60r1lXBAfNrDUWHOTol1Dfu+hpcx4bpj3WRyob5cf+6KeCDA==
 
 "@trpc/next@^10.10.0":
   version "10.12.0"
@@ -2378,10 +2378,10 @@
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@vercel/analytics@^0.1.6":
-  version "0.1.8"
-  resolved "https://registry.npmjs.org/@vercel/analytics/-/analytics-0.1.8.tgz"
-  integrity sha512-PQrOI8BJ9qUiVJuQfnKiJd15eDjDJH9TBKsNeMrtelT4NAk7d9mBVz1CoZkvoFnHQ0OW7Xnqmr1F2nScfAnznQ==
+"@vercel/analytics@^0.1.10":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-0.1.11.tgz#727a0ac655a4a89104cdea3e6925476470299428"
+  integrity sha512-mj5CPR02y0BRs1tN3oZcBNAX9a8NxsIUl9vElDPcqxnMfP0RbRc9fI9Ud7+QDg/1Izvt5uMumsr+6YsmVHcyuw==
 
 "@vercel/og@^0.3.0":
   version "0.3.0"
@@ -6801,10 +6801,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lucide-react@^0.109.0:
-  version "0.109.0"
-  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.109.0.tgz#c6160954f64f1955f1ab00ade2f5fdf90a0bd87f"
-  integrity sha512-CXBQnHSd/EHaSN+Bs9T73jgCbjb/0IVykFG7NvWjk+kG2skiEgXeIIJjpkta2DVSORy8u6RXN2WZuryiuNmC0Q==
+lucide-react@^0.115.0:
+  version "0.115.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.115.0.tgz#793396ba54bcab6872c3e8933c3f2e0f6ff2ce9a"
+  integrity sha512-VGL7jBKN6pEXi6peXoyn9t9O7olvinaAonnoe+iFi/F2q7/yQzAFM5KR1OY15u9PlrB3scI9HvcTFoOrIjUaVQ==
 
 lz-string@^1.4.4:
   version "1.4.4"
@@ -10648,10 +10648,10 @@ youtube-player@5.5.2:
     load-script "^1.0.0"
     sister "^3.0.0"
 
-zod@^3.20.2:
-  version "3.20.2"
-  resolved "https://registry.npmjs.org/zod/-/zod-3.20.2.tgz"
-  integrity sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==
+zod@^3.20.6:
+  version "3.21.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
+  integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
 
 zwitch@^2.0.0, zwitch@^2.0.4:
   version "2.0.4"
