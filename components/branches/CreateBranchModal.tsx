@@ -2,10 +2,9 @@ import { useRouter } from "next/router";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
 import { trpc } from "@/utils/trpc";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Branch } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler } from "react-hook-form";
 import * as z from "zod";
 import {
   BaseInput,
@@ -20,6 +19,11 @@ import { showToast } from "../theme/showToast";
 import BranchComboBox from "./BranchComboBox";
 
 interface Project {
+  name: string;
+}
+
+export interface BranchWithNameAndId {
+  id: string;
   name: string;
 }
 
@@ -54,11 +58,12 @@ const CreateBranchModal = ({
     schema,
   });
 
-  const defaultBranches = [
-    { id: 1, name: "main", isSelected: true },
-    { id: 2, name: "staging", isSelected: false },
-    { id: 3, name: "production", isSelected: false },
+  const defaultBranches: BranchWithNameAndId[] = [
+    { id: "1", name: "main" },
+    { id: "2", name: "staging" },
+    { id: "3", name: "production" },
   ];
+
   const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
   const [branches, setBranches] = useState(defaultBranches);
 
@@ -137,7 +142,12 @@ const CreateBranchModal = ({
         </div>
 
         <div className="mb-4">
-          <BranchComboBox inputLabel="Base Branch" />
+          <BranchComboBox
+            branches={branches}
+            selectedBranch={baseBranchFrom}
+            setSelectedBranch={setBaseBranchFrom}
+            inputLabel="Base Branch"
+          />
         </div>
 
         <div className="float-right">

@@ -1,27 +1,24 @@
-import { Fragment, useState } from "react";
+import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Combobox, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { Check, ChevronsUpDown, GitBranch } from "lucide-react";
-
-const people = [
-  { id: 1, name: "main" },
-  { id: 2, name: "development" },
-  { id: 3, name: "production" },
-  { id: 4, name: "update-env-keys" },
-  { id: 5, name: "dev-environment" },
-  { id: 6, name: "testing-environment" },
-];
+import { BranchWithNameAndId } from "./CreateBranchModal";
 
 interface BranchComboBoxProps {
   inputPadding?: "sm" | "lg";
   inputLabel: string;
+  branches: BranchWithNameAndId[];
+  selectedBranch: BranchWithNameAndId;
+  setSelectedBranch: Dispatch<SetStateAction<BranchWithNameAndId>>;
 }
 
 export default function BranchComboBox({
   inputPadding = "sm",
   inputLabel,
+  branches,
+  selectedBranch,
+  setSelectedBranch,
 }: BranchComboBoxProps) {
-  const [selected, setSelected] = useState(people[0]);
   const [query, setQuery] = useState("");
 
   let defaultInputPaddingClass = "!pl-28";
@@ -30,17 +27,17 @@ export default function BranchComboBox({
     defaultInputPaddingClass = "!pl-32";
   }
 
-  const filteredPeople =
+  const filteredBranches =
     query === ""
-      ? people
-      : people.filter((person) =>
-          person.name
+      ? branches
+      : branches.filter((branch) =>
+          branch.name
             .toLowerCase()
-            .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, "")),
         );
+
   return (
-    <Combobox value={selected} onChange={setSelected}>
+    <Combobox value={selectedBranch} onChange={setSelectedBranch}>
       <div className="relative mt-1">
         <div className="transition-color relative flex w-full items-center rounded-md sm:text-xs">
           <div className="absolute inline-flex h-full items-center overflow-hidden border-none px-3 sm:text-xs">
@@ -54,7 +51,7 @@ export default function BranchComboBox({
               defaultInputPaddingClass,
             )}
             onChange={(event) => setQuery(event.target.value)}
-            displayValue={(person) => person.name}
+            displayValue={(branch: BranchWithNameAndId) => branch.name}
           />
 
           <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -67,38 +64,36 @@ export default function BranchComboBox({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md border border-dark bg-darker py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-xs">
-            {filteredPeople.length === 0 && query !== "" ? (
+          <Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-dark bg-darker py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-xs">
+            {filteredBranches.length === 0 && query !== "" ? (
               <div className="relative cursor-default select-none py-2 px-4 text-white">
                 Nothing found.
               </div>
             ) : (
-              filteredPeople.map((person) => (
+              filteredBranches.map((branch) => (
                 <Combobox.Option
-                  key={person.id}
+                  key={branch.id}
                   className={({ active }) =>
                     `relative cursor-default select-none py-2 pl-10 pr-4 ${
                       active ? "bg-dark" : ""
                     }`
                   }
-                  value={person}
+                  value={branch}
                 >
-                  {({ selected, active }) => (
+                  {({ selected }) => (
                     <>
                       <span
                         className={`block truncate ${
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        {person.name}
+                        {branch.name}
                       </span>
                       {selected ? (
                         <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? "" : "text-teal-400"
-                          }`}
+                          className={`absolute inset-y-0 right-0 flex items-center pr-3 text-teal-400`}
                         >
-                          <Check className="h-5 w-5" aria-hidden="true" />
+                          <Check className="h-4 w-4" aria-hidden="true" />
                         </span>
                       ) : null}
                     </>
