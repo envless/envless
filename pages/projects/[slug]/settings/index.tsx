@@ -99,7 +99,9 @@ export const SettingsPage = ({
                   </label>
 
                   <Toggle
-                    checked={currentProject.settings?.enforce2FA || false}
+                    // TODO - create enforce2fa column instead of adding it to settings
+                    // checked={currentProject.settings?.enforce2FA || false}
+                    checked={false}
                     name="enforce2FA"
                     register={register}
                   />
