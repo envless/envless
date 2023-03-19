@@ -24,7 +24,7 @@ const Envless: AppType = ({ Component, pageProps }) => {
           height={1.5}
           showOnShallow={true}
         />
-        <ErrorBoundary>
+        <ErrorBoundary fallback="Error occured somewhare in this page">
           <Component {...pageProps} />
         </ErrorBoundary>
         <Analytics />
