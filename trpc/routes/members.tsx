@@ -3,7 +3,7 @@ import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
-import { UserRole } from "@prisma/client";
+import { Access, UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
 import { randomBytes } from "crypto";
@@ -64,7 +64,7 @@ const checkAccessAndPermission = async ({
   }
 
   // Fetch access records for current user and target user
-  const access = await ctx.prisma.access.findMany({
+  const access: Access[] = await ctx.prisma.access.findMany({
     where: {
       projectId: projectId,
       userId: {
@@ -79,7 +79,7 @@ const checkAccessAndPermission = async ({
     },
   });
 
-  if (!access) {
+  if (access.length !== 2) {
     throw new TRPCError(UNAUTHORIZED_ERROR);
   }
 
