@@ -4,7 +4,7 @@ import ProjectLayout from "@/layouts/Project";
 import Member from "@/models/member";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { Access, Project } from "@prisma/client";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTable from "@/components/members/Table";
 import prisma from "@/lib/prisma";
@@ -14,6 +14,7 @@ interface Props {
   currentProject: Project;
   members: UserType[];
   user: UserType;
+  userAccessInCurrentProject: Access;
   activeMembers: UserType[];
   inactiveMembers: UserType[];
   pendingMembers: UserType[];
@@ -26,6 +27,7 @@ export const MembersPage = ({
   activeMembers,
   pendingMembers,
   inactiveMembers,
+  userAccessInCurrentProject
 }: Props) => {
   const [tab, setTab] = useState("active");
 
@@ -54,6 +56,9 @@ export const MembersPage = ({
                   members={activeMembers}
                   tab={tab}
                   setTab={setTab}
+                  userAccessInCurrentProject={userAccessInCurrentProject}
+                  projectId={currentProject.id}
+                  user={user}
                 />
               )}
 
@@ -62,6 +67,9 @@ export const MembersPage = ({
                   members={pendingMembers}
                   tab={tab}
                   setTab={setTab}
+                  userAccessInCurrentProject={userAccessInCurrentProject}
+                  projectId={currentProject.id}
+                  user={user}
                 />
               )}
 
@@ -70,6 +78,9 @@ export const MembersPage = ({
                   members={inactiveMembers}
                   tab={tab}
                   setTab={setTab}
+                  userAccessInCurrentProject={userAccessInCurrentProject}
+                  projectId={currentProject.id}
+                  user={user}
                 />
               )}
             </div>
@@ -111,6 +122,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           updatedAt: true,
         },
       },
+      role: true,
     },
   });
 
@@ -135,6 +147,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
+  const userAccessInCurrentProject = await prisma.access.findUnique({
+    where: {
+      userId_projectId: {
+        userId: user.id,
+        projectId: currentProject.id
+      }
+    }
+  })
+
+  if(!userAccessInCurrentProject) {
+    return {
+      redirect: {
+        destination: "/projects",
+        permanent: false
+      }
+    }
+  }
+
   const activeMembers = await Member.getMany(currentProject.id);
   const inactiveMembers = await Member.getMany(currentProject.id, false);
   const pendingMembers = await Member.getPending(currentProject.id);
@@ -143,7 +173,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
-      user: user,
+      userAccessInCurrentProject: JSON.parse(JSON.stringify(userAccessInCurrentProject)),
+      user,
       activeMembers,
       inactiveMembers,
       pendingMembers,

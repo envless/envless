@@ -9,14 +9,19 @@ import { z } from "zod";
 import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
+import { UserRole } from "@prisma/client";
+import { capitalize } from "lodash";
 
 interface MemberProps {
   email: string;
   userId: string;
-  role: string;
+  role: UserRole;
 }
 
-type Role = "guest" | "developer" | "mantainer" | "owner";
+const selectOptions = Object.values(UserRole).map((role) => ({
+  value: role,
+  label: capitalize(role)
+}))
 
 const AddMemberModal = ({ user, projectId }) => {
   const [loading, setLoading] = useState(false);
@@ -32,7 +37,7 @@ const AddMemberModal = ({ user, projectId }) => {
   } = useForm({
     resolver: zodResolver(
       z.object({
-        role: z.enum(["guest", "developer", "mantainer", "owner"]),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
         email: z.string().email("Please enter a valid email address"),
       }),
     ),
@@ -61,7 +66,7 @@ const AddMemberModal = ({ user, projectId }) => {
     await inviteMutation.mutate({
       email,
       projectId,
-      role: role as Role,
+      role: role,
     });
 
     setLoading(false);
@@ -124,24 +129,7 @@ const AddMemberModal = ({ user, projectId }) => {
             label="Assign a role"
             className="w-full"
             required
-            options={[
-              {
-                value: "guest",
-                label: "Guest",
-              },
-              {
-                value: "developer",
-                label: "Developer",
-              },
-              {
-                value: "mantainer",
-                label: "Mantainer",
-              },
-              {
-                value: "owner",
-                label: "Owner",
-              },
-            ]}
+            options={selectOptions}
             help={
               <p className="pt-2 text-xs text-light">
                 Learn more about the{" "}
