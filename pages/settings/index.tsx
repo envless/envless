@@ -76,7 +76,9 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
       return;
     } else {
       setTwoFactorRequired(false);
-      handleSubmit(saveSettings(data as SettingProps) as SubmitHandler<SettingProps>);
+      handleSubmit(
+        saveSettings(data as SettingProps) as SubmitHandler<SettingProps>,
+      );
     }
   };
 
@@ -88,7 +90,11 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
         onStateChange={setTwoFactorRequired}
         onConfirm={() => {
           setTwoFactorRequired(false);
-          handleSubmit(saveSettings(formData as SettingProps) as SubmitHandler<SettingProps>);
+          handleSubmit(
+            saveSettings(
+              formData as SettingProps,
+            ) as SubmitHandler<SettingProps>,
+          );
         }}
       />
 

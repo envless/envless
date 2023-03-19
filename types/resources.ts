@@ -8,4 +8,3 @@ export interface UserType {
   role: UserRole;
   twoFactorEnabled?: boolean;
 }
-
