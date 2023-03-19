@@ -33,22 +33,24 @@ const checkAccessAndPermission = async ({
 }: CheckAccessAndPermissionArgs) => {
   const { id: userId } = ctx.session.user;
 
+  const UNAUTHORIZED_ERROR: { code: TRPCError["code"]; message: string } = {
+    code: "UNAUTHORIZED",
+    message:
+      "You do not have the required permission to perform this action. Please contact the project owner to request permission",
+  };
+
   // Check if maintainer is trying to update an owner
   if (
     currentUserRole === UserRole.maintainer &&
     targetUserRole === UserRole.owner
   ) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message:
-        "You do not have the required permission to perform this action. Please contact the project owner to request permission",
-    });
+    throw new TRPCError(UNAUTHORIZED_ERROR);
   }
 
   // Check if trying to update an owner's role
   if (newRole === UserRole.owner) {
     throw new TRPCError({
-      code: "UNAUTHORIZED",
+      code: "FORBIDDEN",
       message: "The owner role cannot be updated",
     });
   }
@@ -77,6 +79,10 @@ const checkAccessAndPermission = async ({
     },
   });
 
+  if (!access) {
+    throw new TRPCError(UNAUTHORIZED_ERROR);
+  }
+
   // Sort access records so that the current user comes first
   const [firstUser, secondUser] = access.sort((a, b) => {
     if (a.userId === userId) {
@@ -94,11 +100,7 @@ const checkAccessAndPermission = async ({
       : [secondUser, firstUser];
 
   if (currentUser.userId !== userId || targetUser.userId !== targetUserId) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message:
-        "You do not have the required permission to perform this action. Please contact the project owner to request permission",
-    });
+    throw new TRPCError(UNAUTHORIZED_ERROR);
   }
 };
 
