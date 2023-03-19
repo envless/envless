@@ -2,6 +2,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { UserRole } from "@prisma/client";
+import { capitalize } from "lodash";
 import { ArrowRight, UserPlus } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -9,8 +11,6 @@ import { z } from "zod";
 import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import { UserRole } from "@prisma/client";
-import { capitalize } from "lodash";
 
 interface MemberProps {
   email: string;
@@ -20,8 +20,8 @@ interface MemberProps {
 
 const selectOptions = Object.values(UserRole).map((role) => ({
   value: role,
-  label: capitalize(role)
-}))
+  label: capitalize(role),
+}));
 
 const AddMemberModal = ({ user, projectId }) => {
   const [loading, setLoading] = useState(false);

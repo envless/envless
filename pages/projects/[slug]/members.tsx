@@ -27,7 +27,7 @@ export const MembersPage = ({
   activeMembers,
   pendingMembers,
   inactiveMembers,
-  userAccessInCurrentProject
+  userAccessInCurrentProject,
 }: Props) => {
   const [tab, setTab] = useState("active");
 
@@ -151,18 +151,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     where: {
       userId_projectId: {
         userId: user.id,
-        projectId: currentProject.id
-      }
-    }
-  })
+        projectId: currentProject.id,
+      },
+    },
+  });
 
-  if(!userAccessInCurrentProject) {
+  if (!userAccessInCurrentProject) {
     return {
       redirect: {
         destination: "/projects",
-        permanent: false
-      }
-    }
+        permanent: false,
+      },
+    };
   }
 
   const activeMembers = await Member.getMany(currentProject.id);
@@ -173,7 +173,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
-      userAccessInCurrentProject: JSON.parse(JSON.stringify(userAccessInCurrentProject)),
+      userAccessInCurrentProject: JSON.parse(
+        JSON.stringify(userAccessInCurrentProject),
+      ),
       user,
       activeMembers,
       inactiveMembers,
