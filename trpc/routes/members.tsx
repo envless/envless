@@ -3,6 +3,7 @@ import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
+import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
 import { randomBytes } from "crypto";
@@ -12,13 +13,188 @@ import generatePassword from "omgopass";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
+interface CheckAccessAndPermissionArgs {
+  ctx: any;
+  projectId: string;
+  userId: string;
+  targetUserId: string;
+  currentUserRole: UserRole;
+  targetUserRole: UserRole;
+  newRole?: UserRole;
+}
+
+const checkAccessAndPermission = async ({
+  ctx,
+  projectId,
+  currentUserRole,
+  targetUserId,
+  targetUserRole,
+  newRole,
+}: CheckAccessAndPermissionArgs) => {
+  const { id: userId } = ctx.session.user;
+
+  // Check if maintainer is trying to update an owner
+  if (
+    currentUserRole === UserRole.maintainer &&
+    targetUserRole === UserRole.owner
+  ) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message:
+        "You do not have the required permission to perform this action. Please contact the project owner to request permission",
+    });
+  }
+
+  // Check if trying to update an owner's role
+  if (newRole === UserRole.owner) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "The owner role cannot be updated",
+    });
+  }
+
+  // Check if user is trying to perform the action on their account
+  if (targetUserId === userId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You cannot perform this action on yourself",
+    });
+  }
+
+  const access = await ctx.prisma.access.findMany({
+    where: {
+      projectId: projectId,
+      userId: {
+        in: [userId, targetUserId],
+      },
+      role: {
+        in: [currentUserRole, targetUserRole],
+      },
+    },
+    orderBy: {
+      role: "asc",
+    },
+  });
+
+  const [ currentUser, targetUser ] = access;
+
+  if (currentUser.userId !== userId || targetUser.userId !== targetUserId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message:
+        "You do not have the required permission to perform this action. Please contact the project owner to request permission",
+    });
+  }
+};
+
 export const members = createRouter({
+  update: withAuth
+    .input(
+      z.object({
+        targetUserId: z.string(),
+        projectId: z.string(),
+        newRole: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
+        currentUserRole: z.enum(
+          Object.values(UserRole) as [UserRole, ...UserRole[]],
+        ),
+        targetUserRole: z.enum(
+          Object.values(UserRole) as [UserRole, ...UserRole[]],
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        targetUserId,
+        projectId,
+        newRole,
+        currentUserRole,
+        targetUserRole,
+      } = input;
+      const { id: userId } = ctx.session.user;
+
+      await checkAccessAndPermission({
+        ctx,
+        projectId,
+        currentUserRole,
+        targetUserRole,
+        targetUserId,
+        userId,
+        newRole,
+      });
+
+      const updatedMember = await ctx.prisma.access.update({
+        where: {
+          userId_projectId: {
+            userId: targetUserId,
+            projectId,
+          },
+        },
+        data: {
+          role: newRole,
+        },
+      });
+      return updatedMember;
+    }),
+
+  updateActiveStatus: withAuth
+    .input(
+      z.object({
+        targetUserId: z.string(),
+        projectId: z.string(),
+        currentUserRole: z.enum(
+          Object.values(UserRole) as [UserRole, ...UserRole[]],
+        ),
+        targetUserRole: z.enum(
+          Object.values(UserRole) as [UserRole, ...UserRole[]],
+        ),
+        status: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        targetUserId,
+        projectId,
+        currentUserRole,
+        targetUserRole,
+        status,
+      } = input;
+      const { id: userId } = ctx.session.user;
+
+      // Check if owner is being removed from project
+      if (targetUserRole === UserRole.owner && !status) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "The project owner cannot be removed from the project",
+        });
+      }
+      await checkAccessAndPermission({
+        ctx,
+        projectId,
+        currentUserRole,
+        targetUserRole,
+        targetUserId,
+        userId,
+      });
+
+      const updatedMember = await ctx.prisma.access.update({
+        where: {
+          userId_projectId: {
+            userId: targetUserId,
+            projectId,
+          },
+        },
+        data: {
+          active: status,
+        },
+      });
+      return updatedMember;
+    }),
   invite: withAuth
     .input(
       z.object({
         projectId: z.string(),
         email: z.string().email(),
-        role: z.enum(["guest", "developer", "mantainer", "owner"]),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
