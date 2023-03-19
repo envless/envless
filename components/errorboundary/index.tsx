@@ -2,12 +2,18 @@ import React, { ErrorInfo, ReactNode } from "react";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
 }
 
+/**
+ * Renders Fallback UI in case of error in child component.
+ * Important section can be wrapped with ErrorBoundary with provided fallback component.
+ * @returns {ReactNode}
+ */
 class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -23,25 +29,17 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.log({ error, errorInfo });
+    /**
+     * Error monitoring library like: sentry can be implemented here.
+     */
+    if (process.env.NODE_ENV === "development")
+      console.error({ error, errorInfo });
   }
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div>
-          <h2>Oops, there is an error!</h2>
-          <button
-            type="button"
-            onClick={() => this.setState({ hasError: false })}
-          >
-            Try again?
-          </button>
-        </div>
-      );
+      return this.props.fallback || "Unexpected client error";
     }
-
-    // Return children components in case of no error
     return this.props.children;
   }
 }
