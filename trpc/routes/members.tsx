@@ -61,6 +61,7 @@ const checkAccessAndPermission = async ({
     });
   }
 
+  // Fetch access records for current user and target user
   const access = await ctx.prisma.access.findMany({
     where: {
       projectId: projectId,
@@ -76,7 +77,21 @@ const checkAccessAndPermission = async ({
     },
   });
 
-  const [ currentUser, targetUser ] = access;
+  // Sort access records so that the current user comes first
+  const [firstUser, secondUser] = access.sort((a, b) => {
+    if (a.userId === userId) {
+      return -1;
+    } else if (b.userId === userId) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // Assign current user and target user based on the sorted order
+  const [currentUser, targetUser] =
+    firstUser.userId === userId
+      ? [firstUser, secondUser]
+      : [secondUser, firstUser];
 
   if (currentUser.userId !== userId || targetUser.userId !== targetUserId) {
     throw new TRPCError({
