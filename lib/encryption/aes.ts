@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import crypto from "crypto";
 
 /**
@@ -41,7 +42,7 @@ interface DecryptInterface {
  * @param {EncryptInterface} - An object containing the plaintext and key.
  * @returns {Promise<{ciphertext: string, iv: string, tag: string}>} - An object containing the ciphertext, initialization vector, and authentication tag.
  */
-export const encrypt = async ({ plaintext, key }: EncryptInterface) => {
+const encrypt = async ({ plaintext, key }: EncryptInterface) => {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, key, iv);
 
@@ -63,12 +64,7 @@ export const encrypt = async ({ plaintext, key }: EncryptInterface) => {
  * @param {DecryptInterface} - An object containing the ciphertext, initialization vector, and authentication tag.
  * @returns {Promise<string>} - The decrypted plaintext.
  */
-export const decrypt = async ({
-  ciphertext,
-  iv,
-  tag,
-  key,
-}: DecryptInterface) => {
+const decrypt = async ({ ciphertext, iv, tag, key }: DecryptInterface) => {
   const decipher = crypto.createDecipheriv(
     algorithm,
     key,
@@ -81,3 +77,26 @@ export const decrypt = async ({
 
   return decrypted;
 };
+
+/**
+ * Generates a random encryption key.
+ * @function
+ * @async
+ * @returns {Promise<string>} - The generated encryption key.
+ * @throws {Error} - Throws an error if the key cannot be generated.
+ * @example
+ * const key = await generateKey();
+ */
+
+const generateKey = async () => {
+  const key = crypto.randomBytes(32);
+  return key.toString("hex").substring(0, 32);
+};
+
+const AES = {
+  encrypt,
+  decrypt,
+  generateKey,
+};
+
+export default AES;

@@ -6,6 +6,7 @@ import { Branch } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
 import * as z from "zod";
+import BranchComboBox from "@/components/branches/BranchComboBox";
 import {
   BaseInput,
   Button,
@@ -14,9 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/theme";
-import BaseModal from "../theme/BaseModal";
-import { showToast } from "../theme/showToast";
-import BranchComboBox from "./BranchComboBox";
+import BaseModal from "@/components/theme/BaseModal";
+import { showToast } from "@/components/theme/showToast";
 
 interface Project {
   name: string;
