@@ -1,6 +1,6 @@
 import { env } from "@/env/index.mjs";
 import { authenticator } from "otplib";
-import { decrypt } from "@/lib/encryption";
+import AES from "@/lib/encryption/aes";
 
 interface VerifyType {
   code: string;
@@ -14,7 +14,7 @@ export const verifyTwoFactor = async ({ code, secret }: VerifyType) => {
     tag: string;
   };
 
-  const decrypted = await decrypt({
+  const decrypted = await AES.decrypt({
     ...encrypted,
     key: env.ENCRYPTION_KEY,
   });
