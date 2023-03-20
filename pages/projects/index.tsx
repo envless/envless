@@ -1,6 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import { getServerSideSession } from "@/utils/session";
-import { User } from "@prisma/client";
+import { Project, User } from "@prisma/client";
 import { SquarePlusIcon } from "@/components/icons";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";

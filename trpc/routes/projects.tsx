@@ -1,4 +1,7 @@
+import { env } from "@/env/index.mjs";
 import { createRouter, withAuth } from "@/trpc/router";
+import sendMail from "emails";
+import { MjmlText } from "mjml-react";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -132,7 +135,7 @@ export const projects = createRouter({
       const { project } = input;
       const enforce2FA = project.enforce2FA || false;
 
-      const updatedProduct = await prisma.project.update({
+      const updatedProject = await prisma.project.update({
         where: {
           id: project.id,
         },
@@ -144,7 +147,7 @@ export const projects = createRouter({
         },
       });
 
-      return updatedProduct;
+      return updatedProject;
     }),
 
   delete: withAuth
@@ -157,11 +160,22 @@ export const projects = createRouter({
       const { prisma } = ctx;
       const { project } = input;
 
-      const deletedProject = await prisma.project.delete({
+      const softDeletedProject = await prisma.project.update({
+        data: {
+          deletedAt: new Date(),
+        },
         where: {
           id: project.id,
         },
       });
-      return deletedProject;
+
+      /*
+       await sendMail({
+        subject: `Your project ${softDeletedProject?.name} will be deleted`,
+        to: 'test@test.com',
+      });
+     */
+
+      return softDeletedProject;
     }),
 });
