@@ -90,7 +90,7 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
                   {currentProject.name}
                 </strong>{" "}
                 project, env keys, branches, pull requests and remove all
-                collaborator associations.
+                collaborator associations after 7 days.
               </span>
             }
             onConfirmAction={onConfirm}

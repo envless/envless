@@ -36,6 +36,7 @@ model Project {
   slug                    String
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
+  deletedAt               DateTime?
   settings                Json      @default("{}")
   branches                Branch[]
   access                  Access[]
