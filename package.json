@@ -20,6 +20,7 @@
     "test:e2e:watch": "playwright-watch test"
   },
   "dependencies": {
+    "@47ng/cloak": "^1.1.0",
     "@fingerprintjs/fingerprintjs": "^3.4.0",
     "@headlessui/react": "^1.7.12",
     "@hookform/resolvers": "^2.9.11",
