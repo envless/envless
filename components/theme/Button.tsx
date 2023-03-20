@@ -105,5 +105,5 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
   },
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 export default Button;
