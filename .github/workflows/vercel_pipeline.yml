@@ -1,0 +1,44 @@
+name: Vercel Deploy Pipeline
+on:
+  push:
+    branches: [ 'main' ]
+  # pull_request: will create Vercel preview deployments on every PR
+  pull_request:
+    types:
+      - synchronize
+      - opened
+    branches:
+      - 'main'
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Production environment setup
+        if: ${{ github.ref_name == 'main' }}
+        run: |
+          echo 'DEPLOY_ENVIRONMENT=production' >> $GITHUB_ENV
+          echo 'PROD_DEPLOY_ARG=--prod' >> $GITHUB_ENV
+
+      - name: Preview environment setup
+        if: ${{ github.ref_name != 'main' }}
+        run: |
+          echo "DEPLOY_ENVIRONMENT=preview" >> $GITHUB_ENV
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ env.DEPLOY_ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build ${{ env.PROD_DEPLOY_ARG }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt ${{ env.PROD_DEPLOY_ARG }} --token=${{ secrets.VERCEL_TOKEN }}
