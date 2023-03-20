@@ -6,7 +6,9 @@ import { Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
+import BranchComboBox from "../branches/BranchComboBox";
 import { BranchPopover } from "../branches/BranchPopover";
+import { BranchWithNameAndId } from "../branches/CreateBranchModal";
 import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
 
@@ -25,12 +27,13 @@ const CreatePullRequestModal = ({
   setIsOpen,
   onSuccessCreation,
 }: BranchModalProps) => {
-  const defaultBranches = [
-    { id: 1, name: "main", isSelected: true },
-    { id: 2, name: "staging", isSelected: false },
-    { id: 3, name: "production", isSelected: false },
+  const defaultBranches: BranchWithNameAndId[] = [
+    { id: "1", name: "main" },
+    { id: "2", name: "staging" },
+    { id: "3", name: "production" },
   ];
   const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
+  const [currentBranch, setCurrentBranch] = useState(defaultBranches[1]);
   const [branches, setBranches] = useState(defaultBranches);
 
   const router = useRouter();
@@ -90,27 +93,21 @@ const CreatePullRequestModal = ({
         </div>
 
         <div className="mb-4 w-full">
-          <BranchPopover
-            zIndex={30}
-            outlined
-            fullWidth
-            buttonText="Current Branch"
+          <BranchComboBox
             branches={branches}
-            setBranches={setBranches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={currentBranch}
+            setSelectedBranch={setCurrentBranch}
+            inputPadding="lg"
+            inputLabel="Current Branch"
           />
         </div>
 
         <div className="mb-4 w-full">
-          <BranchPopover
-            outlined
-            fullWidth
-            buttonText="Base Branch"
+          <BranchComboBox
             branches={branches}
-            setBranches={setBranches}
             selectedBranch={baseBranchFrom}
             setSelectedBranch={setBaseBranchFrom}
+            inputLabel="Base Branch"
           />
         </div>
 
