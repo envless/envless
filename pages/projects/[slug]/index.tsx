@@ -22,7 +22,7 @@ interface Props {
   user: object;
   projects: Project[];
   currentProject: Project;
-  publicKey: string;
+  publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
 }
 
@@ -88,7 +88,6 @@ export const ProjectPage = ({
       const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
 
       if (privateKey) {
-        sessionStorage.setItem("privateKey", privateKey);
         const decryptedProjectKey = (await OpenPGP.decrypt(
           encryptedProjectKey,
           privateKey,

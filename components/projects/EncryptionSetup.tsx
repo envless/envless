@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { decryptString, encryptString, generateKey } from "@47ng/cloak";
 import { trpc } from "@/utils/trpc";
-import { Download } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
-import { Button, Modal } from "@/components/theme";
+import { Button } from "@/components/theme";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { showToast } from "@/components/theme/showToast";
 import AES from "@/lib/encryption/aes";
@@ -14,6 +14,10 @@ const EncryptionSetup = ({ ...props }) => {
   const [loading, setLoading] = useState(false);
   const [privateKey, setPrivateKey] = useState("");
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
+  const [encryptedProjectKey, setEncryptedProjectKey] = useState("");
+  const [pageState, setPageState] = useState(
+    encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
+  );
 
   const download = (filename, text) => {
     var element = document.createElement("a");
@@ -39,22 +43,14 @@ const EncryptionSetup = ({ ...props }) => {
 
       const { projectKey, publicKey } = data;
 
-      // TODO - this is not logging decrypteProjectKey and privateKey
-      // console.log(
-      //   "🚀 ~ file: EncryptionSetup.tsx ~ line 67 ~ createKeys ~ projectKey",
-      //   `Decrypted project key: ${decryptedProjectKey}`,
-      //   `Encrypted project key: ${projectKey.encryptedKey}`,
-      //   `Personal publicKey ${publicKey.key}`,
-      //   `Personal privateKey ${privateKey}`,
-      // )
-
-      async () => {
+      (async () => {
         const _decryptedProjectKey = (await OpenPGP.decrypt(
           projectKey.encryptedKey,
           privateKey,
         )) as string;
 
         setDecryptedProjectKey(_decryptedProjectKey);
+        setEncryptedProjectKey(projectKey.encryptedKey);
 
         setEncryptionKeys({
           project: {
@@ -62,16 +58,19 @@ const EncryptionSetup = ({ ...props }) => {
             encryptedProjectKey: projectKey.encryptedKey,
           },
           personal: {
+            ...encryptionKeys.personal,
             publicKey: publicKey.key,
-            privateKey: privateKey,
           },
         });
-      };
+      })();
 
       download("envless.key", privateKey);
+      setEncryptedProjectKey(projectKey.encryptedKey);
+      setPageState("uploadKey");
     },
 
     onError: (error) => {
+      console.error(error);
       showToast({
         duration: 5000,
         type: "error",
@@ -92,9 +91,10 @@ const EncryptionSetup = ({ ...props }) => {
       setLoading(true);
       const pgp = await OpenPGP.generageKeyPair(user.name, user.email);
       const unencryptedProjectKey = await generateKey();
-      const encryptedProjectKey = await OpenPGP.encrypt(unencryptedProjectKey, [
-        pgp.publicKey,
-      ]);
+      const _encryptedProjectKey = await OpenPGP.encrypt(
+        unencryptedProjectKey,
+        [pgp.publicKey],
+      );
 
       await setPrivateKey(pgp.privateKey);
       await setDecryptedProjectKey(unencryptedProjectKey);
@@ -103,8 +103,37 @@ const EncryptionSetup = ({ ...props }) => {
         personal: { publicKey: pgp.publicKey },
         project: {
           id: project.id,
-          encryptedKey: encryptedProjectKey as string,
+          encryptedKey: _encryptedProjectKey as string,
         },
+      });
+    }
+  };
+
+  const onPrivateKeySetup = async () => {
+    try {
+      const decryptedProjectKey = (await OpenPGP.decrypt(
+        encryptedProjectKey,
+        privateKey,
+      )) as string;
+
+      sessionStorage.setItem("privateKey", privateKey);
+
+      setEncryptionKeys({
+        project: {
+          ...encryptionKeys.project,
+          decryptedProjectKey: decryptedProjectKey,
+        },
+        personal: {
+          ...encryptionKeys.personal,
+          privateKey: privateKey,
+        },
+      });
+    } catch (error) {
+      showToast({
+        duration: 3000,
+        type: "error",
+        title: "Private key setup failed",
+        subtitle: error.message,
       });
     }
   };
@@ -118,43 +147,84 @@ const EncryptionSetup = ({ ...props }) => {
         title="Setup end to end encryption"
         subtitle={
           <>
-            Plase create and download your Private Key. Private keys are
-            generated on the client side and we never be saved on the database.
-            We recommend you further encrypt and store this private key to your
-            most trusted password manager (eg. BitWarden) on on a safe place.
-            You will need this this key when you login on a new browser or
-            device.
+            {pageState === "uploadKey"
+              ? "Please copy/paste your previously downloaded private key."
+              : "Plase create and download your Private Key. Private keys are generated on the client side and we never be saved on the database. We recommend you further encrypt and store this private key to your most trusted password manager (eg. BitWarden) on on a safe place. You will need this this key when you login on a new browser or device."}
           </>
         }
       >
-        <div className="flex flex-col items-center justify-center">
-          <div className="justify-center">
-            <Button
-              variant="primary"
-              size="md"
-              disabled={loading}
-              onClick={async () => {
-                await generateEncryptionKeys();
-              }}
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await onPrivateKeySetup();
+          }}
+        >
+          <div className="flex flex-col items-center justify-center">
+            {pageState === "uploadKey" && (
+              <textarea
+                name="privateKey"
+                autoComplete="off"
+                autoFocus={true}
+                rows={10}
+                required={true}
+                onChange={(e) => setPrivateKey(e.target.value)}
+                placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                    -----END PGP PRIVATE KEY BLOCK-----
+                  "
+                className={
+                  "input-primary mb-10 w-full max-w-xl scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker"
+                }
+              />
+            )}
+
+            <div className="justify-center">
+              {pageState === "uploadKey" ? (
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  disabled={loading}
+                >
+                  Confirm and continue
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  disabled={loading}
+                  onClick={async () => {
+                    await generateEncryptionKeys();
+                  }}
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  {loading ? "Generating keys..." : "Download private key"}
+                </Button>
+              )}
+            </div>
+
+            <a
+              href="https://envless.dev/docs/encryption"
+              target={"_blank"}
+              className="mt-2 text-xs text-teal-400 hover:text-teal-600"
             >
-              <Download className="mr-2 h-5 w-5" />
-              {loading ? "Generating keys..." : "Download private key"}
-            </Button>
+              How does end-to-end encryption work?
+            </a>
           </div>
-
-          <a
-            href="https://envless.dev/docs/encryption"
-            target={"_blank"}
-            className="mt-2 text-xs text-teal-400 hover:text-teal-600"
-          >
-            How does end-to-end encryption work?
-          </a>
-        </div>
+        </form>
       </BaseEmptyState>
-
-      <Modal button={<>Button</>} title="Create a new project">
-        Modal contents
-      </Modal>
     </>
   );
 };

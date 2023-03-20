@@ -43,12 +43,6 @@ interface DecryptInterface {
  * @returns {Promise<{ciphertext: string, iv: string, tag: string}>} - An object containing the ciphertext, initialization vector, and authentication tag.
  */
 const encrypt = async ({ plaintext, key }: EncryptInterface) => {
-  const secretKey = crypto
-    .createHash("sha256")
-    .update(String(key))
-    .digest("base64")
-    .substr(0, 32);
-  debugger;
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, key, iv);
 
