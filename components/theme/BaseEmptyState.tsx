@@ -1,7 +1,7 @@
 type Props = {
   icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle: string | React.ReactNode;
   children?: React.ReactNode;
 };
 

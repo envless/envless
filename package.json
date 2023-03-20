@@ -20,6 +20,7 @@
     "test:e2e:watch": "playwright-watch test"
   },
   "dependencies": {
+    "@47ng/cloak": "^1.1.0",
     "@fingerprintjs/fingerprintjs": "^3.4.0",
     "@headlessui/react": "^1.7.12",
     "@hookform/resolvers": "^2.9.11",
@@ -85,9 +86,8 @@
     "remark": "^14.0.2",
     "remark-gfm": "^3.0.1",
     "remark-html": "^15.0.2",
+    "session-keystore": "^1.0.3",
     "superjson": "^1.12.1",
-    "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1",
     "zod": "^3.20.6"
   },
   "devDependencies": {

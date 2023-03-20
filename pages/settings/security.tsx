@@ -13,7 +13,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
 import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
-import { decrypt, encrypt } from "@/lib/encryption/aes";
+import AES from "@/lib/encryption/aes";
 import log from "@/lib/log";
 import prisma from "@/lib/prisma";
 
@@ -238,7 +238,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     if (!user?.twoFactorEnabled) {
       const secret = await authenticator.generateSecret(20);
-      const encryptedSecret = await encrypt({
+      const encryptedSecret = await AES.encrypt({
         plaintext: secret,
         key: env.ENCRYPTION_KEY,
       });
@@ -274,7 +274,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         tag: string;
       };
 
-      const decrypted = await decrypt({
+      const decrypted = await AES.decrypt({
         ...encrypted,
         key: env.ENCRYPTION_KEY,
       });

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { Project } from "@prisma/client";
+import { EncryptedProjectKey, PublicKey } from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
+import OpenPGP from "@/lib/encryption/openpgp";
 import prisma from "@/lib/prisma";
 
 /**
@@ -17,45 +19,42 @@ import prisma from "@/lib/prisma";
  * @param {Projects} props.projects - The projects the user has access to. @param {currentProject} props.currentProject - The current project. */
 
 interface Props {
+  user: object;
   projects: Project[];
   currentProject: Project;
   publicKey: string;
-  projectKey: {
-    publicKey: string;
-    encryptedPrivateKey: string;
-  };
+  encryptedProjectKey: EncryptedProjectKey;
 }
 
-interface KeyPair {
-  publicKey: string;
+interface PersonalKey {
+  publicKey: PublicKey["key"];
   privateKey: string;
 }
 
-interface EncryptedKeyPair {
-  publicKey: string;
-  privateKey: string;
-  encryptedPrivateKey: string;
+interface ProjectKey {
+  decryptedProjectKey: string;
+  encryptedProjectKey: EncryptedProjectKey["encryptedKey"];
 }
 
 export const ProjectPage = ({
+  user,
   projects,
   currentProject,
   publicKey,
-  projectKey,
+  encryptedProjectKey,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [encryptionKeys, setEncryptionKeys] = useState<{
-    user: KeyPair;
-    project: EncryptedKeyPair;
+    personal: PersonalKey;
+    project: ProjectKey;
   }>({
-    user: {
+    personal: {
       publicKey: publicKey,
       privateKey: "",
     },
     project: {
-      publicKey: projectKey.publicKey,
-      privateKey: "",
-      encryptedPrivateKey: projectKey.encryptedPrivateKey,
+      decryptedProjectKey: "",
+      encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     },
   });
 
@@ -75,29 +74,55 @@ export const ProjectPage = ({
     if (getPrivateKey) {
       setEncryptionKeys({
         ...encryptionKeys,
-        user: {
-          ...encryptionKeys.user,
+        personal: {
+          ...encryptionKeys.personal,
           privateKey: getPrivateKey,
         },
       });
     }
-  });
+  }, []);
 
   useEffect(() => {
-    sessionStorage.setItem("privateKey", encryptionKeys.user.privateKey);
-    // descrypt project private key and save to setEncryptionKeys
-  }, [encryptionKeys.user.privateKey]);
+    (async () => {
+      const privateKey = encryptionKeys.personal.privateKey;
+      const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
+
+      if (privateKey) {
+        sessionStorage.setItem("privateKey", privateKey);
+        const decryptedProjectKey = (await OpenPGP.decrypt(
+          encryptedProjectKey,
+          privateKey,
+        )) as string;
+
+        setEncryptionKeys({
+          personal: {
+            ...encryptionKeys.personal,
+          },
+
+          project: {
+            ...encryptionKeys.project,
+            decryptedProjectKey: decryptedProjectKey,
+          },
+        });
+      }
+    })();
+  }, [
+    encryptionKeys.personal.privateKey,
+    encryptionKeys.project.encryptedProjectKey,
+  ]);
 
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
-      {encryptionKeys.user.privateKey.length === 0 ? (
+      {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
+          user={user}
+          project={currentProject}
           encryptionKeys={encryptionKeys}
           setEncryptionKeys={setEncryptionKeys}
         />
       ) : (
         <>
-          <div className="mt-8 w-full">
+          <div className="w-full">
             <div className="flex w-full items-center justify-between">
               <BranchDropdown
                 branches={branches}
@@ -187,7 +212,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const publicKey = await prisma.publicKey.findFirst({
     where: {
-      AND: [{ userId: user.id, projectId: currentProject.id }],
+      userId: user.id,
     },
     select: {
       id: true,
@@ -195,19 +220,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   });
 
-  const projectKey = await prisma.projectKey.findFirst({
+  const encryptedProjectKey = await prisma.encryptedProjectKey.findFirst({
     where: { projectId: currentProject.id },
+    select: {
+      encryptedKey: true,
+    },
   });
 
   return {
     props: {
+      user,
       currentProject: JSON.parse(JSON.stringify(currentProject)),
       projects: JSON.parse(JSON.stringify(projects)),
       publicKey: publicKey?.key || "",
-      projectKey: {
-        publicKey: projectKey?.publicKey || "",
-        encryptedPrivateKey: projectKey?.encryptedPrivateKey || "",
-      },
+      encryptedProjectKey,
     },
   };
 }
