@@ -150,7 +150,7 @@ export const projects = createRouter({
   delete: withAuth
     .input(
       z.object({
-        project: z.object({ name: z.string(), slug: z.string() }),
+        project: z.object({ id: z.string().min(1, "project id is required") }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -159,10 +159,7 @@ export const projects = createRouter({
 
       const deletedProject = await prisma.project.delete({
         where: {
-          name_slug: {
-            name: project.name,
-            slug: project.slug,
-          },
+          id: project.id,
         },
       });
       return deletedProject;

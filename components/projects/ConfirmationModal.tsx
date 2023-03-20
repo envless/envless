@@ -5,9 +5,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useForm } from "react-hook-form";
+import { useZodForm } from "@/hooks/useZodForm";
+import { z } from "zod";
 import { BaseInput, Button, Paragraph } from "@/components/theme";
 import BaseModal from "../theme/BaseModal";
+import Form from "../theme/Form";
 
 interface ConfirmationModalProps {
   title: string;
@@ -36,25 +38,27 @@ const ConfirmationModal = ({
   setOpen,
   validationInputProps,
 }: ConfirmationModalProps) => {
-  const {
-    register,
-    setFocus,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const confirmationSchema = z.object({
+    name: z.string().optional(),
+  });
+
+  const form = useZodForm({
+    schema: confirmationSchema,
+  });
 
   const [isDisabled, setIsDisabled] = useState(true);
 
   // This is not working and is subject to change.
+  /*
   useEffect(() => {
     if (validationInputProps) {
-      setFocus(validationInputProps.name);
+      form.setFocus();
     }
-  }, [setFocus, validationInputProps]);
+  }, [form.setFocus, validationInputProps]);
+        */
 
   useEffect(() => {
-    const subscription = watch((value) => {
+    const subscription = form.watch((value) => {
       if (
         value[validationInputProps?.name as string] ===
         String(validationInputProps?.validationText)
@@ -65,7 +69,7 @@ const ConfirmationModal = ({
       }
     });
     return () => subscription.unsubscribe();
-  }, [watch]);
+  }, [form, form.watch]);
 
   return (
     <BaseModal isOpen={open} setIsOpen={setOpen} title={title}>
@@ -79,7 +83,7 @@ const ConfirmationModal = ({
           {descriptionComponent}
         </Paragraph>
         {validationInputProps && (
-          <form onSubmit={handleSubmit(onConfirmAction)} className="w-full">
+          <Form form={form} className="w-full" onSubmit={onConfirmAction}>
             <label
               htmlFor={validationInputProps.name}
               className="my-2 block w-full text-left text-xs font-semibold text-lighter"
@@ -91,15 +95,15 @@ const ConfirmationModal = ({
               type={validationInputProps.type}
               id={validationInputProps.name}
               placeholder={validationInputProps.placeholder}
-              {...register(validationInputProps.name, { required: true })}
+              {...form.register("name")}
             />
 
-            {errors && errors[validationInputProps.name] != null && (
+            {form.formState.errors?.name && (
               <p className="mt-1 text-xs text-red-400/75">
-                {errors[validationInputProps.name]?.message as string}
+                {form.formState.errors.name.message}
               </p>
             )}
-          </form>
+          </Form>
         )}
         <div className="mt-6 flex w-full justify-center gap-2">
           <Button

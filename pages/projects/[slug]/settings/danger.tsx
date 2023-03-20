@@ -1,16 +1,10 @@
 import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { SetStateAction, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { Project } from "@prisma/client";
-import {
-  FieldValues,
-  RegisterOptions,
-  UseFormRegisterReturn,
-  useForm,
-} from "react-hook-form";
 import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Paragraph } from "@/components/theme";
@@ -34,16 +28,6 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
   const router = useRouter();
   const props = { projects, currentProject };
 
-  const {
-    register,
-    formState: { errors },
-    watch,
-    setError,
-    clearErrors,
-  } = useForm();
-
-  const slug = watch("slug");
-
   const { mutate: projectDeleteMutation, isLoading } =
     trpc.projects.delete.useMutation({
       onSuccess: () => {
@@ -60,18 +44,14 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
           title: "Project Delete failed",
           subtitle: "",
         });
-        setError("slug", {
-          message: "Please ensure that the entered slug is correct.",
-        });
       },
     });
 
   const onConfirm = useCallback(() => {
-    clearErrors(["slug"]);
     projectDeleteMutation({
-      project: { ...currentProject, slug },
+      project: { id: currentProject.id },
     });
-  }, [clearErrors, currentProject, projectDeleteMutation, slug]);
+  }, [currentProject, projectDeleteMutation]);
 
   return (
     <ProjectLayout tab="settings" {...props}>
@@ -107,7 +87,7 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
                 <strong className="font-bold text-lighter">CANNOT</strong> be
                 undone. This will permanently delete the{" "}
                 <strong className="font-bold text-lighter">
-                  {currentProject.slug}
+                  {currentProject.name}
                 </strong>{" "}
                 project, env keys, branches, pull requests and remove all
                 collaborator associations.
@@ -118,12 +98,12 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
             setOpen={setIsConfirmationModalOpen}
             confirmButtonText="I understand, delete this project"
             validationInputProps={{
-              name: "slug",
+              name: "name",
               type: "text",
-              label: "Please type in the slug of the project to confirm.",
+              label: "Please type in the name of the project to confirm.",
               errorText: "Required",
-              placeholder: "Enter project slug",
-              validationText: currentProject.slug,
+              placeholder: "Enter project name",
+              validationText: currentProject.name,
             }}
           />
         </div>

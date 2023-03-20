@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { encrypt, decrypt } from "../../lib/encryption";
+import { describe, expect, it } from "vitest";
+import { decrypt, encrypt } from "../../lib/encryption";
 
 describe("encrypt/decrypt", () => {
   it("should correctly encrypt and decrypt a message", async () => {
