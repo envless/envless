@@ -31,20 +31,30 @@ model Audit {
 }
 
 model Project {
-  id        String    @id @default(cuid())
-  name      String
-  slug      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  settings  Json      @default("{}")
-  branches  Branch[]
-  access    Access[]
-  audits    Audit[]
-  invites   ProjectInvite[]
-  pullRequests PullRequest[]
-  privateKeys PublicKey[]
+  id                      String    @id @default(cuid())
+  name                    String
+  slug                    String
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  settings                Json      @default("{}")
+  branches                Branch[]
+  access                  Access[]
+  audits                  Audit[]
+  invites                 ProjectInvite[]
+  pullRequests            PullRequest[]
+  encryptedProjectKey     EncryptedProjectKey?
 
   @@unique([name, slug])
+}
+
+model EncryptedProjectKey {
+  id                  String    @id @default(cuid())
+  encryptedKey        String
+
+  projectId           String    @unique
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model PublicKey {
@@ -52,13 +62,10 @@ model PublicKey {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   key       String
-  userId    String
-  projectId String
+  userId    String    @unique
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([projectId])
 }
 
 model ProjectInvite {
@@ -111,7 +118,7 @@ model Branch {
 
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdBy   User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  envs        Env[]
+  secrets     Secret[]
 
   @@index([createdById])
   @@index([projectId])
@@ -157,26 +164,27 @@ model PullRequest {
   @@index([projectId, prId])
 }
 
-
 enum PullRequestStatus {
   open
   merged
   closed
 }
 
-
-model Env {
+model Secret {
   id        String   @id @default(cuid())
-  key       String
-  value     String
+  cipher    String   @default("aes-256-gcm")
+  iv        String   @default("")
+  tag       String   @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  userId    String
   branchId  String
   branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@index([branchId])
-  @@unique([key, branchId])
 }
 
 // Necessary for Next auth
@@ -242,13 +250,13 @@ model User {
   sessionHistories  SessionHistory[]
   access            Access[]
   publicKeys        PublicKey[]
+  secrets 	        Secret[]
   auditsCreatedBy   Audit[]   @relation(name: "createdBy")
   auditsCreatedFor  Audit[]   @relation(name: "createdFor")
   branchesCreatedBy Branch[]  @relation(name: "createdBy")
-  createdPRs PullRequest[] @relation(name: "createdBy")
-  mergedPRs PullRequest[] @relation(name: "mergedBy")
-  closedPRs PullRequest[] @relation(name: "closedBy")
-
+  createdPRs        PullRequest[] @relation(name: "createdBy")
+  mergedPRs         PullRequest[] @relation(name: "mergedBy")
+  closedPRs         PullRequest[] @relation(name: "closedBy")
 
   // Two factor authentication
   encryptedTwoFactorSecret    Json?

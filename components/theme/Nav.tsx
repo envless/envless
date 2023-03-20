@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { getInitials } from "@/utils/helpers";
 import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -19,13 +20,7 @@ const Nav = ({ ...props }) => {
   }, [projects]);
 
   const { name, email, image } = user;
-  const initials = name
-    ? name
-        .split(" ")
-        .map((n: String) => n[0])
-        .join("")
-        .toUpperCase()
-    : email.slice(0, 2).toUpperCase();
+  const initials = getInitials(name || email);
   const avatar =
     image || `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
 
