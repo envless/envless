@@ -14,7 +14,9 @@ const EncryptionSetup = ({ ...props }) => {
   const [loading, setLoading] = useState(false);
   const [privateKey, setPrivateKey] = useState("");
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
-  const [encryptedProjectKey, setEncryptedProjectKey] = useState("");
+  const [encryptedProjectKey, setEncryptedProjectKey] = useState(
+    encryptionKeys.project.encryptedProjectKey,
+  );
   const [pageState, setPageState] = useState(
     encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
   );
