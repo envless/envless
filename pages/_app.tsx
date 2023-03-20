@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import NextNProgress from "nextjs-progressbar";
 import ErrorBoundary from "@/components/errorboundary";
+import Fallback from "@/components/errorboundary/Fallback";
 import "@/styles/balloon.css";
 import "@/styles/globals.css";
 import "@/styles/primary.css";
@@ -24,7 +25,7 @@ const Envless: AppType = ({ Component, pageProps }) => {
           height={1.5}
           showOnShallow={true}
         />
-        <ErrorBoundary fallback="Error occured somewhare in this page">
+        <ErrorBoundary fallback={<Fallback />}>
           <Component {...pageProps} />
         </ErrorBoundary>
         <Analytics />
