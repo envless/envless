@@ -1,7 +1,8 @@
 name: Vercel Deploy Pipeline
 on:
-  push:
-    branches: [ 'main' ]
+  # release: will trigger this workflow only when release is published
+  release:
+    types: [ 'published' ]
   # pull_request: will create Vercel preview deployments on every PR
   pull_request:
     types:
@@ -9,7 +10,6 @@ on:
       - opened
     branches:
       - 'main'
-
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -24,15 +24,15 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Production environment setup
-        if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.event_name == 'release' }}
         run: |
           echo 'DEPLOY_ENVIRONMENT=production' >> $GITHUB_ENV
           echo 'PROD_DEPLOY_ARG=--prod' >> $GITHUB_ENV
 
       - name: Preview environment setup
-        if: ${{ github.ref_name != 'main' }}
+        if: ${{ github.event_name != 'release' }}
         run: |
-          echo "DEPLOY_ENVIRONMENT=preview" >> $GITHUB_ENV
+          echo 'DEPLOY_ENVIRONMENT=preview' >> $GITHUB_ENV
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=${{ env.DEPLOY_ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
