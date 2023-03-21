@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
+import { withAccessControl } from "@/utils/withAccessControl";
 import { Project } from "@prisma/client";
 import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
@@ -112,81 +113,8 @@ export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      role: true,
-      project: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  const projectsWithRole = access.map((a) => {
-    if (a.role === "owner") {
-      return {
-        project: a.project,
-        role: a.role,
-      };
-    }
-    return {
-      project: a.project,
-      role: null,
-    };
-  });
-
-  const projects = projectsWithRole.map((pr) => pr.project);
-
-  const currentProject = projectsWithRole.find(
-    (pr) => pr.project.slug === slug && pr.role === "owner",
-  );
-
-  if (!currentProject) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  checkProjectOwner: true,
+});
 
 export default DangerZone;
