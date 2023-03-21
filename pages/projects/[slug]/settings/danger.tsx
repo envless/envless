@@ -20,13 +20,13 @@ import prisma from "@/lib/prisma";
 
 interface DangerPageProps {
   projects: Project[];
-  currentProject: Project;
+  currentProject: any;
 }
 
 export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const router = useRouter();
-  const props = { projects, currentProject };
+  const props = { projects, currentProject: currentProject.project };
 
   const { mutate: projectDeleteMutation, isLoading } =
     trpc.projects.delete.useMutation({
@@ -135,6 +135,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
     select: {
       id: true,
+      role: true,
       project: {
         select: {
           id: true,
@@ -155,15 +156,28 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.slug === slug);
+  const projectsWithRole = access.map((a) => {
+    if (a.role === "owner") {
+      return {
+        project: a.project,
+        role: a.role,
+      };
+    }
+    return {
+      project: a.project,
+      role: null,
+    };
+  });
+
+  const projects = projectsWithRole.map((pr) => pr.project);
+
+  const currentProject = projectsWithRole.find(
+    (pr) => pr.project.slug === slug && pr.role === "owner",
+  );
 
   if (!currentProject) {
     return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
