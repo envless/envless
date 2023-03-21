@@ -56,15 +56,9 @@ export function withAccessControl<P = Record<string, unknown>>({
     }
 
     const projectsWithRole = access.map((a) => {
-      if (a.role === "owner") {
-        return {
-          project: a.project,
-          role: a.role,
-        };
-      }
       return {
         project: a.project,
-        role: null,
+        role: a.role,
       };
     });
 
@@ -77,15 +71,25 @@ export function withAccessControl<P = Record<string, unknown>>({
     );
 
     if (!currentProject) {
-      return {
-        notFound: true,
-      };
+      if (checkProjectOwner) {
+        return {
+          notFound: true,
+        };
+      } else {
+        return {
+          redirect: {
+            destination: "/projects",
+            permanent: false,
+          },
+        };
+      }
     }
 
     return {
       props: {
         ...serverPropsFromParent.props,
         currentProject: JSON.parse(JSON.stringify(currentProject)),
+        projectRole: currentProject.role,
         projects: JSON.parse(JSON.stringify(projects)),
       },
     };
