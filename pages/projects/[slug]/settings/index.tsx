@@ -1,14 +1,12 @@
-import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
+import { withAccessControl } from "@/utils/withAccessControl";
 import { Project } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -19,15 +17,16 @@ import prisma from "@/lib/prisma";
 
 interface SettingsPageProps {
   projects: Project[];
-  currentProject: Project;
+  currentProject: any;
+  projectRole: string;
 }
 
 export const SettingsPage = ({
   projects,
+  projectRole,
   currentProject,
 }: SettingsPageProps) => {
   const router = useRouter();
-  const props = { projects, currentProject };
 
   const { register, handleSubmit } = useForm();
 
@@ -63,11 +62,16 @@ export const SettingsPage = ({
   };
 
   return (
-    <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+    <ProjectLayout
+      tab="pr"
+      projects={projects}
+      currentProject={currentProject.project}
+    >
       <ProjectSettings
         active="general"
         projects={projects}
-        currentProject={currentProject}
+        currentProject={currentProject.project}
+        projectRole={projectRole}
       >
         <>
           <h3 className="mb-8 text-lg">General</h3>
@@ -77,7 +81,7 @@ export const SettingsPage = ({
                 name="name"
                 label="Project name"
                 placeholder=""
-                defaultValue={currentProject.name || ""}
+                defaultValue={currentProject.project.name || ""}
                 required={true}
                 register={register}
                 className="w-full"
@@ -119,67 +123,8 @@ export const SettingsPage = ({
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.slug === slug);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  checkProjectOwner: false,
+});
 
 export default SettingsPage;

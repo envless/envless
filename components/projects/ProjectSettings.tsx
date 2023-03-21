@@ -7,6 +7,7 @@ type ActiveType = "general" | "branches" | "danger";
 interface SettingsProps {
   projects: Project[];
   currentProject: Project;
+  projectRole: string;
   active: ActiveType;
   children?: React.ReactNode;
 }
@@ -14,6 +15,7 @@ interface SettingsProps {
 const ProjectSettings = ({
   projects,
   currentProject,
+  projectRole,
   active,
   children,
 }: SettingsProps) => {
@@ -29,7 +31,7 @@ const ProjectSettings = ({
         name: "Protected branches",
         href: `/projects/${currentProject.slug}/settings/protected-branch`,
       },
-      {
+      (projectRole === "owner" || "maintainer") && {
         id: "danger",
         name: "Danger zone",
         href: `/projects/${currentProject.slug}/settings/danger`,

@@ -1,8 +1,6 @@
-import { type GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project } from "@prisma/client";
@@ -10,7 +8,6 @@ import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Paragraph } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -22,12 +19,21 @@ import prisma from "@/lib/prisma";
 interface DangerPageProps {
   projects: Project[];
   currentProject: any;
+  projectRole: string;
 }
 
-export const DangerZone = ({ projects, currentProject }: DangerPageProps) => {
+export const DangerZone = ({
+  projects,
+  currentProject,
+  projectRole,
+}: DangerPageProps) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const router = useRouter();
-  const props = { projects, currentProject: currentProject.project };
+  const props = {
+    projects,
+    currentProject: currentProject.project,
+    projectRole,
+  };
 
   const { mutate: projectDeleteMutation, isLoading } =
     trpc.projects.delete.useMutation({
