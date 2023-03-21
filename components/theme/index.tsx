@@ -18,6 +18,7 @@ export { default as Container } from "./Container";
 export { default as LoadingIcon } from "./LoadingIcon";
 export { default as TextareaGroup } from "./TextareaGroup";
 export { default as BaseInput } from "./BaseInput";
+export { default as Banner } from "./Banner";
 
 export { ScrollBar } from "./ScrollArea";
 export { ScrollArea } from "./ScrollArea";

@@ -4,12 +4,14 @@ import clsx from "clsx";
 type TextareaTypes = {
   icon: ReactNode;
   full?: boolean;
+  rows?: number;
   iconActionClick?: () => void;
 } & ComponentProps<"textarea">;
 
 export default function Textarea({
   full,
   icon,
+  rows,
   className,
   disabled,
   iconActionClick,
@@ -19,7 +21,7 @@ export default function Textarea({
     <div className={clsx("relative flex items-center", full && "w-full")}>
       <textarea
         {...props}
-        rows={1}
+        rows={rows || 1}
         disabled={disabled}
         className={clsx(
           className,
@@ -29,7 +31,7 @@ export default function Textarea({
 
       <button
         onClick={iconActionClick}
-        className="absolute inset-y-0 right-0 mr-3 flex items-center rounded p-1"
+        className="absolute bottom-4 right-0 mr-3"
       >
         {icon}
       </button>
