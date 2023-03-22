@@ -54,7 +54,7 @@
     "fuse.js": "^6.6.2",
     "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.115.0",
+    "lucide-react": "^0.118.0",
     "mailing-core": "^0.9.12",
     "moment": "^2.29.4",
     "next": "^13.2.1",
