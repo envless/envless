@@ -100,7 +100,7 @@ const Login = ({ csrfToken }) => {
                 full={true}
                 register={register}
                 errors={errors}
-                defaultValue="envless.dev@example.com"
+                defaultValue="envless@example.com"
                 validationSchema={{
                   required: "Email is required",
                   pattern: {
