@@ -1,15 +1,14 @@
 import { useRouter } from "next/router";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import React from "react";
 import useFuse from "@/hooks/useFuse";
 import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { Access, UserRole } from "@prisma/client";
 import clsx from "clsx";
-import { Lock, Settings2, Unlock, UserX } from "lucide-react";
+import { Lock, Trash, Unlock, UserX } from "lucide-react";
 import MemberTabs from "@/components/members/MemberTabs";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
-import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
 import MemberDropDown from "./MemberDropDown";
 
@@ -24,12 +23,12 @@ interface TableProps {
   user: UserType;
 }
 
-interface ActiveUser {
+interface SelectedMember {
   userId: string;
   newRole: UserRole;
   currentRole: UserRole;
 }
-const defaultRoles: UserRole[] = Object.values(UserRole);
+const roles: UserRole[] = Object.values(UserRole);
 
 const MembersTable = ({
   members,
@@ -41,8 +40,6 @@ const MembersTable = ({
 }: TableProps) => {
   const [query, setQuery] = useState("");
   const [team, setTeam] = useState(members);
-  const [roles, setRoles] = useState(defaultRoles);
-  const [selectedMember, setSelectedMember] = useState<ActiveUser | null>(null);
   const [fetching, setFetching] = useState(false);
 
   const fuseOptions = { keys: ["name", "email"], threshold: 0.2 };
@@ -65,7 +62,6 @@ const MembersTable = ({
         title: "Access successfully updated",
         subtitle: "",
       });
-      setSelectedMember(null);
       setFetching(false);
       router.replace(router.asPath);
     },
@@ -85,7 +81,6 @@ const MembersTable = ({
         title: "Access successfully updated",
         subtitle: "",
       });
-      setSelectedMember(null);
       setFetching(false);
       router.replace(router.asPath);
     },
@@ -99,30 +94,36 @@ const MembersTable = ({
     },
   });
 
-  const onUpdateMemberAccess = useCallback(() => {
-    if (selectedMember) {
+  const onUpdateMemberAccess = useCallback(
+    (user: SelectedMember) => {
       setFetching(true);
 
       memeberUpdateMutation.mutate({
         projectId,
-        newRole: selectedMember.newRole,
-        currentUserRole: userAccess.role,
-        targetUserId: selectedMember.userId,
-        targetUserRole: selectedMember.currentRole,
-      });
-    }
-  }, [selectedMember, memeberUpdateMutation, projectId, userAccess.role]);
-
-  const onUpdateMemberStatus = useCallback(
-    (user: ActiveUser, status: boolean) => {
-      setFetching(true);
-      memberStatusMutation.mutate({
-        projectId,
-        status,
+        newRole: user.newRole,
         currentUserRole: userAccess.role,
         targetUserId: user.userId,
         targetUserRole: user.currentRole,
       });
+    },
+    [memeberUpdateMutation, projectId, userAccess.role],
+  );
+
+  const onUpdateMemberStatus = useCallback(
+    (user: SelectedMember, status: boolean) => {
+      const confirmed = confirm(
+        "Are you sure you want to change this user's status?",
+      );
+      if (confirmed) {
+        setFetching(true);
+        memberStatusMutation.mutate({
+          projectId,
+          status,
+          currentUserRole: userAccess.role,
+          targetUserId: user.userId,
+          targetUserRole: user.currentRole,
+        });
+      }
     },
     [memberStatusMutation, projectId, userAccess.role],
   );
@@ -166,9 +167,19 @@ const MembersTable = ({
                 </td>
 
                 <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
-                  {member.role}
+                  <MemberDropDown
+                    roles={roles}
+                    setSelectedRole={(role) =>
+                      onUpdateMemberAccess({
+                        currentRole: member.role,
+                        newRole: role,
+                        userId: member.id,
+                      })
+                    }
+                    selectedRole={member.role}
+                    loading={fetching}
+                  />
                 </td>
-
                 {tab != "pending" && (
                   <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
                     <div className="inline-flex">
@@ -185,14 +196,18 @@ const MembersTable = ({
                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                   <button
                     onClick={() =>
-                      setSelectedMember({
-                        userId: member.id,
-                        newRole: member.role,
-                        currentRole: member.role,
-                      })
+                      onUpdateMemberStatus(
+                        {
+                          currentRole: member.role,
+                          newRole: member.role,
+                          userId: member.id,
+                        },
+                        false,
+                      )
                     }
                     className="disabled:opacity-50 hover:text-teal-400 hover:disabled:text-current"
                     disabled={
+                      fetching ||
                       !(
                         userAccess.role === UserRole.owner ||
                         userAccess.role === UserRole.maintainer
@@ -202,10 +217,7 @@ const MembersTable = ({
                         member.role === UserRole.owner)
                     }
                   >
-                    <Settings2
-                      className="float-right h-5 w-5"
-                      strokeWidth={2}
-                    />
+                    <Trash className="float-right h-5 w-5" strokeWidth={2} />
                     <span className="sr-only">, {member.name}</span>
                   </button>
                 </td>
@@ -214,37 +226,6 @@ const MembersTable = ({
           </tbody>
         </table>
       )}
-      <BaseModal
-        isOpen={selectedMember !== null}
-        setIsOpen={() => setSelectedMember(null)}
-        title={"Update Member"}
-      >
-        {selectedMember && (
-          <Fragment>
-            <MemberDropDown
-              roles={roles}
-              setSelectedRole={(role) =>
-                setSelectedMember((prev) =>
-                  prev
-                    ? {
-                        ...prev,
-                        newRole: role,
-                      }
-                    : null,
-                )
-              }
-              selectedRole={selectedMember.newRole}
-              setRoles={setRoles}
-              onClickSave={onUpdateMemberAccess}
-              onClickRemove={(status) => {
-                onUpdateMemberStatus(selectedMember, status);
-              }}
-              loading={fetching}
-              tab={tab}
-            />
-          </Fragment>
-        )}
-      </BaseModal>
     </React.Fragment>
   );
 };

@@ -69,7 +69,7 @@ const ConfirmationModal = ({
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, form.watch]);
+  }, [form, form.watch, validationInputProps?.name, validationInputProps?.validationText]);
 
   return (
     <BaseModal isOpen={open} setIsOpen={setOpen} title={title}>
