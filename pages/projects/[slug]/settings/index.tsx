@@ -27,16 +27,17 @@ export const SettingsPage = ({
   currentProject,
 }: SettingsPageProps) => {
   const router = useRouter();
-  const props = { projects, currentProject };
-
-  const { register, handleSubmit } = useForm();
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { mutate: projectGeneralMutation, isLoading } =
     trpc.projects.update.useMutation({
-      onSuccess: (data) => {
+      onSuccess: ({ name }) => {
         showToast({
           type: "success",
-          title: "Project setting updated successfully",
+          title: `Project ${name} setting updated successfully`,
           subtitle: "",
         });
         router.push(router.asPath);
@@ -79,14 +80,14 @@ export const SettingsPage = ({
             <Input
               name="name"
               label="Project name"
-              placeholder=""
               defaultValue={currentProject.name || ""}
-              required={true}
               register={register}
               className="w-full"
+              errors={errors}
               validationSchema={{
                 required: "Project name is required",
               }}
+              required
             />
             <div className="mb-6 rounded border-2 border-dark p-3">
               <div className="flex items-center justify-between">
@@ -101,7 +102,7 @@ export const SettingsPage = ({
                 </label>
 
                 <Toggle
-                  // TODO - create enforce2fa column instead of adding it to settings
+                  // TODO: - create enforce2fa column instead of adding it to settings
                   // checked={currentProject.settings?.enforce2FA || false}
                   checked={false}
                   name="enforce2FA"
