@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 import fs from "fs";
 import OpenPGP from "../../lib/encryption/openpgp";
-import { EncryptedProjectKeyType } from "./types";
 
 const prisma = new PrismaClient();
 
@@ -64,7 +63,7 @@ const e2eeSetup = async () => {
     process.exit(0);
   }
 
-  return email;
+  return true;
 };
 
 export default e2eeSetup;
