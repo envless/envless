@@ -11,7 +11,7 @@ const seedUsers = async (count: number = 10) => {
   const users: UserType[] = [
     {
       name: faker.name.fullName(),
-      email: "envless.dev@example.com",
+      email: "envless@example.com",
     },
   ];
 

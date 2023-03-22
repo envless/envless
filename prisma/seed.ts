@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 import seedAccesses from "./seeds/access";
 import seedBranches from "./seeds/branches";
+import seedE2EESetup from "./seeds/e2eeSetup";
 import seedInactiveUsers from "./seeds/inactiveUsers";
 import seedInvites from "./seeds/invites";
 import seedProjects from "./seeds/projects";
@@ -37,6 +38,7 @@ const seed = async () => {
       await seedUsers(100);
       await seedProjects(50);
       await seedAccesses();
+      await seedE2EESetup();
       await seedBranches();
       await seedInactiveUsers(25);
       await seedInvites(25);
@@ -56,13 +58,15 @@ const nuke = async () => {
     await prisma.branch.deleteMany();
     await prisma.projectInvite.deleteMany();
     await prisma.pullRequest.deleteMany();
+    await prisma.publicKey.deleteMany();
+    await prisma.encryptedProjectKey.deleteMany();
   });
 };
 
 seed()
   .then(async () => {
     console.log("✅ Database seeding completed".green);
-    console.log("💌 Please login using envless.dev@example.com".cyan);
+    console.log("💌 Please login using envless@example.com".cyan);
     await prisma.$disconnect();
   })
   .catch(async (e) => {
