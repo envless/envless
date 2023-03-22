@@ -71,8 +71,6 @@ model PublicKey {
 enum UserRole {
   maintainer
   owner
-  editor
-  viewer
   developer
   guest
 }

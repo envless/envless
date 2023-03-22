@@ -39,11 +39,20 @@ const checkAccessAndPermission = async ({
       "You do not have the required permission to perform this action. Please contact the project owner to request permission",
   };
 
-  // Check if maintainer is trying to update an owner
+  // Check if user is owner or maintainer
+  if (
+    !(
+      currentUserRole == UserRole.maintainer ||
+      currentUserRole === UserRole.owner
+    )
+  ) {
+    throw new TRPCError(UNAUTHORIZED_ERROR);
+  }
   if (
     currentUserRole === UserRole.maintainer &&
     targetUserRole === UserRole.owner
   ) {
+    // Check if maintainer is trying to update an owner
     throw new TRPCError(UNAUTHORIZED_ERROR);
   }
 

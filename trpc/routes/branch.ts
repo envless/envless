@@ -48,10 +48,11 @@ export const branches = createRouter({
       const { branch } = input;
 
       const projectSlug = branch.projectSlug as string;
+
       const project = await Project.findBySlug(projectSlug);
-
+      
       const userId = user.id as string;
-
+      
       const projectAccess = await prisma.access.findUnique({
         where: {
           userId_projectId: {
