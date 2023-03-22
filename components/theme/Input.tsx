@@ -1,3 +1,4 @@
+import React from "react";
 import { clsx } from "clsx";
 
 /**
@@ -20,7 +21,7 @@ import { clsx } from "clsx";
  * @param {object} [props.validationSchema] - An object containing the validation rules for the input element.
  */
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   help?: string;
@@ -30,7 +31,6 @@ interface InputProps {
   disabled?: boolean;
   full?: boolean;
   type?: string;
-  inputMode?: string;
   placeholder?: string;
   defaultValue?: string;
   className?: string;
@@ -53,6 +53,7 @@ const Input = ({ ...props }: InputProps) => {
     defaultValue,
     className,
     validationSchema,
+    ...restProps
   } = props;
 
   return (
@@ -80,14 +81,13 @@ const Input = ({ ...props }: InputProps) => {
             full && "w-full",
             "input-primary",
           )}
+          {...restProps}
         />
 
         {help && <p className="pt-1 text-xs text-light">{help}</p>}
 
-        {errors && errors[name] != null && (
-          <p className="pt-1 text-xs text-red-400/75">
-            {errors[name]?.message}
-          </p>
+        {errors && errors[name] && (
+          <p className="pt-1 text-xs text-red-400/75">{errors[name].message}</p>
         )}
       </div>
     </div>
