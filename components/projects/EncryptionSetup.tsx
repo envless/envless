@@ -91,7 +91,7 @@ const EncryptionSetup = ({ ...props }) => {
 
     if (!publicKey || !privateKey) {
       setLoading(true);
-      const pgp = await OpenPGP.generageKeyPair(user.name, user.email);
+      const pgp = await OpenPGP.generageKeyPair(user.name || "", user.email);
       const unencryptedProjectKey = await generateKey();
       const _encryptedProjectKey = await OpenPGP.encrypt(
         unencryptedProjectKey,
