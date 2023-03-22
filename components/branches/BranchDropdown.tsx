@@ -1,6 +1,7 @@
-import { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
+import Fuse from "fuse.js";
 import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -21,6 +22,20 @@ export default function BranchDropdown({
   selectedBranch,
   setBranches,
 }: BranchDropdownProps) {
+  const [searchData, setSearchData] = useState(branches);
+
+  const fuzzySearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fuse = new Fuse(branches, {
+      shouldSort: true,
+      threshold: 0.1,
+      location: 0,
+      distance: 100,
+      keys: ["name", "description"],
+    });
+    const result = fuse.search(event.target.value);
+    setSearchData(result.length ? result.map((item) => item.item) : branches);
+  };
+
   const handleSelectBranchClick = (branch) => {
     setBranches([
       ...branches.map((b) => {
@@ -68,7 +83,7 @@ export default function BranchDropdown({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left rounded-md bg-darker shadow-xl ring-2 ring-dark focus:outline-none ">
+        <Menu.Items className=" absolute left-0 mt-2 w-56 origin-top-left  rounded-md bg-darker shadow-xl ring-2 ring-dark focus:outline-none ">
           <div className="border-b border-dark px-3 py-3 text-xs">
             <p className="font-semibold">{dropdownLabel}</p>
           </div>
@@ -80,13 +95,15 @@ export default function BranchDropdown({
                 id="search"
                 className="w-full border-none bg-transparent pr-3 pl-6 text-sm focus:outline-none focus:ring-0"
                 placeholder="Find a branch..."
-                {...register("search")}
+                {...register("search", {
+                  onChange: fuzzySearch,
+                })}
               />
             </div>
           </form>
 
-          <ul className="flex w-full flex-col text-xs">
-            {branches.map((branch) => (
+          <ul className="flex max-h-52 w-full flex-col overflow-y-auto text-xs [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+            {searchData.map((branch) => (
               <Menu.Item
                 as="button"
                 key={branch.id}
@@ -96,11 +113,11 @@ export default function BranchDropdown({
                   <li
                     className={clsx(
                       "inline-flex w-full items-center justify-between px-3 py-2",
-                      active ? "bg-dark" : "",
+                      active && "bg-dark",
                     )}
                   >
                     <span className="truncate">{branch.name}</span>
-                    {branch.isSelected && (
+                    {branch.name === selectedBranch.name && (
                       <Check
                         className="h-4 w-4 shrink-0 text-teal-300"
                         aria-hidden="true"
