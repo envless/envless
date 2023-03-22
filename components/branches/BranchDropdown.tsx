@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Fuse from "fuse.js";
 import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { truncate } from "@/lib/helpers";
 
 interface BranchDropdownProps {
   label: string;
@@ -12,6 +13,7 @@ interface BranchDropdownProps {
   setSelectedBranch: any;
   selectedBranch: any;
   setBranches: any;
+  full: boolean;
 }
 
 export default function BranchDropdown({
@@ -21,8 +23,10 @@ export default function BranchDropdown({
   setSelectedBranch,
   selectedBranch,
   setBranches,
+  full = false,
 }: BranchDropdownProps) {
   const [searchData, setSearchData] = useState(branches);
+  const { register } = useForm();
 
   const fuzzySearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fuse = new Fuse(branches, {
@@ -32,7 +36,9 @@ export default function BranchDropdown({
       distance: 100,
       keys: ["name", "description"],
     });
+
     const result = fuse.search(event.target.value);
+
     setSearchData(result.length ? result.map((item) => item.item) : branches);
   };
 
@@ -49,31 +55,42 @@ export default function BranchDropdown({
     setSelectedBranch(branch);
   };
 
-  const { register } = useForm();
-
   return (
-    <Menu
-      as="div"
-      className="relative z-10 mt-4 inline-block w-full max-w-[200px]"
-    >
-      <div className="w-full">
-        <Menu.Button className="inline-flex w-full items-center truncate rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker">
+    <Menu as="div" className={clsx("relative z-10 mt-4 inline-block")}>
+      <>
+        <Menu.Button
+          className={clsx(
+            "inline-flex items-center truncate rounded border border-dark bg-dark px-3 py-2 text-sm transition-colors duration-75 hover:bg-darker",
+            full && "w-[27.25rem] justify-between",
+          )}
+        >
           <div className="flex items-center">
             <GitBranch className="mr-2 h-4 w-4 shrink-0" />
             <span className="mr-2 block text-xs text-light">{label}</span>
           </div>
-
-          <div className="flex items-center space-x-2 justify-self-end">
-            <span className="max-w-[34px] truncate text-sm font-semibold">
-              {selectedBranch.name}
-            </span>
-            <ChevronDown
-              aria-hidden="true"
-              className="h-4 w-4 shrink-0 justify-self-end"
-            />
-          </div>
+          {full ? (
+            <>
+              <span className="max-w-[34px]  text-sm font-semibold">
+                {truncate(selectedBranch.name, 18)}
+              </span>
+              <ChevronDown
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 justify-self-end"
+              />
+            </>
+          ) : (
+            <div className="flex items-center space-x-2 justify-self-end">
+              <span className="max-w-[34px] truncate text-sm font-semibold">
+                {selectedBranch.name}
+              </span>
+              <ChevronDown
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0 justify-self-end"
+              />
+            </div>
+          )}
         </Menu.Button>
-      </div>
+      </>
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"

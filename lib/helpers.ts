@@ -47,3 +47,6 @@ export const toUUID = (value: string) => {
   }
   return array.join("");
 };
+
+export const truncate = (string: string, charIndex: number) =>
+  string.length > charIndex ? `${string.substring(0, charIndex)}...` : string;
