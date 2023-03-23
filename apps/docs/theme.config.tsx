@@ -37,7 +37,7 @@ const config: DocsThemeConfig = {
       </svg>
     ),
   },
-  docsRepositoryBase: "https://github.com/envless/docs/blob/main",
+  docsRepositoryBase: "https://github.com/envless/envless/blob/main/apps/docs",
   footer: {
     text: `${new Date().getFullYear()} © Envless`,
   },
