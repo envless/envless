@@ -4,6 +4,7 @@ import type {
   GetServerSidePropsResult,
 } from "next";
 import { accessesWithProject } from "@/models/access";
+import prisma from "@/lib/prisma";
 import { getServerSideSession } from "./session";
 
 type PageProps = {};
@@ -11,15 +12,20 @@ type PageProps = {};
 type AccessControlPageProps = PageProps & {
   currentProject: any;
   projects: any;
+  projectRole: any;
+};
+
+type AccessControlParams<P> = {
+  getServerSideProps?: GetServerSideProps<P & PageProps>;
+  checkProjectOwner?: boolean;
+  withEncryptedProjectKey?: boolean;
 };
 
 export function withAccessControl<P = Record<string, unknown>>({
   checkProjectOwner = false,
+  withEncryptedProjectKey = false,
   getServerSideProps,
-}: {
-  getServerSideProps?: GetServerSideProps<P & PageProps>;
-  checkProjectOwner: boolean;
-}) {
+}: AccessControlParams<P>) {
   return async (
     context: GetServerSidePropsContext,
   ): Promise<GetServerSidePropsResult<AccessControlPageProps>> => {
@@ -85,12 +91,40 @@ export function withAccessControl<P = Record<string, unknown>>({
       }
     }
 
+    let encryptionProps = {};
+
+    if (withEncryptedProjectKey) {
+      const publicKey = await prisma.publicKey.findFirst({
+        where: {
+          userId: user?.id,
+        },
+        select: {
+          id: true,
+          key: true,
+        },
+      });
+
+      const encryptedProjectKey = await prisma.encryptedProjectKey.findFirst({
+        where: { projectId: currentProject.project.id },
+        select: {
+          encryptedKey: true,
+        },
+      });
+
+      encryptionProps = {
+        publicKey: publicKey?.key || "",
+        encryptedProjectKey,
+      };
+    }
+
     return {
       props: {
         ...serverPropsFromParent.props,
-        currentProject: JSON.parse(JSON.stringify(currentProject)),
+        ...encryptionProps,
+        currentProject: JSON.parse(JSON.stringify(currentProject.project)),
         projectRole: currentProject.role,
         projects: JSON.parse(JSON.stringify(projects)),
+        user,
       },
     };
   };

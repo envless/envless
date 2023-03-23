@@ -31,8 +31,8 @@ export const DangerZone = ({
   const router = useRouter();
   const props = {
     projects,
-    currentProject: currentProject.project,
-    projectRole,
+    currentProject: currentProject,
+    roleInCurrentProject: projectRole,
   };
 
   const { mutate: projectDeleteMutation, isLoading } =
@@ -119,8 +119,6 @@ export const DangerZone = ({
   );
 };
 
-export const getServerSideProps = withAccessControl({
-  checkProjectOwner: true,
-});
+export const getServerSideProps = withAccessControl({});
 
 export default DangerZone;
