@@ -8,8 +8,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "dotenv -- turbo run build",
     "dev": "dotenv -- turbo run dev",
+    "build": "dotenv -- turbo run build",
     "lint": "dotenv -- turbo run lint",
     "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md}\"",
     "build:ui": "dotenv -- turbo run build:ui",

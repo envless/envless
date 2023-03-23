@@ -7,7 +7,7 @@ import NextNProgress from "nextjs-progressbar";
 import ErrorBoundary from "@/components/errorboundary";
 import Fallback from "@/components/errorboundary/Fallback";
 import "@/styles/balloon.css";
-import "@/styles/globals.css";
+import "ui/styles/tailwind.css";
 import "@/styles/primary.css";
 import "@/styles/zoom.css";
 

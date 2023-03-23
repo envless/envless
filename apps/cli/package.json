@@ -1,0 +1,63 @@
+{
+  "name": "cli",
+  "version": "0.0.4",
+  "description": "An open-source, the most secure and frictionless way to share and manage app secrets across teams.",
+  "author": "Envless",
+  "bin": {
+    "envless": "./bin/run"
+  },
+  "homepage": "https://envless.dev",
+  "license": "AGPL-3.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/envless/envless",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "dependencies": {
+    "@oclif/core": "^2",
+    "@oclif/plugin-help": "^5",
+    "@oclif/plugin-plugins": "^2.3.0",
+    "add": "^2.0.6",
+    "axios": "^1.3.2",
+    "gradient-string": "^2.0.2",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.11",
+    "oclif": "^3",
+    "shx": "^0.3.3",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.5.0",
+    "typescript": "^4.9.5",
+    "vitest": "^0.29.7"
+  },
+  "oclif": {
+    "bin": "envless",
+    "dirname": "envless",
+    "commands": "./dist/commands",
+    "topicSeparator": " ",
+    "topics": {
+      "hello": {
+        "description": "Say hello to the world and others"
+      }
+    }
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "test": "vitest",
+    "version": "oclif readme && git add README.md"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "bugs": "https://github.com/envless/envless/issues",
+  "keywords": [
+    "envless, security, e2ee, .env, dotenv"
+  ],
+  "types": "dist/index.d.ts"
+}
