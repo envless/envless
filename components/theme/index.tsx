@@ -16,7 +16,7 @@ export { default as Paragraph } from "./Paragraph";
 export { default as EmptyState } from "./EmptyState";
 export { default as Container } from "./Container";
 export { default as LoadingIcon } from "./LoadingIcon";
-export { default as TextareaGroup } from "./TextareaGroup";
+export { default as TextArea } from "./Textarea";
 export { default as BaseInput } from "./BaseInput";
 
 export { ScrollBar } from "./ScrollArea";

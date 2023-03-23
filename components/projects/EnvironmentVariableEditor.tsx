@@ -4,7 +4,11 @@ import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { DragDropIcon } from "@/components/icons";
-import { Button, Container, TextareaGroup } from "@/components/theme";
+import {
+  Button,
+  Container,
+  TextArea as TextareaGroup,
+} from "@/components/theme";
 
 export interface EnvVariable {
   envKey: string;
