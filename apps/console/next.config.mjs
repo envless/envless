@@ -4,10 +4,10 @@
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./env/index.mjs"));
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
+  transpilePackages: ["ui"],
   images: {
     dangerouslyAllowSVG: true,
     domains: [

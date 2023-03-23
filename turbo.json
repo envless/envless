@@ -1,0 +1,41 @@
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false
+    },
+    "build:ui": {
+      "cache": false
+    },
+    "test": {
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "db:reset": {
+      "cache": false
+    },
+    "db:studio": {
+      "cache": false
+    },
+    "format": {
+      "cache": false
+    },
+    "test:e2e": {
+      "cache": false
+    }
+  }
+}
