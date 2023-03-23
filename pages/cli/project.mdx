@@ -1,0 +1,24 @@
+import { Tab, Tabs } from "nextra-theme-docs";
+
+## Project CLI Commands
+With Envless CLI, you can easily create and update projects.
+
+### Creating a new project
+To create a new project, run the following command in your terminal:
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless project create ```</Tab>
+</Tabs>
+
+This command will prompt you for the necessary information to create the project, including the project name, description, and any team members you want to add to the project.
+
+### Updating a project
+To update an existing project, run the following command in your terminal:
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless project update ```</Tab>
+</Tabs>
+
+This command will update the project with any changes you've made to your local `.envless` file, including changes to the project ID, branch, or any environment variables. You can modify the `.envless` file directly to make these changes.
+
+Note that you must have appropriate permissions to create or update a project. If you encounter any issues or have questions about project management, please reach out to our [Slack](https://dub.sh/envless-slack), [Discord](https://dub.sh/envless-discord) or [open and issue](https://github.com/envless/envless/issues/new/choose) for assistance.

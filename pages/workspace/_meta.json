@@ -1,0 +1,10 @@
+{
+  "index": "Projects",
+  "branches": "Branches",
+  "protected-branches": "Protected Branches",
+  "pull-requests": "Pull Requests",
+  "members": "Members",
+  "integrations": "Integrations",
+  "audits": "Audit Logs",
+  "settings": "Settings"
+}

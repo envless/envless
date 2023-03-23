@@ -1,0 +1,20 @@
+{
+  "index": "🏠 Home",
+  "quickstart": "⚡ Quickstart",
+  "features": "🎉 Features",
+  "security": "🔐 Security",
+  "community": "👋 Community",
+  "contribution": "💻 Contribution",
+  "workspace": "Workspace",
+  "cli": "CLI",
+  "blog": {
+    "title": "Blog",
+    "type": "page",
+    "href": "https://envless.dev/blog"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "type": "page",
+    "href": "https://envless.dev/changelog"
+  }
+}
