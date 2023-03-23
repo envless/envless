@@ -21,14 +21,15 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const seed = async () => {
-  const prompt = new Confirm({
-    name: "question",
-    message:
-      "⚠️  You are about to delete all the records on your database, and re-seed with new records, do you want to continue?"
-        .yellow,
-  });
+  // const prompt = new Confirm({
+  //   name: "question",
+  //   message:
+  //     "⚠️  You are about to delete all the records on your database, and re-seed with new records, do you want to continue?"
+  //       .yellow,
+  // });
 
-  const answer = await prompt.run();
+  // const answer = await prompt.run();
+  const answer = true;
 
   if (answer) {
     await nuke();
