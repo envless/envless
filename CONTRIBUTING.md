@@ -1,11 +1,12 @@
 # Contribution Guidelines
 
 ## Table of contents
-* <a href="#start">Getting started</a>
-* <a href="#setup">Setting up databases</a>
-* <a href="#server">Running the server</a>
-* <a href="#changes">Implement your changes</a>
-* <a href="#pr">Open a pull request</a>
+
+- <a href="#start">Getting started</a>
+- <a href="#setup">Setting up databases</a>
+- <a href="#server">Running the server</a>
+- <a href="#changes">Implement your changes</a>
+- <a href="#pr">Open a pull request</a>
 
 <h2 id="start">Getting started</h2>
 When contributing to `envless`, whether on GitHub or in other community spaces:
@@ -46,21 +47,20 @@ Then, copy `.env.example` to `.env`
 
 > Of-course this will change and we no longer will need .env files once we are ready to go live.
 
-
 ```bash
 cp .env.example .env
 ```
 
 <h2 id="setup">Setting up databases</h2>
 
-* <a href="#postgres">Setup Postgres Database</a>
-* <a href="#redis">Setup Redis Database</a>
+- <a href="#postgres">Setup Postgres Database</a>
+- <a href="#redis">Setup Redis Database</a>
 
 <h3 id="postgres">Setup Postgres Database</h3>
 
-* [How to setup Postgres on Mac](/setup/postgres-on-mac.md)
-* [How to setup Postgres on Linux](/setup/postgres-on-linux.md)
-* [How to setup Postgres on Windows / WSL](/setup/postgres-on-windows.md)
+- [How to setup Postgres on Mac](/setup/postgres-on-mac.md)
+- [How to setup Postgres on Linux](/setup/postgres-on-linux.md)
+- [How to setup Postgres on Windows / WSL](/setup/postgres-on-windows.md)
 
 For a quickstart, you can setup Postgres database on [Supabase](https://supabase.com/) or [Neon](https://neon.tech/) as well.
 
@@ -69,8 +69,8 @@ Copy/paste these env variables to .env file.
 ```
 DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
 ```
-> Note: please change username, password and port (default port is 5432) as according to your setup.
 
+> Note: please change username, password and port (default port is 5432) as according to your setup.
 
 <h3 id="redis">Setup Upstash Redis</h3>
 
@@ -88,13 +88,16 @@ Then install upstash redis server
 `go install github.com/mna/upstashdis/cmd/upstash-redis-rest-server@latest`
 
 Update your `.env` with
+
 ```
 UPSTASH_REDIS_REST_URL="http://127.0.0.1:3010"
 UPSTASH_REDIS_REST_TOKEN="asd"
 ```
+
 Start Local upstash redis server with
 
 `upstash-redis-rest-server --addr 127.0.0.1:3010 --redis-addr 127.0.0.1:6379 --api-token asd`
+
 ### Implement your changes
 
 When making commits, make sure to follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) guidelines, i.e. prepending the message with `feat:`, `fix:`, `chore:`, `docs:`, etc... You can use `git status` to double check which files have not yet been staged for commit:
@@ -102,6 +105,7 @@ When making commits, make sure to follow the [conventional commit](https://www.c
 ```bash
 git add <file> && git commit -m "feat/fix/chore/docs: commit message"
 ```
+
 <h3 id="pr">Open a pull request</h3>
 
 ### When you're done

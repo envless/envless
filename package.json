@@ -11,12 +11,15 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{css,js,jsx,json,ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md}\"",
     "build:ui": "turbo run build:ui",
     "test": "turbo run test"
   },
   "devDependencies": {
     "prettier": "^2.5.1",
+    "eslint-config-prettier": "^8.7.0",
+    "prettier-plugin-tailwindcss": "^0.2.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "turbo": "latest"
   },
   "engines": {

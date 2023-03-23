@@ -21,9 +21,11 @@ Fixes # (issue)
 - [ ] Test B
 
 **Test Configuration**:
-* OS with version:
-* Browser with version:
-* SDK / CLI with version:
+
+- OS with version:
+- Browser with version:
+- SDK / CLI with version:
+
 # Checklist:
 
 - [ ] My code follows the style guidelines of this project

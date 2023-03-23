@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import { forwardRef } from "react";
+import clsx from "clsx";
 
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "xxl";
 
@@ -40,7 +40,7 @@ export const Button = forwardRef<ButtonRef, ButtonProps>((props, ref) => {
         size === "xl" ? "px-5 py-3" : "",
         size === "xxl" ? "px-7 py-4" : "",
         // Default
-        "gap-2 bg-black rounded-lg text-white text-sm font-medium flex items-center justify-center"
+        "flex items-center justify-center gap-2 rounded-lg bg-black text-sm font-medium text-white",
       )}
     >
       {label}

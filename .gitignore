@@ -93,3 +93,4 @@ dump.rdb
 /test-results/
 /playwright-report/
 /playwright/.cache/
+.mailing
