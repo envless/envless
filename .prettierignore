@@ -1,4 +1,6 @@
+**/.next/*
 **/.mailing/*
+**/node_modules/*
 .next/*
 .vercel/*
 .vscode/*
