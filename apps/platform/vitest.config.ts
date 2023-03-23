@@ -8,7 +8,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: [
-      "/__tests__/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+      "./__tests__/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
     ],
   },
 });

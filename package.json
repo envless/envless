@@ -13,7 +13,8 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md}\"",
     "build:ui": "turbo run build:ui",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
     "prettier": "^2.5.1",
