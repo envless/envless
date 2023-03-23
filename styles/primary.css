@@ -1,8 +1,0 @@
-.input-primary {
-  @apply block appearance-none rounded border border-dark bg-darker px-3 placeholder-light shadow-sm ring-1 ring-light/50 focus:border-dark focus:outline-none focus:ring-light sm:text-sm;
-}
-
-.obscure {
-  color: transparent;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-}
