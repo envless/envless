@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "envless": "yarn --cwd ./apps/cli/ run cli",
     "dev": "dotenv -- turbo run dev",
     "build": "dotenv -- turbo run build",
     "lint": "dotenv -- turbo run lint",
