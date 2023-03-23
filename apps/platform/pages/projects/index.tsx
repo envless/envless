@@ -46,17 +46,8 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
               </div>
               <div className="mb-4 w-full px-4 md:mb-0 md:w-1/2 lg:w-1/3">
                 <div className="md:px-14">
-                  <h2 className="mb-8 text-lg">Audit logs</h2>
+                  <h2 className="mb-8 text-lg">Activities</h2>
                   <AuditLogs logs={logs} user={user} />
-
-                  <Button
-                    small={true}
-                    variant="secondary"
-                    className="mt-8"
-                    href="/settings/audits"
-                  >
-                    More audit logs
-                  </Button>
                 </div>
               </div>
             </div>

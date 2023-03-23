@@ -104,7 +104,7 @@ export default function AuditLogs({ logs, user }) {
         const role = log.data.access.role;
         const name =
           createdFor.id === user.id
-            ? "yourself"
+            ? "you"
             : createdFor.name || createdFor.email;
 
         return (
