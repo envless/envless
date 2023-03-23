@@ -13,10 +13,11 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: 18
+        cache: 'yarn'
     - name: Install dependencies
       run: yarn
-    - name: Run Playwright tests
-      run: npx vitest
+    - name: Run Vitest tests
+      run: yarn test
     - uses: actions/upload-artifact@v3
       if: always()
       with:
