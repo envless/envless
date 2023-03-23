@@ -46,6 +46,7 @@
     }
   },
   "scripts": {
+    "cli": "yarn build && ./bin/run",
     "build": "shx rm -rf dist && tsc -b",
     "postpack": "shx rm -f oclif.manifest.json",
     "prepack": "yarn build && oclif manifest && oclif readme",

@@ -4,10 +4,10 @@ import { Inter } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import NextNProgress from "nextjs-progressbar";
+import "ui/styles/tailwind.css";
 import ErrorBoundary from "@/components/errorboundary";
 import Fallback from "@/components/errorboundary/Fallback";
 import "@/styles/balloon.css";
-import "ui/styles/tailwind.css";
 import "@/styles/primary.css";
 import "@/styles/zoom.css";
 
