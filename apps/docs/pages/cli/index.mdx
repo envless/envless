@@ -1,0 +1,35 @@
+import { Tab, Tabs } from "nextra-theme-docs";
+
+## Get started with Envless CLI
+
+The Envless CLI is a powerful command-line tool designed to sync, secure and manage your app secrets on your local development machine, as well as Cloud and CI/CD pipelines. It can be used to perform a variety of tasks, including authenticating to your account, managing variables, branches and teams.
+
+The Envless CLI is compatible with any programming languages, frameworks, hosting platforms, and infrastructures, as well as with CI/CD pipelines, making it a versatile tool that can be integrated seamlessly into your existing software development and deployment workflow.
+### Installing Envless CLI
+
+To download and install Envless CLI, run the following command:
+
+<Tabs items={["npm", "yarn", "brew"]}>
+  <Tab>``` npm i -g envless ```</Tab>
+  <Tab>``` yarn global add envless ```</Tab>
+  <Tab>``` brew install envless ```</Tab>
+</Tabs>
+
+### Authentication
+
+The Envless CLI offers a convenient way to authenticate to your account directly from the command line. With a single command, you can easily log in or sign up.
+
+To authenticate with the Envless CLI, follow these steps:
+
+<Tabs items={["Terminal"]}>
+  <Tab>``` envless auth ```</Tab>
+</Tabs>
+
+{/* TODO - needs some  ♥️ */}
+
+- This will open the `https://envless.dev/cli/auth` page in your default web browser.
+- Enter your email address when prompted.
+- You will receive a secure login link via email.
+- If you do not already have an Envless account, you will be asked to create a public/private encryption key.
+- This private key will be securely saved on your device for future use with the Envless CLI.
+- If you already have an Envless account, the authentication process will be completed and you will be able to use the CLI.

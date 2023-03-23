@@ -92,4 +92,4 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 <p>
 Don't forget to leave a star ⭐️
 </p>
-<image src=".github\images\Enveless.gif">
+<image src=".github/images/envless.gif">
