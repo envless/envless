@@ -5,6 +5,9 @@ export const accessesWithProject = async ({ userId }: { userId: string }) => {
     where: {
       // @ts-ignore
       userId,
+      project: {
+        deletedAt: null,
+      },
     },
     select: {
       id: true,

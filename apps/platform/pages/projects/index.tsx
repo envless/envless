@@ -77,6 +77,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
       include: {
         access: {
+          where: {
+            project: {
+              deletedAt: null,
+            },
+          },
           include: {
             project: {
               include: {
