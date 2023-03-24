@@ -3,6 +3,7 @@ import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
+import { ACCESS_CREATED } from "@/types/auditActions";
 import { Access, UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
@@ -441,7 +442,7 @@ export const members = createRouter({
         createdById: invite.invitedById as string,
         createdForId: newUser.id,
         projectId: invite.projectId,
-        action: "access.created",
+        action: ACCESS_CREATED,
         data: {
           access: {
             id: access.id,

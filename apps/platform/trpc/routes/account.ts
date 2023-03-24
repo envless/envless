@@ -1,4 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
+import { ACCOUNT_UPDATED } from "@/types/auditActions";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -57,7 +58,7 @@ export const account = createRouter({
         await Audit.create({
           createdById: user.id,
           createdForId: user.id,
-          action: "account.updated",
+          action: ACCOUNT_UPDATED,
           data: {
             before: {
               ...(name != currentUser?.name && { name: currentUser?.name }),
