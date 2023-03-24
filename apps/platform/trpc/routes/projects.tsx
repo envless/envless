@@ -1,7 +1,9 @@
+import DeleteProjectNotice from "@/emails/DeleteProjectNotice";
 import { env } from "@/env/index.mjs";
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import { PROJECT_CREATED } from "@/types/auditActions";
+import { formatDateTime } from "@/utils/helpers";
 import sendMail from "emails";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
@@ -158,24 +160,16 @@ export const projects = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { prisma } = ctx;
       const { project } = input;
-      const userId = ctx.session.user.id;
+      const user = ctx.session.user;
 
       const softDeletedProject = await Project.deleteProject({
         id: project.id,
         softDelete: true,
       });
 
-      /*
-       await sendMail({
-        subject: `Your project ${softDeletedProject?.name} will be deleted`,
-        to: 'test@test.com',
-      });
-     */
-
       await Audit.create({
-        createdById: userId,
+        createdById: user.id,
         projectId: softDeletedProject.id,
         action: "project.delete_requested",
         data: {
@@ -184,6 +178,43 @@ export const projects = createRouter({
             name: softDeletedProject.name,
           },
         },
+      });
+
+      await sendMail({
+        subject: `Project Deletion Notice - ${softDeletedProject?.name}`,
+        to: user.email,
+        component: (
+          <>
+            <DeleteProjectNotice
+              headline={
+                <>
+                  Project Deletion Notice - <b>{softDeletedProject?.name}</b>
+                </>
+              }
+              body={
+                <>
+                  This is to inform you that {softDeletedProject?.name} has been
+                  requested to be deleted by {user.name} on{" "}
+                  {formatDateTime(softDeletedProject.deletedAt as Date)}. If
+                  this was done on purpose, the project will be permanently
+                  deleted within 7 days.
+                  <br />
+                  <br />
+                  To reactive the project, please login to your account and
+                  follow the steps to cancel the deletion request.
+                  <br />
+                  <br />
+                  Please note that all information related to this project,
+                  including branches, pull requests, and other associated data,
+                  will be permanently deleted once the project is deleted.
+                </>
+              }
+              greeting="Hi there,"
+              buttonText="Login"
+              buttonLink={`${env.BASE_URL}/auth/login`}
+            />
+          </>
+        ),
       });
 
       return softDeletedProject;
