@@ -27,7 +27,7 @@ export function DeleteProjectNoticeEmail() {
       }
       greeting="Hi there,"
       buttonText="Login"
-      buttonLink={`${env.BASE_URL}/auth/login`}
+      buttonLink={`${env.BASE_URL}/auth`}
     />
   );
 }
