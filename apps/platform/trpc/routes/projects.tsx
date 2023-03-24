@@ -1,4 +1,5 @@
 import { env } from "@/env/index.mjs";
+import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import sendMail from "emails";
 import { string, z } from "zod";
@@ -160,13 +161,9 @@ export const projects = createRouter({
       const { project } = input;
       const userId = ctx.session.user.id;
 
-      const softDeletedProject = await prisma.project.update({
-        data: {
-          deletedAt: new Date(),
-        },
-        where: {
-          id: project.id,
-        },
+      const softDeletedProject = await Project.deleteProject({
+        id: project.id,
+        softDelete: true,
       });
 
       /*
