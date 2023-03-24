@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
-import { Project } from "@prisma/client";
+import { Branch, Project } from "@prisma/client";
 import { GitBranchPlus, TerminalSquare } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
@@ -20,16 +20,18 @@ interface Props {
   currentProject: Project;
 }
 
+const defaultBranches = [
+  { id: 1, name: "main" },
+  { id: 2, name: "staging" },
+  { id: 3, name: "production" },
+  { id: 4, name: "feat/upload-env-file" },
+];
+
 export const ProjectPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const defaultBranches = [
-    { id: 1, name: "main", isSelected: true },
-    { id: 2, name: "staging", isSelected: false },
-    { id: 3, name: "production", isSelected: false },
-    { id: 4, name: "feat/upload-env-file", isSelected: false },
-  ];
-  const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
-  const [branches, setBranches] = useState(defaultBranches);
+  const [selectedBranch, setSelectedBranch] = useState<GenericBranch>(
+    defaultBranches[0],
+  );
 
   return (
     <ProjectLayout projects={projects} currentProject={currentProject}>
@@ -60,10 +62,9 @@ export const ProjectPage = ({ projects, currentProject }: Props) => {
           <BranchDropdown
             label="Current Branch"
             dropdownLabel="Switch between branches"
-            branches={branches}
-            setBranches={setBranches}
+            branches={defaultBranches}
             selectedBranch={selectedBranch}
-            setSelectedBranch={setSelectedBranch}
+            onClick={(branches) => setSelectedBranch(branches)}
           />
 
           <Button
@@ -146,3 +147,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 }
 
 export default ProjectPage;
+
+type GenericBranch = {
+  id: number;
+  name: string;
+};

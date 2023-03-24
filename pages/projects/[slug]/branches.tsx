@@ -1,13 +1,13 @@
 import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
+import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Branch, Project, User } from "@prisma/client";
-import { ColumnDef } from "@tanstack/react-table";
+import { Project } from "@prisma/client";
 import {
   CheckCheck,
   Copy,
@@ -30,6 +30,20 @@ import prisma from "@/lib/prisma";
  * @param {currentProject} props.currentProject - The current project.
  */
 
+const filterOptions: FilterOptions = {
+  status: [
+    { value: "open", label: "Open" },
+    { value: "closed", label: "Closed" },
+    { value: "merged", label: "Merged" },
+  ],
+  sort: [
+    { label: "Newest", value: "createdAt", order: "desc" },
+    { label: "Oldest", value: "createdAt", order: "asc" },
+    { label: "Recently Updated", value: "updatedAt", order: "desc" },
+    { label: "Least recently updated", value: "updatedAt", order: "asc" },
+  ],
+};
+
 interface Props {
   projects: Project[];
   currentProject: Project;
@@ -38,8 +52,6 @@ interface Props {
 export const BranchesPage = ({ projects, currentProject }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
-  const [protectedBranches, setProtectedBranches] = useState<any>([]);
-  const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
@@ -55,18 +67,10 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-  useEffect(() => {
-    setProtectedBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === true)
-        : [],
-    );
-    setAllOtherBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === false)
-        : [],
-    );
-  }, [branchQuery.data]);
+  console.log(branchQuery?.data);
+
+  const { protected: protectedBranches, unprotected: allOtherBranches } =
+    useSeperateBranches(branchQuery.data || []);
 
   const branchesColumnVisibility = {
     details: true,
@@ -77,7 +81,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     protected: false,
   };
 
-  const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
+  const branchesColumns = [
     {
       id: "author",
       accessorFn: (row) => row.createdBy.name,
@@ -139,6 +143,9 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
               {info.row.original.name}
             </div>
             <div className="text-light">
+              {(() => {
+                console.log(info.row.original);
+              })()}
               Created by {info.row.original.createdBy.name}{" "}
               <DateTimeAgo date={info.row.original.createdAt} />
             </div>
@@ -163,7 +170,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const protectedBranchesColumns: ColumnDef<(typeof protectedBranches)[0]>[] = [
+  const protectedBranchesColumns = [
     {
       id: "name",
       header: "name",
@@ -226,20 +233,6 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       ),
     },
   ];
-
-  const filterOptions: FilterOptions = {
-    status: [
-      { value: "open", label: "Open" },
-      { value: "closed", label: "Closed" },
-      { value: "merged", label: "Merged" },
-    ],
-    sort: [
-      { label: "Newest", value: "createdAt", order: "desc" },
-      { label: "Oldest", value: "createdAt", order: "asc" },
-      { label: "Recently Updated", value: "updatedAt", order: "desc" },
-      { label: "Least recently updated", value: "updatedAt", order: "asc" },
-    ],
-  };
 
   return (
     <ProjectLayout

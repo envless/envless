@@ -1,5 +1,6 @@
 import React from "react";
 import { clsx } from "clsx";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
 /**
  * A functional react component for rendering a text input.
@@ -25,19 +26,15 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   help?: string;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   errors?: object;
   required?: boolean;
-  disabled?: boolean;
   full?: boolean;
-  type?: string;
-  placeholder?: string;
   defaultValue?: string;
-  className?: string;
   validationSchema?: object;
 }
 
-const Input = ({ ...props }: InputProps) => {
+const Input = (props: InputProps) => {
   const {
     name,
     label,
@@ -66,8 +63,8 @@ const Input = ({ ...props }: InputProps) => {
 
       <div className="my-2">
         <input
+          {...restProps}
           id={name}
-          name={name}
           type={type}
           inputMode={inputMode}
           required={required}
@@ -81,7 +78,6 @@ const Input = ({ ...props }: InputProps) => {
             full && "w-full",
             "input-primary",
           )}
-          {...restProps}
         />
 
         {help && <p className="pt-1 text-xs text-light">{help}</p>}

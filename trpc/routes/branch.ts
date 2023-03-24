@@ -111,4 +111,32 @@ export const branches = createRouter({
 
       return newBranch;
     }),
+  update: withAuth
+    .input(
+      z.object({
+        branch: z.object({
+          id: z.string(),
+          name: z.string(),
+          description: z.string(),
+          protected: z.boolean(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { user } = ctx.session;
+      const { branch } = input;
+
+      const newBranch = await prisma.branch.update({
+        where: {
+          id: branch.id,
+        },
+        data: {
+          description: branch.description,
+          protected: branch.protected,
+        },
+      });
+
+      return newBranch;
+    }),
 });

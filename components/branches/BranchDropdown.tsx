@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import { Branch } from "@prisma/client";
 import clsx from "clsx";
 import Fuse from "fuse.js";
 import { Check, ChevronDown, GitBranch, Search } from "lucide-react";
@@ -9,24 +10,27 @@ import { truncate } from "@/lib/helpers";
 interface BranchDropdownProps {
   label: string;
   dropdownLabel?: string;
-  branches: any;
-  setSelectedBranch: any;
+  branches: Branch[] | any;
   selectedBranch: any;
-  setBranches: any;
-  full: boolean;
+  full?: boolean;
+  onClick: (branch: Branch | any) => void;
 }
 
 export default function BranchDropdown({
   label,
   dropdownLabel,
   branches,
-  setSelectedBranch,
   selectedBranch,
-  setBranches,
-  full = false,
+  full,
+  onClick,
 }: BranchDropdownProps) {
   const [searchData, setSearchData] = useState(branches);
   const { register } = useForm();
+
+  /**Trigger re-render on serversideprops refresh**/
+  useEffect(() => {
+    setSearchData(branches);
+  }, [branches]);
 
   const fuzzySearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fuse = new Fuse(branches, {
@@ -40,19 +44,6 @@ export default function BranchDropdown({
     const result = fuse.search(event.target.value);
 
     setSearchData(result.length ? result.map((item) => item.item) : branches);
-  };
-
-  const handleSelectBranchClick = (branch) => {
-    setBranches([
-      ...branches.map((b) => {
-        return {
-          ...b,
-          isSelected: b.id === branch.id,
-        };
-      }),
-    ]);
-
-    setSelectedBranch(branch);
   };
 
   return (
@@ -124,7 +115,7 @@ export default function BranchDropdown({
               <Menu.Item
                 as="button"
                 key={branch.id}
-                onClick={() => handleSelectBranchClick(branch)}
+                onClick={() => onClick(branch)}
               >
                 {({ active }) => (
                   <li

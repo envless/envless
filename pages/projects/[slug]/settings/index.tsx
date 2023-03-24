@@ -32,6 +32,7 @@ export const SettingsPage = ({
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const { mutate: projectGeneralMutation, isLoading } =
     trpc.projects.update.useMutation({
       onSuccess: ({ name }) => {
