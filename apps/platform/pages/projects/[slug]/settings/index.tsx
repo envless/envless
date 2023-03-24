@@ -63,15 +63,16 @@ export const SettingsPage = ({
 
   return (
     <ProjectLayout
-      tab="pr"
+      tab="settings"
       projects={projects}
+      roleInCurrentProject={projectRole}
       currentProject={currentProject.project}
     >
       <ProjectSettings
         active="general"
         projects={projects}
-        currentProject={currentProject.project}
-        projectRole={projectRole}
+        currentProject={currentProject}
+        roleInCurrentProject={projectRole}
       >
         <>
           <h3 className="mb-8 text-lg">General</h3>
@@ -81,7 +82,7 @@ export const SettingsPage = ({
                 name="name"
                 label="Project name"
                 placeholder=""
-                defaultValue={currentProject.project.name || ""}
+                defaultValue={currentProject.name || ""}
                 required={true}
                 register={register}
                 className="w-full"
@@ -123,8 +124,6 @@ export const SettingsPage = ({
   );
 };
 
-export const getServerSideProps = withAccessControl({
-  checkProjectOwner: false,
-});
+export const getServerSideProps = withAccessControl({});
 
 export default SettingsPage;

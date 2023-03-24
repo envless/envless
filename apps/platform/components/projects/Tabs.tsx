@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { getNavigationTabs } from "@/utils/helpers";
 import {
   GitBranch,
   GitPullRequest,
@@ -16,57 +17,19 @@ function classNames(...classes) {
 }
 
 interface Props {
-  active: String;
-  projectSlug: String;
+  active: string;
+  projectSlug: string;
+  roleInCurrentProject: string;
 }
 
-export default function Tabs({ active, projectSlug }: Props) {
+export default function Tabs({
+  active,
+  projectSlug,
+  roleInCurrentProject,
+}: Props) {
   const router = useRouter();
   const projectUrl = `/projects/${projectSlug}`;
-  const tabs = [
-    {
-      id: "project",
-      name: "Project",
-      href: `${projectUrl}`, // This is the default
-      icon: LayoutGrid,
-    },
-    {
-      id: "branches",
-      name: "Branches",
-      href: `${projectUrl}/branches`,
-      icon: GitBranch,
-    },
-    {
-      id: "pr",
-      name: "Pull requests",
-      href: `${projectUrl}/pulls`,
-      icon: GitPullRequest,
-    },
-    {
-      id: "members",
-      name: "Members",
-      href: `${projectUrl}/members`,
-      icon: Users,
-    },
-    {
-      id: "integrations",
-      name: "Integrations",
-      href: `${projectUrl}/integrations`,
-      icon: Zap,
-    },
-    {
-      id: "audits",
-      name: "Audit logs",
-      href: `${projectUrl}/audits`,
-      icon: LayoutList,
-    },
-    {
-      id: "settings",
-      name: "Settings",
-      href: `${projectUrl}/settings`,
-      icon: Settings2,
-    },
-  ];
+  const tabs = getNavigationTabs(roleInCurrentProject, projectUrl);
 
   return (
     <div>

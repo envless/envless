@@ -8,10 +8,17 @@ interface Props {
   tab?: string;
   projects: Project[];
   currentProject: Project;
+  roleInCurrentProject: string;
   children: React.ReactNode;
 }
 
-const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
+const ProjectLayout = ({
+  tab,
+  projects,
+  children,
+  currentProject,
+  roleInCurrentProject,
+}: Props) => {
   const { data: session, status } = useSession();
   const user = session?.user;
 
@@ -25,7 +32,11 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
             projects={projects}
           />
         </Container>
-        <Tabs projectSlug={currentProject?.slug} active={tab || "project"} />
+        <Tabs
+          roleInCurrentProject={roleInCurrentProject}
+          projectSlug={currentProject?.slug}
+          active={tab || "project"}
+        />
 
         <Container>
           <div className="my-10 flex flex-wrap">{children}</div>
