@@ -1,5 +1,6 @@
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
+import { BRANCH_CREATED } from "@/types/auditActions";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import Audit from "@/lib/audit";
@@ -100,7 +101,7 @@ export const branches = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: project.id,
-          action: "branch.created",
+          action: BRANCH_CREATED,
           data: {
             branch: {
               id: newBranch.id,

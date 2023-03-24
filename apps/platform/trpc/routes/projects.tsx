@@ -1,6 +1,7 @@
 import { env } from "@/env/index.mjs";
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
+import { PROJECT_CREATED } from "@/types/auditActions";
 import sendMail from "emails";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
@@ -84,7 +85,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "project.created",
+          action: PROJECT_CREATED,
         });
 
         // @ts-ignore
