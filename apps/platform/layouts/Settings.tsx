@@ -22,11 +22,6 @@ const Settings: React.FC<Props> = ({ tab, user, children }) => {
       name: "Security",
       href: "/settings/security",
     },
-    {
-      id: "audit",
-      name: "Audit logs",
-      href: "/settings/audits",
-    },
   ];
 
   return (
