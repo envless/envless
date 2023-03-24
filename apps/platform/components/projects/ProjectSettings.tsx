@@ -1,4 +1,5 @@
 import React from "react";
+import { getProjectSettingTabs } from "@/utils/helpers";
 import { Project } from "@prisma/client";
 import Tabs from "@/components/settings/Tabs";
 
@@ -7,7 +8,7 @@ type ActiveType = "general" | "branches" | "danger";
 interface SettingsProps {
   projects: Project[];
   currentProject: Project;
-  projectRole: string;
+  roleInCurrentProject: string;
   active: ActiveType;
   children?: React.ReactNode;
 }
@@ -15,28 +16,12 @@ interface SettingsProps {
 const ProjectSettings = ({
   projects,
   currentProject,
-  projectRole,
+  roleInCurrentProject,
   active,
   children,
 }: SettingsProps) => {
   const tabData = React.useMemo(
-    () => [
-      {
-        id: "general",
-        name: "General settings",
-        href: `/projects/${currentProject.slug}/settings`,
-      },
-      {
-        id: "branches",
-        name: "Protected branches",
-        href: `/projects/${currentProject.slug}/settings/protected-branch`,
-      },
-      (projectRole === "owner" || "maintainer") && {
-        id: "danger",
-        name: "Danger zone",
-        href: `/projects/${currentProject.slug}/settings/danger`,
-      },
-    ],
+    () => getProjectSettingTabs(roleInCurrentProject, currentProject.slug),
     [currentProject.slug],
   );
 

@@ -2,6 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
+import { withAccessControl } from "@/utils/withAccessControl";
 import { Project } from "@prisma/client";
 import { EncryptedProjectKey, PublicKey } from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
@@ -24,6 +25,7 @@ interface Props {
   currentProject: Project;
   publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
+  projectRole: string;
 }
 
 interface PersonalKey {
@@ -41,6 +43,7 @@ export const ProjectPage = ({
   projects,
   currentProject,
   publicKey,
+  projectRole,
   encryptedProjectKey,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -111,7 +114,11 @@ export const ProjectPage = ({
   ]);
 
   return (
-    <ProjectLayout projects={projects} currentProject={currentProject}>
+    <ProjectLayout
+      roleInCurrentProject={projectRole}
+      projects={projects}
+      currentProject={currentProject}
+    >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
           user={user}
@@ -154,87 +161,9 @@ export const ProjectPage = ({
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.slug === slug);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  const publicKey = await prisma.publicKey.findFirst({
-    where: {
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      key: true,
-    },
-  });
-
-  const encryptedProjectKey = await prisma.encryptedProjectKey.findFirst({
-    where: { projectId: currentProject.id },
-    select: {
-      encryptedKey: true,
-    },
-  });
-
-  return {
-    props: {
-      user,
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-      publicKey: publicKey?.key || "",
-      encryptedProjectKey,
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  checkProjectOwner: false,
+  withEncryptedProjectKey: true,
+});
 
 export default ProjectPage;
