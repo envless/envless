@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  redis: &service_defaults
+    image: "redis:7-alpine"
+    hostname: "envless-redis"
+    init: true
+    ports: 
+      - "6379:6379"
+  redis-rest:
+    <<: *service_defaults
+    image: "golang:1.20-alpine"
+    hostname: "envless-redis-rest"
+    command: "go install github.com/mna/upstashdis/cmd/upstash-redis-rest-server@latest && upstash-redis-rest-server -a 0.0.0.0:3010 -r envless-redis:6379 --api-token envless"
+    depends_on:
+      - "redis"
+    ports: 
+      - "3010:3010"
+  postgres:
+    <<: *service_defaults
+    image: "postgres:13-alpine"
+    hostname: "envless-postgres"
+    restart: "always"
+    environment:
+      POSTGRES_USER: "envless"
+      POSTGRES_DB: "envless"
+      POSTGRES_PASSWORD: "envless"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+  app:
+    <<: *service_defaults
+    image: "node:hydrogen-alpine"
+    hostname: "envless-app"
+    env_file: .env.local
+    user: "node"
+    restart: on-failure
+    working_dir: /opt/envless
+    command: "yarn && yarn db:migrate && yarn db:seed && yarn dev"
+    environment:
+      - "NODE_ENV=development"
+    volumes:
+      - ./:/opt/envless
+    ports: 
+      - "3000:3000"
+      - "3001:3001"
+      - "3883:3883"
+    depends_on:
+      redis-rest:
+        condition: service_started
+volumes:
+  pgdata:
