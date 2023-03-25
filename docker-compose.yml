@@ -1,0 +1,37 @@
+version: "2"
+services:
+  # turborepo
+  turbo:
+    container_name: envless
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+      - "3000:3000"
+      - "3883:3883"
+      # - "3002:3002"
+      # - "6006:6006"
+    volumes:
+      - ./:/app/
+        # Just specify a path and let the Engine create a volume
+      - /app/node_modules/
+    restart: on-failure
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_DB=envless
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  postgres:
+
+networks:
+  turbo-network:
+    driver: bridge
