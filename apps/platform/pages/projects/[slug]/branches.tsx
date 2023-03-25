@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
+import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { Branch, Project, User, UserRole } from "@prisma/client";
-import { ColumnDef } from "@tanstack/react-table";
+import type { Project, UserRole } from "@prisma/client";
 import {
   CheckCheck,
   Copy,
@@ -20,6 +20,20 @@ import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
+
+const filterOptions: FilterOptions = {
+  status: [
+    { value: "open", label: "Open" },
+    { value: "closed", label: "Closed" },
+    { value: "merged", label: "Merged" },
+  ],
+  sort: [
+    { label: "Newest", value: "createdAt", order: "desc" },
+    { label: "Oldest", value: "createdAt", order: "asc" },
+    { label: "Recently Updated", value: "updatedAt", order: "desc" },
+    { label: "Least recently updated", value: "updatedAt", order: "asc" },
+  ],
+};
 
 /**
  * A functional component that represents a project.
@@ -42,8 +56,6 @@ export const BranchesPage = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
-  const [protectedBranches, setProtectedBranches] = useState<any>([]);
-  const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
@@ -59,18 +71,8 @@ export const BranchesPage = ({
     },
   );
 
-  useEffect(() => {
-    setProtectedBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === true)
-        : [],
-    );
-    setAllOtherBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === false)
-        : [],
-    );
-  }, [branchQuery.data]);
+  const { protected: protectedBranches, unprotected: allOtherBranches } =
+    useSeperateBranches(branchQuery.data || []);
 
   const branchesColumnVisibility = {
     details: true,
@@ -81,7 +83,7 @@ export const BranchesPage = ({
     protected: false,
   };
 
-  const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
+  const branchesColumns = [
     {
       id: "author",
       accessorFn: (row) => row.createdBy.name,
@@ -167,7 +169,7 @@ export const BranchesPage = ({
     },
   ];
 
-  const protectedBranchesColumns: ColumnDef<(typeof protectedBranches)[0]>[] = [
+  const protectedBranchesColumns = [
     {
       id: "name",
       header: "name",
@@ -230,20 +232,6 @@ export const BranchesPage = ({
       ),
     },
   ];
-
-  const filterOptions: FilterOptions = {
-    status: [
-      { value: "open", label: "Open" },
-      { value: "closed", label: "Closed" },
-      { value: "merged", label: "Merged" },
-    ],
-    sort: [
-      { label: "Newest", value: "createdAt", order: "desc" },
-      { label: "Oldest", value: "createdAt", order: "asc" },
-      { label: "Recently Updated", value: "updatedAt", order: "desc" },
-      { label: "Least recently updated", value: "updatedAt", order: "asc" },
-    ],
-  };
 
   return (
     <ProjectLayout
