@@ -137,7 +137,7 @@ export const ProtectedBranch = ({
             }
           }}
         >
-          <Unlock className="h-5 w-5" strokeWidth={2} />
+          <Unlock className="h-5 w-5 text-red-500" strokeWidth={2} />
           <span className="sr-only">, {info.row.original.name}</span>
         </div>
       ),
