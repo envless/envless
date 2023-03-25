@@ -1,11 +1,16 @@
-import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Project, PullRequest, PullRequestStatus, User } from "@prisma/client";
+import { withAccessControl } from "@/utils/withAccessControl";
+import {
+  Project,
+  PullRequest,
+  PullRequestStatus,
+  User,
+  UserRole,
+} from "@prisma/client";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -19,21 +24,26 @@ import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import PullRequestTitleHoverCard from "@/components/pulls/PullRequestTitleHoverCard";
 import { Badge, Button, Label } from "@/components/theme";
 import { FilterOptions, Table } from "@/components/theme/Table/Table";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
+  currentRole: UserRole;
 }
 
-export const PullRequestPage = ({ projects, currentProject }: Props) => {
+export const PullRequestPage = ({
+  projects,
+  currentProject,
+  currentRole,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pullRequestQuery = trpc.pullRequest.getAll.useQuery(
@@ -140,7 +150,12 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
   };
 
   return (
-    <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+    <ProjectLayout
+      tab="pr"
+      projects={projects}
+      currentProject={currentProject}
+      currentRole={currentRole}
+    >
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
@@ -186,68 +201,9 @@ export const PullRequestPage = ({ projects, currentProject }: Props) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.slug === slug);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  hasAccess: { owner: true, maintainer: true, developer: true, guest: true },
+});
 
 export default PullRequestPage;
 

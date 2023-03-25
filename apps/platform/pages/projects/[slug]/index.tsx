@@ -1,9 +1,7 @@
-import { type GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import { Project, UserRole } from "@prisma/client";
 import { EncryptedProjectKey, PublicKey } from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
@@ -12,20 +10,21 @@ import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import OpenPGP from "@/lib/encryption/openpgp";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
- * @param {Projects} props.projects - The projects the user has access to. @param {currentProject} props.currentProject - The current project. */
-
+ * @param {Projects} props.projects - The projects the user has access to.
+ * @param {currentProject} props.currentProject - The current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
+ */
 interface Props {
   user: object;
   projects: Project[];
   currentProject: Project;
+  currentRole: UserRole;
   publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
-  projectRole: string;
 }
 
 interface PersonalKey {
@@ -38,12 +37,19 @@ interface ProjectKey {
   encryptedProjectKey: EncryptedProjectKey["encryptedKey"];
 }
 
+const defaultBranches = [
+  { id: 1, name: "main", isSelected: true },
+  { id: 2, name: "staging", isSelected: false },
+  { id: 3, name: "production", isSelected: false },
+  { id: 4, name: "feat/upload-env-file", isSelected: false },
+];
+
 export const ProjectPage = ({
   user,
   projects,
   currentProject,
+  currentRole,
   publicKey,
-  projectRole,
   encryptedProjectKey,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,15 +67,7 @@ export const ProjectPage = ({
     },
   });
 
-  const defaultBranches = [
-    { id: 1, name: "main", isSelected: true },
-    { id: 2, name: "staging", isSelected: false },
-    { id: 3, name: "production", isSelected: false },
-    { id: 4, name: "feat/upload-env-file", isSelected: false },
-  ];
-
   const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
-  const [branches, setBranches] = useState(defaultBranches);
 
   useEffect(() => {
     const getPrivateKey = sessionStorage.getItem("privateKey");
@@ -83,7 +81,7 @@ export const ProjectPage = ({
         },
       });
     }
-  }, []);
+  }, [encryptionKeys]);
 
   useEffect(() => {
     (async () => {
@@ -108,16 +106,13 @@ export const ProjectPage = ({
         });
       }
     })();
-  }, [
-    encryptionKeys.personal.privateKey,
-    encryptionKeys.project.encryptedProjectKey,
-  ]);
+  }, [encryptionKeys.personal, encryptionKeys.project]);
 
   return (
     <ProjectLayout
-      roleInCurrentProject={projectRole}
       projects={projects}
       currentProject={currentProject}
+      currentRole={currentRole}
     >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
@@ -131,10 +126,11 @@ export const ProjectPage = ({
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
               <BranchDropdown
-                branches={branches}
-                setBranches={setBranches}
+                label="Current Branch"
+                dropdownLabel="Switch between branches"
+                branches={defaultBranches}
                 selectedBranch={selectedBranch}
-                setSelectedBranch={setSelectedBranch}
+                onClick={(branches) => setSelectedBranch(branches)}
               />
 
               <Button
@@ -162,8 +158,13 @@ export const ProjectPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  checkProjectOwner: false,
   withEncryptedProjectKey: true,
+  hasAccess: {
+    owner: true,
+    maintainer: true,
+    developer: true,
+    guest: true,
+  },
 });
 
 export default ProjectPage;

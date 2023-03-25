@@ -4,28 +4,31 @@ import type {
   GetServerSidePropsResult,
 } from "next";
 import { accessesWithProject } from "@/models/access";
+import { Project, UserRole } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getServerSideSession } from "./session";
 
 type PageProps = {};
 
 type AccessControlPageProps = PageProps & {
-  currentProject: any;
-  projects: any;
-  projectRole: any;
+  currentProject: Project;
+  projects: Project[];
+  currentRole: UserRole;
 };
 
 type AccessControlParams<P> = {
-  getServerSideProps?: GetServerSideProps<P & PageProps>;
-  checkProjectOwner?: boolean;
+  hasAccess?: Partial<Record<UserRole, boolean>>;
   withEncryptedProjectKey?: boolean;
+  getServerSideProps?: GetServerSideProps<P & PageProps>;
 };
 
 export function withAccessControl<P = Record<string, unknown>>({
-  checkProjectOwner = false,
   withEncryptedProjectKey = false,
   getServerSideProps,
-}: AccessControlParams<P>) {
+  hasAccess = {},
+}: AccessControlParams<P>): (
+  context: GetServerSidePropsContext,
+) => Promise<GetServerSidePropsResult<AccessControlPageProps>> {
   return async (
     context: GetServerSidePropsContext,
   ): Promise<GetServerSidePropsResult<AccessControlPageProps>> => {
@@ -71,24 +74,30 @@ export function withAccessControl<P = Record<string, unknown>>({
     const projects = projectsWithRole.map((pr) => pr.project);
 
     const currentProject = projectsWithRole.find(
-      (pr) =>
-        pr.project.slug === slug &&
-        (checkProjectOwner ? pr.role === "owner" : true),
+      (pr) => pr.project.slug === slug,
     );
 
     if (!currentProject) {
-      if (checkProjectOwner) {
-        return {
-          notFound: true,
-        };
-      } else {
-        return {
-          redirect: {
-            destination: "/projects",
-            permanent: false,
-          },
-        };
+      return {
+        notFound: true,
+      };
+    }
+
+    let authorized = false;
+
+    Object.entries(hasAccess).forEach(([role, canAccess]) => {
+      if (canAccess && currentProject.role === role) {
+        authorized = true;
       }
+    });
+
+    if (!authorized) {
+      return {
+        redirect: {
+          destination: "/projects",
+          permanent: false,
+        },
+      };
     }
 
     let encryptionProps = {};
@@ -122,7 +131,7 @@ export function withAccessControl<P = Record<string, unknown>>({
         ...serverPropsFromParent.props,
         ...encryptionProps,
         currentProject: JSON.parse(JSON.stringify(currentProject.project)),
-        projectRole: currentProject.role,
+        currentRole: currentProject.role,
         projects: JSON.parse(JSON.stringify(projects)),
         user,
       },

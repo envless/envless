@@ -4,7 +4,7 @@ import React from "react";
 import useFuse from "@/hooks/useFuse";
 import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
-import { Access, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import clsx from "clsx";
 import { Lock, Trash, Unlock, UserX } from "lucide-react";
 import MemberTabs from "@/components/members/MemberTabs";
@@ -18,7 +18,7 @@ interface TableProps {
   tab: Tab;
   setTab: (tab: Tab) => void;
   members: UserType[];
-  userAccessInCurrentProject: Access;
+  currentRole: UserRole;
   projectId: string;
   user: UserType;
 }
@@ -34,7 +34,7 @@ const MembersTable = ({
   members,
   tab,
   setTab,
-  userAccessInCurrentProject: userAccess,
+  currentRole,
   projectId,
   user,
 }: TableProps) => {
@@ -101,12 +101,13 @@ const MembersTable = ({
       memeberUpdateMutation.mutate({
         projectId,
         newRole: user.newRole,
-        currentUserRole: userAccess.role,
+        currentUserRole: currentRole,
         targetUserId: user.userId,
         targetUserRole: user.currentRole,
       });
     },
-    [memeberUpdateMutation, projectId, userAccess.role],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [projectId, currentRole],
   );
 
   const onUpdateMemberStatus = useCallback(
@@ -119,13 +120,13 @@ const MembersTable = ({
         memberStatusMutation.mutate({
           projectId,
           status,
-          currentUserRole: userAccess.role,
+          currentUserRole: currentRole,
           targetUserId: user.userId,
           targetUserRole: user.currentRole,
         });
       }
     },
-    [memberStatusMutation, projectId, userAccess.role],
+    [memberStatusMutation, projectId, currentRole],
   );
 
   return (
@@ -209,11 +210,11 @@ const MembersTable = ({
                     disabled={
                       fetching ||
                       !(
-                        userAccess.role === UserRole.owner ||
-                        userAccess.role === UserRole.maintainer
+                        currentRole === UserRole.owner ||
+                        currentRole === UserRole.maintainer
                       ) ||
                       member.id === user.id ||
-                      (userAccess.role === UserRole.maintainer &&
+                      (currentRole === UserRole.maintainer &&
                         member.role === UserRole.owner)
                     }
                   >

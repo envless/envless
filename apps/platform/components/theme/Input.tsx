@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import { FieldValues, UseFormRegister } from "react-hook-form";
 
 /**
  * A functional react component for rendering a text input.
@@ -20,20 +21,15 @@ import { clsx } from "clsx";
  * @param {object} [props.validationSchema] - An object containing the validation rules for the input element.
  */
 
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   help?: string;
-  register: any;
+  register: UseFormRegister<FieldValues>;
   errors?: object;
   required?: boolean;
-  disabled?: boolean;
   full?: boolean;
-  type?: string;
-  inputMode?: string;
-  placeholder?: string;
   defaultValue?: string;
-  className?: string;
   validationSchema?: object;
 }
 
@@ -53,6 +49,7 @@ const Input = ({ ...props }: InputProps) => {
     defaultValue,
     className,
     validationSchema,
+    ...restProps
   } = props;
 
   return (
@@ -65,7 +62,8 @@ const Input = ({ ...props }: InputProps) => {
 
       <div className="my-2">
         <input
-          name={name}
+          {...restProps}
+          id={name}
           type={type}
           inputMode={inputMode}
           required={required}
@@ -83,10 +81,8 @@ const Input = ({ ...props }: InputProps) => {
 
         {help && <p className="text-light pt-1 text-xs">{help}</p>}
 
-        {errors && errors[name] != null && (
-          <p className="pt-1 text-xs text-red-400/75">
-            {errors[name]?.message}
-          </p>
+        {errors && errors[name] && (
+          <p className="pt-1 text-xs text-red-400/75">{errors[name].message}</p>
         )}
       </div>
     </div>

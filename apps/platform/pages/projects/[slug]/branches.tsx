@@ -1,13 +1,12 @@
-import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
+import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Branch, Project, User } from "@prisma/client";
-import { ColumnDef } from "@tanstack/react-table";
+import { withAccessControl } from "@/utils/withAccessControl";
+import type { Project, UserRole } from "@prisma/client";
 import {
   CheckCheck,
   Copy,
@@ -21,25 +20,42 @@ import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
-import prisma from "@/lib/prisma";
+
+const filterOptions: FilterOptions = {
+  status: [
+    { value: "open", label: "Open" },
+    { value: "closed", label: "Closed" },
+    { value: "merged", label: "Merged" },
+  ],
+  sort: [
+    { label: "Newest", value: "createdAt", order: "desc" },
+    { label: "Oldest", value: "createdAt", order: "asc" },
+    { label: "Recently Updated", value: "updatedAt", order: "desc" },
+    { label: "Least recently updated", value: "updatedAt", order: "asc" },
+  ],
+};
 
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
+  currentRole: UserRole;
 }
 
-export const BranchesPage = ({ projects, currentProject }: Props) => {
+export const BranchesPage = ({
+  projects,
+  currentProject,
+  currentRole,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
-  const [protectedBranches, setProtectedBranches] = useState<any>([]);
-  const [allOtherBranches, setAllOtherBranches] = useState<any>([]);
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
@@ -55,18 +71,8 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   );
 
-  useEffect(() => {
-    setProtectedBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === true)
-        : [],
-    );
-    setAllOtherBranches(
-      branchQuery.data
-        ? branchQuery.data.filter((branch) => branch.protected === false)
-        : [],
-    );
-  }, [branchQuery.data]);
+  const { protected: protectedBranches, unprotected: allOtherBranches } =
+    useSeperateBranches(branchQuery.data || []);
 
   const branchesColumnVisibility = {
     details: true,
@@ -77,7 +83,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     protected: false,
   };
 
-  const branchesColumns: ColumnDef<Branch & { createdBy: User }>[] = [
+  const branchesColumns = [
     {
       id: "author",
       accessorFn: (row) => row.createdBy.name,
@@ -163,7 +169,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const protectedBranchesColumns: ColumnDef<(typeof protectedBranches)[0]>[] = [
+  const protectedBranchesColumns = [
     {
       id: "name",
       header: "name",
@@ -217,7 +223,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       header: "Actions",
       cell: (info) => (
         <Link
-          href={`/projects/${info.row.original.project.slug}/settings/protected-branches`}
+          href={`/projects/${info.row.original.project.slug}/settings/protected-branch`}
           className="float-right pr-4 hover:text-teal-400"
         >
           <Settings2 className="h-5 w-5" strokeWidth={2} />
@@ -227,25 +233,12 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
     },
   ];
 
-  const filterOptions: FilterOptions = {
-    status: [
-      { value: "open", label: "Open" },
-      { value: "closed", label: "Closed" },
-      { value: "merged", label: "Merged" },
-    ],
-    sort: [
-      { label: "Newest", value: "createdAt", order: "desc" },
-      { label: "Oldest", value: "createdAt", order: "asc" },
-      { label: "Recently Updated", value: "updatedAt", order: "desc" },
-      { label: "Least recently updated", value: "updatedAt", order: "asc" },
-    ],
-  };
-
   return (
     <ProjectLayout
       tab="branches"
       projects={projects}
       currentProject={currentProject}
+      currentRole={currentRole}
     >
       <CreateBranchModal
         onSuccessCreation={() => {
@@ -337,58 +330,8 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.slug === slug);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, developer: true, guest: true, owner: true },
+});
 
 export default BranchesPage;

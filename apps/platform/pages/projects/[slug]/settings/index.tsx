@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import type { Project, UserRole } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
@@ -13,29 +13,33 @@ import { showToast } from "@/components/theme/showToast";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
-interface SettingsPageProps {
+interface Props {
   projects: Project[];
-  currentProject: any;
-  projectRole: string;
+  currentProject: Project;
+  currentRole: UserRole;
 }
 
 export const SettingsPage = ({
   projects,
-  projectRole,
+  currentRole,
   currentProject,
-}: SettingsPageProps) => {
+}: Props) => {
   const router = useRouter();
-
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const { mutate: projectGeneralMutation, isLoading } =
     trpc.projects.update.useMutation({
-      onSuccess: (data) => {
+      onSuccess: ({ name }) => {
         showToast({
           type: "success",
-          title: "Project setting updated successfully",
+          title: `Project ${name} setting updated successfully`,
           subtitle: "",
         });
         router.push(router.asPath);
@@ -65,65 +69,64 @@ export const SettingsPage = ({
     <ProjectLayout
       tab="settings"
       projects={projects}
-      roleInCurrentProject={projectRole}
-      currentProject={currentProject.project}
+      currentProject={currentProject}
+      currentRole={currentRole}
     >
       <ProjectSettings
         active="general"
         projects={projects}
         currentProject={currentProject}
-        roleInCurrentProject={projectRole}
+        currentRole={currentRole}
       >
-        <>
-          <h3 className="mb-8 text-lg">General</h3>
-          <div className="w-full lg:w-3/5">
-            <form onSubmit={handleSubmit(submitForm)}>
-              <Input
-                name="name"
-                label="Project name"
-                placeholder=""
-                defaultValue={currentProject.name || ""}
-                required={true}
-                register={register}
-                className="w-full"
-                validationSchema={{
-                  required: "Project name is required",
-                }}
-              />
-              <div className="border-dark mb-6 rounded border-2 p-3">
-                <div className="flex items-center justify-between">
-                  <label className="cursor-pointer" htmlFor="auth_2fa">
-                    <h3 className="mb-1 text-sm font-semibold">
-                      Enforce two-factor authentication
-                    </h3>
-                    <Paragraph color="light" size="sm" className="mr-4">
-                      After enabling this feature, all team members should
-                      enable their two-factor authentication to access this
-                      project.
-                    </Paragraph>
-                  </label>
+        <h3 className="mb-8 text-lg">General</h3>
+        <div className="w-full lg:w-3/5">
+          <form onSubmit={handleSubmit(submitForm)}>
+            <Input
+              name="name"
+              label="Project name"
+              defaultValue={currentProject.name || ""}
+              register={register}
+              className="w-full"
+              errors={errors}
+              validationSchema={{
+                required: "Project name is required",
+              }}
+              required
+            />
+            <div className="border-dark mb-6 rounded border-2 p-3">
+              <div className="flex items-center justify-between">
+                <label className="cursor-pointer" htmlFor="auth_2fa">
+                  <h3 className="mb-1 text-sm font-semibold">
+                    Enforce two-factor authentication
+                  </h3>
+                  <Paragraph color="light" size="sm" className="mr-4">
+                    After enabling this feature, all team members should enable
+                    their two-factor authentication to access this project.
+                  </Paragraph>
+                </label>
 
-                  <Toggle
-                    // TODO - create enforce2fa column instead of adding it to settings
-                    // checked={currentProject.settings?.enforce2FA || false}
-                    checked={false}
-                    name="enforce2FA"
-                    register={register}
-                  />
-                </div>
+                <Toggle
+                  // TODO: - create enforce2fa column instead of adding it to settings
+                  // checked={currentProject.settings?.enforce2FA || false}
+                  checked={false}
+                  name="enforce2FA"
+                  register={register}
+                />
               </div>
+            </div>
 
-              <Button type="submit" disabled={isLoading || false}>
-                Save project settings
-              </Button>
-            </form>
-          </div>
-        </>
+            <Button type="submit" disabled={isLoading || false}>
+              Save project settings
+            </Button>
+          </form>
+        </div>
       </ProjectSettings>
     </ProjectLayout>
   );
 };
 
-export const getServerSideProps = withAccessControl({});
+export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, owner: true },
+});
 
 export default SettingsPage;
