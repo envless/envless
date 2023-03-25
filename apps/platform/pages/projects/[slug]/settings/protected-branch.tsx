@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useState } from "react";
 import useCopyToClipboard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
@@ -6,7 +5,7 @@ import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Branch, Project, UserRole } from "@prisma/client";
-import { CheckCheck, Copy, Link, Settings2, ShieldCheck } from "lucide-react";
+import { CheckCheck, Copy, ShieldCheck, Unlock } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
@@ -52,7 +51,6 @@ export const ProtectedBranch = ({
     currentRole: roleInProject,
   };
 
-  const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipboard();
   const utils = trpc.useContext();
 
@@ -123,13 +121,25 @@ export const ProtectedBranch = ({
       id: "actions",
       header: "Actions",
       cell: (info) => (
-        <Link
-          href={router.asPath}
-          className="float-right pr-4 hover:text-teal-400"
+        <div
+          className="float-right cursor-pointer pr-4 hover:text-teal-400"
+          onClick={() => {
+            const confirmed = confirm(
+              `Are you sure you want to remove protection from ${info.row.original.name} branch ?`,
+            );
+            if (confirmed) {
+              mutate({
+                branch: {
+                  ...info.row.original,
+                  protected: false,
+                },
+              });
+            }
+          }}
         >
-          <Settings2 className="h-5 w-5" strokeWidth={2} />
+          <Unlock className="h-5 w-5" strokeWidth={2} />
           <span className="sr-only">, {info.row.original.name}</span>
-        </Link>
+        </div>
       ),
     },
   ];
