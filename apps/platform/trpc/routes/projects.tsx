@@ -5,6 +5,7 @@ import { createRouter, withAuth } from "@/trpc/router";
 import { PROJECT_CREATED } from "@/types/auditActions";
 import { formatDateTime } from "@/utils/helpers";
 import sendMail from "emails";
+import { kebabCase } from "lodash";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -61,7 +62,7 @@ export const projects = createRouter({
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
-          slug: project.slug,
+          slug: kebabCase(project.slug),
           access: {
             create: {
               userId: user.id,

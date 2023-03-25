@@ -49,15 +49,15 @@ const CreateProjectModal = () => {
   });
 
   const createNewProject: SubmitHandler<Project> = async (data) => {
-    const { name, slug } = data;
+    const { name } = data;
     setLoading(true);
 
-    if (!name || !slug) {
+    if (!name || !kebabSlug) {
       setLoading(false);
       return;
     }
 
-    projectMutation.mutate({ project: { name, slug } });
+    projectMutation.mutate({ project: { name, slug: kebabSlug } });
     reset();
   };
 

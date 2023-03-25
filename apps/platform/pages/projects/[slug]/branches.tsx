@@ -1,12 +1,11 @@
-import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Branch, Project, User } from "@prisma/client";
+import { withAccessControl } from "@/utils/withAccessControl";
+import type { Branch, Project, User, UserRole } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   CheckCheck,
@@ -21,21 +20,26 @@ import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
+  roleInProject: UserRole;
 }
 
-export const BranchesPage = ({ projects, currentProject }: Props) => {
+export const BranchesPage = ({
+  projects,
+  currentProject,
+  roleInProject,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
   const [protectedBranches, setProtectedBranches] = useState<any>([]);
@@ -246,6 +250,7 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
       tab="branches"
       projects={projects}
       currentProject={currentProject}
+      currentRole={roleInProject}
     >
       <CreateBranchModal
         onSuccessCreation={() => {
@@ -337,58 +342,8 @@ export const BranchesPage = ({ projects, currentProject }: Props) => {
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
-  // @ts-ignore
-  const { slug } = context.params;
-
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((project) => project.slug === slug);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
-    },
-  };
-}
+export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, developer: true, guest: true, owner: true },
+});
 
 export default BranchesPage;

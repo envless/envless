@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import type { Project, UserRole } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
@@ -13,17 +13,18 @@ import { showToast } from "@/components/theme/showToast";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
  */
 
 interface SettingsPageProps {
   projects: Project[];
-  currentProject: any;
-  projectRole: string;
+  currentProject: Project;
+  roleInProject: UserRole;
 }
 
 export const SettingsPage = ({
   projects,
-  projectRole,
+  roleInProject,
   currentProject,
 }: SettingsPageProps) => {
   const router = useRouter();
@@ -65,14 +66,14 @@ export const SettingsPage = ({
     <ProjectLayout
       tab="settings"
       projects={projects}
-      roleInCurrentProject={projectRole}
-      currentProject={currentProject.project}
+      currentProject={currentProject}
+      currentRole={roleInProject}
     >
       <ProjectSettings
         active="general"
         projects={projects}
         currentProject={currentProject}
-        roleInCurrentProject={projectRole}
+        currentRole={roleInProject}
       >
         <>
           <h3 className="mb-8 text-lg">General</h3>
@@ -124,6 +125,8 @@ export const SettingsPage = ({
   );
 };
 
-export const getServerSideProps = withAccessControl({});
+export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, owner: true },
+});
 
 export default SettingsPage;
