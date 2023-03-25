@@ -113,4 +113,49 @@ export const branches = createRouter({
 
       return newBranch;
     }),
+  update: withAuth
+    .input(
+      z.object({
+        branch: z.object({
+          id: z.string(),
+          name: z.string(),
+          description: z.string(),
+          protected: z.boolean(),
+          protectedAt: z.date(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { user } = ctx.session;
+      const { branch } = input;
+
+      const currentBranch = await prisma.branch.findUnique({
+        where: {
+          id: branch.id,
+        },
+      });
+
+      if (!currentBranch) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Branch does not exist",
+        });
+      }
+
+      const protectedAt =
+        currentBranch.protectedAt || branch.protectedAt || new Date();
+      const updatedBranch = await prisma.branch.update({
+        where: {
+          id: currentBranch.id,
+        },
+        data: {
+          description: branch.description,
+          protected: branch.protected,
+          ...(branch.protected ? { protectedAt } : {}),
+        },
+      });
+
+      return updatedBranch;
+    }),
 });

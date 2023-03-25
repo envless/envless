@@ -16,13 +16,13 @@ import OpenPGP from "@/lib/encryption/openpgp";
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 interface Props {
   user: object;
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
   publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
 }
@@ -37,11 +37,18 @@ interface ProjectKey {
   encryptedProjectKey: EncryptedProjectKey["encryptedKey"];
 }
 
+const defaultBranches = [
+  { id: 1, name: "main", isSelected: true },
+  { id: 2, name: "staging", isSelected: false },
+  { id: 3, name: "production", isSelected: false },
+  { id: 4, name: "feat/upload-env-file", isSelected: false },
+];
+
 export const ProjectPage = ({
   user,
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
   publicKey,
   encryptedProjectKey,
 }: Props) => {
@@ -60,15 +67,7 @@ export const ProjectPage = ({
     },
   });
 
-  const defaultBranches = [
-    { id: 1, name: "main", isSelected: true },
-    { id: 2, name: "staging", isSelected: false },
-    { id: 3, name: "production", isSelected: false },
-    { id: 4, name: "feat/upload-env-file", isSelected: false },
-  ];
-
   const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
-  const [branches, setBranches] = useState(defaultBranches);
 
   useEffect(() => {
     const getPrivateKey = sessionStorage.getItem("privateKey");
@@ -82,7 +81,7 @@ export const ProjectPage = ({
         },
       });
     }
-  }, []);
+  }, [encryptionKeys]);
 
   useEffect(() => {
     (async () => {
@@ -107,16 +106,13 @@ export const ProjectPage = ({
         });
       }
     })();
-  }, [
-    encryptionKeys.personal.privateKey,
-    encryptionKeys.project.encryptedProjectKey,
-  ]);
+  }, [encryptionKeys.personal, encryptionKeys.project]);
 
   return (
     <ProjectLayout
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
@@ -130,10 +126,11 @@ export const ProjectPage = ({
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
               <BranchDropdown
-                branches={branches}
-                setBranches={setBranches}
+                label="Current Branch"
+                dropdownLabel="Switch between branches"
+                branches={defaultBranches}
                 selectedBranch={selectedBranch}
-                setSelectedBranch={setSelectedBranch}
+                onClick={(branches) => setSelectedBranch(branches)}
               />
 
               <Button

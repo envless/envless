@@ -40,6 +40,7 @@ export type BranchType = {
   name: string;
   description?: string;
   protected: boolean;
+  protectedAt?: Date | null;
   status?: string;
   createdById: string;
   projectId: string;

@@ -15,7 +15,7 @@ import { Button } from "@/components/theme";
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {PullRequest & {createdBy: User}} props.pullRequest - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
@@ -24,13 +24,13 @@ interface Props {
     createdBy: UserType;
   };
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export default function PullRequestDetailPage({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
   pullRequest,
 }: Props) {
   const oldCode = `
@@ -49,7 +49,7 @@ EMAIL_FROM=email@example.com
       tab="pr"
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">

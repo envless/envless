@@ -117,10 +117,11 @@ model Branch {
   projectId   String
   name        String
   description String?
-  protected   Boolean @default(false)
   status      BranchStatus?
-
   createdById String
+  protected   Boolean @default(false)
+
+  protectedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
