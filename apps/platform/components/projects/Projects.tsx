@@ -26,7 +26,7 @@ const Projects = ({ ...props }) => {
         onSuccess: () => {
           showToast({
             type: "success",
-            title: "Project Restored successfully",
+            title: "Project successfully restored.",
             subtitle: "",
           });
           router.replace("/projects");
@@ -34,7 +34,8 @@ const Projects = ({ ...props }) => {
         onError: (error) => {
           showToast({
             type: "error",
-            title: "Project restoration failed",
+            title:
+              "Failed to restore project, please reload the page and try again.",
             subtitle: "",
           });
         },
@@ -66,6 +67,8 @@ const Projects = ({ ...props }) => {
                 {project.deletedAt ? (
                   <button
                     disabled={isLoading}
+                    aria-label="This project has been queued for deletion, please click here to restore it"
+                    data-balloon-pos="up"
                     className="rounded-full p-2 text-white transition duration-200 hover:bg-white/25"
                     onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                       e.stopPropagation();
@@ -91,6 +94,7 @@ const Projects = ({ ...props }) => {
                       className="rounded-full p-2 text-white transition duration-200 hover:bg-white/25"
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();
+                        // TODO: show 2FA modal
                         alert("Show 2FA modal");
                       }}
                     >
