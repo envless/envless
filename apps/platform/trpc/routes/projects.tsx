@@ -88,6 +88,12 @@ export const projects = createRouter({
           createdById: user.id,
           projectId: newProject.id,
           action: PROJECT_CREATED,
+          data: {
+            project: {
+              id: newProject.id,
+              name: newProject.name,
+            },
+          },
         });
 
         // @ts-ignore
