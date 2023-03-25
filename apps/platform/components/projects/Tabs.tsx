@@ -23,11 +23,7 @@ interface Props {
   currentRole: UserRole;
 }
 
-export default function Tabs({
-  active,
-  projectSlug,
-  currentRole,
-}: Props) {
+export default function Tabs({ active, projectSlug, currentRole }: Props) {
   const router = useRouter();
   const projectUrl = `/projects/${projectSlug}`;
   const tabs = getNavigationTabs(currentRole, projectUrl);

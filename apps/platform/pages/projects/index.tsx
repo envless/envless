@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+import { ACCOUNT_UPDATED } from "@/types/auditActions";
 import { getServerSideSession } from "@/utils/session";
 import { Project, User } from "@prisma/client";
 import { SquarePlusIcon } from "@/components/icons";
@@ -77,11 +78,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
       include: {
         access: {
-          where: {
-            project: {
-              deletedAt: null,
-            },
-          },
+          where: {},
           include: {
             project: {
               include: {
@@ -114,7 +111,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const projectIds = projects.map((project: any) => project.id);
     const logs = await Audit.logs({
       createdById: userRecord.id,
-      actions: ["account.updated"],
+      actions: [ACCOUNT_UPDATED],
       projectIds: projectIds,
       limit: 10,
     });
