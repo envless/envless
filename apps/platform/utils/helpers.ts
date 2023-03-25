@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client";
 import {
   GitBranch,
   GitPullRequest,
@@ -38,10 +39,13 @@ interface ProjectSettingTab {
   href: string;
 }
 
-export const getProjectSettingTabs = (currentUserRole, slug) => {
+export const getProjectSettingTabs = (
+  currentUserRole: UserRole,
+  slug: string,
+) => {
   let tabs: ProjectSettingTab[] = [];
 
-  const authorizedRoles = ["owner", "maintainer"];
+  const authorizedRoles: UserRole[] = [UserRole.owner, UserRole.maintainer];
 
   if (authorizedRoles.includes(currentUserRole)) {
     tabs.push(
@@ -58,7 +62,7 @@ export const getProjectSettingTabs = (currentUserRole, slug) => {
     );
   }
 
-  if (currentUserRole === "owner") {
+  if (currentUserRole === UserRole.owner) {
     tabs.push({
       id: "danger",
       name: "Danger zone",
@@ -70,7 +74,7 @@ export const getProjectSettingTabs = (currentUserRole, slug) => {
 };
 
 export const getNavigationTabs = (currentUserRole, projectUrl) => {
-  const authorizedRoles = ["owner", "maintainer"];
+  const authorizedRoles = [UserRole.owner, UserRole.maintainer];
 
   const defaultTabs = [
     {
@@ -91,12 +95,7 @@ export const getNavigationTabs = (currentUserRole, projectUrl) => {
       href: `${projectUrl}/pulls`,
       icon: GitPullRequest,
     },
-    {
-      id: "members",
-      name: "Members",
-      href: `${projectUrl}/members`,
-      icon: Users,
-    },
+
     {
       id: "integrations",
       name: "Integrations",
@@ -112,12 +111,20 @@ export const getNavigationTabs = (currentUserRole, projectUrl) => {
   ];
 
   if (authorizedRoles.includes(currentUserRole)) {
-    defaultTabs.push({
-      id: "settings",
-      name: "Settings",
-      href: `${projectUrl}/settings`,
-      icon: Settings2,
-    });
+    defaultTabs.push(
+      {
+        id: "members",
+        name: "Members",
+        href: `${projectUrl}/members`,
+        icon: Users,
+      },
+      {
+        id: "settings",
+        name: "Settings",
+        href: `${projectUrl}/settings`,
+        icon: Settings2,
+      },
+    );
   }
 
   return defaultTabs;

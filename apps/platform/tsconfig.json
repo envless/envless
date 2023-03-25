@@ -28,7 +28,8 @@
       "@/layouts/*": ["layouts/*"],
       "@/models/*": ["models/*"],
       "@/components/*": ["components/*"],
-      "@/env/*": ["env/*"]
+      "@/env/*": ["env/*"],
+      "@/store/*": ["store/*"]
     },
     "strict": false
   },

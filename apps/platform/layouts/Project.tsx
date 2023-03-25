@@ -1,4 +1,5 @@
-import type { Project } from "@prisma/client";
+import { Fragment } from "react";
+import type { Project, UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
@@ -8,7 +9,7 @@ interface Props {
   tab?: string;
   projects: Project[];
   currentProject: Project;
-  roleInCurrentProject: string;
+  currentRole: UserRole;
   children: React.ReactNode;
 }
 
@@ -17,14 +18,14 @@ const ProjectLayout = ({
   projects,
   children,
   currentProject,
-  roleInCurrentProject,
+  currentRole,
 }: Props) => {
   const { data: session, status } = useSession();
   const user = session?.user;
 
   if (status === "authenticated") {
     return (
-      <>
+      <Fragment>
         <Container>
           <Nav
             user={user}
@@ -33,7 +34,7 @@ const ProjectLayout = ({
           />
         </Container>
         <Tabs
-          roleInCurrentProject={roleInCurrentProject}
+          currentRole={currentRole}
           projectSlug={currentProject?.slug}
           active={tab || "project"}
         />
@@ -43,7 +44,7 @@ const ProjectLayout = ({
         </Container>
 
         <Toaster position="top-right" />
-      </>
+      </Fragment>
     );
   } else {
     return (
