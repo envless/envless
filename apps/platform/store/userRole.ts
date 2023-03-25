@@ -3,7 +3,6 @@ import { create } from "zustand";
 
 interface UserAccessStore {
   accessData?: Access;
-  isLoading: boolean;
   isAdmin: boolean;
   isDeveloper: boolean;
   isGuest: boolean;
@@ -14,7 +13,6 @@ interface UserAccessStore {
 
 export const useUserAccessStore = create<UserAccessStore>((set) => ({
   accessData: undefined,
-  isLoading: true,
   isAdmin: false,
   isDeveloper: false,
   isGuest: false,
@@ -23,7 +21,6 @@ export const useUserAccessStore = create<UserAccessStore>((set) => ({
   setAccessData: (data?: Access) => {
     set({
       accessData: data,
-      isLoading: false,
       isAdmin:
         data?.role === UserRole.owner || data?.role === UserRole.maintainer,
       isDeveloper: data?.role === UserRole.developer,
