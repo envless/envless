@@ -24,7 +24,6 @@ type DeleteProjectNoticeProps = {
   headline: ReactElement;
   body: ReactElement;
   greeting: string;
-  subText: string;
   buttonText?: string;
   buttonLink?: string;
 };
@@ -33,7 +32,6 @@ const DeleteProjectNotice: React.FC<DeleteProjectNoticeProps> = ({
   headline,
   body,
   greeting,
-  subText,
   buttonText,
   buttonLink,
 }) => {
@@ -85,15 +83,6 @@ const DeleteProjectNotice: React.FC<DeleteProjectNoticeProps> = ({
                 <MjmlSpacer height="8px" />
               </>
             )}
-
-            <MjmlText
-              cssClass="paragraph"
-              padding="12px 0"
-              fontSize={textSm}
-              lineHeight={leadingRelaxed}
-            >
-              <>{subText}</>
-            </MjmlText>
 
             <MjmlDivider
               borderColor="#666"
