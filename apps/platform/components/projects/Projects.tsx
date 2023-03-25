@@ -1,11 +1,14 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { trpc } from "@/utils/trpc";
 import { GitBranch, ShieldAlert, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import { LockIcon } from "@/components/icons";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
+import { showToast } from "@/components/theme/showToast";
 
 const Projects = ({ ...props }) => {
   const { projects } = props;
+  const router = useRouter();
 
   const sortedProjects = projects.sort((a, b) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -14,10 +17,37 @@ const Projects = ({ ...props }) => {
   const Card = ({ project }) => {
     const twoFactorAuth = project.settings.enforce2FA;
 
+    const navigateToProjectDetailPage = () => {
+      router.push(`/projects/${project.slug}`);
+    };
+
+    const { mutate: projectRestoreMutation, isLoading } =
+      trpc.projects.restoreProject.useMutation({
+        onSuccess: () => {
+          showToast({
+            type: "success",
+            title: "Project Restored successfully",
+            subtitle: "",
+          });
+          router.replace("/projects");
+        },
+        onError: (error) => {
+          showToast({
+            type: "error",
+            title: "Project restoration failed",
+            subtitle: "",
+          });
+        },
+      });
+
     return (
       <>
-        <Link href={`/projects/${project.slug}`} className="cursor-pointer">
-          <div className="border-darker bg-darker w-full  rounded-md border-2  p-5 transition duration-300 hover:border-teal-300/70">
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => navigateToProjectDetailPage()}
+        >
+          <div className="border-darker bg-darker w-full rounded-md border-2 p-5 transition duration-300 hover:border-teal-300/70">
             <div className="flex justify-between gap-2">
               <div>
                 <h5
@@ -35,9 +65,21 @@ const Projects = ({ ...props }) => {
               <div>
                 {project.deletedAt ? (
                   <button
-                    aria-label="You have deleted this project. Click to restore it."
-                    data-balloon-pos="up"
+                    disabled={isLoading}
                     className="rounded-full p-2 text-white transition duration-200 hover:bg-white/25"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.stopPropagation();
+
+                      if (
+                        confirm(
+                          "Are you sure you want to restore this project?",
+                        )
+                      ) {
+                        projectRestoreMutation({
+                          project: { id: project.id },
+                        });
+                      }
+                    }}
                   >
                     <ShieldAlert className="h-5 w-5 shrink-0 text-red-600" />
                   </button>
@@ -47,6 +89,10 @@ const Projects = ({ ...props }) => {
                       aria-label="This project requires two-factor authentication"
                       data-balloon-pos="up"
                       className="rounded-full p-2 text-white transition duration-200 hover:bg-white/25"
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        alert("Show 2FA modal");
+                      }}
                     >
                       <LockIcon className="h-5 w-5 shrink-0 text-teal-300" />
                     </button>
@@ -76,7 +122,7 @@ const Projects = ({ ...props }) => {
               </div>
             </div>
           </div>
-        </Link>
+        </div>
       </>
     );
   };

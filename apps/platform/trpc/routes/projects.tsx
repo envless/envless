@@ -1,8 +1,15 @@
 import DeleteProjectNotice from "@/emails/DeleteProjectNotice";
+import ProjectRestorationNotice from "@/emails/ProjectRestorationNotice";
 import { env } from "@/env/index.mjs";
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
-import { PROJECT_CREATED } from "@/types/auditActions";
+import {
+  ACCESS_CREATED,
+  BRANCH_CREATED,
+  PROJECT_CREATED,
+  PROJECT_DELETE_REQUESTED,
+  PROJECT_RESTORED,
+} from "@/types/auditActions";
 import { formatDateTime } from "@/utils/helpers";
 import sendMail from "emails";
 import { string, z } from "zod";
@@ -105,7 +112,7 @@ export const projects = createRouter({
           createdById: user.id,
           createdForId: user.id,
           projectId: newProject.id,
-          action: "access.created",
+          action: ACCESS_CREATED,
           data: {
             access: {
               id: access.id,
@@ -117,7 +124,7 @@ export const projects = createRouter({
         await Audit.create({
           createdById: user.id,
           projectId: newProject.id,
-          action: "branch.created",
+          action: BRANCH_CREATED,
           data: {
             branch: {
               id: branch.id,
@@ -177,7 +184,7 @@ export const projects = createRouter({
       await Audit.create({
         createdById: user.id,
         projectId: softDeletedProject.id,
-        action: "project.delete_requested",
+        action: PROJECT_DELETE_REQUESTED,
         data: {
           project: {
             id: softDeletedProject.id,
@@ -224,5 +231,69 @@ export const projects = createRouter({
       });
 
       return softDeletedProject;
+    }),
+  restoreProject: withAuth
+    .input(
+      z.object({
+        project: z.object({ id: z.string().min(1, "project id is required") }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { project } = input;
+      const user = ctx.session.user;
+      const projectAccess = await ctx.prisma.access.findFirst({
+        where: {
+          projectId: project.id,
+          userId: user.id,
+          role: "owner",
+        },
+      });
+      if (!projectAccess) {
+        throw new Error("You are not the owner of this project");
+      }
+
+      const restoredProject = await Project.restoreProject(project.id);
+
+      await Audit.create({
+        createdById: user.id,
+        projectId: restoredProject.id,
+        action: PROJECT_RESTORED,
+        data: {
+          project: {
+            id: restoredProject.id,
+            name: restoredProject.name,
+          },
+        },
+      });
+
+      await sendMail({
+        subject: `Project Restoration Notice - ${restoredProject?.name}`,
+        to: user.email,
+        component: (
+          <>
+            <ProjectRestorationNotice
+              headline={
+                <>
+                  Project Restoration Notice - <b>{restoredProject?.name}</b>
+                </>
+              }
+              body={
+                <>
+                  This is to inform you that {restoredProject?.name} has been
+                  restored by {user.name} on{" "}
+                  {formatDateTime(restoredProject.updatedAt as Date)}.
+                  <br />
+                  <br />
+                  To access the project, please login to your account and follow
+                  the steps to access the project.
+                </>
+              }
+              greeting="Hi there,"
+              buttonText="Login"
+              buttonLink={`${env.BASE_URL}/auth`}
+            />
+          </>
+        ),
+      });
     }),
 });

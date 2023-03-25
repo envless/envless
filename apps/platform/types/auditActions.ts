@@ -1,4 +1,6 @@
 export const PROJECT_CREATED = "project.created";
+export const PROJECT_DELETE_REQUESTED = "project.delete_requested";
+export const PROJECT_RESTORED = "project.restored";
 export const BRANCH_CREATED = "branch.created";
 export const BRANCH_DELETED = "branch.deleted";
 export const BRANCH_RENAMED = "branch.renamed";

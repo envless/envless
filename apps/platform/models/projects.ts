@@ -48,9 +48,23 @@ const deleteProject = async ({
   return deletedProject;
 };
 
+const restoreProject = async (id: string) => {
+  const restoredProject = await prisma.project.update({
+    where: {
+      id,
+    },
+    data: {
+      deletedAt: null,
+    },
+  });
+
+  return restoredProject;
+};
+
 const Project = {
   findBySlug,
   deleteProject,
+  restoreProject,
 };
 
 export default Project;
