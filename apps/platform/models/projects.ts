@@ -1,6 +1,6 @@
+import { Project as ProjectType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import prisma from "@/lib/prisma";
-import { Project } from "@prisma/client";
 
 const findBySlug = async (slug: string) => {
   const project = await prisma.project.findFirst({
@@ -19,10 +19,16 @@ const findBySlug = async (slug: string) => {
   return project;
 };
 
-const deleteProject = async ({ softDelete = true, id } : { id: string, softDelete: boolean }) => {
-  let deletedProject: Project|null = null;
+const deleteProject = async ({
+  softDelete = true,
+  id,
+}: {
+  id: string;
+  softDelete: boolean;
+}) => {
+  let deletedProject: ProjectType | null = null;
 
-  if(softDelete) {
+  if (softDelete) {
     deletedProject = await prisma.project.update({
       where: {
         id,
@@ -31,9 +37,8 @@ const deleteProject = async ({ softDelete = true, id } : { id: string, softDelet
         deletedAt: new Date(),
       },
     });
-  }
-  else {
-   deletedProject = await prisma.project.delete({
+  } else {
+    deletedProject = await prisma.project.delete({
       where: {
         id,
       },
@@ -45,7 +50,7 @@ const deleteProject = async ({ softDelete = true, id } : { id: string, softDelet
 
 const Project = {
   findBySlug,
-  deleteProject
+  deleteProject,
 };
 
 export default Project;

@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { AlertCircle, GitBranch, Lock, Users } from "lucide-react";
+import { AlertCircle, GitBranch, Users } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
+import { LockIcon } from "@/components/icons";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
 import {
   Tooltip,
@@ -27,7 +28,7 @@ const Projects = ({ ...props }) => {
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Lock className="text-lighter absolute right-5 inline-block h-5 w-5" />
+                    <LockIcon className="absolute right-5 inline-block h-5 w-5 text-teal-400" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <div className="flex space-x-4">
