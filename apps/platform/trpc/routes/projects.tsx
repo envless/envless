@@ -1,6 +1,7 @@
 import { env } from "@/env/index.mjs";
 import { createRouter, withAuth } from "@/trpc/router";
 import sendMail from "emails";
+import { kebabCase } from "lodash";
 import { MjmlText } from "mjml-react";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
@@ -58,7 +59,7 @@ export const projects = createRouter({
       const newProject = await prisma.project.create({
         data: {
           name: project.name,
-          slug: project.slug,
+          slug: kebabCase(project.slug),
           access: {
             create: {
               userId: user.id,
