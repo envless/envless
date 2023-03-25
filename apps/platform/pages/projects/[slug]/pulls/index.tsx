@@ -30,19 +30,19 @@ import { FilterOptions, Table } from "@/components/theme/Table/Table";
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export const PullRequestPage = ({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -154,7 +154,7 @@ export const PullRequestPage = ({
       tab="pr"
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {

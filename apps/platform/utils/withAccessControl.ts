@@ -13,7 +13,7 @@ type PageProps = {};
 type AccessControlPageProps = PageProps & {
   currentProject: Project;
   projects: Project[];
-  roleInProject: UserRole;
+  currentRole: UserRole;
 };
 
 type AccessControlParams<P> = {
@@ -131,7 +131,7 @@ export function withAccessControl<P = Record<string, unknown>>({
         ...serverPropsFromParent.props,
         ...encryptionProps,
         currentProject: JSON.parse(JSON.stringify(currentProject.project)),
-        roleInProject: currentProject.role,
+        currentRole: currentProject.role,
         projects: JSON.parse(JSON.stringify(projects)),
         user,
       },

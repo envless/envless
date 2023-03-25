@@ -14,26 +14,26 @@ import { showToast } from "@/components/theme/showToast";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface DangerPageProps {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export const DangerZone = ({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
 }: DangerPageProps) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const router = useRouter();
   const props = {
     projects,
     currentProject: currentProject,
-    currentRole: roleInProject,
+    currentRole,
   };
 
   const { mutate: projectDeleteMutation, isLoading } =

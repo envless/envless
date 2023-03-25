@@ -80,6 +80,7 @@ export const projects = createRouter({
             create: {
               name: "main",
               protected: true,
+              protectedAt: new Date(),
               createdById: user.id,
             },
           },

@@ -7,25 +7,25 @@ import { Project, UserRole } from "@prisma/client";
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export const AuditLogsPage = ({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
 }: Props) => {
   return (
     <ProjectLayout
       tab="audits"
       projects={projects}
-      currentRole={roleInProject}
+      currentRole={currentRole}
       currentProject={currentProject}
     >
       <h1>AuditLogsPage for {currentProject.name}</h1>

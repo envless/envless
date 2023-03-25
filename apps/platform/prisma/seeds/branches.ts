@@ -23,10 +23,13 @@ const seedBranches = async () => {
 
   for (let i = 0; i < users.length; i++) {
     for (let j = 0; j < projects.length; j++) {
+      const isProtected = random() < 0.5;
       branches.push({
         name: `${faker.git.branch()}-${random(1, 5000)}`,
         projectId: projects[j].id,
-        protected: j >= parseInt(String(projects.length / 2)) ? true : false,
+        protected: isProtected,
+        protectedAt: isProtected ? new Date() : null,
+        description: isProtected ? faker.lorem.sentence(4) : "",
         createdById: users[i].id,
       });
     }

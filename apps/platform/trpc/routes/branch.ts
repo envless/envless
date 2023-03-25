@@ -121,6 +121,7 @@ export const branches = createRouter({
           name: z.string(),
           description: z.string(),
           protected: z.boolean(),
+          protectedAt: z.date(),
         }),
       }),
     )
@@ -129,16 +130,32 @@ export const branches = createRouter({
       const { user } = ctx.session;
       const { branch } = input;
 
-      const newBranch = await prisma.branch.update({
+      const currentBranch = await prisma.branch.findUnique({
         where: {
           id: branch.id,
+        },
+      });
+
+      if (!currentBranch) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Branch does not exist",
+        });
+      }
+
+      const protectedAt =
+        currentBranch.protectedAt || branch.protectedAt || new Date();
+      const updatedBranch = await prisma.branch.update({
+        where: {
+          id: currentBranch.id,
         },
         data: {
           description: branch.description,
           protected: branch.protected,
+          ...(branch.protected ? { protectedAt } : {}),
         },
       });
 
-      return newBranch;
+      return updatedBranch;
     }),
 });

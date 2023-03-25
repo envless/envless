@@ -5,7 +5,7 @@ import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Branch, Project, UserRole } from "@prisma/client";
-import { CheckCheck, Copy, ShieldCheck, Unlock } from "lucide-react";
+import { CheckCheck, Copy, ShieldCheck, ShieldOff } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
@@ -23,6 +23,7 @@ const initialValue: Branch = {
   name: "",
   projectId: "",
   protected: false,
+  protectedAt: null,
   updatedAt: new Date(),
   status: null,
 };
@@ -32,23 +33,23 @@ const initialValue: Branch = {
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 interface ProtectedBranchPageProps {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export const ProtectedBranch = ({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
 }: ProtectedBranchPageProps) => {
   const props = {
     projects,
     currentProject,
-    currentRole: roleInProject,
+    currentRole,
   };
 
   const [copiedValue, copy, setCopiedValue] = useCopyToClipboard();
@@ -74,12 +75,7 @@ export const ProtectedBranch = ({
       header: "name",
       cell: (info) => (
         <div className="flex items-center">
-          <div className="h-10 w-10 flex-shrink-0">
-            <Badge type="success">
-              <ShieldCheck className="h-6 w-6" strokeWidth={2} />
-            </Badge>
-          </div>
-          <div className="ml-4">
+          <div>
             <div className="flex items-center">
               {copiedValue === info.row.original.name ? (
                 <button
@@ -108,11 +104,10 @@ export const ProtectedBranch = ({
               )}
               {info.row.original.name}
             </div>
-            <div className="text-light">
-              Created by {info.row.original.createdBy.name}{" "}
-              <DateTimeAgo date={info.row.original.createdAt} />
-            </div>
             <div className="text-light">{info.row.original.description}</div>
+            <div className="text-light">
+              Protected <DateTimeAgo date={info.row.original.protectedAt} />
+            </div>
           </div>
         </div>
       ),
@@ -121,8 +116,10 @@ export const ProtectedBranch = ({
       id: "actions",
       header: "Actions",
       cell: (info) => (
-        <div
-          className="float-right cursor-pointer pr-4 hover:text-teal-400"
+        <button
+          aria-label="This branch is protected, click here to remove protection"
+          data-balloon-pos="up"
+          className="rounded-full p-2 text-white transition duration-200 hover:bg-white/25"
           onClick={() => {
             const confirmed = confirm(
               `Are you sure you want to remove protection from ${info.row.original.name} branch ?`,
@@ -137,9 +134,9 @@ export const ProtectedBranch = ({
             }
           }}
         >
-          <Unlock className="h-5 w-5 text-red-500" strokeWidth={2} />
+          <ShieldOff className="h-5 w-5 text-red-500" strokeWidth={2} />
           <span className="sr-only">, {info.row.original.name}</span>
-        </div>
+        </button>
       ),
     },
   ];
@@ -155,7 +152,7 @@ export const ProtectedBranch = ({
     onSuccess: ({ name }: Branch) => {
       showToast({
         type: "success",
-        title: `Branch ${name} protected successfully`,
+        title: `You have successfully removed protection for branch - ${name}.`,
         subtitle: "",
       });
       utils.branches.getAll.invalidate();
@@ -181,6 +178,7 @@ export const ProtectedBranch = ({
       branch: {
         ...selectedBranch,
         protected: true,
+        protectedAt: new Date(),
         description,
       },
     });
@@ -189,8 +187,21 @@ export const ProtectedBranch = ({
   return (
     <ProjectLayout tab="settings" {...props}>
       <ProjectSettings active="branches" {...props}>
-        <h3 className="mb-8 text-lg">Protected branches</h3>
-        <div className="flex flex-col">
+        <h3 className="mb-3 text-lg">Protected branches</h3>
+        <div className="w-full lg:w-3/5">
+          <Table
+            data={protectedBranches}
+            columns={columns}
+            emptyStateProps={{
+              title: "Protected branches",
+              description: "No protected branches yet",
+              icon: ShieldCheck,
+              actionText: "",
+            }}
+            hasFilters={false}
+          />
+        </div>
+        <div className="mt-5 flex flex-col">
           <label>Branches</label>
           <BranchDropdown
             label="Selected Branch"
@@ -227,20 +238,6 @@ export const ProtectedBranch = ({
           </form>
         </div>
       </ProjectSettings>
-      <div className="mt-9 w-full">
-        <h1 className="text-lg">Protected Branches</h1>
-        <Table
-          data={protectedBranches}
-          columns={columns}
-          emptyStateProps={{
-            title: "Protected branches",
-            description: "No protected branches yet",
-            icon: ShieldCheck,
-            actionText: "",
-          }}
-          hasFilters={false}
-        />
-      </div>
     </ProjectLayout>
   );
 };

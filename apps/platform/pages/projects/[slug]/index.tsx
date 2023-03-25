@@ -16,13 +16,13 @@ import OpenPGP from "@/lib/encryption/openpgp";
  * @param {Props} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 interface Props {
   user: object;
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
   publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
 }
@@ -48,7 +48,7 @@ export const ProjectPage = ({
   user,
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
   publicKey,
   encryptedProjectKey,
 }: Props) => {
@@ -112,7 +112,7 @@ export const ProjectPage = ({
     <ProjectLayout
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup

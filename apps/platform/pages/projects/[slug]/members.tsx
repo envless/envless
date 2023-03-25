@@ -13,7 +13,7 @@ import prisma from "@/lib/prisma";
 interface Props {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
   members: UserType[];
   user: UserType;
   activeMembers: UserType[];
@@ -24,7 +24,7 @@ interface Props {
 export const MembersPage = ({
   projects,
   currentProject,
-  roleInProject,
+  currentRole,
   user,
   activeMembers,
   pendingMembers,
@@ -37,7 +37,7 @@ export const MembersPage = ({
       tab="members"
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
@@ -58,7 +58,7 @@ export const MembersPage = ({
                   members={activeMembers}
                   tab={tab}
                   setTab={setTab}
-                  currentRole={roleInProject}
+                  currentRole={currentRole}
                   projectId={currentProject.id}
                   user={user}
                 />
@@ -69,7 +69,7 @@ export const MembersPage = ({
                   members={pendingMembers}
                   tab={tab}
                   setTab={setTab}
-                  currentRole={roleInProject}
+                  currentRole={currentRole}
                   projectId={currentProject.id}
                   user={user}
                 />
@@ -80,7 +80,7 @@ export const MembersPage = ({
                   members={inactiveMembers}
                   tab={tab}
                   setTab={setTab}
-                  currentRole={roleInProject}
+                  currentRole={currentRole}
                   projectId={currentProject.id}
                   user={user}
                 />

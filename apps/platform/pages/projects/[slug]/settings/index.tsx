@@ -13,18 +13,18 @@ import { showToast } from "@/components/theme/showToast";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
- * @param {roleInProject} props.roleInProject - The user role in current project.
+ * @param {currentRole} props.currentRole - The user role in current project.
  */
 
 interface Props {
   projects: Project[];
   currentProject: Project;
-  roleInProject: UserRole;
+  currentRole: UserRole;
 }
 
 export const SettingsPage = ({
   projects,
-  roleInProject,
+  currentRole,
   currentProject,
 }: Props) => {
   const router = useRouter();
@@ -70,13 +70,13 @@ export const SettingsPage = ({
       tab="settings"
       projects={projects}
       currentProject={currentProject}
-      currentRole={roleInProject}
+      currentRole={currentRole}
     >
       <ProjectSettings
         active="general"
         projects={projects}
         currentProject={currentProject}
-        currentRole={roleInProject}
+        currentRole={currentRole}
       >
         <h3 className="mb-8 text-lg">General</h3>
         <div className="w-full lg:w-3/5">

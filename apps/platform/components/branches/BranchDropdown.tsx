@@ -51,7 +51,7 @@ export default function BranchDropdown({
       <>
         <Menu.Button
           className={clsx(
-            "border-dark bg-dark hover:bg-darker inline-flex items-center truncate rounded border px-3 py-2 text-sm transition-colors duration-75",
+            "border-dark bg-dark hover:bg-darker inline-flex items-center truncate rounded border px-3 py-3 text-sm transition-colors duration-75",
             full && "w-[27.599rem] justify-between",
           )}
         >
