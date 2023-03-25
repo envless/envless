@@ -4,7 +4,7 @@ import ProjectLayout from "@/layouts/Project";
 import Member from "@/models/member";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
-import { Access, Project } from "@prisma/client";
+import { Access, Project, UserRole } from "@prisma/client";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTable from "@/components/members/Table";
 import prisma from "@/lib/prisma";
@@ -162,6 +162,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         destination: "/projects",
         permanent: false,
       },
+    };
+  }
+
+  if (
+    !(
+      userAccessInCurrentProject.role === UserRole.owner ||
+      userAccessInCurrentProject.role === UserRole.maintainer
+    )
+  ) {
+    return {
+      notFound: true,
     };
   }
 

@@ -102,8 +102,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
-    console.log(userRecord);
-
     const access = userRecord?.access || [];
     const projects = access.map((a: any) => a.project);
     const projectIds = projects.map((project: any) => project.id);

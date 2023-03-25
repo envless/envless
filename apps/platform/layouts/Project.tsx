@@ -1,4 +1,6 @@
-import type { Project } from "@prisma/client";
+import { UserAccessProvider } from "@/store/UserRoleProvider";
+import { trpc } from "@/utils/trpc";
+import { Project } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Tabs } from "@/components/projects";
@@ -13,11 +15,13 @@ interface Props {
 
 const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
   const { data: session, status } = useSession();
+  const { members } = trpc.useContext();
+
   const user = session?.user;
 
   if (status === "authenticated") {
     return (
-      <>
+      <UserAccessProvider projectId={currentProject.id}>
         <Container>
           <Nav
             user={user}
@@ -32,7 +36,7 @@ const ProjectLayout = ({ tab, projects, children, currentProject }: Props) => {
         </Container>
 
         <Toaster position="top-right" />
-      </>
+      </UserAccessProvider>
     );
   } else {
     return (

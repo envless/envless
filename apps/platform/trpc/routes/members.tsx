@@ -450,7 +450,6 @@ export const members = createRouter({
         },
       });
     }),
-
   getInvites: withAuth
     .input(
       z.object({
@@ -468,7 +467,6 @@ export const members = createRouter({
 
       return invites;
     }),
-
   getMembers: withAuth
     .input(
       z.object({
@@ -481,5 +479,31 @@ export const members = createRouter({
       const isActive = active === undefined ? true : active;
       const members = await Member.getMany(projectId, isActive);
       return members;
+    }),
+  getAccess: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+
+      const access = await ctx.prisma.access.findUnique({
+        where: {
+          userId_projectId: {
+            userId: user.id,
+            projectId: input.projectId,
+          },
+        },
+      });
+      if (!access) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Access to this project is not permitted",
+        });
+      }
+
+      return access;
     }),
 });

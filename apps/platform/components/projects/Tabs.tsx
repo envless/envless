@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useUserAccessStore } from "@/store/userRole";
 import {
   GitBranch,
   GitPullRequest,
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export default function Tabs({ active, projectSlug }: Props) {
+  const isAdmin = useUserAccessStore((state) => state.isAdmin);
+
   const router = useRouter();
   const projectUrl = `/projects/${projectSlug}`;
   const tabs = [
@@ -102,30 +105,35 @@ export default function Tabs({ active, projectSlug }: Props) {
         <div className="border-dark border-b">
           <Container>
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-              {tabs.map((tab) => (
-                <Link
-                  key={tab.id}
-                  href={tab.href}
-                  className={classNames(
-                    tab.id === active
-                      ? "border-teal-300 text-teal-300"
-                      : "lighter hover:border-dark border-transparent hover:text-teal-300",
-                    "group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium",
-                  )}
-                  aria-current={tab.id === active ? "page" : undefined}
-                >
-                  <tab.icon
+              {tabs.map((tab) => {
+                if (tab.id === "members" && !isAdmin) {
+                  return null;
+                }
+                return (
+                  <Link
+                    key={tab.id}
+                    href={tab.href}
                     className={classNames(
                       tab.id === active
-                        ? "text-teal-300"
-                        : "group-hover:lighter text-lighter",
-                      "-ml-0.5 mr-2 h-5 w-5",
+                        ? "border-teal-300 text-teal-300"
+                        : "lighter hover:border-dark border-transparent hover:text-teal-300",
+                      "group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium",
                     )}
-                    aria-hidden="true"
-                  />
-                  <span>{tab.name}</span>
-                </Link>
-              ))}
+                    aria-current={tab.id === active ? "page" : undefined}
+                  >
+                    <tab.icon
+                      className={classNames(
+                        tab.id === active
+                          ? "text-teal-300"
+                          : "group-hover:lighter text-lighter",
+                        "-ml-0.5 mr-2 h-5 w-5",
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span>{tab.name}</span>
+                  </Link>
+                );
+              })}
             </nav>
           </Container>
         </div>
