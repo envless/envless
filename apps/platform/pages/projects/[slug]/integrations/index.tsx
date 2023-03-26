@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ProjectLayout from "@/layouts/Project";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
@@ -19,11 +20,19 @@ import {
   RailwayIcon,
   RenderIcon,
   SupabaseIcon,
+  TerminalIcon,
   VercelIcon,
 } from "@/components/icons/integrations";
 import { Button } from "@/components/theme";
 
 const integrations = [
+  {
+    name: "CLI",
+    slug: "cli",
+    icon: TerminalIcon,
+    category: "For development, deployment & CI/CD",
+    isActive: true,
+  },
   {
     name: "Vercel",
     slug: "vercel",
@@ -177,12 +186,14 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
+  children?: React.ReactNode;
 }
 
 export const IntegrationsPage = ({
   projects,
   currentProject,
   currentRole,
+  children,
 }: Props) => {
   return (
     <ProjectLayout
@@ -191,11 +202,13 @@ export const IntegrationsPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
+      {children}
+
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-4">
         {integrations.map((integration) => (
           <div
             key={integration.slug}
-            className="delay-50 bg-darker w-full cursor-pointer rounded p-5 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 sm:p-6"
+            className="delay-50 bg-darker w-full rounded p-5 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 sm:p-6"
           >
             <div className="flex space-x-3">
               <div className="flex-shrink-0">
@@ -203,18 +216,27 @@ export const IntegrationsPage = ({
               </div>
               <div className="min-w-0">
                 <p className="text-lightest text-sm font-medium">
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href={`/projects/${currentProject.slug}/integrations/${integration.slug}`}
+                  >
                     {integration.name}
-                  </a>
+                  </Link>
                 </p>
                 <p className="text-light text-sm">
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href={`/projects/${currentProject.slug}/integrations/${integration.slug}`}
+                  >
                     {integration.category}
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>
-            <Button size="sm" variant="secondary" className="mt-5">
+            <Button
+              href={`/projects/${currentProject.slug}/integrations/${integration.slug}`}
+              size="sm"
+              variant="secondary"
+              className="mt-5"
+            >
               Configure
             </Button>
           </div>
@@ -226,6 +248,7 @@ export const IntegrationsPage = ({
 
 export const getServerSideProps = withAccessControl({
   hasAccess: { maintainer: true, owner: true, developer: true, guest: true },
+  withEncryptedProjectKey: false,
 });
 
 export default IntegrationsPage;
