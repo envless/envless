@@ -4,12 +4,12 @@ import { create } from "zustand";
 interface UserAccessStore {
   userRoleInProject: UserRole;
 
-  setAccessData: (role: UserRole) => void;
+  setCurrentRole: (role: UserRole) => void;
 }
 
 export const useUserAccessStore = create<UserAccessStore>((set) => ({
   userRoleInProject: UserRole.guest, // safe default
-  setAccessData: (role: UserRole) => {
+  setCurrentRole: (role: UserRole) => {
     set({
       userRoleInProject: role,
     });
