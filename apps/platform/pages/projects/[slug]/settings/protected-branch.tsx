@@ -22,7 +22,11 @@ export const ProtectedBranch = ({
   currentProject,
   roleInProject,
 }: ProtectedBranchPageProps) => {
-  const props = { projects, currentProject, roleInCurrentProject: roleInProject };
+  const props = {
+    projects,
+    currentProject,
+    roleInCurrentProject: roleInProject,
+  };
 
   return (
     <ProjectLayout tab="settings" {...props}>

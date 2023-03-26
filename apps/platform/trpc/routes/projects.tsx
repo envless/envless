@@ -5,9 +5,9 @@ import { createRouter, withAuth } from "@/trpc/router";
 import { PROJECT_CREATED } from "@/types/auditActions";
 import { formatDateTime } from "@/utils/helpers";
 import sendMail from "emails";
+import { kebabCase } from "lodash";
 import { string, z } from "zod";
 import Audit from "@/lib/audit";
-import { kebabCase } from "lodash";
 
 export const projects = createRouter({
   getAll: withAuth.query(({ ctx }) => {
