@@ -250,7 +250,7 @@ export const BranchesPage = ({
       tab="branches"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <CreateBranchModal
         onSuccessCreation={() => {

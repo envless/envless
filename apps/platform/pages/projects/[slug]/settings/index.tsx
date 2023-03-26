@@ -67,13 +67,13 @@ export const SettingsPage = ({
       tab="settings"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <ProjectSettings
         active="general"
         projects={projects}
         currentProject={currentProject}
-        roleInCurrentProject={roleInProject}
+        currentRole={roleInProject}
       >
         <>
           <h3 className="mb-8 text-lg">General</h3>

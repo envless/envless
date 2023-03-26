@@ -8,7 +8,7 @@ type ActiveType = "general" | "branches" | "danger";
 interface SettingsProps {
   projects: Project[];
   currentProject: Project;
-  roleInCurrentProject: UserRole;
+  currentRole: UserRole;
   active: ActiveType;
   children?: React.ReactNode;
 }
@@ -16,13 +16,13 @@ interface SettingsProps {
 const ProjectSettings = ({
   projects,
   currentProject,
-  roleInCurrentProject,
+  currentRole,
   active,
   children,
 }: SettingsProps) => {
   const tabData = React.useMemo(
-    () => getProjectSettingTabs(roleInCurrentProject, currentProject.slug),
-    [currentProject.slug, roleInCurrentProject],
+    () => getProjectSettingTabs(currentRole, currentProject.slug),
+    [currentProject.slug, currentRole],
   );
 
   return (

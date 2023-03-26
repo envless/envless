@@ -189,7 +189,7 @@ export const IntegrationsPage = ({
       tab="integrations"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-4">
         {integrations.map((integration) => (

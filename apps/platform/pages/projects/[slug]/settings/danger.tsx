@@ -33,7 +33,7 @@ export const DangerZone = ({
   const props = {
     projects,
     currentProject: currentProject,
-    roleInCurrentProject: roleInProject,
+    currentRole: roleInProject,
   };
 
   const { mutate: projectDeleteMutation, isLoading } =

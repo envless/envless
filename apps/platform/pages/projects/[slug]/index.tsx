@@ -116,7 +116,7 @@ export const ProjectPage = ({
     <ProjectLayout
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup

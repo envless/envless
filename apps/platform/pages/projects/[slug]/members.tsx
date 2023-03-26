@@ -37,7 +37,7 @@ export const MembersPage = ({
       tab="members"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
@@ -58,7 +58,7 @@ export const MembersPage = ({
                   members={activeMembers}
                   tab={tab}
                   setTab={setTab}
-                  roleInCurrentProject={roleInProject}
+                  currentRole={roleInProject}
                   projectId={currentProject.id}
                   user={user}
                 />
@@ -69,7 +69,7 @@ export const MembersPage = ({
                   members={pendingMembers}
                   tab={tab}
                   setTab={setTab}
-                  roleInCurrentProject={roleInProject}
+                  currentRole={roleInProject}
                   projectId={currentProject.id}
                   user={user}
                 />
@@ -80,7 +80,7 @@ export const MembersPage = ({
                   members={inactiveMembers}
                   tab={tab}
                   setTab={setTab}
-                  roleInCurrentProject={roleInProject}
+                  currentRole={roleInProject}
                   projectId={currentProject.id}
                   user={user}
                 />

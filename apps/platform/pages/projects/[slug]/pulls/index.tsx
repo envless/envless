@@ -154,7 +154,7 @@ export const PullRequestPage = ({
       tab="pr"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {

@@ -19,7 +19,7 @@ interface TableProps {
   tab: Tab;
   setTab: (tab: Tab) => void;
   members: UserType[];
-  roleInCurrentProject: UserRole;
+  currentRole: UserRole;
   projectId: string;
   user: UserType;
 }
@@ -35,7 +35,7 @@ const MembersTable = ({
   members,
   tab,
   setTab,
-  roleInCurrentProject,
+  currentRole,
   projectId,
   user,
 }: TableProps) => {
@@ -102,13 +102,13 @@ const MembersTable = ({
       memeberUpdateMutation.mutate({
         projectId,
         newRole: user.newRole,
-        currentUserRole: roleInCurrentProject,
+        currentUserRole: currentRole,
         targetUserId: user.userId,
         targetUserRole: user.currentRole,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [projectId, roleInCurrentProject],
+    [projectId, currentRole],
   );
 
   const onUpdateMemberStatus = useCallback(
@@ -121,13 +121,13 @@ const MembersTable = ({
         memberStatusMutation.mutate({
           projectId,
           status,
-          currentUserRole: roleInCurrentProject,
+          currentUserRole: currentRole,
           targetUserId: user.userId,
           targetUserRole: user.currentRole,
         });
       }
     },
-    [memberStatusMutation, projectId, roleInCurrentProject],
+    [memberStatusMutation, projectId, currentRole],
   );
 
   return (
@@ -211,11 +211,11 @@ const MembersTable = ({
                     disabled={
                       fetching ||
                       !(
-                        roleInCurrentProject === UserRole.owner ||
-                        roleInCurrentProject === UserRole.maintainer
+                        currentRole === UserRole.owner ||
+                        currentRole === UserRole.maintainer
                       ) ||
                       member.id === user.id ||
-                      (roleInCurrentProject === UserRole.maintainer &&
+                      (currentRole === UserRole.maintainer &&
                         member.role === UserRole.owner)
                     }
                   >

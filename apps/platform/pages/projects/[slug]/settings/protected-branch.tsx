@@ -25,7 +25,7 @@ export const ProtectedBranch = ({
   const props = {
     projects,
     currentProject,
-    roleInCurrentProject: roleInProject,
+    currentRole: roleInProject,
   };
 
   return (

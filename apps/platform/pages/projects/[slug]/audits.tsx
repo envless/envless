@@ -25,7 +25,7 @@ export const AuditLogsPage = ({
     <ProjectLayout
       tab="audits"
       projects={projects}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
       currentProject={currentProject}
     >
       <h1>AuditLogsPage for {currentProject.name}</h1>

@@ -20,17 +20,17 @@ function classNames(...classes) {
 interface Props {
   active: string;
   projectSlug: string;
-  roleInCurrentProject: UserRole;
+  currentRole: UserRole;
 }
 
 export default function Tabs({
   active,
   projectSlug,
-  roleInCurrentProject,
+  currentRole,
 }: Props) {
   const router = useRouter();
   const projectUrl = `/projects/${projectSlug}`;
-  const tabs = getNavigationTabs(roleInCurrentProject, projectUrl);
+  const tabs = getNavigationTabs(currentRole, projectUrl);
 
   return (
     <div>

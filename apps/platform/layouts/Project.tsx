@@ -9,7 +9,7 @@ interface Props {
   tab?: string;
   projects: Project[];
   currentProject: Project;
-  roleInCurrentProject: UserRole;
+  currentRole: UserRole;
   children: React.ReactNode;
 }
 
@@ -18,7 +18,7 @@ const ProjectLayout = ({
   projects,
   children,
   currentProject,
-  roleInCurrentProject,
+  currentRole,
 }: Props) => {
   const { data: session, status } = useSession();
   const user = session?.user;
@@ -34,7 +34,7 @@ const ProjectLayout = ({
           />
         </Container>
         <Tabs
-          roleInCurrentProject={roleInCurrentProject}
+          currentRole={currentRole}
           projectSlug={currentProject?.slug}
           active={tab || "project"}
         />

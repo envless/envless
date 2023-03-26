@@ -49,7 +49,7 @@ EMAIL_FROM=email@example.com
       tab="pr"
       projects={projects}
       currentProject={currentProject}
-      roleInCurrentProject={roleInProject}
+      currentRole={roleInProject}
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">

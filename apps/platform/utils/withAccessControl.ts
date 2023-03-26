@@ -85,8 +85,8 @@ export function withAccessControl<P = Record<string, unknown>>({
 
     let authorized = false;
 
-    Object.entries(hasAccess).forEach(([role, authorizedForRole]) => {
-      if (authorizedForRole && currentProject.role === role) {
+    Object.entries(hasAccess).forEach(([role, canAccess]) => {
+      if (canAccess && currentProject.role === role) {
         authorized = true;
       }
     });
