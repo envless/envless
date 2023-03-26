@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import { Project, UserRole } from "@prisma/client";
 import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Paragraph } from "@/components/theme";
@@ -14,25 +14,26 @@ import { showToast } from "@/components/theme/showToast";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
  */
 
 interface DangerPageProps {
   projects: Project[];
-  currentProject: any;
-  projectRole: string;
+  currentProject: Project;
+  roleInProject: UserRole;
 }
 
 export const DangerZone = ({
   projects,
   currentProject,
-  projectRole,
+  roleInProject,
 }: DangerPageProps) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const router = useRouter();
   const props = {
     projects,
     currentProject: currentProject,
-    roleInCurrentProject: projectRole,
+    roleInCurrentProject: roleInProject,
   };
 
   const { mutate: projectDeleteMutation, isLoading } =
@@ -58,7 +59,7 @@ export const DangerZone = ({
     projectDeleteMutation({
       project: { id: currentProject.id },
     });
-  }, [currentProject, projectDeleteMutation]);
+  }, [currentProject.id, projectDeleteMutation]);
 
   return (
     <ProjectLayout tab="settings" {...props}>
@@ -119,6 +120,8 @@ export const DangerZone = ({
   );
 };
 
-export const getServerSideProps = withAccessControl({});
+export const getServerSideProps = withAccessControl({
+  hasAccess: { owner: true },
+});
 
 export default DangerZone;

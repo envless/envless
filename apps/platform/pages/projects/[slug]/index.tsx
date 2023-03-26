@@ -1,9 +1,7 @@
-import { type GetServerSidePropsContext } from "next";
 import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import { Project, UserRole } from "@prisma/client";
 import { EncryptedProjectKey, PublicKey } from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
@@ -12,20 +10,21 @@ import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import OpenPGP from "@/lib/encryption/openpgp";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
  * @param {Props} props - The props for the component.
- * @param {Projects} props.projects - The projects the user has access to. @param {currentProject} props.currentProject - The current project. */
-
+ * @param {Projects} props.projects - The projects the user has access to.
+ * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
+ */
 interface Props {
   user: object;
   projects: Project[];
   currentProject: Project;
+  roleInProject: UserRole;
   publicKey: PublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
-  projectRole: string;
 }
 
 interface PersonalKey {
@@ -42,8 +41,8 @@ export const ProjectPage = ({
   user,
   projects,
   currentProject,
+  roleInProject,
   publicKey,
-  projectRole,
   encryptedProjectKey,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,9 +114,9 @@ export const ProjectPage = ({
 
   return (
     <ProjectLayout
-      roleInCurrentProject={projectRole}
       projects={projects}
       currentProject={currentProject}
+      roleInCurrentProject={roleInProject}
     >
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
@@ -162,8 +161,13 @@ export const ProjectPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  checkProjectOwner: false,
   withEncryptedProjectKey: true,
+  hasAccess: {
+    owner: true,
+    maintainer: true,
+    developer: true,
+    guest: true,
+  },
 });
 
 export default ProjectPage;

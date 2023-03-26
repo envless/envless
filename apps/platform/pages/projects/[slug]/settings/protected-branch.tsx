@@ -1,6 +1,6 @@
 import ProjectLayout from "@/layouts/Project";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import type { Project, UserRole } from "@prisma/client";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 
 /**
@@ -8,20 +8,21 @@ import ProjectSettings from "@/components/projects/ProjectSettings";
  * @param {SettingProps} props - The props for the component.
  * @param {Projects} props.projects - The projects the user has access to.
  * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
  */
 
 interface ProtectedBranchPageProps {
   projects: Project[];
   currentProject: Project;
-  projectRole: string;
+  roleInProject: UserRole;
 }
 
 export const ProtectedBranch = ({
   projects,
   currentProject,
-  projectRole,
+  roleInProject,
 }: ProtectedBranchPageProps) => {
-  const props = { projects, currentProject, roleInCurrentProject: projectRole };
+  const props = { projects, currentProject, roleInCurrentProject: roleInProject };
 
   return (
     <ProjectLayout tab="settings" {...props}>
@@ -32,6 +33,8 @@ export const ProtectedBranch = ({
   );
 };
 
-export const getServerSideProps = withAccessControl({});
+export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, owner: true },
+});
 
 export default ProtectedBranch;

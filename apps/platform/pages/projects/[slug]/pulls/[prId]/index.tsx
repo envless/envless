@@ -2,18 +2,37 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
-import { getServerSideSession } from "@/utils/session";
+import { withAccessControl } from "@/utils/withAccessControl";
+import type { PullRequest, UserRole } from "@prisma/client";
 import { GitPullRequestClosed } from "lucide-react";
+import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
-import prisma from "@/lib/prisma";
+
+/**
+ * A functional component that represents a pull request detail.
+ * @param {Projects} props.projects - The projects the user has access to.
+ * @param {PullRequest & {createdBy: User}} props.pullRequest - The projects the user has access to.
+ * @param {currentProject} props.currentProject - The current project.
+ * @param {roleInProject} props.roleInProject - The user role in current project.
+ */
+
+interface Props {
+  projects: Project[];
+  pullRequest: PullRequest & {
+    createdBy: UserType;
+  };
+  currentProject: Project;
+  roleInProject: UserRole;
+}
 
 export default function PullRequestDetailPage({
   projects,
   currentProject,
+  roleInProject,
   pullRequest,
-}) {
+}: Props) {
   const oldCode = `
   # SMTP
   EMAIL_SERVER=smtp://username:password@smtp.example.com:587
@@ -26,7 +45,12 @@ EMAIL_FROM=email@example.com
 `;
 
   return (
-    <ProjectLayout tab="pr" projects={projects} currentProject={currentProject}>
+    <ProjectLayout
+      tab="pr"
+      projects={projects}
+      currentProject={currentProject}
+      roleInCurrentProject={roleInProject}
+    >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-10">
@@ -67,70 +91,23 @@ EMAIL_FROM=email@example.com
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSideSession(context);
-  const user = session?.user;
-
+const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   // @ts-ignore
   const { slug: projectSlug, prId } = context.params;
+
   const project = await Project.findBySlug(projectSlug);
   const projectId = project.id;
 
-  if (!user) {
-    return {
-      redirect: {
-        destination: "/auth",
-        permanent: false,
-      },
-    };
-  }
-
-  const access = await prisma.access.findMany({
-    where: {
-      // @ts-ignore
-      userId: user.id,
-    },
-    select: {
-      id: true,
-      project: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          updatedAt: true,
-        },
-      },
-    },
-  });
-
-  if (!access) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
-
   const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
-
-  const projects = access.map((a) => a.project);
-  const currentProject = projects.find((p) => p.id === projectId);
-
-  if (!currentProject) {
-    return {
-      redirect: {
-        destination: "/projects",
-        permanent: false,
-      },
-    };
-  }
 
   return {
     props: {
-      currentProject: JSON.parse(JSON.stringify(currentProject)),
-      projects: JSON.parse(JSON.stringify(projects)),
       pullRequest: JSON.parse(JSON.stringify(pullRequest)),
     },
   };
-}
+};
+
+export const getServerSideProps = withAccessControl({
+  getServerSideProps: getPageServerSideProps,
+  hasAccess: { owner: true, maintainer: true, developer: true, guest: true },
+});

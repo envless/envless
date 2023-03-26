@@ -1,6 +1,6 @@
 import React from "react";
 import { getProjectSettingTabs } from "@/utils/helpers";
-import { Project } from "@prisma/client";
+import type { Project, UserRole } from "@prisma/client";
 import Tabs from "@/components/settings/Tabs";
 
 type ActiveType = "general" | "branches" | "danger";
@@ -8,7 +8,7 @@ type ActiveType = "general" | "branches" | "danger";
 interface SettingsProps {
   projects: Project[];
   currentProject: Project;
-  roleInCurrentProject: string;
+  roleInCurrentProject: UserRole;
   active: ActiveType;
   children?: React.ReactNode;
 }
@@ -22,7 +22,7 @@ const ProjectSettings = ({
 }: SettingsProps) => {
   const tabData = React.useMemo(
     () => getProjectSettingTabs(roleInCurrentProject, currentProject.slug),
-    [currentProject.slug],
+    [currentProject.slug, roleInCurrentProject],
   );
 
   return (

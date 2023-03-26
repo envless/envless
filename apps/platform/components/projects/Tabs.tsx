@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { getNavigationTabs } from "@/utils/helpers";
+import type { UserRole } from "@prisma/client";
 import {
   GitBranch,
   GitPullRequest,
@@ -19,7 +20,7 @@ function classNames(...classes) {
 interface Props {
   active: string;
   projectSlug: string;
-  roleInCurrentProject: string;
+  roleInCurrentProject: UserRole;
 }
 
 export default function Tabs({
