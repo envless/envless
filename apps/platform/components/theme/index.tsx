@@ -19,6 +19,7 @@ export { default as LoadingIcon } from "./LoadingIcon";
 export { default as TextareaGroup } from "./TextareaGroup";
 export { default as BaseInput } from "./BaseInput";
 export { default as Banner } from "./Banner";
+export { default as SlideOver } from "./SlideOver";
 
 export { ScrollBar } from "./ScrollArea";
 export { ScrollArea } from "./ScrollArea";

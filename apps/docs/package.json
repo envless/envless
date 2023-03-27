@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Envless - OpenSource, frictionless and secure way to share and manage app secrets across teams.",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start"
   },
