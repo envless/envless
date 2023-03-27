@@ -63,10 +63,18 @@ model PublicKey {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   key       String
-  userId    String    @unique
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?   @unique
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cli       Cli?
 
   @@index([userId])
+}
+
+model Cli {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  publicKeyId String    @unique
+  publicKey   PublicKey @relation(fields: [publicKeyId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {

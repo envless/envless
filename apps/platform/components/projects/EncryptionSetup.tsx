@@ -13,6 +13,7 @@ const EncryptionSetup = ({ ...props }) => {
   const { user, project, encryptionKeys, setEncryptionKeys } = props;
   const [loading, setLoading] = useState(false);
   const [privateKey, setPrivateKey] = useState("");
+  const [publicKeyId, setPublicKeyId] = useState("");
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const [encryptedProjectKey, setEncryptedProjectKey] = useState(
     encryptionKeys.project.encryptedProjectKey,

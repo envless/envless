@@ -4,8 +4,8 @@
   "private": false,
   "license": "AGPL-3.0",
   "scripts": {
-    "build": "next build -p 3000",
-    "dev": "next dev & npx mailing",
+    "build": "next build",
+    "dev": "next dev -p 3000 & npx mailing",
     "lint": "next lint",
     "start": "next start",
     "db:generate": "prisma generate",
