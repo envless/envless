@@ -4,7 +4,8 @@ import ProjectLayout from "@/layouts/Project";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { Columns, Filter, Search } from "lucide-react";
-import { BaseInput, Button } from "@/components/theme";
+import { BaseInput, Button, SlideOver } from "@/components/theme";
+import { useState } from "react";
 
 /**
  * A functional component that represents a project.
@@ -27,6 +28,9 @@ export const AuditLogsPage = ({
   currentRole,
   auditLogs,
 }: Props) => {
+
+  const [open, setOpen] = useState(false);
+
   return (
     <ProjectLayout
       tab="audits"
@@ -34,6 +38,16 @@ export const AuditLogsPage = ({
       currentRole={currentRole}
       currentProject={currentProject}
     >
+
+      <SlideOver title="Audit log title" size="xl" description="description of the title" open={open} setOpen={setOpen} onClose={() => setOpen(false)}>
+        <div className="flex flex-col h-full">
+          <div className="flex-1 overflow-y-auto">
+            <div className="py-6 px-4 sm:px-6">
+              <h2 className="text-2xl font-bold text-light">Audit log title</h2></div>
+              </div>
+              </div>
+      </SlideOver>
+
       <div className="border-dark mt-12 w-full overflow-x-auto rounded-md border-2 shadow-sm">
         <div className="flex items-center justify-end py-2 px-2 font-medium">
           <div className="flex w-full items-center justify-end gap-2 md:max-w-md">
@@ -94,12 +108,12 @@ export const AuditLogsPage = ({
                   {item.createdAt}
                 </td>
                 <td className="whitespace-nowrap px-6 text-right">
-                  <a
-                    href="#"
+                  <button
+                    onClick={() => setOpen(true)}
                     className="py-2 px-3 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
                   >
                     Detail
-                  </a>
+                  </button>
                 </td>
               </tr>
             ))}
