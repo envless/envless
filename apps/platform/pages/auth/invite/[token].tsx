@@ -214,7 +214,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const expired = isAfter(new Date(), new Date(invite.invitationTokenExpiresAt));
+  const expired = isAfter(
+    new Date(),
+    new Date(invite.invitationTokenExpiresAt),
+  );
 
   return {
     props: {
