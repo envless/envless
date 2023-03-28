@@ -16,6 +16,8 @@ export type ProjectInviteType = {
   email: string;
   projectId: string;
   invitationToken: string;
+  invitationTokenExpiresAt: Date;
+  role: AccessType["role"];
   hashedPassword: string;
   createdAt?: Date;
 };

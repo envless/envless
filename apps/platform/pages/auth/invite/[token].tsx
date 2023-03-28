@@ -195,7 +195,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     select: {
       invitationToken: true,
-      createdAt: true,
+      invitationTokenExpiresAt: true,
       accepted: true,
       project: {
         select: {
@@ -214,8 +214,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const expiresAt = addHours(invite.createdAt, 48);
-  const expired = isAfter(new Date(), new Date(expiresAt));
+  const expired = isAfter(new Date(), new Date(invite.invitationTokenExpiresAt));
 
   return {
     props: {

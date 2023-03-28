@@ -10,6 +10,13 @@ import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTable from "@/components/members/Table";
 import prisma from "@/lib/prisma";
 
+export interface PendingInvite {
+  email: string;
+  id: string;
+  invitationTokenExpiresAt: Date;
+  role: UserRole;
+}
+
 interface Props {
   projects: Project[];
   currentProject: Project;
@@ -18,7 +25,7 @@ interface Props {
   user: UserType;
   activeMembers: UserType[];
   inactiveMembers: UserType[];
-  pendingMembers: UserType[];
+  pendingMembers: PendingInvite[];
 }
 
 export const MembersPage = ({
@@ -52,7 +59,7 @@ export const MembersPage = ({
 
         <div className="mt-3 flex flex-col">
           <div className="inline-block min-w-full py-4 align-middle">
-            <div className="ring-darker overflow-hidden shadow ring-1 ring-opacity-5 md:rounded">
+            <div className="ring-darker shadow ring-1 ring-opacity-5 md:rounded">
               {tab === "active" && (
                 <MembersTable
                   members={activeMembers}
@@ -157,7 +164,7 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
     props: {
       activeMembers,
       inactiveMembers,
-      pendingMembers,
+      pendingMembers: JSON.parse(JSON.stringify(pendingMembers)),
     },
   };
 };
