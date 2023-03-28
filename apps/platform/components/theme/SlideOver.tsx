@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, Download, X } from "lucide-react";
 import { Button } from "@/components/theme";
 
 export type Size = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
@@ -13,6 +13,8 @@ interface SlideOverProps {
   setOpen: (open: boolean) => void;
   onClose: () => void;
   size?: Size;
+  submitButtonText?: string;
+  submitButtonIcon: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -24,6 +26,8 @@ const SlideOver = ({
   title,
   description,
   children,
+  submitButtonText = "Submit",
+  submitButtonIcon,
 }: SlideOverProps) => {
   const sizeVariant = size ?? "sm";
 
@@ -95,11 +99,9 @@ const SlideOver = ({
                       </Button>
 
                       <Button className="ml-4">
-                        Save and continue
-                        <ArrowRight
-                          className="ml-2 -mr-1 h-5 w-5"
-                          aria-hidden="true"
-                        />
+                        {submitButtonText}
+
+                        {submitButtonIcon}
                       </Button>
                     </div>
                   </div>

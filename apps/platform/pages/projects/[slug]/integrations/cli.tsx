@@ -2,14 +2,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useEffect } from "react";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project } from "@prisma/client";
+import { Project, UserRole } from "@prisma/client";
+import { ArrowRight } from "lucide-react";
 import { Button, SlideOver } from "@/components/theme";
 import IntegrationsPage from "./index";
 
 interface Props {
   projects: Project[];
   currentProject: Project;
-  projectRole: string;
+  projectRole: UserRole;
 }
 
 export const CliIntegration = ({
@@ -30,7 +31,7 @@ export const CliIntegration = ({
     <IntegrationsPage
       projects={projects}
       currentProject={currentProject}
-      projectRole={projectRole}
+      currentRole={projectRole}
     >
       <SlideOver
         size="2xl"
@@ -42,6 +43,10 @@ export const CliIntegration = ({
           setOpen(false);
           router.push(`/projects/${currentProject.slug}/integrations`);
         }}
+        submitButtonText="Continue"
+        submitButtonIcon={
+          <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+        }
       >
         <div className="space-y-4">Hello world!</div>
       </SlideOver>
@@ -50,7 +55,6 @@ export const CliIntegration = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  checkProjectOwner: false,
   withEncryptedProjectKey: false,
 });
 
