@@ -1,6 +1,15 @@
 import Link from "next/link";
+import { useMemo } from "react";
+import { Audit } from "@prisma/client";
+import {
+  ColumnDef,
+  PaginationState,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Columns, Filter, Search } from "lucide-react";
-import { BaseInput } from "@/components/theme";
+import { BaseInput, Button } from "@/components/theme";
 
 type AuditLogTableProps = {
   auditLogs: any;
@@ -11,9 +20,78 @@ export default function AuditLogTable({
   auditLogs,
   setSlideOverOpen,
 }: AuditLogTableProps) {
+  const columns = useMemo<ColumnDef<any>[]>(
+    () => [
+      {
+        header: "Created By",
+        id: "createdBy",
+        accessorFn: (row) => row.createdBy.name,
+        cell: (info) => (
+          <div className="flex items-center gap-x-3">
+            <img
+              src={info.row.original.avatar}
+              className="h-10 w-10 rounded-full"
+            />
+            <div>
+              <span className="block text-xs">
+                {info.row.original.createdBy.name}
+              </span>
+            </div>
+          </div>
+        ),
+      },
+      {
+        header: "Action Performed",
+        id: "action",
+        accessorFn: (row) => row.action,
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: "Project",
+        id: "project",
+        accessorFn: (row) => row.project.name,
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: "Created At",
+        id: "createdAt",
+        accessorFn: (row) => row.createdAt,
+        cell: (info) => info.getValue(),
+      },
+      {
+        id: "detail",
+        cell: (info) => (
+          <div className="text-right">
+            <button
+              onClick={() => setSlideOverOpen(true)}
+              className="py-2 px-3 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
+            >
+              Detail
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data: auditLogs,
+    columns,
+    // pageCount: dataQuery.data?.pageCount ?? -1,
+    state: {
+      // pagination,
+    },
+    // onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    // manualPagination: true,
+    // getPaginationRowModel: getPaginationRowModel(), // If only doing manual pagination, you don't need this
+    debugTable: true,
+  });
+
   return (
     <div className="border-dark mt-12 w-full overflow-x-auto rounded-md border-2 shadow-sm">
-      <div className="flex items-center justify-end py-2 px-2 font-medium">
+      <div className="border-dark flex items-center justify-end border-b py-2 px-2 font-medium">
         <div className="flex w-full items-center justify-end gap-2 md:max-w-md">
           <div className="flex flex-1 justify-end">
             <div className="group relative w-full">
@@ -43,69 +121,52 @@ export default function AuditLogTable({
         </div>
       </div>
       <table className="w-full table-auto border-b-2 text-left text-sm">
-        <thead className="border-dark border-b-2">
-          <tr>
-            <th className="py-3 px-6 text-sm font-medium">Created By</th>
-            <th className="py-3 px-6 text-sm font-normal">Action Performed</th>
-            <th className="py-3 px-6 text-sm font-normal">Project</th>
-            <th className="py-3 px-6 text-sm font-normal">Created At</th>
-            <th className="py-3 px-6 text-sm"></th>
-          </tr>
+        <thead className="border-dark border-b">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <th key={header.id} className="py-3 px-6 text-xs font-medium">
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </div>
+                    )}
+                  </th>
+                );
+              })}
+            </tr>
+          ))}
         </thead>
+
         <tbody className="divide-dark bg-darker divide-y">
-          {auditLogs.map((item, idx) => (
-            <tr key={idx}>
-              <td className="flex items-center gap-x-3 whitespace-nowrap py-3 px-6">
-                <img src={item.avatar} className="h-10 w-10 rounded-full" />
-                <div>
-                  <span className="block text-xs">{item.createdBy.name}</span>
-                </div>
-              </td>
-              <td className="whitespace-nowrap rounded-md px-6 py-4">
-                <span className="bg-lighter text-dark rounded-xl border px-2 py-0.5 text-xs tracking-tight">
-                  {item.action}
-                </span>
-              </td>
-              <td className="whitespace-nowrap px-6 py-4">
-                {item.project.name}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4">{item.createdAt}</td>
-              <td className="whitespace-nowrap px-6 text-right">
-                <button
-                  onClick={() => setSlideOverOpen(true)}
-                  className="py-2 px-3 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  className="whitespace-nowrap py-3 px-6 text-xs"
+                  key={cell.id}
                 >
-                  Detail
-                </button>
-              </td>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>
       </table>
 
-      <div className="flex items-center justify-between py-2 px-2 font-medium">
-        <p className="text-xs">100 items</p>
-        <div className="flex items-center gap-4">
-          <Link className="text-xs text-teal-400" href="/">
-            Prev
-          </Link>
-          <div>
-            <span className="block text-xs">Page 1 of 3</span>
-          </div>
-          <Link className="text-xs text-teal-400" href="/">
-            Next
-          </Link>
-        </div>
-
+      <div className="flex items-center justify-between py-3 px-4 font-medium">
+        <p className="text-xs">Showing 1 to 10 of 20 items</p>
         <div className="flex items-center gap-3 text-xs">
-          <p>Per Page</p>
-          <select className="input-primary text-xs">
-            <option>10</option>
-            <option>20</option>
-            <option>30</option>
-            <option>40</option>
-            <option>50</option>
-          </select>
+          <Button variant="primary" size="sm">
+            Previous
+          </Button>
+          <Button variant="primary" size="sm">
+            Next
+          </Button>
         </div>
       </div>
     </div>
