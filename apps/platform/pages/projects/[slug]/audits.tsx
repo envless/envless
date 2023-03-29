@@ -1,8 +1,10 @@
 import { GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
+import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
+import { PaginationState } from "@tanstack/react-table";
 import AuditLogSideOver from "@/components/projects/auditLogs/AuditLogSlideOver";
 import AuditLogTable from "@/components/projects/auditLogs/AuditLogTable";
 
@@ -18,16 +20,32 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
-  auditLogs: any;
+  initialAuditLogs: any;
 }
 
 export const AuditLogsPage = ({
   projects,
   currentProject,
   currentRole,
-  auditLogs,
+  initialAuditLogs,
 }: Props) => {
   const [open, setOpen] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 1,
+    pageSize: 10,
+  });
+
+  const { data: auditLogs } = trpc.auditLogs.getAll.useQuery(
+    {
+      page: pagination.pageIndex,
+    },
+    {
+      initialData: initialAuditLogs,
+      keepPreviousData: true,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   return (
     <ProjectLayout
@@ -37,7 +55,12 @@ export const AuditLogsPage = ({
       currentProject={currentProject}
     >
       <AuditLogSideOver open={open} setOpen={setOpen} auditLogs={auditLogs} />
-      <AuditLogTable auditLogs={auditLogs} setSlideOverOpen={setOpen} />
+      <AuditLogTable
+        pagination={pagination}
+        setPagination={setPagination}
+        auditLogs={auditLogs}
+        setSlideOverOpen={setOpen}
+      />
     </ProjectLayout>
   );
 };
@@ -64,7 +87,7 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
 
   return {
     props: {
-      auditLogs: JSON.parse(JSON.stringify(auditLogs)),
+      initialAuditLogs: JSON.parse(JSON.stringify(auditLogs)),
     },
   };
 };
