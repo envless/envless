@@ -21,6 +21,7 @@ interface Props {
   currentProject: Project;
   currentRole: UserRole;
   initialAuditLogs: any;
+  totalAuditLogs: number;
 }
 
 export const AuditLogsPage = ({
@@ -28,16 +29,19 @@ export const AuditLogsPage = ({
   currentProject,
   currentRole,
   initialAuditLogs,
+  totalAuditLogs,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 1,
+    pageIndex: 0,
     pageSize: 10,
   });
 
+  const pageCount = Math.ceil(totalAuditLogs / pagination.pageSize);
+
   const { data: auditLogs } = trpc.auditLogs.getAll.useQuery(
     {
-      page: pagination.pageIndex,
+      page: pagination.pageIndex + 1,
     },
     {
       initialData: initialAuditLogs,
@@ -59,6 +63,8 @@ export const AuditLogsPage = ({
         pagination={pagination}
         setPagination={setPagination}
         auditLogs={auditLogs}
+        pageCount={pageCount}
+        totalAuditLogs={totalAuditLogs}
         setSlideOverOpen={setOpen}
       />
     </ProjectLayout>
@@ -85,9 +91,12 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
     take: 10,
   });
 
+  const totalAuditLogs = await prisma?.audit.count();
+
   return {
     props: {
       initialAuditLogs: JSON.parse(JSON.stringify(auditLogs)),
+      totalAuditLogs,
     },
   };
 };
