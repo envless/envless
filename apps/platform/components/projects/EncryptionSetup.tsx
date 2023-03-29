@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { decryptString, encryptString, generateKey } from "@47ng/cloak";
+import { generateKey } from "@47ng/cloak";
 import { trpc } from "@/utils/trpc";
-import { ArrowRight, Download } from "lucide-react";
+import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
-import { Button } from "@/components/theme";
+import CliSetup from "@/components/integrations/CliSetup";
+import { Button, SlideOver } from "@/components/theme";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { showToast } from "@/components/theme/showToast";
-import AES from "@/lib/encryption/aes";
 import OpenPGP from "@/lib/encryption/openpgp";
 
 const EncryptionSetup = ({ ...props }) => {
   const { user, project, encryptionKeys, setEncryptionKeys } = props;
   const [loading, setLoading] = useState(false);
+  const [cliModal, setCliModal] = useState(true);
   const [privateKey, setPrivateKey] = useState("");
   const [publicKeyId, setPublicKeyId] = useState("");
+  const [cliToken, setCliToken] = useState("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+  const [cliSetupComplete, setCliSetupComplete] = useState(false);
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const [encryptedProjectKey, setEncryptedProjectKey] = useState(
     encryptionKeys.project.encryptedProjectKey,
@@ -69,7 +72,7 @@ const EncryptionSetup = ({ ...props }) => {
 
       download("envless.key", privateKey);
       setEncryptedProjectKey(projectKey.encryptedKey);
-      setPageState("uploadKey");
+      // setPageState("uploadKey");
     },
 
     onError: (error) => {
@@ -228,6 +231,28 @@ const EncryptionSetup = ({ ...props }) => {
           </div>
         </form>
       </BaseEmptyState>
+
+      <SlideOver
+        size="2xl"
+        closable={false}
+        open={cliModal}
+        setOpen={setCliModal}
+        title="Envless CLI Configuration"
+        description="Configure CLI for local development, deployment or CI/CD pipelines."
+        onClose={() => {
+          setCliModal(false);
+        }}
+        footer={
+          <div className="flex flex-shrink-0 justify-end px-4 py-4">
+            <Button className="ml-4">
+              <ArrowLeft className="mr-2 -mr-1 h-5 w-5" aria-hidden="true" />
+              Confirm and continue
+            </Button>
+          </div>
+        }
+      >
+        <CliSetup cliToken={cliToken} currentProject={project} />
+      </SlideOver>
     </>
   );
 };

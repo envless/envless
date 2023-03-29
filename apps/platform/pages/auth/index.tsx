@@ -60,7 +60,7 @@ const Login = ({ csrfToken }) => {
             height={100}
             width={100}
             src="/logo.png"
-            alt="Your Company"
+            alt="Envless"
           />
           <h2 className="mt-6 text-center text-2xl">
             Get started with Envless

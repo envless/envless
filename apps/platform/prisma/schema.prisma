@@ -62,7 +62,7 @@ model PublicKey {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  key       String
+  key       String    @unique
   userId    String?   @unique
   user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   cli       Cli?

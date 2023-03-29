@@ -1,8 +1,7 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { ArrowRight, Download, X } from "lucide-react";
-import { Button } from "@/components/theme";
+import { X } from "lucide-react";
 
 export type Size = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 
@@ -16,6 +15,8 @@ interface SlideOverProps {
   submitButtonText?: string;
   submitButtonIcon: React.ReactNode;
   children: React.ReactNode;
+  closable?: boolean;
+  footer?: React.ReactNode;
 }
 
 const SlideOver = ({
@@ -26,14 +27,20 @@ const SlideOver = ({
   title,
   description,
   children,
-  submitButtonText = "Submit",
-  submitButtonIcon,
+  closable = true,
+  footer,
 }: SlideOverProps) => {
   const sizeVariant = size ?? "sm";
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog
+        as="div"
+        className="relative z-50"
+        onClose={() => {
+          closable && onClose();
+        }}
+      >
         <div className="backdrop-blur-xs fixed inset-0" />
 
         <div className="fixed inset-0 overflow-hidden">
@@ -51,12 +58,12 @@ const SlideOver = ({
                 <Dialog.Panel
                   className={clsx(
                     "pointer-events-auto w-screen",
-                    sizeVariant === "xs" ? "max-w-xs" : "",
-                    sizeVariant === "sm" ? "max-w-sm" : "",
-                    sizeVariant === "md" ? "max-w-md" : "",
-                    sizeVariant === "lg" ? "max-w-lg" : "",
-                    sizeVariant === "xl" ? "max-w-xl" : "",
-                    sizeVariant === "2xl" ? "max-w-2xl" : "",
+                    sizeVariant === "xs" && "max-w-xs",
+                    sizeVariant === "sm" && "max-w-sm",
+                    sizeVariant === "md" && "max-w-md",
+                    sizeVariant === "lg" && "max-w-lg",
+                    sizeVariant === "xl" && "max-w-xl",
+                    sizeVariant === "2xl" && "max-w-2xl",
                   )}
                 >
                   <div className="divide-dark bg-darker flex h-full flex-col divide-y-2 shadow-xl">
@@ -66,44 +73,34 @@ const SlideOver = ({
                           <Dialog.Title className="text-lighter text-base font-semibold leading-6">
                             {title}
                           </Dialog.Title>
-                          <div className="ml-3 flex h-7 items-center">
-                            <button
-                              type="button"
-                              className="rounded-md focus:outline-none"
-                              onClick={onClose}
-                            >
-                              <span className="sr-only">Close panel</span>
-                              <X
-                                className="text-lightest h-6 w-6"
-                                aria-hidden="true"
-                              />
-                            </button>
-                          </div>
+
+                          {closable && (
+                            <div className="ml-3 flex h-7 items-center">
+                              <button
+                                type="button"
+                                className="rounded-md focus:outline-none"
+                                onClick={onClose}
+                              >
+                                <span className="sr-only">Close panel</span>
+                                <X
+                                  className="text-lightest h-6 w-6"
+                                  aria-hidden="true"
+                                />
+                              </button>
+                            </div>
+                          )}
                         </div>
 
                         <div className="mt-1">
                           <p className="text-light text-sm">{description}</p>
                         </div>
                       </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                      <div className="scrollbar relative mt-6 flex-1 overflow-auto px-4 sm:px-6">
                         {children}
                       </div>
                     </div>
-                    <div className="flex flex-shrink-0 justify-end px-4 py-4">
-                      <Button
-                        className="ml-4"
-                        variant="secondary"
-                        onClick={onClose}
-                      >
-                        Cancel
-                      </Button>
 
-                      <Button className="ml-4">
-                        {submitButtonText}
-
-                        {submitButtonIcon}
-                      </Button>
-                    </div>
+                    {footer}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

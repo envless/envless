@@ -4,22 +4,24 @@ import { useEffect } from "react";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { ArrowRight } from "lucide-react";
-import { Button, SlideOver } from "@/components/theme";
+import CliSetup from "@/components/integrations/CliSetup";
+import { SlideOver } from "@/components/theme";
 import IntegrationsPage from "./index";
 
 interface Props {
   projects: Project[];
   currentProject: Project;
-  projectRole: UserRole;
+  currentRole: UserRole;
 }
 
 export const CliIntegration = ({
   projects,
   currentProject,
-  projectRole,
+  currentRole,
 }: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [cliToken, setCliToken] = useState("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
   useEffect(() => {
     if (router.isReady) {
@@ -31,7 +33,7 @@ export const CliIntegration = ({
     <IntegrationsPage
       projects={projects}
       currentProject={currentProject}
-      currentRole={projectRole}
+      currentRole={currentRole}
     >
       <SlideOver
         size="2xl"
@@ -48,13 +50,14 @@ export const CliIntegration = ({
           <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
         }
       >
-        <div className="space-y-4">Hello world!</div>
+        <CliSetup cliToken={cliToken} currentProject={currentProject} />
       </SlideOver>
     </IntegrationsPage>
   );
 };
 
 export const getServerSideProps = withAccessControl({
+  hasAccess: { maintainer: true, owner: true, developer: true, guest: true },
   withEncryptedProjectKey: false,
 });
 

@@ -1,3 +1,4 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import MagicLink from "@/emails/MagicLink";
 import { env } from "@/env/index.mjs";
 import SessionHistory from "@/models/SessionHistory";
@@ -112,4 +113,8 @@ export const authOptions: NextAuthOptions = {
   debug: env.NODE_ENV === "development",
 };
 
-export default NextAuth(authOptions);
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  const params = req.query;
+  console.log({ params });
+  return await NextAuth(req, res, authOptions);
+}

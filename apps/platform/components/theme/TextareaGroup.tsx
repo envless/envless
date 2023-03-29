@@ -34,10 +34,7 @@ export default function Textarea({
           rows={rows || 1}
           disabled={disabled}
           {...(register ? { ...register(name, validationSchema) } : {})}
-          className={clsx(
-            className,
-            "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full",
-          )}
+          className={clsx(className, "input-primary scrollbar w-full")}
         />
 
         {icon && (

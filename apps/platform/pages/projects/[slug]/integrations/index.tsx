@@ -185,7 +185,7 @@ const integrations = [
 interface Props {
   projects: Project[];
   currentProject: Project;
-  currentRole: UserRole;
+  currentRole: UserRole | string;
   children?: React.ReactNode;
 }
 
