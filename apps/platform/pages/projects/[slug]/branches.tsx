@@ -269,7 +269,7 @@ export const BranchesPage = ({
               className="float-right"
               onClick={() => {
                 router.push(
-                  `/project/${router.query.slug}/settings/protected-branches`,
+                  `/projects/${router.query.slug}/settings/protected-branch`,
                 );
               }}
             >

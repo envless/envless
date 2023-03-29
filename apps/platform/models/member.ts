@@ -17,6 +17,9 @@ const getMany = async (projectId: string, active: boolean = true) => {
     include: {
       user: true,
     },
+    orderBy: {
+      createdAt: "asc",
+    },
   });
 
   return accesses.map((access) => {
@@ -41,6 +44,10 @@ const getPending = async (projectId: string) => {
       id: true,
       email: true,
       role: true,
+      invitationTokenExpiresAt: true,
+    },
+    orderBy: {
+      createdAt: "asc",
     },
   });
 
