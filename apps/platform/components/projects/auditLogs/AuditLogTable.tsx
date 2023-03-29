@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useMemo } from "react";
 import { Audit } from "@prisma/client";
 import {
@@ -14,12 +13,18 @@ import { BaseInput, Button } from "@/components/theme";
 type AuditLogTableProps = {
   auditLogs: any;
   setSlideOverOpen: (open: boolean) => void;
+  pagination: PaginationState;
+  setPagination: (pagination: PaginationState) => void;
 };
 
 export default function AuditLogTable({
   auditLogs,
   setSlideOverOpen,
+  pagination,
+  setPagination,
 }: AuditLogTableProps) {
+  console.log("auditLogs", auditLogs);
+
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -44,7 +49,11 @@ export default function AuditLogTable({
         header: "Action Performed",
         id: "action",
         accessorFn: (row) => row.action,
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <span className="bg-lighter text-dark rounded-xl border px-2 py-0.5 text-xs tracking-tight">
+            {info.row.original.action}
+          </span>
+        ),
       },
       {
         header: "Project",
@@ -55,7 +64,7 @@ export default function AuditLogTable({
       {
         header: "Created At",
         id: "createdAt",
-        accessorFn: (row) => row.createdAt,
+        accessorFn: (row) => new Date(row.createdAt).toDateString(),
         cell: (info) => info.getValue(),
       },
       {
@@ -78,14 +87,13 @@ export default function AuditLogTable({
   const table = useReactTable({
     data: auditLogs,
     columns,
-    // pageCount: dataQuery.data?.pageCount ?? -1,
+    pageCount: 10,
     state: {
-      // pagination,
+      pagination,
     },
-    // onPaginationChange: setPagination,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    // manualPagination: true,
-    // getPaginationRowModel: getPaginationRowModel(), // If only doing manual pagination, you don't need this
+    manualPagination: true,
     debugTable: true,
   });
 
@@ -161,10 +169,20 @@ export default function AuditLogTable({
       <div className="flex items-center justify-between py-3 px-4 font-medium">
         <p className="text-xs">Showing 1 to 10 of 20 items</p>
         <div className="flex items-center gap-3 text-xs">
-          <Button variant="primary" size="sm">
+          <Button
+            disabled={!table.getCanPreviousPage()}
+            onClick={() => table.previousPage()}
+            variant="primary"
+            size="sm"
+          >
             Previous
           </Button>
-          <Button variant="primary" size="sm">
+          <Button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            variant="primary"
+            size="sm"
+          >
             Next
           </Button>
         </div>
