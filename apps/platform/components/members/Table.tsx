@@ -81,7 +81,7 @@ const MembersTable = ({
       setFetching(false);
     },
   });
-  const memeberUpdateMutation = trpc.members.update.useMutation({
+  const memberUpdateMutation = trpc.members.update.useMutation({
     onSuccess: (data) => {
       showToast({
         type: "success",
@@ -101,7 +101,7 @@ const MembersTable = ({
     },
   });
 
-  const memeberReinviteMutation = trpc.members.reInvite.useMutation({
+  const memberReinviteMutation = trpc.members.reInvite.useMutation({
     onSuccess: (data) => {
       setFetching(false);
       router.replace(router.asPath);
@@ -121,7 +121,7 @@ const MembersTable = ({
     },
   });
 
-  const memeberDeleteInviteMutation = trpc.members.deleteInvite.useMutation({
+  const memberDeleteInviteMutation = trpc.members.deleteInvite.useMutation({
     onSuccess: (data) => {
       setFetching(false);
       router.replace(router.asPath);
@@ -146,7 +146,7 @@ const MembersTable = ({
     (user: SelectedMember) => {
       setFetching(true);
 
-      memeberUpdateMutation.mutate({
+      memberUpdateMutation.mutate({
         projectId,
         newRole: user.newRole,
         currentUserRole: currentRole,
@@ -179,14 +179,14 @@ const MembersTable = ({
 
   const handleReInvite = async (email: string) => {
     setFetching(true);
-    memeberReinviteMutation.mutate({
+    memberReinviteMutation.mutate({
       email,
       projectId,
     });
   };
   const handleDeleteInvite = (email: string) => {
     setFetching(true);
-    memeberDeleteInviteMutation.mutate({
+    memberDeleteInviteMutation.mutate({
       email,
       projectId,
     });
