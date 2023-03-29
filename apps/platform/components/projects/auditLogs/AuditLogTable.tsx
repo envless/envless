@@ -15,6 +15,8 @@ type AuditLogTableProps = {
   setSlideOverOpen: (open: boolean) => void;
   pagination: PaginationState;
   setPagination: (pagination: PaginationState) => void;
+  pageCount: number;
+  totalAuditLogs: number;
 };
 
 export default function AuditLogTable({
@@ -22,9 +24,9 @@ export default function AuditLogTable({
   setSlideOverOpen,
   pagination,
   setPagination,
+  pageCount,
+  totalAuditLogs,
 }: AuditLogTableProps) {
-  console.log("auditLogs", auditLogs);
-
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -87,7 +89,7 @@ export default function AuditLogTable({
   const table = useReactTable({
     data: auditLogs,
     columns,
-    pageCount: 10,
+    pageCount,
     state: {
       pagination,
     },
@@ -167,7 +169,10 @@ export default function AuditLogTable({
       </table>
 
       <div className="flex items-center justify-between py-3 px-4 font-medium">
-        <p className="text-xs">Showing 1 to 10 of 20 items</p>
+        <p className="text-xs">
+          Showing {pagination.pageIndex + 1} to {pageCount} of {totalAuditLogs}{" "}
+          items
+        </p>
         <div className="flex items-center gap-3 text-xs">
           <Button
             disabled={!table.getCanPreviousPage()}
