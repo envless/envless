@@ -170,8 +170,11 @@ export default function AuditLogTable({
 
       <div className="flex items-center justify-between py-3 px-4 font-medium">
         <p className="text-xs">
-          Showing {pagination.pageIndex + 1} to {pageCount} of {totalAuditLogs}{" "}
-          items
+          Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
+          {(pagination.pageIndex + 1) * pagination.pageSize > totalAuditLogs
+            ? totalAuditLogs
+            : (pagination.pageIndex + 1) * pagination.pageSize}{" "}
+          of {totalAuditLogs}{" "}
         </p>
         <div className="flex items-center gap-3 text-xs">
           <Button

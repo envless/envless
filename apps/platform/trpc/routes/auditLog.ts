@@ -7,7 +7,7 @@ export const auditLogs = createRouter({
   getAll: withAuth
     .input(z.object({ page: z.number() }))
     .query(async ({ ctx, input }) => {
-      const ITEMS_PER_PAGE = 10;
+      const ITEMS_PER_PAGE = 25;
 
       const auditLogs = await ctx.prisma.audit.findMany({
         orderBy: {
@@ -25,7 +25,7 @@ export const auditLogs = createRouter({
             },
           },
         },
-        take: 10,
+        take: ITEMS_PER_PAGE,
         skip: (input.page - 1) * ITEMS_PER_PAGE,
       });
 

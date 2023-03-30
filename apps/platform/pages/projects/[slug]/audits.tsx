@@ -34,7 +34,7 @@ export const AuditLogsPage = ({
   const [open, setOpen] = useState(false);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 25,
   });
 
   const pageCount = Math.ceil(totalAuditLogs / pagination.pageSize);
@@ -88,7 +88,7 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
         },
       },
     },
-    take: 10,
+    take: 25,
   });
 
   const totalAuditLogs = await prisma?.audit.count();
