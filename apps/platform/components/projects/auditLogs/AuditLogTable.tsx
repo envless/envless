@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Audit } from "@prisma/client";
 import {
   ColumnDef,
@@ -7,7 +7,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Columns, Filter, Search } from "lucide-react";
+import clsx from "clsx";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Columns,
+  Download,
+  Filter,
+  Search,
+} from "lucide-react";
 import { BaseInput, Button } from "@/components/theme";
 
 type AuditLogTableProps = {
@@ -17,6 +25,7 @@ type AuditLogTableProps = {
   setPagination: (pagination: PaginationState) => void;
   pageCount: number;
   totalAuditLogs: number;
+  setAuditLogDetail: (auditLog: any) => void;
 };
 
 export default function AuditLogTable({
@@ -26,6 +35,7 @@ export default function AuditLogTable({
   setPagination,
   pageCount,
   totalAuditLogs,
+  setAuditLogDetail,
 }: AuditLogTableProps) {
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
@@ -74,7 +84,10 @@ export default function AuditLogTable({
         cell: (info) => (
           <div className="text-right">
             <button
-              onClick={() => setSlideOverOpen(true)}
+              onClick={() => {
+                setAuditLogDetail(info.row.original);
+                setSlideOverOpen(true);
+              }}
               className="py-2 px-3 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
             >
               Detail
@@ -99,26 +112,30 @@ export default function AuditLogTable({
     debugTable: true,
   });
 
-  return (
-    <div className="border-dark mt-12 w-full overflow-x-auto rounded-md border-2 shadow-sm">
-      <div className="border-dark flex items-center justify-end border-b py-2 px-2 font-medium">
-        <div className="flex w-full items-center justify-end gap-2 md:max-w-md">
-          <div className="flex flex-1 justify-end">
-            <div className="group relative w-full">
-              <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
-                <Search className="h-4 w-4" />
-              </div>
+  console.log("renders");
 
-              <BaseInput
-                placeholder="Search"
-                className="w-full max-w-xs py-1.5 !pl-9"
-                full={false}
-              />
+  return (
+    <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
+      <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
+        <div className="flex w-full items-center justify-between px-4">
+          <div className="group relative w-full">
+            <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
+              <Search className="h-4 w-4" />
             </div>
+
+            <BaseInput
+              placeholder="Search"
+              className="w-full max-w-xs py-1.5 !pl-9"
+              full={false}
+            />
           </div>
 
           <div className="flex shrink-0 items-center">
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
+            <button
+              aria-label="Apply Filters"
+              data-balloon-pos="up"
+              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+            >
               <Filter className="h-5 w-5" />
             </button>
           </div>
@@ -126,6 +143,16 @@ export default function AuditLogTable({
           <div className="flex shrink-0 items-center">
             <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
               <Columns className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex shrink-0 items-center">
+            <button
+              aria-label="Download as JSON"
+              data-balloon-pos="up"
+              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+            >
+              <Download className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -159,6 +186,7 @@ export default function AuditLogTable({
                 <td
                   className="whitespace-nowrap py-3 px-6 text-xs"
                   key={cell.id}
+                  style={{ width: cell.column.getSize() }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -177,22 +205,28 @@ export default function AuditLogTable({
           of {totalAuditLogs}{" "}
         </p>
         <div className="flex items-center gap-3 text-xs">
-          <Button
+          <button
             disabled={!table.getCanPreviousPage()}
             onClick={() => table.previousPage()}
-            variant="primary"
-            size="sm"
+            className={clsx(
+              "flex items-center gap-x-1",
+              !table.getCanPreviousPage() && "text-light cursor-not-allowed",
+            )}
           >
+            <ChevronLeft className="h-4 w-4" />
             Previous
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            variant="primary"
-            size="sm"
+            className={clsx(
+              "flex items-center gap-x-1",
+              !table.getCanNextPage() && "text-light cursor-not-allowed",
+            )}
           >
             Next
-          </Button>
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </div>

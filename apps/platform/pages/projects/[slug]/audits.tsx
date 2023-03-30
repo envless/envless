@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from "next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
@@ -32,10 +32,18 @@ export const AuditLogsPage = ({
   totalAuditLogs,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const [pagination, setPagination] = useState<PaginationState>({
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 25,
   });
+
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize],
+  );
 
   const pageCount = Math.ceil(totalAuditLogs / pagination.pageSize);
 
@@ -51,6 +59,9 @@ export const AuditLogsPage = ({
     },
   );
 
+  const [auditLogDetail, setAuditLogDetail] = useState();
+  const memoizedAuditLogs = useMemo(() => auditLogs, [auditLogs]);
+
   return (
     <ProjectLayout
       tab="audits"
@@ -58,14 +69,22 @@ export const AuditLogsPage = ({
       currentRole={currentRole}
       currentProject={currentProject}
     >
-      <AuditLogSideOver open={open} setOpen={setOpen} auditLogs={auditLogs} />
+      {auditLogDetail && (
+        <AuditLogSideOver
+          auditLogDetail={auditLogDetail}
+          open={open}
+          setOpen={setOpen}
+          auditLogs={auditLogs}
+        />
+      )}
       <AuditLogTable
         pagination={pagination}
         setPagination={setPagination}
-        auditLogs={auditLogs}
+        auditLogs={memoizedAuditLogs}
         pageCount={pageCount}
         totalAuditLogs={totalAuditLogs}
         setSlideOverOpen={setOpen}
+        setAuditLogDetail={setAuditLogDetail}
       />
     </ProjectLayout>
   );
