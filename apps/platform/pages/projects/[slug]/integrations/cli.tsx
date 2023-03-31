@@ -21,7 +21,6 @@ export const CliIntegration = ({
 }: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [cliToken, setCliToken] = useState("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
   useEffect(() => {
     if (router.isReady) {
@@ -50,7 +49,7 @@ export const CliIntegration = ({
           <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
         }
       >
-        <CliSetup cliToken={cliToken} currentProject={currentProject} />
+        <CliSetup currentProject={currentProject} />
       </SlideOver>
     </IntegrationsPage>
   );

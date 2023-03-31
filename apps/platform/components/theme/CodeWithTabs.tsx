@@ -17,19 +17,20 @@ const CodeWithTabs = ({ tabs }: Props) => {
 
   return (
     <Fragment>
-      <nav className="flex space-x-8" aria-label="Tabs">
+      <nav className="mt-5 flex space-x-5" aria-label="Tabs">
         {tabs.map((tab, index) => (
-          <button
+          <span
+            key={index}
             onClick={() => {
               setActiveTab(tab);
             }}
             className={clsx(
-              "text-light hover:text-lighter whitespace-nowrap border-b-2 border-transparent pt-5 text-sm font-medium hover:border-gray-300",
+              "text-light hover:text-lighter cursor-pointer whitespace-nowrap border-b-2 border-transparent text-sm font-medium hover:border-gray-300",
               activeTab.label === tab.label ? "text-teal-400" : "",
             )}
           >
             {tab.label}
-          </button>
+          </span>
         ))}
       </nav>
 

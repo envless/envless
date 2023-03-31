@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
@@ -12,11 +12,8 @@ import OpenPGP from "@/lib/encryption/openpgp";
 const EncryptionSetup = ({ ...props }) => {
   const { user, project, encryptionKeys, setEncryptionKeys } = props;
   const [loading, setLoading] = useState(false);
-  const [cliModal, setCliModal] = useState(true);
+  const [cliModal, setCliModal] = useState(false);
   const [privateKey, setPrivateKey] = useState("");
-  const [publicKeyId, setPublicKeyId] = useState("");
-  const [cliToken, setCliToken] = useState("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-  const [cliSetupComplete, setCliSetupComplete] = useState(false);
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const [encryptedProjectKey, setEncryptedProjectKey] = useState(
     encryptionKeys.project.encryptedProjectKey,
@@ -24,6 +21,12 @@ const EncryptionSetup = ({ ...props }) => {
   const [pageState, setPageState] = useState(
     encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
   );
+
+  useEffect(() => {
+    if (pageState === "uploadKey") {
+      setCliModal(true);
+    }
+  }, [pageState]);
 
   const download = (filename, text) => {
     var element = document.createElement("a");
@@ -37,6 +40,17 @@ const EncryptionSetup = ({ ...props }) => {
     element.click();
     document.body.removeChild(element);
   };
+
+  const { mutate: activateCli, isLoading: loadingUpdate } =
+    trpc.cli.update.useMutation({
+      onSuccess: (_response) => {
+        setCliModal(false);
+      },
+
+      onError: (error) => {
+        console.log(error);
+      },
+    });
 
   const createKeys = trpc.keys.create.useMutation({
     onSuccess: (data) => {
@@ -71,8 +85,9 @@ const EncryptionSetup = ({ ...props }) => {
       })();
 
       download("envless.key", privateKey);
+      setCliModal(true);
       setEncryptedProjectKey(projectKey.encryptedKey);
-      // setPageState("uploadKey");
+      setPageState("uploadKey");
     },
 
     onError: (error) => {
@@ -167,31 +182,28 @@ const EncryptionSetup = ({ ...props }) => {
         >
           <div className="flex flex-col items-center justify-center">
             {pageState === "uploadKey" && (
-              <textarea
-                name="privateKey"
-                autoComplete="off"
-                autoFocus={true}
-                rows={10}
-                required={true}
-                onChange={(e) => setPrivateKey(e.target.value)}
-                placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    -----END PGP PRIVATE KEY BLOCK-----
-                  "
-                className={
-                  "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker mb-10 w-full max-w-xl"
-                }
-              />
+              <div className="mb-10 max-w-xl">
+                <textarea
+                  name="privateKey"
+                  autoComplete="off"
+                  autoFocus={true}
+                  rows={10}
+                  required={true}
+                  onChange={(e) => setPrivateKey(e.target.value)}
+                  placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----"
+                  className={
+                    "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full "
+                  }
+                />
+
+                <p className="mt-2 w-full text-xs">
+                  ⚡ Protip: Run{" "}
+                  <code className="px-1 text-red-400">
+                    envless privateKey --copy
+                  </code>{" "}
+                  to copy from system's keychain.
+                </p>
+              </div>
             )}
 
             <div className="justify-center">
@@ -237,21 +249,26 @@ const EncryptionSetup = ({ ...props }) => {
         closable={false}
         open={cliModal}
         setOpen={setCliModal}
-        title="Envless CLI Configuration"
+        title="Setup Envless CLI"
         description="Configure CLI for local development, deployment or CI/CD pipelines."
         onClose={() => {
           setCliModal(false);
         }}
         footer={
           <div className="flex flex-shrink-0 justify-end px-4 py-4">
-            <Button className="ml-4">
-              <ArrowLeft className="mr-2 -mr-1 h-5 w-5" aria-hidden="true" />
+            <Button
+              className="ml-4"
+              onClick={async () => {
+                await activateCli({ active: true });
+              }}
+            >
+              <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
               Confirm and continue
             </Button>
           </div>
         }
       >
-        <CliSetup cliToken={cliToken} currentProject={project} />
+        <CliSetup currentProject={project} />
       </SlideOver>
     </>
   );

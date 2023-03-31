@@ -1,28 +1,92 @@
 import Link from "next/link";
 import { Fragment, useState } from "react";
+import useUpdateEffect from "@/hooks/useUpdateEffect";
+import { trpc } from "@/utils/trpc";
 import type { Project } from "@prisma/client";
-import Code from "@/components/theme/Code";
+import * as argon2 from "argon2-browser";
+import { randomBytes } from "crypto";
+import { Button } from "@/components/theme";
 import CodeWithTabs from "@/components/theme/CodeWithTabs";
 
 interface CliProps {
-  cliToken?: string;
   currentProject: Project;
 }
 
-const CliSetup = ({ cliToken, currentProject }: CliProps) => {
+const CliSetup = ({ currentProject }: CliProps) => {
+  const { cli: cliQuery } = trpc.useContext();
+
+  const [cli, setCli] = useState<{
+    id: string;
+    token: string;
+  }>({ id: "", token: "" });
+
+  useUpdateEffect(() => {
+    const fetchCliSetup = async () => {
+      if (!cli.id || !cli.token) {
+        const { cli: record } = await cliQuery.getOne.fetch();
+        if (record) {
+          setCli({ ...cli, id: record.id });
+        }
+      }
+    };
+
+    fetchCliSetup().catch(console.error);
+  }, []);
+
+  const { mutate: createCliTokenMutation, isLoading: loadingCreate } =
+    trpc.cli.create.useMutation({
+      onSuccess: (response) => {
+        const { cli: record } = response;
+        setCli({ ...cli, id: record.id });
+      },
+
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+
+  const { mutate: updateCliTokenMutation, isLoading: loadingUpdate } =
+    trpc.cli.update.useMutation({
+      onSuccess: (_response) => {
+        console.log("Update successful");
+      },
+
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+
+  const createOrUpdateCLiToken = async () => {
+    const token = randomBytes(32).toString("hex");
+    const salt = randomBytes(32).toString("hex");
+    setCli({ ...cli, token });
+
+    const { encoded: hashedToken } = (await argon2.hash({
+      pass: token,
+      salt,
+    })) as { encoded: string };
+
+    if (cli.id) {
+      await updateCliTokenMutation({ hashedToken });
+    } else {
+      await createCliTokenMutation({ hashedToken });
+    }
+  };
+
   return (
     <Fragment>
       <div className="px-4">
-        <section className="mb-20">
+        <section className="mb-14">
           <h3 className="text-lg">
             <span className="text-darker mr-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300">
               1
             </span>
-            Install envless CLI
+            Installation
           </h3>
-          <p className="text-light mt-2 text-sm">
-            You may skip this step if you already have the CLI installed.
-          </p>
+          <div className="text-light mt-2 text-sm">
+            You may skip this step if you already have the Envless CLI
+            installed.
+          </div>
 
           <CodeWithTabs
             tabs={[
@@ -46,7 +110,8 @@ const CliSetup = ({ cliToken, currentProject }: CliProps) => {
           />
 
           <p className="text-light text-xs">
-            For other OS installation guidelines, please refer to our{" "}
+            For other OS installation and other CLI guidelines, please refer to
+            our{" "}
             <Link
               href="https://envless.dev/docs/cli"
               target={"_blank"}
@@ -57,47 +122,106 @@ const CliSetup = ({ cliToken, currentProject }: CliProps) => {
           </p>
         </section>
 
-        <section className="mb-20">
+        <section className="mb-14">
           <h3 className="text-lg">
             <span className="text-darker mr-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300">
               2
             </span>
-            Initialize envless CLI
+            Initialize CLI
           </h3>
-          <p className="text-light mt-2 text-sm">
-            From your project's root directory, run the following command to
-            activate the CLI.{" "}
-            <Code
-              copy={true}
-              language={"shell"}
-              code={`envless init \\ \n --pid ${currentProject.id} \\\n --token ${cliToken}`}
-            />
-          </p>
-          <p className="text-light text-xs">
-            Learn more about{" "}
-            <Link
-              href="https://envless.dev/docs/cli"
-              target={"_blank"}
-              className="text-teal-400"
-            >
-              Envless CLI
-            </Link>
-          </p>
+          <div className="text-light mt-2 text-sm">
+            You may skip this step if you have already Initialized the Envless
+            CLI.
+            {cli && cli.id && cli.token ? (
+              <CodeWithTabs
+                tabs={[
+                  {
+                    label: "Terminal",
+                    lang: "shell",
+                    snippet: `envless init \\ \n --id ${cli.id} \\\n --token ${cli.token}`,
+                  },
+                  {
+                    label: "Help",
+                    lang: "shell",
+                    snippet: `envless init --help`,
+                  },
+                ]}
+              />
+            ) : (
+              <Button
+                size="sm"
+                variant={cli.id ? "danger-outline" : "secondary"}
+                className="mt-3"
+                disabled={loadingCreate || loadingUpdate}
+                onClick={async () => {
+                  await createOrUpdateCLiToken();
+                }}
+              >
+                {cli.id ? "Rotate " : "Generate "}
+                CLI token
+              </Button>
+            )}
+          </div>
         </section>
 
-        <section className="mb-20">
+        <section className="mb-14">
           <h3 className="text-lg">
             <span className="text-darker mr-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300">
               3
             </span>
-            You are all set !
+            Link project
           </h3>
-          <p className="text-light mt-2 text-sm">
-            If you didnot see any errors, you are good to go. Your private key
-            is now securely stored in your local machine. It is also currently
-            copied to your clipboard. Please click the button below to continue.
-            You will be asked to paste the private key in the next step.
+          <div className="text-light mt-2 text-sm">
+            From your project's root directory, run the following command to
+            activate the CLI.
+            <CodeWithTabs
+              tabs={[
+                {
+                  label: "Terminal",
+                  lang: "shell",
+                  snippet: `envless link \\ \n --project ${currentProject.id}`,
+                },
+                {
+                  label: "Help",
+                  lang: "shell",
+                  snippet: `envless link --help`,
+                },
+              ]}
+            />
+          </div>
+          <p className="text-light text-xs">
+            You may skip this step if you have already already have .envless
+            file on your project's root and is already linked.
           </p>
+        </section>
+
+        <section className="mb-14">
+          <h3 className="text-lg">
+            <span className="text-darker mr-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300">
+              4
+            </span>
+            Secure and copy your private key
+          </h3>
+          <div className="text-light mt-2 text-sm">
+            Please run the following command to secure and copy your private
+            key. This will securely store your private key in your system's
+            keychain and copy it to your clipboard. You will be asked to paste
+            the private key in the next step.
+            <CodeWithTabs
+              tabs={[
+                {
+                  label: "Terminal",
+                  lang: "shell",
+                  snippet: `envless privateKey --copy`,
+                },
+                {
+                  label: "Help",
+                  lang: "shell",
+                  snippet: `envless privateKey --help`,
+                },
+              ]}
+            />
+          </div>
         </section>
       </div>
     </Fragment>

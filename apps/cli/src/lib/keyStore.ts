@@ -26,7 +26,7 @@ export const savePrivateKeyToKeyStore = async () => {
   let privateKey = await getPrivateKeyFromKeyStore();
 
   if (!privateKey) {
-    const filePath = `${downloadsFolder()}/envless.keys`;
+    const filePath = `${downloadsFolder()}/envless.key`;
     privateKey = fs.readFileSync(filePath, "utf8");
     await keytar.setPassword("envless", "privateKey", privateKey as string);
   }

@@ -6,24 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  relationMode      = "prisma"
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model Audit {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  action        String
-  data          Json?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  action    String
+  data      Json?
 
-  createdById   String
-  createdForId  String?
-  projectId     String?
+  createdById  String
+  createdForId String?
+  projectId    String?
 
-  project       Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdBy     User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  createdFor    User?    @relation(name: "createdFor", fields: [createdForId], references: [id], onDelete: Cascade)
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy  User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  createdFor User?    @relation(name: "createdFor", fields: [createdForId], references: [id], onDelete: Cascade)
 
   @@index([createdById])
   @@index([createdForId])
@@ -31,50 +31,42 @@ model Audit {
 }
 
 model Project {
-  id                      String    @id @default(cuid())
-  name                    String
-  slug                    String
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  deletedAt               DateTime?
-  settings                Json      @default("{}")
-  branches                Branch[]
-  access                  Access[]
-  audits                  Audit[]
-  invites                 ProjectInvite[]
-  pullRequests            PullRequest[]
-  encryptedProjectKey     EncryptedProjectKey?
+  id                  String               @id @default(cuid())
+  name                String
+  slug                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+  settings            Json                 @default("{}")
+  branches            Branch[]
+  access              Access[]
+  audits              Audit[]
+  invites             ProjectInvite[]
+  pullRequests        PullRequest[]
+  encryptedProjectKey EncryptedProjectKey?
 
   @@unique([name, slug])
 }
 
 model EncryptedProjectKey {
-  id                  String    @id @default(cuid())
-  encryptedKey        String
+  id           String @id @default(cuid())
+  encryptedKey String
 
-  projectId           String    @unique
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model PublicKey {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  key       String    @unique
-  userId    String?   @unique
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cli       Cli?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  key       String
+  userId    String?  @unique
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-}
-
-model Cli {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  publicKeyId String    @unique
-  publicKey   PublicKey @relation(fields: [publicKeyId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
@@ -106,41 +98,41 @@ model ProjectInvite {
 }
 
 model Access {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    String
   projectId String
   role      UserRole
-  active    Boolean   @default(true)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  active    Boolean  @default(true)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, projectId])
   @@index([userId])
   @@index([projectId])
-  @@unique([userId, projectId])
 }
 
 model Branch {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   projectId   String
   name        String
   description String?
   status      BranchStatus?
   createdById String
-  protected   Boolean @default(false)
+  protected   Boolean       @default(false)
 
   protectedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdBy   User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  secrets     Secret[]
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  secrets   Secret[]
 
+  @@unique([name, projectId])
   @@index([createdById])
   @@index([projectId])
-  @@unique([name, projectId])
   @@index([protected])
 }
 
@@ -151,34 +143,33 @@ enum BranchStatus {
 }
 
 model PullRequest {
-  id String @id @default(cuid())
-  title String
-  prId Int
-  status PullRequestStatus
-  projectId String
-  createdById String
-  mergedById  String?
-  closedById  String?
-  baseBranchId String?
+  id              String            @id @default(cuid())
+  title           String
+  prId            Int
+  status          PullRequestStatus
+  projectId       String
+  createdById     String
+  mergedById      String?
+  closedById      String?
+  baseBranchId    String?
   currentBranchId String?
-  createdAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  mergedAt DateTime?
-  closedAt DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  mergedAt        DateTime?
+  closedAt        DateTime?
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  createdBy User @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  mergedBy User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
-  closedBy User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+  createdBy User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  mergedBy  User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
+  closedBy  User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
 
+  @@unique([prId, projectId])
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
   @@index([createdAt])
-
-  @@unique([prId, projectId])
-  @@index([projectId, status]) 
+  @@index([projectId, status])
   @@index([projectId, prId])
 }
 
@@ -196,10 +187,10 @@ model Secret {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId    String
-  branchId  String
-  branch    Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  branchId String
+  branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([branchId])
@@ -222,27 +213,27 @@ model Account {
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model SessionHistory {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  ip           String?
-  os           Json?    @default("{}")
-  geo          Json?
-  device       Json?    @default("{}")
-  browser      Json?    @default("{}")
-  engine       Json?    @default("{}")
-  cpu          Json?    @default("{}")
-  isBot        Boolean? @default(false)
-  mfa          Boolean? @default(false)
+  ip      String?
+  os      Json?    @default("{}")
+  geo     Json?
+  device  Json?    @default("{}")
+  browser Json?    @default("{}")
+  engine  Json?    @default("{}")
+  cpu     Json?    @default("{}")
+  isBot   Boolean? @default(false)
+  mfa     Boolean? @default(false)
 
-  fingerprint  String?
-  createdAt    DateTime @default(now())
+  fingerprint String?
+  createdAt   DateTime @default(now())
 
   @@index([userId])
   @@index([id, userId, fingerprint])
@@ -254,34 +245,52 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
 }
 
 model User {
-  id                String    @id @default(cuid())
+  id                String           @id @default(cuid())
   name              String?
-  email             String    @unique
+  email             String           @unique
   emailVerified     DateTime?
   image             String?
+  cliId             String?          @unique
   accounts          Account[]
   sessions          Session[]
   sessionHistories  SessionHistory[]
   access            Access[]
   publicKeys        PublicKey[]
-  secrets 	        Secret[]
-  auditsCreatedBy   Audit[]   @relation(name: "createdBy")
-  auditsCreatedFor  Audit[]   @relation(name: "createdFor")
-  branchesCreatedBy Branch[]  @relation(name: "createdBy")
-  createdPRs        PullRequest[] @relation(name: "createdBy")
-  mergedPRs         PullRequest[] @relation(name: "mergedBy")
-  closedPRs         PullRequest[] @relation(name: "closedBy")
+  secrets           Secret[]
+  auditsCreatedBy   Audit[]          @relation(name: "createdBy")
+  auditsCreatedFor  Audit[]          @relation(name: "createdFor")
+  branchesCreatedBy Branch[]         @relation(name: "createdBy")
+  createdPRs        PullRequest[]    @relation(name: "createdBy")
+  mergedPRs         PullRequest[]    @relation(name: "mergedBy")
+  closedPRs         PullRequest[]    @relation(name: "closedBy")
 
   // Two factor authentication
-  encryptedTwoFactorSecret    Json?
-  twoFactorEnabled  Boolean   @default(false)
+  encryptedTwoFactorSecret Json?
+  twoFactorEnabled         Boolean @default(false)
+  cliConfigured            Boolean @default(false)
 
-  marketing         Boolean   @default(true)
-  notification      Boolean   @default(true)
+  marketing    Boolean @default(true)
+  notification Boolean @default(true)
+  cli          Cli?
+}
+
+// Personal CLI configuration
+model Cli {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hashedToken String
+  active      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, active])
 }
 
 model VerificationToken {
