@@ -29,6 +29,7 @@ const server = z.object({
   GITHUB_TOKEN: z.string().optional(),
   GITLAB_CLIENT_ID: z.string(),
   GITLAB_CLIENT_SECRET: z.string(),
+  MAX_AUTH_ATTEMPTS: z.number().default(5),
   NOTION_TOKEN: z.string().optional(),
   NOTION_DATABASE_ID: z.string(),
   SMTP_HOST: z.string().optional(),
@@ -45,6 +46,7 @@ const server = z.object({
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_DEV_LOG: z.boolean().default(false),
+  NEXT_PUBLIC_MAX_AUTH_ATTEMPTS: z.number().default(5),
 });
 
 /**
@@ -69,6 +71,7 @@ const processEnv = {
   GITHUB_TOKEN: process.env.GITHUB_TOKEN,
   GITLAB_CLIENT_ID: process.env.GITLAB_CLIENT_ID,
   GITLAB_CLIENT_SECRET: process.env.GITLAB_CLIENT_SECRET,
+  MAX_AUTH_ATTEMPTS: process.env.MAX_AUTH_ATTEMPTS,
   NOTION_TOKEN: process.env.NOTION_TOKEN,
   NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
   SMTP_HOST: process.env.SMTP_HOST,

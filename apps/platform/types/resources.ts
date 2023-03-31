@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { LockedUser, UserRole } from "@prisma/client";
 
 export interface UserType {
   id: string;
@@ -7,4 +7,5 @@ export interface UserType {
   image?: string;
   role?: UserRole;
   twoFactorEnabled?: boolean;
+  locked: LockedUser | null;
 }

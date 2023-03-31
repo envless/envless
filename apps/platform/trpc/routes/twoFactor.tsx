@@ -1,3 +1,8 @@
+import { Fragment } from "react";
+import InviteLink from "@/emails/InviteLink";
+import LockUserAccount from "@/emails/LockUserAccount";
+import { env } from "@/env/index.mjs";
+import { lockUserAccountAndSendEmail } from "@/models/user";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -88,6 +93,8 @@ export const twoFactor = createRouter({
         },
         select: {
           encryptedTwoFactorSecret: true,
+          failedAuthAttempts: true,
+          locked: true,
         },
       });
 
@@ -99,18 +106,77 @@ export const twoFactor = createRouter({
         });
       }
 
+      if (userRecord.locked) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Your account has been locked. Please contact support for assistance.",
+        });
+      }
+
+      if (userRecord.failedAuthAttempts >= env.MAX_AUTH_ATTEMPTS) {
+        await lockUserAccountAndSendEmail({
+          user,
+          reason: "Too many failed two-factor authentication attempts",
+          emailSubject: "Your Account Has Been Locked for Security Reasons",
+          emailTemplate: (
+            <LockUserAccount
+              headline={<Fragment>Your account has been locked</Fragment>}
+              greeting={`Hi ${user.name || "there"},`}
+              body={
+                <Fragment>
+                  We regret to inform you that your account has been locked due
+                  to repeated failed authentication attempts.
+                  <br />
+                  <br />
+                  To unlock your account, please contact our support team at
+                  support@envless.dev.
+                </Fragment>
+              }
+            />
+          ),
+        });
+
+        // Throw an error to indicate that the user account is locked
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Your account has been locked. Please contact support for assistance.",
+        });
+      }
+
       const isValid = await verifyTwoFactor({
         code,
         secret: userRecord.encryptedTwoFactorSecret,
       });
 
       if (!isValid) {
+        await prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            failedAuthAttempts: userRecord.failedAuthAttempts + 1,
+          },
+        });
+
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message:
-            "Code is either expired or invalid. Please copy code from authenticator app and try again.",
+          message: `Invalid code. ${
+            env.MAX_AUTH_ATTEMPTS - userRecord.failedAuthAttempts
+          } attempts left.`,
         });
       }
+
+      // Reset the failedAuthAttempts count
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          failedAuthAttempts: 0,
+        },
+      });
 
       const sessionStore = await redis.get(`session:${id}`);
 

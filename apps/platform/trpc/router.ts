@@ -24,6 +24,15 @@ const isAuthenticated = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  if (ctx.session.user.locked) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message:
+        "Your account has been locked. Please contact support for assistance.",
+    });
+  }
+
   return next({
     ctx: {
       // infers the `session` as non-nullable

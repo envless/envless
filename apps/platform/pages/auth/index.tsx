@@ -26,23 +26,7 @@ const Login = ({ csrfToken }) => {
   const onSubmit = async (data) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
-
-    const res = await fetch("/api/auth/signin/email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (res.status === 200) {
-      debounce(() => {
-        router.reload();
-      }, 3000)();
-    } else {
-      const json = await res.json();
-      if (json?.error) {
-        log("error", json.error);
-      }
-    }
+    signIn("email", data);
     reset();
   };
 

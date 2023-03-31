@@ -73,7 +73,7 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
         onChange={handleOnChange}
       />
 
-      {error && <p className="px-3 pt-1 text-xs text-red-400/75">{error}</p>}
+      {error && <p className="px-3 pt-1 text-xs text-red-400/75 text-center">{error}</p>}
 
       <Button
         disabled={loading}
