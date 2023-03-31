@@ -35,15 +35,6 @@ export function withAccessControl<P = Record<string, unknown>>({
     const session = await getServerSideSession(context);
     const user = session?.user;
 
-    let serverPropsFromParent: any = { props: {} };
-
-    if (getServerSideProps) {
-      serverPropsFromParent = await getServerSideProps(context);
-    }
-
-    // @ts-ignore
-    const { slug } = context.params;
-
     if (!user) {
       return {
         redirect: {
@@ -52,6 +43,15 @@ export function withAccessControl<P = Record<string, unknown>>({
         },
       };
     }
+
+    let serverPropsFromParent: any = { props: {} };
+
+    if (getServerSideProps) {
+      serverPropsFromParent = await getServerSideProps(context);
+    }
+
+    // @ts-ignore
+    const { slug } = context.params;
 
     const access = await accessesWithProject({ userId: user.id });
 
