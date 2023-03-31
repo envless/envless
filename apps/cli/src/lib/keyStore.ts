@@ -1,18 +1,22 @@
 import * as keytar from "keytar";
 
 const fs = require("fs");
-
 const downloadsFolder = require("downloads-folder");
 
-export const saveToKeyStore = async (key: object) => {
+export const getCliConfigFromKeyStore = async () => {
+  const cli = await keytar.getPassword("envless", "cli" as string);
+  return JSON.parse(cli as string);
+};
+
+export const saveCliConfigToKeyStore = async (cli: object) => {
   let keyRing;
   keyRing = await keytar.getPassword("envless", "cli" as string);
 
   if (!keyRing) {
-    keyRing = [key];
+    keyRing = [cli];
   } else {
     keyRing = JSON.parse(keyRing);
-    keyRing.push(key);
+    keyRing.push(cli);
   }
 
   await keytar.setPassword("envless", "cli" as string, JSON.stringify(keyRing));
