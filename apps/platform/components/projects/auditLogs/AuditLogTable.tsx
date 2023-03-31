@@ -112,8 +112,6 @@ export default function AuditLogTable({
     debugTable: true,
   });
 
-  console.log("renders");
-
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
       <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
