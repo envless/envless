@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import React from "react";
 import useFuse from "@/hooks/useFuse";
+import type { PendingInvite } from "@/pages/projects/[slug]/members";
 import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { UserRole } from "@prisma/client";
 import clsx from "clsx";
-import { Lock, Trash, Unlock, UserX } from "lucide-react";
+import { Lock, MailCheck, Trash, Unlock, UserCog, UserX } from "lucide-react";
 import MemberTabs from "@/components/members/MemberTabs";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { showToast } from "../theme/showToast";
@@ -29,6 +30,12 @@ interface SelectedMember {
   currentRole: UserRole;
 }
 const roles: UserRole[] = Object.values(UserRole);
+
+function hasExpired(invite: PendingInvite) {
+  const now = Date.now();
+  const inviteTime = new Date(invite.invitationTokenExpiresAt).getTime();
+  return now > inviteTime;
+}
 
 const MembersTable = ({
   members,
@@ -74,7 +81,7 @@ const MembersTable = ({
       setFetching(false);
     },
   });
-  const memeberUpdateMutation = trpc.members.update.useMutation({
+  const memberUpdateMutation = trpc.members.update.useMutation({
     onSuccess: (data) => {
       showToast({
         type: "success",
@@ -94,11 +101,52 @@ const MembersTable = ({
     },
   });
 
+  const memberReinviteMutation = trpc.members.reInvite.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      router.replace(router.asPath);
+      showToast({
+        type: "success",
+        title: "Invitation sent",
+        subtitle: "You have succefully sent an invitation.",
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Invitation not sent",
+        subtitle: error.message,
+      });
+    },
+  });
+
+  const memberDeleteInviteMutation = trpc.members.deleteInvite.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      router.replace(router.asPath);
+      showToast({
+        type: "success",
+        title: "Invitation deleted",
+        subtitle: "The invitation has been successfully deleted.",
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Error deleting invitation",
+        subtitle:
+          "An error occurred while deleting the invitation. Please try again later.",
+      });
+    },
+  });
+
   const onUpdateMemberAccess = useCallback(
     (user: SelectedMember) => {
       setFetching(true);
 
-      memeberUpdateMutation.mutate({
+      memberUpdateMutation.mutate({
         projectId,
         newRole: user.newRole,
         currentUserRole: currentRole,
@@ -128,6 +176,81 @@ const MembersTable = ({
     },
     [memberStatusMutation, projectId, currentRole],
   );
+
+  const handleReInvite = async (email: string) => {
+    setFetching(true);
+    memberReinviteMutation.mutate({
+      email,
+      projectId,
+    });
+  };
+  const handleDeleteInvite = (email: string) => {
+    setFetching(true);
+    memberDeleteInviteMutation.mutate({
+      email,
+      projectId,
+    });
+  };
+
+  const renderSettingsButton = (member: UserType) => {
+    if (tab === "pending") {
+      const invite = member as PendingInvite;
+
+      return (
+        <button
+          onClick={
+            hasExpired(invite)
+              ? () => {
+                  handleReInvite(invite.email);
+                }
+              : () => {
+                  handleDeleteInvite(invite.email);
+                }
+          }
+          aria-label={hasExpired(invite) ? "Re-invite member" : "Delete invite"}
+          data-balloon-pos="up"
+          className="hover:text-teal-400 hover:disabled:text-current"
+          disabled={fetching || invite.id === user.id}
+        >
+          {hasExpired(invite) ? (
+            <Fragment>
+              <MailCheck className="h-5 w-5" strokeWidth={2} />
+              <span className="sr-only">Re-invite {invite.email}</span>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Trash className="h-5 w-5" strokeWidth={2} />
+              <span className="sr-only">Delete invite for {invite.email}</span>
+            </Fragment>
+          )}
+        </button>
+      );
+    }
+    return (
+      <button
+        onClick={() =>
+          onUpdateMemberStatus(
+            {
+              currentRole: member.role,
+              newRole: member.role,
+              userId: member.id,
+            },
+            false,
+          )
+        }
+        className="hover:text-teal-400 disabled:opacity-50 hover:disabled:text-current"
+        disabled={
+          fetching ||
+          member.id === user.id ||
+          (currentRole === UserRole.maintainer &&
+            member.role === UserRole.owner)
+        }
+      >
+        <Trash className="float-right h-5 w-5" strokeWidth={2} />
+        <span className="sr-only">, {member.name}</span>
+      </button>
+    );
+  };
 
   return (
     <React.Fragment>
@@ -167,20 +290,38 @@ const MembersTable = ({
                   </div>
                 </td>
 
-                <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
-                  <MemberDropDown
-                    roles={roles}
-                    setSelectedRole={(role) =>
-                      onUpdateMemberAccess({
-                        currentRole: member.role,
-                        newRole: role,
-                        userId: member.id,
-                      })
-                    }
-                    selectedRole={member.role}
-                    loading={fetching}
-                  />
-                </td>
+                {tab === "pending" ? (
+                  <td className="relative mt-4 inline-block w-full max-w-[200px]">
+                    <div className="w-full">
+                      <div className="border-dark bg-dark inline-flex w-full items-center justify-center truncate rounded border px-3 py-2 text-sm">
+                        <div className="flex items-center">
+                          <UserCog className="mr-2 h-4 w-4 shrink-0" />
+                          <span className="text-light mr-2 block text-xs">
+                            Role
+                          </span>
+                        </div>
+                        <span className="max-w-[100px] truncate text-sm font-semibold">
+                          {member.role}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                ) : (
+                  <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
+                    <MemberDropDown
+                      roles={roles}
+                      setSelectedRole={(role) =>
+                        onUpdateMemberAccess({
+                          currentRole: member.role,
+                          newRole: role,
+                          userId: member.id,
+                        })
+                      }
+                      selectedRole={member.role}
+                      disabled={fetching}
+                    />
+                  </td>
+                )}
                 {tab != "pending" && (
                   <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
                     <div className="inline-flex">
@@ -195,32 +336,7 @@ const MembersTable = ({
                 )}
 
                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                  <button
-                    onClick={() =>
-                      onUpdateMemberStatus(
-                        {
-                          currentRole: member.role,
-                          newRole: member.role,
-                          userId: member.id,
-                        },
-                        false,
-                      )
-                    }
-                    className="hover:text-teal-400 disabled:opacity-50 hover:disabled:text-current"
-                    disabled={
-                      fetching ||
-                      !(
-                        currentRole === UserRole.owner ||
-                        currentRole === UserRole.maintainer
-                      ) ||
-                      member.id === user.id ||
-                      (currentRole === UserRole.maintainer &&
-                        member.role === UserRole.owner)
-                    }
-                  >
-                    <Trash className="float-right h-5 w-5" strokeWidth={2} />
-                    <span className="sr-only">, {member.name}</span>
-                  </button>
+                  {renderSettingsButton(member)}
                 </td>
               </tr>
             ))}

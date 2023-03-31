@@ -77,17 +77,18 @@ enum UserRole {
 }
 
 model ProjectInvite {
-  id                  String    @id @default(cuid())
-  email               String
-  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId           String
-  createdAt           DateTime @default(now())
-  invitationToken     String
-  hashedPassword      String 
-  retryCount          Int @default(0)
-  invitedById         String?
-  role                UserRole @default(developer)
-  accepted            Boolean @default(false)
+  id                        String    @id @default(cuid())
+  email                     String
+  project                   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId                 String
+  createdAt                 DateTime @default(now())
+  invitationToken           String
+  invitationTokenExpiresAt  DateTime @default(now())
+  hashedPassword            String 
+  retryCount                Int @default(0)
+  invitedById               String?
+  role                      UserRole @default(developer)
+  accepted                  Boolean @default(false)
 
   @@unique(fields: [email, projectId], name: "uniq_email_project")
   @@unique([invitationToken])

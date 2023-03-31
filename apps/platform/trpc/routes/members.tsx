@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import Member from "@/models/member";
@@ -8,7 +8,7 @@ import { Access, UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
 import { randomBytes } from "crypto";
-import { addHours, isAfter } from "date-fns";
+import { add, addHours, isAfter } from "date-fns";
 import sendMail from "emails";
 import generatePassword from "omgopass";
 import { z } from "zod";
@@ -43,7 +43,7 @@ const checkAccessAndPermission = async ({
   // Check if user is owner or maintainer
   if (
     !(
-      currentUserRole == UserRole.maintainer ||
+      currentUserRole === UserRole.maintainer ||
       currentUserRole === UserRole.owner
     )
   ) {
@@ -244,6 +244,8 @@ export const members = createRouter({
       const password = await generatePassword();
       const hashedPassword = await argon2.hash(password);
 
+      const expiresAt = addHours(new Date(), 48);
+
       const record = await ctx.prisma.projectInvite.create({
         data: {
           projectId,
@@ -251,7 +253,8 @@ export const members = createRouter({
           role,
           invitationToken,
           hashedPassword,
-          invitedById: ctx.session?.user?.id as string,
+          invitedById: user.id,
+          invitationTokenExpiresAt: expiresAt,
         },
       });
 
@@ -287,13 +290,13 @@ export const members = createRouter({
         component: (
           <InviteLink
             headline={
-              <>
+              <Fragment>
                 Join <b>{project?.name}</b> on Envless
-              </>
+              </Fragment>
             }
             greeting="Hi there,"
             body={
-              <>
+              <Fragment>
                 You have been invited to join the project <b>{project?.name}</b>{" "}
                 on Envless. You will need this One-time password. Please note
                 that this invitation link will expire in 48 hours.
@@ -302,7 +305,7 @@ export const members = createRouter({
                 <code>
                   <pre>{password}</pre>
                 </code>
-              </>
+              </Fragment>
             }
             subText="If you did not request this email you can safely ignore it."
             buttonText={`Join ${project?.name}`}
@@ -311,7 +314,147 @@ export const members = createRouter({
         ),
       });
     }),
+  reInvite: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user;
+      const { projectId, email } = input;
+      const invited = await ctx.prisma.projectInvite.findFirst({
+        where: {
+          AND: [{ email }, { projectId }],
+        },
+      });
 
+      if (!invited) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invite not found",
+        });
+      }
+
+      if (invited.accepted) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "This member has already accepted the invitation",
+        });
+      }
+
+      const invitationToken = randomBytes(32).toString("hex");
+      const password = await generatePassword();
+      const hashedPassword = await argon2.hash(password);
+
+      const record = await ctx.prisma.projectInvite.update({
+        where: {
+          id: invited.id,
+        },
+        data: {
+          invitationToken,
+          invitedById: user.id,
+          hashedPassword,
+          invitationTokenExpiresAt: addHours(new Date(), 48),
+        },
+      });
+
+      if (record) {
+        await Audit.create({
+          projectId,
+          createdById: user.id,
+          action: "invite.recreated",
+          data: {
+            invite: {
+              id: record.id,
+              email: email,
+              role: record.role,
+            },
+          },
+        });
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong",
+        });
+      }
+
+      const project = await ctx.prisma.project.findUnique({
+        where: {
+          id: projectId,
+        },
+      });
+
+      sendMail({
+        subject: `Invitation to join ${project?.name} on Envless`,
+        to: email,
+        component: (
+          <InviteLink
+            headline={
+              <Fragment>
+                Join <b>{project?.name}</b> on Envless
+              </Fragment>
+            }
+            greeting="Hi there,"
+            body={
+              <Fragment>
+                You have been invited to join the project <b>{project?.name}</b>{" "}
+                on Envless. You will need this One-time password. Please note
+                that this invitation link will expire in 48 hours.
+                <br />
+                <br />
+                <code>
+                  <pre>{password}</pre>
+                </code>
+              </Fragment>
+            }
+            subText="If you did not request this email you can safely ignore it."
+            buttonText={`Join ${project?.name}`}
+            buttonLink={`${env.BASE_URL}/auth/invite/${invitationToken}`}
+          />
+        ),
+      });
+    }),
+  deleteInvite: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { projectId, email } = input;
+
+      const invite = await ctx.prisma.projectInvite.findFirst({
+        where: {
+          AND: [
+            { projectId },
+            { email },
+            {
+              invitationTokenExpiresAt: {
+                gt: new Date(), // Only allow deletion if the invite link has not expired yet
+              },
+            },
+          ],
+        },
+      });
+
+      if (!invite) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired invitation link",
+        });
+      }
+
+      await ctx.prisma.projectInvite.delete({
+        where: {
+          id: invite.id,
+        },
+      });
+
+      return { success: true };
+    }),
   acceptInvite: withoutAuth
     .input(
       z.object({
@@ -348,8 +491,7 @@ export const members = createRouter({
         });
       }
 
-      const expiresAt = addHours(invite.createdAt, 48);
-      const expired = isAfter(new Date(), new Date(expiresAt));
+      const expired = isAfter(new Date(), invite.invitationTokenExpiresAt);
 
       if (expired) {
         throw new TRPCError({

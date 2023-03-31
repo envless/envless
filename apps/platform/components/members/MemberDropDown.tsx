@@ -4,19 +4,19 @@ import { UserRole } from "@prisma/client";
 import clsx from "clsx";
 import { Check, ChevronDown, UserCog } from "lucide-react";
 
-interface MemeberDropdownProps {
+interface MemberDropdownProps {
   roles: UserRole[];
   setSelectedRole: (role: UserRole) => void;
   selectedRole: UserRole;
-  loading: boolean;
+  disabled: boolean;
 }
 
 export default function MemberDropDown({
   roles,
   selectedRole,
   setSelectedRole,
-  loading,
-}: MemeberDropdownProps) {
+  disabled,
+}: MemberDropdownProps) {
   const handleSelectRoleClick = (role: UserRole) => {
     setSelectedRole(role);
   };
@@ -25,7 +25,7 @@ export default function MemberDropDown({
     <Menu as="div" className="relative mt-4 inline-block w-full max-w-[200px]">
       <div className="w-full">
         <Menu.Button
-          disabled={loading}
+          disabled={disabled}
           className="border-dark bg-dark hover:bg-darker inline-flex w-full items-center truncate rounded border px-3 py-2 text-sm transition-colors duration-75 disabled:opacity-50 hover:disabled:text-current"
         >
           <div className="flex items-center">
@@ -53,7 +53,7 @@ export default function MemberDropDown({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="bg-darker ring-dark absolute left-0 z-10 mt-2 w-56 origin-top-left rounded-md shadow-xl ring-2 focus:outline-none">
+        <Menu.Items className="bg-darker ring-dark absolute left-0 z-10 mt-1 w-56 origin-top-left rounded-md shadow-xl ring-2 focus:outline-none">
           <div className="border-dark border-b px-3 py-3 text-xs">
             <p className="font-semibold">Change user role</p>
           </div>
