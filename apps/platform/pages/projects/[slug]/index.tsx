@@ -167,19 +167,6 @@ export const getServerSideProps = withAccessControl({
     developer: true,
     guest: true,
   },
-
-  // getServerSideProps: async (context) => {
-  //   const session = await getServerSideSession(context);
-  //   const userId = session?.user?.id as string;
-
-  //   const cli = await prisma.cli.findUnique({
-  //     where: { userId },
-  //   });
-
-  //   return {
-  //     props: { cli },
-  //   }
-  // },
 });
 
 export default ProjectPage;

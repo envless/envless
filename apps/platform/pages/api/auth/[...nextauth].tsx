@@ -114,7 +114,5 @@ export const authOptions: NextAuthOptions = {
 };
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-  const params = req.query;
-  console.log({ params });
   return await NextAuth(req, res, authOptions);
 }

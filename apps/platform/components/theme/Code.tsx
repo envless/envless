@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Clipboard, ClipboardCheck } from "lucide-react";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
-import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 /**
  * Props for the Code component
@@ -53,7 +53,7 @@ const Code: React.FC<Props> = ({ code, copy, language, className }) => {
         </div>
       )}
 
-      <SyntaxHighlighter language={language} style={dracula}>
+      <SyntaxHighlighter language={language} style={atomDark}>
         {code}
       </SyntaxHighlighter>
     </div>

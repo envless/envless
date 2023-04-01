@@ -12,8 +12,6 @@ interface SlideOverProps {
   setOpen: (open: boolean) => void;
   onClose: () => void;
   size?: Size;
-  submitButtonText?: string;
-  submitButtonIcon: React.ReactNode;
   children: React.ReactNode;
   closable?: boolean;
   footer?: React.ReactNode;

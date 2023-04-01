@@ -5,7 +5,7 @@ import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { ArrowRight } from "lucide-react";
 import CliSetup from "@/components/integrations/CliSetup";
-import { SlideOver } from "@/components/theme";
+import { Button, SlideOver } from "@/components/theme";
 import IntegrationsPage from "./index";
 
 interface Props {
@@ -44,9 +44,13 @@ export const CliIntegration = ({
           setOpen(false);
           router.push(`/projects/${currentProject.slug}/integrations`);
         }}
-        submitButtonText="Continue"
-        submitButtonIcon={
-          <ArrowRight className="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+        footer={
+          <div className="flex flex-shrink-0 justify-end px-4 py-4">
+            <Button className="ml-4" onClick={async () => {}}>
+              Save and continue
+              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+            </Button>
+          </div>
         }
       >
         <CliSetup currentProject={currentProject} />

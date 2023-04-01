@@ -15,8 +15,6 @@ const withCliAuth = (
 ) => {
   return async (req: NextCliApiRequest, res: NextApiResponse) => {
     try {
-      console.log("withCliAuth ==========>");
-      console.log(req.headers.authorization);
       if (
         !req.headers.authorization ||
         req.headers.authorization.indexOf("Basic ") === -1
