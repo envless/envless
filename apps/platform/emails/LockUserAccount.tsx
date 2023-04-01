@@ -22,7 +22,7 @@ type LockUserAccountProps = {
 const LockUserAccount: React.FC<LockUserAccountProps> = ({
   headline,
   greeting,
-  body
+  body,
 }) => {
   return (
     <Mjml>

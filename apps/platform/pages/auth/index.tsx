@@ -66,7 +66,13 @@ const Login = ({ csrfToken }) => {
               </div>
             )}
 
-            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="space-y-6"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(onSubmit)();
+              }}
+            >
               <Input
                 name="csrfToken"
                 type="hidden"

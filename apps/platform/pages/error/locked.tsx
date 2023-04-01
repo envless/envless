@@ -6,8 +6,8 @@ const LockedAccount = () => {
     <Container>
       <div className="mt-16">
         <EmptyState
-          icon={<ShieldClose className="m-3 mx-auto h-20 w-20 text-teal-400" />}
-          title={`Your account has been locked`}
+          icon={<ShieldClose className="m-3 mx-auto h-20 w-20 text-red-400" />}
+          title={`Your account is locked!`}
           subtitle="Please contact support for assistance."
         >
           {""}

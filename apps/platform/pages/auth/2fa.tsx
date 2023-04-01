@@ -5,17 +5,15 @@ import { Fragment, useState } from "react";
 import { env } from "@/env/index.mjs";
 import { Transition } from "@headlessui/react";
 import { Button, Hr } from "@/components/theme";
-import BaseModal from "@/components/theme/BaseModal";
 import TwoFactorForm from "@/components/twoFactorForm";
 import log from "@/lib/log";
 
 const TwoFactorAuth = () => {
-  const [modalVisible, setModalVisible] = useState(true);
   const router = useRouter();
 
   return (
     <Fragment>
-      <Transition appear show={!modalVisible} as={Fragment}>
+      <Transition appear show as={Fragment}>
         <Transition.Child
           as="div"
           enter="ease-out duration-300"
@@ -61,27 +59,6 @@ const TwoFactorAuth = () => {
           </div>
         </Transition.Child>
       </Transition>
-      <BaseModal
-        title="Verification Attempt Limit"
-        isOpen={modalVisible}
-        setIsOpen={setModalVisible}
-      >
-        <p className="text-light mt-2 text-center text-base leading-5">
-          Please note that you have a limited number of attempts to verify your
-          account. This number is set to{" "}
-          <b className="text-bold text-lighter">
-            {env.NEXT_PUBLIC_MAX_AUTH_ATTEMPTS}
-          </b>
-          , so please make sure to enter the correct information during each
-          attempt.
-        </p>
-        <Button
-          className="mx-auto mt-5 w-2/3"
-          onClick={() => setModalVisible(false)}
-        >
-          Got it
-        </Button>
-      </BaseModal>
     </Fragment>
   );
 };

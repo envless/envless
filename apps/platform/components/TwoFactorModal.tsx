@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
+import { signOut } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, Logo, Paragraph } from "@/components/theme";
 
@@ -40,7 +41,6 @@ const TwoFactorModal = (props: Props) => {
   }
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
-    // onSuccess: (code: { valid: boolean }) => {
     onSuccess: (valid: any) => {
       setLoading(false);
 
@@ -55,6 +55,10 @@ const TwoFactorModal = (props: Props) => {
     onError: (error) => {
       setLoading(false);
       setError(error.message);
+
+      if (error.message.includes("Your account has been locked")) {
+        signOut();
+      }
     },
   });
 
