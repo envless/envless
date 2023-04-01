@@ -268,11 +268,12 @@ model User {
   createdPRs        PullRequest[]    @relation(name: "createdBy")
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
+  locked            LockedUser?
 
   // Two factor authentication
   encryptedTwoFactorSecret Json?
   twoFactorEnabled         Boolean @default(false)
-  cliConfigured            Boolean @default(false)
+  failedAuthAttempts       Int     @default(0)
 
   marketing    Boolean @default(true)
   notification Boolean @default(true)
@@ -291,6 +292,16 @@ model Cli {
 
   @@index([userId])
   @@index([userId, active])
+}
+
+model LockedUser {
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  reason   String?
+  lockedAt DateTime @default(now())
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {

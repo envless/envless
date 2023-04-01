@@ -3,6 +3,7 @@ import MagicLink from "@/emails/MagicLink";
 import { env } from "@/env/index.mjs";
 import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { LockedUser } from "@prisma/client";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
@@ -73,6 +74,15 @@ export const authOptions: NextAuthOptions = {
           const session = await SessionHistory.create({ userId: user.id });
           token.sessionId = session.id;
         }
+
+        // Add the locked information to the token
+        const locked = await prisma.user
+          .findUnique({
+            where: { id: user.id },
+            include: { locked: true },
+          })
+          .then((user) => (user ? user.locked : null));
+        (token.user as any).locked = locked;
       }
 
       return token;
@@ -84,6 +94,7 @@ export const authOptions: NextAuthOptions = {
         name: string;
         email: string;
         twoFactorEnabled: boolean;
+        locked: LockedUser | null;
       } = token.user as any;
 
       if (user) {
@@ -96,11 +107,24 @@ export const authOptions: NextAuthOptions = {
             name: user?.name,
             email: user?.email,
             twoFactorEnabled: user?.twoFactorEnabled,
+            locked: user.locked,
           },
         };
       }
 
       return session;
+    },
+
+    async signIn({ user }) {
+      const signInUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { locked: true },
+      });
+
+      if (signInUser && signInUser.locked) {
+        return "/error/locked";
+      }
+      return true;
     },
   },
 

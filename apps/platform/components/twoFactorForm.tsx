@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
+import { signOut } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, LoadingIcon } from "@/components/theme";
 
@@ -61,6 +62,10 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
     onError: (error) => {
       setLoading(false);
       setError(error.message);
+
+      if (error.message.includes("Your account has been locked")) {
+        signOut();
+      }
     },
   });
 
@@ -73,7 +78,9 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = (props) => {
         onChange={handleOnChange}
       />
 
-      {error && <p className="px-3 pt-1 text-xs text-red-400/75">{error}</p>}
+      {error && (
+        <p className="px-3 pt-1 text-center text-xs text-red-400/75">{error}</p>
+      )}
 
       <Button
         disabled={loading}
