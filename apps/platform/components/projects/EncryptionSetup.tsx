@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateKey } from "@47ng/cloak";
+import { download } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
@@ -27,19 +28,6 @@ const EncryptionSetup = ({ ...props }) => {
       setCliModal(true);
     }
   }, [pageState]);
-
-  const download = (filename, text) => {
-    var element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text),
-    );
-    element.setAttribute("download", filename);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
 
   const { mutate: activateCli, isLoading: loadingUpdate } =
     trpc.cli.update.useMutation({

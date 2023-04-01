@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { download, formatDateTime } from "@/utils/helpers";
 import { Audit } from "@prisma/client";
 import {
   ColumnDef,
@@ -16,6 +17,7 @@ import {
   Filter,
   Search,
 } from "lucide-react";
+import * as csvParser from "papaparse";
 import { BaseInput, Button } from "@/components/theme";
 
 type AuditLogTableProps = {
@@ -146,9 +148,23 @@ export default function AuditLogTable({
 
           <div className="flex shrink-0 items-center">
             <button
-              aria-label="Download as JSON"
+              aria-label="Download as CSV"
               data-balloon-pos="up"
               className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+              onClick={() => {
+                const dataForCSV = auditLogs.map((auditLog: any) => {
+                  return {
+                    CreatedBy: auditLog.createdBy.name,
+                    Project: auditLog.project.name,
+                    Action: auditLog.action,
+                    Data: JSON.stringify(auditLog.data),
+                    CreatedAt: formatDateTime(auditLog.createdAt),
+                  };
+                });
+
+                const csv = csvParser.unparse(dataForCSV);
+                download("audit-logs.csv", csv);
+              }}
             >
               <Download className="h-5 w-5" />
             </button>

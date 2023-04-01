@@ -68,6 +68,7 @@
     "octokit": "^2.0.14",
     "openpgp": "^5.7.0",
     "otplib": "^12.0.1",
+    "papaparse": "^5.4.1",
     "react": "18.2.0",
     "react-auth-code-input": "^3.2.1",
     "react-code-blocks": "^0.0.9-0",
