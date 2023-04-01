@@ -21,8 +21,35 @@ The Envless CLI offers a convenient way to authenticate to your account directly
 
 To authenticate with the Envless CLI, follow these steps:
 
-<Tabs items={["Terminal"]}>
-  <Tab>``` envless auth ```</Tab>
+<Tabs items={["Terminal", "Help"]}>
+  <Tab>
+    ```ts
+    envless auth
+    ```
+  </Tab>
+
+  <Tab>
+    ```ts
+    envless auth --help
+
+    Login to Envless or create an account
+
+    USAGE
+      $ envless auth [-w email|github|gitlab]
+
+    FLAGS
+      -w, --with=<option>  <options: email|github|gitlab>
+
+    DESCRIPTION
+      Login to Envless or create an account
+
+    EXAMPLES
+      $ envless auth
+      $ envless auth --with email
+      $ envless auth --with github
+      $ envless auth --with gitlab
+    ```
+  </Tab>
 </Tabs>
 
 {/* TODO - needs some  ♥️ */}

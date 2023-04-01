@@ -5,7 +5,6 @@ import colors from "colors";
 import { randomBytes } from "crypto";
 import { addHours, sub } from "date-fns";
 import { random, sample, toLower } from "lodash";
-import generatePassword from "omgopass";
 import type { AccessType, ProjectInviteType } from "./types";
 
 const prisma = new PrismaClient();
@@ -19,7 +18,7 @@ const seedInvites = async (count: number = 10) => {
   });
 
   const inviteArray: ProjectInviteType[] = [];
-  const password = await generatePassword();
+  const password = await randomBytes(32).toString("hex");
   const hashedPassword = await argon2.hash(password);
 
   projects.forEach((project) => {

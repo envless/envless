@@ -36,13 +36,13 @@ const seed = async () => {
 
     console.log("Seeding database".underline.cyan);
     return prisma.$transaction(async () => {
-      await seedUsers(100);
-      await seedProjects(50);
+      await seedUsers(10);
+      await seedProjects(5);
       await seedAccesses();
       await seedE2EESetup();
       await seedBranches();
-      await seedInactiveUsers(25);
-      await seedInvites(25);
+      await seedInactiveUsers(5);
+      await seedInvites(5);
       await seedPullRequests();
     });
   } else {

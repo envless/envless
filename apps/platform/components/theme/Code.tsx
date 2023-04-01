@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Clipboard, ClipboardCheck } from "lucide-react";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/cjs/prism";
-import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 /**
  * Props for the Code component
@@ -12,6 +12,7 @@ import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
  */
 type Props = {
   code: string;
+  copy?: boolean;
   language: string;
   className?: string;
 };
@@ -20,7 +21,7 @@ type Props = {
  * Code component to display and copy code with syntax highlighting
  * @param {Props} props - The props for the component
  */
-const Code: React.FC<Props> = ({ code, language, className }) => {
+const Code: React.FC<Props> = ({ code, copy, language, className }) => {
   const [copied, setCopied] = useState(false);
 
   /**
@@ -35,21 +36,24 @@ const Code: React.FC<Props> = ({ code, language, className }) => {
 
   return (
     <div className={className}>
-      <div className="flex justify-end">
-        <button
-          className="absolute mt-5 mr-3 flex items-center justify-center"
-          onClick={() => {
-            copyToClipboard(code);
-          }}
-        >
-          {copied ? (
-            <ClipboardCheck className="h-5 w-5 text-teal-400" />
-          ) : (
-            <Clipboard className="h-5 w-5 text-gray-300" />
-          )}
-        </button>
-      </div>
-      <SyntaxHighlighter language={language} style={dracula}>
+      {copy && (
+        <div className="flex justify-end">
+          <button
+            className="absolute mt-5 mr-3 flex items-center justify-center"
+            onClick={() => {
+              copyToClipboard(code);
+            }}
+          >
+            {copied ? (
+              <ClipboardCheck className="h-5 w-5 text-teal-400" />
+            ) : (
+              <Clipboard className="h-5 w-5 text-gray-300" />
+            )}
+          </button>
+        </div>
+      )}
+
+      <SyntaxHighlighter language={language} style={atomDark}>
         {code}
       </SyntaxHighlighter>
     </div>

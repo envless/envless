@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
+import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { EncryptedProjectKey, PublicKey } from "@prisma/client";
@@ -10,6 +11,7 @@ import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import OpenPGP from "@/lib/encryption/openpgp";
+import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.

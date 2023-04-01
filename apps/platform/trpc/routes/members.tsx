@@ -7,10 +7,10 @@ import { ACCESS_CREATED } from "@/types/auditActions";
 import { Access, UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
+import crypto from "crypto";
 import { randomBytes } from "crypto";
 import { add, addHours, isAfter } from "date-fns";
 import sendMail from "emails";
-import generatePassword from "omgopass";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -241,7 +241,7 @@ export const members = createRouter({
       }
 
       const invitationToken = randomBytes(32).toString("hex");
-      const password = await generatePassword();
+      const password = randomBytes(32).toString("hex");
       const hashedPassword = await argon2.hash(password);
 
       const expiresAt = addHours(new Date(), 48);
