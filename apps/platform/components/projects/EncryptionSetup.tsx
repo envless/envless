@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateKey } from "@47ng/cloak";
-import { download } from "@/utils/helpers";
+import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
@@ -72,7 +72,7 @@ const EncryptionSetup = ({ ...props }) => {
         });
       })();
 
-      download("envless.key", privateKey);
+      downloadAsTextFile("envless.key", privateKey);
       setCliModal(true);
       setEncryptedProjectKey(projectKey.encryptedKey);
       setPageState("uploadKey");

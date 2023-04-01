@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { download, formatDateTime } from "@/utils/helpers";
-import { Audit } from "@prisma/client";
+import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
 import {
   ColumnDef,
   PaginationState,
@@ -163,7 +162,7 @@ export default function AuditLogTable({
                 });
 
                 const csv = csvParser.unparse(dataForCSV);
-                download("audit-logs.csv", csv);
+                downloadAsTextFile("audit-logs.csv", csv);
               }}
             >
               <Download className="h-5 w-5" />

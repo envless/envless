@@ -130,7 +130,7 @@ export const getNavigationTabs = (currentUserRole, projectUrl) => {
   return defaultTabs;
 };
 
-export const download = (filename, text) => {
+export const downloadAsTextFile = (filename, text) => {
   const element = document.createElement("a");
   element.setAttribute(
     "href",
