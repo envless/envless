@@ -138,7 +138,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
                   {
                     label: "Terminal",
                     lang: "shell",
-                    snippet: `envless init \\ \n --id ${cli.id} \\\n --token ${cli.token}`,
+                    snippet: `envless init \\\n --id ${cli.id} \\\n --token ${cli.token}`,
                   },
                   {
                     label: "Help",
@@ -179,12 +179,12 @@ const CliSetup = ({ currentProject }: CliProps) => {
                 {
                   label: "Terminal",
                   lang: "shell",
-                  snippet: `envless link \\ \n --project ${currentProject.id}`,
+                  snippet: `envless project link \\\n --projectId ${currentProject.id}`,
                 },
                 {
                   label: "Help",
                   lang: "shell",
-                  snippet: `envless link --help`,
+                  snippet: `envless project link --help`,
                 },
               ]}
             />
@@ -212,7 +212,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
                 {
                   label: "Terminal",
                   lang: "shell",
-                  snippet: `envless privateKey --copy`,
+                  snippet: `envless privateKey --secure --copy`,
                 },
                 {
                   label: "Help",

@@ -1,16 +1,10 @@
-// TODO: Complete auth implementation
-import { intro, isCancel, outro, select, spinner, text } from "@clack/prompts";
-import { Command, Flags, ux } from "@oclif/core";
-import * as keytar from "keytar";
-import { blue, bold, cyan, grey, underline, yellow } from "kleur/colors";
+import { intro, isCancel, outro, text } from "@clack/prompts";
+import { Command, Flags } from "@oclif/core";
+import { bold, cyan, grey } from "kleur/colors";
 import { triggerCancel } from "../lib/helpers";
-import {
-  saveCliConfigToKeyStore,
-  savePrivateKeyToKeyStore,
-} from "../lib/keyStore";
+import { saveCliConfigToKeyStore } from "../lib/keyStore";
 
 const API_BASE = process.env.API_BASE || `http://localhost:3000`;
-const loader = spinner();
 const LINKS = {
   login: `${API_BASE}/auth/login`,
   cliTokenDoc: `${API_BASE}/docs/cli/auth`,
@@ -19,7 +13,7 @@ const LINKS = {
 
 export default class Init extends Command {
   static description = `Initialize Envless CLI \n${grey(
-    `💡 Please make sure you have created a project and setup CLI id and token on the dashboard. If you do not have a project, create one at \n${cyan(
+    `⚡ Please make sure you have created a project and setup CLI id and token on the dashboard. If you do not have a project, create one at \n${cyan(
       LINKS.login,
     )}`,
   )}`;
@@ -31,7 +25,11 @@ export default class Init extends Command {
     }),
     token: Flags.string({
       char: "t",
-      description: "CLI Token",
+      description: "Cli Token",
+    }),
+    help: Flags.help({
+      char: "h",
+      description: "Show help for the init command",
     }),
   };
 
@@ -47,10 +45,9 @@ export default class Init extends Command {
     const { flags } = await this.parse(Init);
     flags.id ||= process.env.ENVLESS_CLI_ID;
     flags.token ||= process.env.ENVLESS_CLI_TOKEN;
+    this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    await intro(
-      `${bold(cyan(`Initializing Envless CLI ${grey(`${version}`)}`))}`,
-    );
+    await intro(`${bold(cyan(`Initializing Envless CLI ...`))}`);
 
     if (!flags.id) {
       const id: any = await text({

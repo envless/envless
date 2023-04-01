@@ -1,4 +1,4 @@
-// TODO: Complete auth implementation
+// TODO: Complete oAuth implementation
 import {
   cancel,
   intro,
@@ -8,14 +8,10 @@ import {
   spinner,
   text,
 } from "@clack/prompts";
-import { Command, Flags, ux } from "@oclif/core";
-import * as keytar from "keytar";
-import { blue, bold, cyan, grey, underline, yellow } from "kleur/colors";
-import OpenPGP from "../lib/encryption/openpgp.js";
-import { isValidEmail } from "../lib/helpers.js";
+import { Command, Flags } from "@oclif/core";
+import { blue, bold, cyan, grey, underline } from "kleur/colors";
 
 const API_BASE = process.env.API_BASE || `http://localhost:3000`;
-const ENDPOINT = `${API_BASE}/api/cli/login`;
 const opn = require("better-opn");
 
 const loader = spinner();
@@ -41,10 +37,9 @@ export default class Auth extends Command {
   async run(): Promise<void> {
     const version = this.config.version;
     await intro(`👋 ${bold(cyan(`Welcome to Envless ${grey(`${version}`)}`))}`);
-
     const { flags } = await this.parse(Auth);
-    let provider = flags.with;
-    if (!provider) {
+
+    if (!flags.with) {
       const response: any = await select({
         message: "Login to Envless or create an account",
         options: [
@@ -55,7 +50,7 @@ export default class Auth extends Command {
       });
 
       isCancel(response) && triggerCancel();
-      provider = response;
+      flags.with = response;
     }
 
     const loginUrl = `${API_BASE}/auth?clientId=xxx`;
@@ -90,16 +85,4 @@ export default class Auth extends Command {
 const triggerCancel = () => {
   cancel("Opeartion cancelled");
   process.exit(0);
-};
-
-const handleKeyChain = async (email: string) => {
-  const publicKey = await keytar.getPassword("envless-cli", "publicKey");
-  const privateKey = await keytar.getPassword("envless-cli", "privateKey");
-  const jwtToken = await keytar.getPassword("envless-cli", "jwtToken");
-
-  if (!publicKey || !privateKey) {
-    const pgp = await OpenPGP.generageKeyPair("CLI", email);
-    await keytar.setPassword("envless-cli", "publicKey", pgp.publicKey);
-    await keytar.setPassword("envless-cli", "privateKey", pgp.privateKey);
-  }
 };
