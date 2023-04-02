@@ -1,12 +1,12 @@
 import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { User } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
-import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Hr, Input, Paragraph, Toggle } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
@@ -24,7 +24,6 @@ interface SettingProps {
 
 const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   const {
-    reset,
     setError,
     register,
     handleSubmit,
@@ -32,9 +31,8 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({} as SettingProps);
-  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
   const router = useRouter();
+  const { openModal, withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (_data) => {
@@ -70,33 +68,14 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
   };
 
   const submitWithTwoFactor = async (data) => {
-    if (user.twoFactorEnabled) {
-      setFormData(data);
-      setTwoFactorRequired(true);
-      return;
-    } else {
-      setTwoFactorRequired(false);
-      handleSubmit(
-        saveSettings(data as SettingProps) as SubmitHandler<SettingProps>,
-      );
-    }
+    withTwoFactorAuth(() => {
+      saveSettings(data as SettingProps);
+    });
   };
 
   return (
     <SettingsLayout tab={"account"} user={user}>
       <h3 className="mb-8 text-lg">Account settings</h3>
-      <TwoFactorModal
-        open={twoFactorRequired}
-        onStateChange={setTwoFactorRequired}
-        onConfirm={() => {
-          setTwoFactorRequired(false);
-          handleSubmit(
-            saveSettings(
-              formData as SettingProps,
-            ) as SubmitHandler<SettingProps>,
-          );
-        }}
-      />
 
       <div className="w-full lg:w-3/5">
         <form onSubmit={handleSubmit(submitWithTwoFactor)}>
@@ -169,6 +148,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
           </Button>
         </form>
       </div>
+      <TwoFactorModal open={openModal} />
     </SettingsLayout>
   );
 };

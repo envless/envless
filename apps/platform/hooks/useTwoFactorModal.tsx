@@ -1,8 +1,10 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React from "react";
+import { Fragment, useEffect, useState } from "react";
+import type { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, Logo, Paragraph } from "@/components/theme";
 
@@ -14,8 +16,7 @@ import { Button, Logo, Paragraph } from "@/components/theme";
 
 interface Props {
   open: boolean;
-  onConfirm: () => any;
-  onStateChange: (state: boolean) => any;
+  // onConfirm: () => any;
 }
 
 /**
@@ -37,7 +38,6 @@ const TwoFactorModal = (props: Props) => {
    */
   function closeModal() {
     setOpen(false);
-    props.onStateChange(false);
   }
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
@@ -46,7 +46,7 @@ const TwoFactorModal = (props: Props) => {
 
       if (valid) {
         closeModal();
-        props.onConfirm();
+        // props.onConfirm();
       } else {
         setError("Please enter a valid code");
       }
@@ -173,4 +173,30 @@ const TwoFactorModal = (props: Props) => {
   );
 };
 
-export default TwoFactorModal;
+export const useTwoFactorModal = () => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const { twoFactor } = trpc.useContext();
+  const { data: session } = useSession();
+  const user = session?.user as UserType;
+
+  // Function to wrap mission-critical function calls with two-factor auth
+  async function withTwoFactorAuth(fn: Function) {
+    twoFactor.checkTwoFactorState
+      .fetch()
+      .then(async ({ twoFactorVerified }) => {
+        // Check two-factor auth status
+        if (user.twoFactorEnabled && !twoFactorVerified) {
+          setOpenModal(true);
+        } else if (twoFactorVerified) {
+          // Two-factor auth already verified, execute the original function
+          await fn();
+        } else {
+          // Two-factor auth disabled, execute the original function
+          await fn();
+        }
+      });
+  }
+
+  return { openModal, withTwoFactorAuth, TwoFactorModal };
+};

@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { useState } from "react";
+import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@prisma/client";
 import { capitalize } from "lodash";
 import { ArrowRight, UserPlus } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 
@@ -23,13 +22,12 @@ const selectOptions = Object.values(UserRole).map((role) => ({
   label: capitalize(role),
 }));
 
-const AddMemberModal = ({ user, projectId }) => {
+const AddMemberModal = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({} as MemberProps);
-  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+
+  const { openModal, withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   const {
-    reset,
     register,
     setError,
     handleSubmit,
@@ -72,17 +70,10 @@ const AddMemberModal = ({ user, projectId }) => {
     setLoading(false);
   };
 
-  const submitWithTwoFactor = async (data) => {
-    if (user.twoFactorEnabled) {
-      setFormData(data);
-      setTwoFactorRequired(true);
-      return;
-    } else {
-      setTwoFactorRequired(false);
-      handleSubmit(
-        inviteMembers(data as MemberProps) as SubmitHandler<MemberProps>,
-      );
-    }
+  const submitHandler = (data) => {
+    withTwoFactorAuth(() => {
+      inviteMembers(data as MemberProps);
+    });
   };
 
   return (
@@ -97,21 +88,10 @@ const AddMemberModal = ({ user, projectId }) => {
       title="Invite team member"
     >
       <TwoFactorModal
-        open={twoFactorRequired}
-        onStateChange={setTwoFactorRequired}
-        onConfirm={() => {
-          setTwoFactorRequired(false);
-          // handleSubmit(inviteMembers(formData));
-          handleSubmit(
-            inviteMembers(
-              formData as MemberProps,
-            ) as SubmitHandler<MemberProps>,
-          );
-          reset();
-        }}
+        open={openModal}
       />
 
-      <form onSubmit={handleSubmit(submitWithTwoFactor)}>
+      <form onSubmit={handleSubmit(submitHandler)}>
         <Input
           type="email"
           name="email"

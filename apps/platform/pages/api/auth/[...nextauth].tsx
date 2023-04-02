@@ -103,10 +103,10 @@ export const authOptions: NextAuthOptions = {
           ...session,
           id: sessionId,
           user: {
-            id: user?.id,
-            name: user?.name,
-            email: user?.email,
-            twoFactorEnabled: user?.twoFactorEnabled,
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
           },
         };

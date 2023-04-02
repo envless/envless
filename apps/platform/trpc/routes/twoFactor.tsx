@@ -201,4 +201,18 @@ export const twoFactor = createRouter({
         valid: isValid,
       };
     }),
+  checkTwoFactorState: withAuth.query(async ({ ctx }) => {
+    const { id } = ctx.session;
+    const sessionStore = (await redis.get(`session:${id}`)) as any;
+
+    if (!sessionStore) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "Something went wrong, our engineers are aware of it and are working on a fix.",
+      });
+    }
+
+    return { twoFactorVerified: sessionStore?.mfa || false };
+  }),
 });
