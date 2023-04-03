@@ -60,7 +60,7 @@
     "mailing-core": "^0.9.12",
     "moment": "^2.29.4",
     "next": "^13.2.1",
-    "next-auth": "^4.20.1",
+    "next-auth": "^4.21.1",
     "next-seo": "^5.14.1",
     "nextjs-progressbar": "^0.0.16",
     "node-html-parser": "^6.1.5",
