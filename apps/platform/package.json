@@ -115,7 +115,7 @@
     "tailwindcss": "^3.2.7",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
-    "typescript": "^5.0.2",
+    "typescript": "^5.0.3",
     "vitest": "^0.29.3"
   }
 }
