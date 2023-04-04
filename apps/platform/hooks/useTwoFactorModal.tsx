@@ -1,10 +1,8 @@
-import React from "react";
-import { Fragment, useEffect, useState } from "react";
-import type { UserType } from "@/types/resources";
+import React, { useCallback } from "react";
+import { Fragment, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
-import { fn } from "moment";
 import { signOut, useSession } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, Logo, Paragraph } from "@/components/theme";
@@ -17,6 +15,7 @@ import { Button, Logo, Paragraph } from "@/components/theme";
 
 interface Props {
   open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onConfirm: Function;
 }
 
@@ -24,15 +23,12 @@ interface Props {
  * A modal component.
  * @param {Props} props - The props for the component.
  */
-const TwoFactorModal = (props: Props) => {
-  const [open, setOpen] = useState(props.open);
+const TwoFactorModal = ({ open, setOpen, onConfirm }: Props) => {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    setOpen(props.open);
-  }, [props.open]);
+  const { data: session, update } = useSession();
 
   /**
    * Closes the modal.
@@ -42,12 +38,24 @@ const TwoFactorModal = (props: Props) => {
   }
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
-    onSuccess: (valid: any) => {
+    onSuccess: async (valid: any) => {
       setLoading(false);
 
       if (valid) {
         closeModal();
-        props.onConfirm();
+
+        // Update the session
+        const updatedSession = {
+          ...session,
+          user: {
+            ...session?.user,
+            clientSideTwoFactorVerified: true,
+          },
+        };
+
+        await update(updatedSession);
+
+        onConfirm();
       } else {
         setError("Please enter a valid code");
       }
@@ -174,18 +182,6 @@ const TwoFactorModal = (props: Props) => {
   );
 };
 
-interface WrapTwoFactorModalProps {
-  callback: (fn: Function) => Promise<void>;
-  open: boolean;
-}
-
-const wrapTwoFactorModal = ({ callback, open }: WrapTwoFactorModalProps) => {
-  const WrappedTwoFactorModal = () => (
-    <TwoFactorModal open={open} onConfirm={callback} />
-  );
-  return WrappedTwoFactorModal;
-};
-
 /**
  * A custom hook that provides the ability to wrap a mission-critical function with two-factor authentication.
  *
@@ -196,28 +192,51 @@ const wrapTwoFactorModal = ({ callback, open }: WrapTwoFactorModalProps) => {
 
 export const useTwoFactorModal = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [originalFunction, setOriginalFunction] = useState<Function | null>(
+    null,
+  );
 
   const { data: session } = useSession();
-  const user = session?.user as UserType;
 
   // Wrap a function with two-factor authentication
-  async function withTwoFactorAuth(fn: Function) {
-    if (user.twoFactorEnabled && !user.clientSideTwoFactorVerified) {
-      setOpenModal(true);
-    } else if (user.clientSideTwoFactorVerified) {
-      // Two-factor auth already verified, execute the original function
-      await fn();
-    } else {
-      // Two-factor auth disabled, execute the original function
-      await fn();
+  const withTwoFactorAuth = useCallback(
+    async (fn: Function) => {
+      const user = session?.user;
+
+      if (user?.twoFactorEnabled && !user?.clientSideTwoFactorVerified) {
+        setOriginalFunction(() => fn);
+        setOpenModal(true);
+      } else if (user?.clientSideTwoFactorVerified) {
+        // Two-factor auth already verified, execute the original function
+        await fn();
+        setOpenModal(false);
+      } else {
+        // Two-factor auth disabled, execute the original function
+        await fn();
+        setOpenModal(false);
+      }
+    },
+    [session?.user],
+  );
+
+  // Function to run the original function after 2FA is verified
+  const runOriginalFunction = useCallback(async () => {
+    if (originalFunction) {
+      await originalFunction();
+      setOriginalFunction(null);
     }
-  }
+  }, [originalFunction]);
+
+  const WrappedTwoFactorModal = () => (
+    <TwoFactorModal
+      open={openModal}
+      onConfirm={runOriginalFunction}
+      setOpen={setOpenModal}
+    />
+  );
 
   return {
     withTwoFactorAuth,
-    TwoFactorModal: wrapTwoFactorModal({
-      callback: withTwoFactorAuth,
-      open: openModal,
-    }),
+    TwoFactorModal: WrappedTwoFactorModal,
   };
 };

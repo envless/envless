@@ -5,7 +5,7 @@ export interface UserType {
   name?: string;
   email: string;
   image?: string;
-  role?: UserRole;
+  role: UserRole;
   twoFactorEnabled: boolean;
   clientSideTwoFactorVerified: boolean;
   locked: LockedUser | null;
