@@ -32,7 +32,7 @@ const e2eeSetup = async () => {
     const userPGP = await OpenPGP.generageKeyPair(user.name || "", user.email);
     const { publicKey, privateKey } = userPGP;
 
-    await prisma.publicKey.create({
+    await prisma.userPublicKey.create({
       data: {
         key: publicKey,
         userId: user.id,

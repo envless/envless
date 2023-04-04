@@ -60,3 +60,12 @@ export type PullRequestType = {
 export type PullRequestStatusType = {
   status: "open" | "closed" | "merged";
 };
+
+export type SecretType = {
+  id?: string;
+  encryptedKey: string;
+  encryptedValue: string;
+  projectId: string;
+  userId: string;
+  branchId: string;
+};
