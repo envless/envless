@@ -32,7 +32,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { openModal, withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
+  const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   const accountMutation = trpc.account.update.useMutation({
     onSuccess: (_data) => {
@@ -148,7 +148,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
           </Button>
         </form>
       </div>
-      <TwoFactorModal open={openModal} />
+      <TwoFactorModal />
     </SettingsLayout>
   );
 };

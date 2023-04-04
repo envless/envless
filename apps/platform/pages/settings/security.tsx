@@ -41,7 +41,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
   const [enabled, setEnabled] = useState(twoFactor.enabled);
 
-  const { openModal, withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
+  const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   useEffect(() => {
     setEnabled(twoFactor.enabled);
@@ -197,7 +197,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
         )}
       </div>
 
-      <TwoFactorModal open={openModal} />
+      <TwoFactorModal />
     </SettingsLayout>
   );
 };
