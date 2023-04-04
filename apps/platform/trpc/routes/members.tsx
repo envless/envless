@@ -345,7 +345,7 @@ export const members = createRouter({
       }
 
       const invitationToken = randomBytes(32).toString("hex");
-      const password = await generatePassword();
+      const password = randomBytes(32).toString("hex");
       const hashedPassword = await argon2.hash(password);
 
       const record = await ctx.prisma.projectInvite.update({

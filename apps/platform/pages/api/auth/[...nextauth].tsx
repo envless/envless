@@ -124,7 +124,7 @@ export const authOptions: NextAuthOptions = {
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
             clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
-          },
+          } as any,
         };
       }
 
