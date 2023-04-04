@@ -4,6 +4,7 @@ import type { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
+import { fn } from "moment";
 import { signOut, useSession } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, Logo, Paragraph } from "@/components/theme";
@@ -16,7 +17,7 @@ import { Button, Logo, Paragraph } from "@/components/theme";
 
 interface Props {
   open: boolean;
-  // onConfirm: () => any;
+  onConfirm: Function;
 }
 
 /**
@@ -46,7 +47,7 @@ const TwoFactorModal = (props: Props) => {
 
       if (valid) {
         closeModal();
-        // props.onConfirm();
+        props.onConfirm();
       } else {
         setError("Please enter a valid code");
       }
@@ -173,30 +174,50 @@ const TwoFactorModal = (props: Props) => {
   );
 };
 
+interface WrapTwoFactorModalProps {
+  callback: (fn: Function) => Promise<void>;
+  open: boolean;
+}
+
+const wrapTwoFactorModal = ({ callback, open }: WrapTwoFactorModalProps) => {
+  const WrappedTwoFactorModal = () => (
+    <TwoFactorModal open={open} onConfirm={callback} />
+  );
+  return WrappedTwoFactorModal;
+};
+
+/**
+ * A custom hook that provides the ability to wrap a mission-critical function with two-factor authentication.
+ *
+ * @returns {Object} An object containing two properties:
+ * - withTwoFactorAuth: a function that takes in another function as an argument and returns a promise. The provided function is only executed after two-factor authentication is confirmed and valid.
+ * - TwoFactorModal: a React component that can be used to display a two-factor authentication modal. The component should be rendered without providing any props.
+ */
+
 export const useTwoFactorModal = () => {
   const [openModal, setOpenModal] = useState(false);
 
-  const { twoFactor } = trpc.useContext();
   const { data: session } = useSession();
   const user = session?.user as UserType;
 
-  // Function to wrap mission-critical function calls with two-factor auth
+  // Wrap a function with two-factor authentication
   async function withTwoFactorAuth(fn: Function) {
-    twoFactor.checkTwoFactorState
-      .fetch()
-      .then(async ({ twoFactorVerified }) => {
-        // Check two-factor auth status
-        if (user.twoFactorEnabled && !twoFactorVerified) {
-          setOpenModal(true);
-        } else if (twoFactorVerified) {
-          // Two-factor auth already verified, execute the original function
-          await fn();
-        } else {
-          // Two-factor auth disabled, execute the original function
-          await fn();
-        }
-      });
+    if (user.twoFactorEnabled && !user.clientSideTwoFactorVerified) {
+      setOpenModal(true);
+    } else if (user.clientSideTwoFactorVerified) {
+      // Two-factor auth already verified, execute the original function
+      await fn();
+    } else {
+      // Two-factor auth disabled, execute the original function
+      await fn();
+    }
   }
 
-  return { openModal, withTwoFactorAuth, TwoFactorModal };
+  return {
+    withTwoFactorAuth,
+    TwoFactorModal: wrapTwoFactorModal({
+      callback: withTwoFactorAuth,
+      open: openModal,
+    }),
+  };
 };

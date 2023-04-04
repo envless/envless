@@ -68,7 +68,10 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.user = user;
+        token.user = {
+          ...user,
+          clientSideTwoFactorVerified: false,
+        };
 
         if (!token.sessionId) {
           const session = await SessionHistory.create({ userId: user.id });
@@ -95,6 +98,7 @@ export const authOptions: NextAuthOptions = {
         email: string;
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
+        clientSideTwoFactorVerified: boolean;
       } = token.user as any;
 
       if (user) {
@@ -108,6 +112,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
+            clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
           },
         };
       }
@@ -124,6 +129,7 @@ export const authOptions: NextAuthOptions = {
       if (signInUser && signInUser.locked) {
         return "/error/locked";
       }
+
       return true;
     },
   },

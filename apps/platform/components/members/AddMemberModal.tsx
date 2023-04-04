@@ -25,7 +25,7 @@ const selectOptions = Object.values(UserRole).map((role) => ({
 const AddMemberModal = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
 
-  const { openModal, withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
+  const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   const {
     register,
@@ -87,9 +87,7 @@ const AddMemberModal = ({ projectId }) => {
       }
       title="Invite team member"
     >
-      <TwoFactorModal
-        open={openModal}
-      />
+      <TwoFactorModal />
 
       <form onSubmit={handleSubmit(submitHandler)}>
         <Input
