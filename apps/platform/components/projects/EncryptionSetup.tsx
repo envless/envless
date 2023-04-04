@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { generateKey } from "@47ng/cloak";
+import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
@@ -23,8 +24,8 @@ const EncryptionSetup = ({ ...props }) => {
     encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
   );
 
-  useEffect(() => {
-    if (pageState === "uploadKey") {
+  useUpdateEffect(() => {
+    if (pageState === "uploadKey" && !cliModal) {
       setCliModal(true);
     }
   }, [pageState]);
