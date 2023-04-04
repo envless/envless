@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useCallback } from "react";
+import { Fragment, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { Dialog, Transition } from "@headlessui/react";
 import { X } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import AuthCode from "react-auth-code-input";
 import { Button, Logo, Paragraph } from "@/components/theme";
 
@@ -14,39 +15,47 @@ import { Button, Logo, Paragraph } from "@/components/theme";
 
 interface Props {
   open: boolean;
-  onConfirm: () => any;
-  onStateChange: (state: boolean) => any;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onConfirm: Function;
 }
 
 /**
  * A modal component.
  * @param {Props} props - The props for the component.
  */
-const TwoFactorModal = (props: Props) => {
-  const [open, setOpen] = useState(props.open);
+const TwoFactorModal = ({ open, setOpen, onConfirm }: Props) => {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    setOpen(props.open);
-  }, [props.open]);
+  const { data: session, update } = useSession();
 
   /**
    * Closes the modal.
    */
   function closeModal() {
     setOpen(false);
-    props.onStateChange(false);
   }
 
   const verifyTwoFactorMutation = trpc.twoFactor.verify.useMutation({
-    onSuccess: (valid: any) => {
+    onSuccess: async (valid: any) => {
       setLoading(false);
 
       if (valid) {
         closeModal();
-        props.onConfirm();
+
+        // Update the session
+        const updatedSession = {
+          ...session,
+          user: {
+            ...session?.user,
+            clientSideTwoFactorVerified: true,
+          },
+        };
+
+        await update(updatedSession);
+
+        onConfirm();
       } else {
         setError("Please enter a valid code");
       }
@@ -173,4 +182,61 @@ const TwoFactorModal = (props: Props) => {
   );
 };
 
-export default TwoFactorModal;
+/**
+ * A custom hook that provides the ability to wrap a mission-critical function with two-factor authentication.
+ *
+ * @returns {Object} An object containing two properties:
+ * - withTwoFactorAuth: a function that takes in another function as an argument and returns a promise. The provided function is only executed after two-factor authentication is confirmed and valid.
+ * - TwoFactorModal: a React component that can be used to display a two-factor authentication modal. The component should be rendered without providing any props.
+ */
+
+export const useTwoFactorModal = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [originalFunction, setOriginalFunction] = useState<Function | null>(
+    null,
+  );
+
+  const { data: session } = useSession();
+
+  // Wrap a function with two-factor authentication
+  const withTwoFactorAuth = useCallback(
+    async (fn: Function) => {
+      const user = session?.user;
+
+      if (user?.twoFactorEnabled && !user?.clientSideTwoFactorVerified) {
+        setOriginalFunction(() => fn);
+        setOpenModal(true);
+      } else if (user?.clientSideTwoFactorVerified) {
+        // Two-factor auth already verified, execute the original function
+        await fn();
+        setOpenModal(false);
+      } else {
+        // Two-factor auth disabled, execute the original function
+        await fn();
+        setOpenModal(false);
+      }
+    },
+    [session?.user],
+  );
+
+  // Function to run the original function after 2FA is verified
+  const runOriginalFunction = useCallback(async () => {
+    if (originalFunction) {
+      await originalFunction();
+      setOriginalFunction(null);
+    }
+  }, [originalFunction]);
+
+  const WrappedTwoFactorModal = () => (
+    <TwoFactorModal
+      open={openModal}
+      onConfirm={runOriginalFunction}
+      setOpen={setOpenModal}
+    />
+  );
+
+  return {
+    withTwoFactorAuth,
+    TwoFactorModal: WrappedTwoFactorModal,
+  };
+};
