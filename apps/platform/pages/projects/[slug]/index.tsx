@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
-import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { EncryptedProjectKey, PublicKey } from "@prisma/client";
@@ -11,7 +11,6 @@ import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import OpenPGP from "@/lib/encryption/openpgp";
-import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -71,7 +70,7 @@ export const ProjectPage = ({
 
   const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     const getPrivateKey = sessionStorage.getItem("privateKey");
 
     if (getPrivateKey) {
@@ -83,9 +82,9 @@ export const ProjectPage = ({
         },
       });
     }
-  }, [encryptionKeys]);
+  }, [encryptionKeys.personal.publicKey]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     (async () => {
       const privateKey = encryptionKeys.personal.privateKey;
       const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
@@ -97,10 +96,7 @@ export const ProjectPage = ({
         )) as string;
 
         setEncryptionKeys({
-          personal: {
-            ...encryptionKeys.personal,
-          },
-
+          ...encryptionKeys,
           project: {
             ...encryptionKeys.project,
             decryptedProjectKey: decryptedProjectKey,
@@ -108,7 +104,7 @@ export const ProjectPage = ({
         });
       }
     })();
-  }, [encryptionKeys.personal, encryptionKeys.project]);
+  }, [encryptionKeys.project.encryptedProjectKey]);
 
   return (
     <ProjectLayout
