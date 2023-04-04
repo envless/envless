@@ -1076,10 +1076,10 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^2", "@oclif/core@^2.6.2", "@oclif/core@^2.6.4", "@oclif/core@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.7.1.tgz#3f38c1ace1675d80b0bbaa3ae5d4572b8fa04c22"
-  integrity sha512-HnaZ0ezNJUGok4uACOmVl05aSrCblmuq5Sqyg3Qa8aLFnTBuvHn3d67fTJKSttyAnJ5LI3zw8e5vzLD7WZuP0A==
+"@oclif/core@^2", "@oclif/core@^2.6.2", "@oclif/core@^2.6.4", "@oclif/core@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.0.tgz#4948de3168804169fa68895af8ec4853f332b307"
+  integrity sha512-A2wHItFrD/WOw5bJ6Mtv9MD7If0bsKNR0pwEY0me+fo4HSXlJOtgYGqmzb8t8akX3DUUT7XsjPajsoHLkIJyvg==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -9069,10 +9069,10 @@ negotiator@0.6.3, negotiator@^0.6.2, negotiator@^0.6.3:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.3.tgz#58e323a72fedc0d6f9cd4d31fe49f51479590ccd"
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
-next-auth@^4.20.1:
-  version "4.20.1"
-  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.20.1.tgz#6e65c4fde14171f6ce64f05f672f80f39fc418c7"
-  integrity sha512-ZcTUN4qzzZ/zJYgOW0hMXccpheWtAol8QOMdMts+LYRcsPGsqf2hEityyaKyECQVw1cWInb9dF3wYwI5GZdEmQ==
+next-auth@^4.21.1:
+  version "4.21.1"
+  resolved "https://registry.yarnpkg.com/next-auth/-/next-auth-4.21.1.tgz#8db520395b2c697bd1259b76831d319728f0d50d"
+  integrity sha512-NYkU4jAPSVxWhCblE8dDFAnKM7kOoO/QEobQ0RoEVP9Wox99A3PKHwOAsWhSg8ahJG/iKIWk2Bo1xHvsS4R39Q==
   dependencies:
     "@babel/runtime" "^7.20.13"
     "@panva/hkdf" "^1.0.2"
@@ -9556,11 +9556,11 @@ oblivious-set@1.0.0:
   integrity sha512-z+pI07qxo4c2CulUHCDf9lcqDlMSo72N/4rLUpRXf6fu+q8vjt8y0xS+Tlf8NTJDdTXHbdeO1n3MlbctwEoXZw==
 
 oclif@^3:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/oclif/-/oclif-3.7.2.tgz#52bcfc5fcdf996fc7f27a9d3729f63aa0c8225e3"
-  integrity sha512-mKzQQ4GFbsuqtzvN3nHYZu2SYLDX670Sa7UItTCOFNJY3S/e65Dcj+Nx/dBPMolESWjW6fIk8I8+kuGeiGVNXw==
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/oclif/-/oclif-3.7.3.tgz#822bb37626e65bf49d6644f07477dc3523fe0f4f"
+  integrity sha512-yQ85UkSJAsDIRx0DXrp287GyvsBc2piyk3a8wup8/T+wxmsdEvWW+SaDWIQfpHNzMHYHrGus0hGW2ZwNvcNgjg==
   dependencies:
-    "@oclif/core" "^2.7.1"
+    "@oclif/core" "^2.8.0"
     "@oclif/plugin-help" "^5.1.19"
     "@oclif/plugin-not-found" "^2.3.7"
     "@oclif/plugin-warn-if-update-available" "^2.0.14"

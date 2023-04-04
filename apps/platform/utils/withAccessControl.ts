@@ -103,7 +103,7 @@ export function withAccessControl<P = Record<string, unknown>>({
     let encryptionProps = {};
 
     if (withEncryptedProjectKey) {
-      const publicKey = await prisma.publicKey.findFirst({
+      const publicKey = await prisma.userPublicKey.findFirst({
         where: {
           userId: user?.id,
         },

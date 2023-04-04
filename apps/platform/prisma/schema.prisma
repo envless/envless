@@ -58,7 +58,7 @@ model EncryptedProjectKey {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
-model PublicKey {
+model UserPublicKey {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -180,12 +180,11 @@ enum PullRequestStatus {
 }
 
 model Secret {
-  id        String   @id @default(cuid())
-  cipher    String   @default("aes-256-gcm")
-  iv        String   @default("")
-  tag       String   @default("")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(cuid())
+  encryptedKey   String
+  encryptedValue String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   userId   String
   branchId String
@@ -260,7 +259,7 @@ model User {
   sessions          Session[]
   sessionHistories  SessionHistory[]
   access            Access[]
-  publicKeys        PublicKey[]
+  userPublicKeys    UserPublicKey[]
   secrets           Secret[]
   auditsCreatedBy   Audit[]          @relation(name: "createdBy")
   auditsCreatedFor  Audit[]          @relation(name: "createdFor")
