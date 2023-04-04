@@ -19,7 +19,7 @@ export const keys = createRouter({
       const { prisma } = ctx;
       const { user } = ctx.session;
       const { personal, project } = input;
-      const publicKey = await prisma.publicKey.create({
+      const publicKey = await prisma.userPublicKey.create({
         data: {
           userId: user.id,
           key: personal.publicKey,
