@@ -30,6 +30,9 @@ jobs:
  
         - name: Install dependencies
           run: yarn install
+
+        - name: Generate Prisma Types
+          run: yarn run db:generate
  
         - name: Build
           run: yarn build
