@@ -38,6 +38,7 @@ jobs:
           run: yarn build
           env:
             SKIP_ENV_VALIDATION: true
+            EMAIL_FROM: envless@example.com
  
         - name: Test
           run: yarn test
