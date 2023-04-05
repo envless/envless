@@ -3,7 +3,11 @@ import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { PullRequest, UserRole } from "@prisma/client";
+import type {
+  Project as ProjectType,
+  PullRequest,
+  UserRole,
+} from "@prisma/client";
 import { GitPullRequestClosed } from "lucide-react";
 import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
@@ -19,11 +23,11 @@ import { Button } from "@/components/theme";
  */
 
 interface Props {
-  projects: Project[];
+  projects: ProjectType[];
   pullRequest: PullRequest & {
     createdBy: UserType;
   };
-  currentProject: Project;
+  currentProject: ProjectType;
   currentRole: UserRole;
 }
 

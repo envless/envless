@@ -20,7 +20,7 @@ function classNames(...classes) {
 interface Props {
   active: string;
   projectSlug: string;
-  currentRole: UserRole;
+  currentRole: UserRole | string;
 }
 
 export default function Tabs({ active, projectSlug, currentRole }: Props) {
