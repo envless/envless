@@ -33,12 +33,15 @@ jobs:
 
         - name: Generate Prisma Types
           run: yarn run db:generate
- 
+
+        - name: Unit Tests
+          run: yarn test
+
+        - name: E2E Tests
+          run: yarn test:e2e
+
         - name: Build
           run: yarn build
           env:
             SKIP_ENV_VALIDATION: true
             EMAIL_FROM: envless@example.com
- 
-        - name: Test
-          run: yarn test
