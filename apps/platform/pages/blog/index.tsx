@@ -1,54 +1,13 @@
-import { env } from "@/env/index.mjs";
+import { Fragment } from "react";
 import { NextSeo } from "next-seo";
 import Hero from "@/components/blog/Hero";
-import Post from "@/components/blog/Post";
+import PostCard, { type PostCardProps } from "@/components/blog/PostCard";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
-import { getNotionData } from "@/lib/notion";
+import { getBlogPosts } from "@/lib/static/blog";
 
 type Props = {
-  posts: Array<PostProps>;
-};
-
-type PostProps = {
-  id: string;
-  properties: {
-    "Cover Image": {
-      files: [
-        {
-          type: "file" | "external";
-          file?: {
-            url: string;
-          };
-          external?: {
-            url: string;
-          };
-        },
-      ];
-    };
-
-    Slug: {
-      rich_text: [
-        {
-          plain_text: string;
-        },
-      ];
-    };
-
-    Post: {
-      title: [
-        {
-          plain_text: string;
-        },
-      ];
-    };
-
-    Date: {
-      date: {
-        start: string;
-      };
-    };
-  };
+  posts: PostCardProps[];
 };
 
 const Blog: React.FC<Props> = ({ posts }) => {
@@ -82,10 +41,10 @@ const Blog: React.FC<Props> = ({ posts }) => {
 
       <Container>
         <section className="md:px-32">
-          <section className="my-24 grid gap-10 md:grid-cols-2 lg:gap-12 lg:gap-y-16">
+          <section className="my-24 grid gap-10 md:grid-cols-2 lg:grid-cols-3 lg:gap-12 lg:gap-y-16">
             {posts.map((post) => (
-              <div key={post.id}>
-                <Post post={post} />
+              <div key={post.slug}>
+                <PostCard slug={post.slug} content={post.content} />
               </div>
             ))}
           </section>
@@ -96,12 +55,11 @@ const Blog: React.FC<Props> = ({ posts }) => {
 };
 
 export const getStaticProps = async () => {
-  const database = await getNotionData(env.NOTION_DATABASE_ID);
+  // const post = await getBlogPost("debug-code-github-step-by-step-guide");
+  const posts = await getBlogPosts();
+
   return {
-    props: {
-      posts: database,
-    },
-    revalidate: 60, // In seconds
+    props: { posts },
   };
 };
 

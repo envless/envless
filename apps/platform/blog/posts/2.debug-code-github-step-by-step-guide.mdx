@@ -2,10 +2,11 @@
 title: How I Debug My Code, the Right Way — Like a Pro with Examples #required
 description: Debugging code on Github is easier than you think! This tutorial walks you through the process, with helpful tips and tricks along the way. #required
 author: Justice Ekemezie #required
-avatar: ../images/author/ttebify.jpg #required
+avatar: /blogs/author/ttebify.webp #required
 twitter: ttebify #optional
 github: ttebify #optional
-preview: ../images/post/debug-code-github-step-by-step-guide-post-cover.jpeg #required
+preview: /blogs/post/debug-code-github-step-by-step-guide-post-cover.jpeg #required
+date: March 30, 2023 #required
 ---
 Have you ever spent hours or even days trying to track down a pesky bug in your code? As developers, we've all been there, and we know how frustrating it can be. But what if I told you that there's a tool you can use to significantly reduce the time it takes to solve these problems and improve your development speed? That tool is Github.
 
@@ -41,7 +42,7 @@ To gain insight into a project, start with the README file. This file typically 
 
 Once you have found a repository, navigating its issues tab can help you gain an understanding of common bugs, feature requests, and other discussions surrounding the project. You can find the issues tab at the top left corner of the repository's home page.
 
-![Screenshot Highlighting tRPC Issues on Github](.../images/posts/screenshot-highlighting-trpc-issues-on-github.png "Screenshot Highlighting tRPC Issues on Github")
+![Screenshot Highlighting tRPC Issues on Github](/blogs/posts/screenshot-highlighting-trpc-issues-on-github.png "Screenshot Highlighting tRPC Issues on Github")
 
 ## Step 2 Github Debugging Techniques
 
@@ -49,7 +50,7 @@ Once you have found a repository, navigating its issues tab can help you gain an
 
    When facing an issue with a project, Github provides several useful features to help you track down the problem. One of these features is the code search functionality. You can access this by going to the Issues tab and using the search box to filter issues based on various criteria, including closed issues.
 
-   ![Screenshot Highlighting the Search box for tRPC issues on Github](.../images/posts/screenshot-highlighting-the-search-box-for-trpc-issues-on-github.png "Screenshot Highlighting the Search box for tRPC issues on Github")
+   ![Screenshot Highlighting the Search box for tRPC issues on Github](/blogs/posts/screenshot-highlighting-the-search-box-for-trpc-issues-on-github.png "Screenshot Highlighting the Search box for tRPC issues on Github")
 
 2. ### Pull Requests
 
@@ -349,11 +350,11 @@ I had to come up with an alternative solution as using the `useQuery` hook was n
 
 I started my search by following the steps mentioned earlier. I navigated to GitHub and searched for the tRPC repository. Then, I searched for the query **“Fetch api without hooks”** in the repository's issues section.
 
-![tRPC Example result in Github Search](.../images/posts/trpc-example-result-in-github-search.png "tRPC Example result in Github Search")
+![tRPC Example result in Github Search](/blogs/posts/trpc-example-result-in-github-search.png "tRPC Example result in Github Search")
 
 Of course, I had to use different search terms before I could get the correct one. The result?
 
-![Screenshot of a Solution after Searching on Github Issues](.../images/posts/screenshot-of-a-solution-after-searching-on-github-issues.png "Screenshot of a Solution after Searching on Github Issues")
+![Screenshot of a Solution after Searching on Github Issues](/blogs/posts/screenshot-of-a-solution-after-searching-on-github-issues.png "Screenshot of a Solution after Searching on Github Issues")
 
 I came across the `useContext` hook that provides access to the client object at the top level of the application. With this, I made the following modification to my code:
 

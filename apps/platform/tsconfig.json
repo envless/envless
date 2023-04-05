@@ -29,7 +29,8 @@
       "@/models/*": ["models/*"],
       "@/components/*": ["components/*"],
       "@/env/*": ["env/*"],
-      "@/store/*": ["store/*"]
+      "@/store/*": ["store/*"],
+      "@/blog/*": ["blog/*"]
     },
     "strict": false
   },
@@ -41,8 +42,6 @@
     "**/*.mjs",
     "emails/index.ts",
     "pages/auth/index.js",
-    "components/blog/ContentBlock.js",
-    "lib/notion.ts",
     "pages/projects/index.tsx",
     "test/cypress/support/component.ts",
     "jest.setup.js"
