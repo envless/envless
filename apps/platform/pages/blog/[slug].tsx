@@ -1,67 +1,98 @@
-import { env } from "@/env/index.mjs";
-import Article from "@/components/blog/Article";
-import { getBlocks, getNotionData, getPage } from "@/lib/notion";
+import Image from "next/image";
+import { MDXRemote } from "next-mdx-remote";
+import { NextSeo } from "next-seo";
+import Zoom from "react-medium-image-zoom";
+import Nav from "@/components/static/Nav";
+import Container from "@/components/theme/Container";
+import { getBlogPosts } from "@/lib/static/blog";
 
-export const databaseId = env.NOTION_DATABASE_ID;
-
-type Props = {
-  post: any;
-  blocks: any;
+type ArticleProps = {
+  post: {
+    slug: string;
+    content: any;
+  };
 };
 
-const BlogArticle: React.FC<Props> = ({ post, blocks }) => {
-  return <Article post={post} blocks={blocks} />;
+const Article: React.FC<ArticleProps> = ({ post }) => {
+  const { slug, content } = post;
+  const { frontmatter } = content;
+  return (
+    <>
+      <NextSeo
+        title={`Envless - ${frontmatter.title}`}
+        description="Open source, frictionless and secure way to share and manage app secrets across teams."
+        canonical="https://envless.dev"
+        themeColor="#111"
+        openGraph={{
+          url: "https://envless.dev",
+          description:
+            "Open source, frictionless and secure way to share and manage app secrets across teams.",
+          images: [{ url: frontmatter.preview }],
+          siteName: "Envless",
+        }}
+        twitter={{
+          handle: "@envless",
+          site: "@envless",
+          cardType: "summary_large_image",
+        }}
+      />
+
+      <Container>
+        <Nav />
+      </Container>
+
+      <Container>
+        <section className="md:px-32">
+          <section className="mx-auto my-16 sm:max-w-3xl">
+            <div className="text-light my-2 flex justify-center text-sm">
+              <div>
+                <Image
+                  src={frontmatter.avatar}
+                  alt={frontmatter.author}
+                  width={40}
+                  height={40}
+                  quality={100}
+                  className="rounded-full"
+                />
+              </div>
+
+              <div className="ml-4">
+                <p>{frontmatter.author}</p>
+                <p>{frontmatter.date}</p>
+              </div>
+            </div>
+            <h1 className="mt-5 text-center text-5xl">{frontmatter.title}</h1>
+          </section>
+        </section>
+      </Container>
+    </>
+  );
 };
 
 export const getStaticPaths = async () => {
-  const database = await getNotionData(databaseId);
+  const posts = await getBlogPosts();
+
   return {
-    paths: database.map((page) => ({
+    paths: posts.map((post) => ({
       params: {
-        slug: page.properties.Slug.rich_text[0].plain_text,
+        slug: post.slug,
       },
     })),
     fallback: false,
   };
 };
 
-export const getStaticProps = async (context: { params: { slug: any } }) => {
+export const getStaticProps = async (context: { params: { slug: string } }) => {
   const { slug } = context.params;
-  const database = await getNotionData(databaseId);
-  const filter = database.filter(
-    (blog) => blog.properties.Slug.rich_text[0].plain_text === slug,
-  );
-
-  const post = await getPage(filter[0].id);
-  const blocks = await getBlocks(filter[0].id);
-
-  const childrenBlocks: { id: any; children: any[] }[] = await Promise.all(
-    blocks
-      .filter((block) => block.has_children)
-      .map(async (block) => {
-        return {
-          id: block.id,
-          children: await getBlocks(block.id),
-        };
-      }),
-  );
-
-  const blocksWithChildren = blocks.map((block) => {
-    if (block.has_children) {
-      block[block.type].children = childrenBlocks.find(
-        (x) => x.id === block.id,
-      )?.children;
-    }
-    return block;
-  });
+  const posts = await getBlogPosts();
+  const post = posts.find((post) => post.slug === slug);
 
   return {
     props: {
       post,
-      blocks: blocksWithChildren,
     },
     revalidate: 60, // In seconds
   };
 };
 
-export default BlogArticle;
+export default Article;
