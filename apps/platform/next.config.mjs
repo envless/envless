@@ -9,6 +9,7 @@ const nextConfig = {
   swcMinify: false,
   transpilePackages: ["ui"],
   images: {
+    formats: ["image/webp"],
     dangerouslyAllowSVG: true,
     domains: [
       "avatar.vercel.sh",

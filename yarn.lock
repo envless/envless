@@ -911,14 +911,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@notionhq/client@^2.2.2":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@notionhq/client/-/client-2.2.3.tgz#b8563994fd116123b0b2e39fca43a593faaf8360"
-  integrity sha512-ZqUzY0iRg/LIrwS+wzz/6osSB2nxIpmqdAtdUwzpcimc9Jlu1j85FeYdaU26Shr193CFrl2TLFeKqpk/APRQ4g==
-  dependencies:
-    "@types/node-fetch" "^2.5.10"
-    node-fetch "^2.6.1"
-
 "@npmcli/arborist@^4.0.4":
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@npmcli/arborist/-/arborist-4.3.1.tgz#a08cddce3339882f688c1dea1651f6971e781c44"
@@ -2448,7 +2440,7 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node-fetch@^2.5.10", "@types/node-fetch@^2.6.1":
+"@types/node-fetch@^2.6.1":
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.2.tgz#d1a9c5fd049d9415dce61571557104dec3ec81da"
   integrity sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==
@@ -9084,7 +9076,7 @@ next-auth@^4.21.1:
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
 
-next-mdx-remote@^4.2.1:
+next-mdx-remote@^4.2.1, next-mdx-remote@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/next-mdx-remote/-/next-mdx-remote-4.4.1.tgz#96b16e2adc54dbcd0a7f204a9a3c3fd269d41abf"
   integrity sha512-1BvyXaIou6xy3XoNF4yaMZUCb6vD2GTAa5ciOa6WoO+gAUTYsb1K4rI/HSC2ogAWLrb/7VSV52skz07vOzmqIQ==
