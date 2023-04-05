@@ -10,7 +10,7 @@ import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTable from "@/components/members/Table";
 import prisma from "@/lib/prisma";
 
-export interface PendingInvite {
+export interface PendingInvite extends UserType {
   email: string;
   id: string;
   invitationTokenExpiresAt: Date;
@@ -53,7 +53,7 @@ export const MembersPage = ({
           </div>
 
           <div className="col-span-6">
-            <AddMemberModal projectId={currentProject.id} user={user} />
+            <AddMemberModal projectId={currentProject.id} />
           </div>
         </div>
 

@@ -1,9 +1,6 @@
-import { env } from "@/env/index.mjs";
 import { Octokit } from "octokit";
 
-const octokit = new Octokit({
-  auth: env.GITHUB_TOKEN,
-});
+const octokit = new Octokit();
 
 export const getStars = async () => {
   const { data } = await octokit.request(

@@ -2,6 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { env } from "@/env/index.mjs";
+import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import SettingsLayout from "@/layouts/Settings";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
@@ -11,7 +12,6 @@ import { signOut } from "next-auth/react";
 import { authenticator } from "otplib";
 import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
-import TwoFactorModal from "@/components/TwoFactorModal";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import AES from "@/lib/encryption/aes";
 import log from "@/lib/log";
@@ -40,7 +40,8 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
   } = useForm();
 
   const [enabled, setEnabled] = useState(twoFactor.enabled);
-  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+
+  const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
 
   useEffect(() => {
     setEnabled(twoFactor.enabled);
@@ -64,7 +65,6 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
 
   const disableMutation = trpc.twoFactor.disable.useMutation({
     onSuccess: () => {
-      setTwoFactorRequired(false);
       setEnabled(false);
       signOut();
     },
@@ -74,12 +74,9 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
     },
   });
 
-  const disableWithTwoFactor = async (verified: boolean) => {
-    if (verified) {
-      disableMutation.mutate();
-    } else {
-      setTwoFactorRequired(true);
-    }
+  const disableWithTwoFactor = async () => {
+    disableMutation.mutate();
+    reset();
   };
 
   const verifyOtp: SubmitHandler<TwoFactorCode> = async (data) => {
@@ -113,7 +110,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
           <Button
             variant="secondary"
             onClick={() => {
-              disableWithTwoFactor(false);
+              withTwoFactorAuth(disableWithTwoFactor);
             }}
             disabled={disableMutation.isLoading}
           >
@@ -200,14 +197,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
         )}
       </div>
 
-      <TwoFactorModal
-        open={twoFactorRequired}
-        onStateChange={setTwoFactorRequired}
-        onConfirm={async () => {
-          disableWithTwoFactor(true);
-          reset();
-        }}
-      />
+      <TwoFactorModal />
     </SettingsLayout>
   );
 };

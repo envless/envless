@@ -9,7 +9,7 @@ interface Props {
   tab?: string;
   projects: Project[];
   currentProject: Project;
-  currentRole: UserRole;
+  currentRole: UserRole | string;
   children: React.ReactNode;
 }
 

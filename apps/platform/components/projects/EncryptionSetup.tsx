@@ -190,7 +190,7 @@ const EncryptionSetup = ({ ...props }) => {
                   <code className="px-1 text-red-400">
                     envless privateKey --copy
                   </code>{" "}
-                  to copy from system's keychain.
+                  to copy from {`system's`} keychain.
                 </p>
               </div>
             )}

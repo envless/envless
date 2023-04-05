@@ -3,7 +3,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
-import { EncryptedProjectKey, PublicKey } from "@prisma/client";
+import { EncryptedProjectKey, UserPublicKey } from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
@@ -24,12 +24,12 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
-  publicKey: PublicKey["key"];
+  publicKey: UserPublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
 }
 
 interface PersonalKey {
-  publicKey: PublicKey["key"];
+  publicKey: UserPublicKey["key"];
   privateKey: string;
 }
 

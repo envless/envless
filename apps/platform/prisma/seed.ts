@@ -7,6 +7,7 @@ import seedInactiveUsers from "./seeds/inactiveUsers";
 import seedInvites from "./seeds/invites";
 import seedProjects from "./seeds/projects";
 import seedPullRequests from "./seeds/pullRequests";
+import seedSecrets from "./seeds/secrets";
 import seedUsers from "./seeds/users";
 
 const { Confirm } = require("enquirer");
@@ -44,6 +45,7 @@ const seed = async () => {
       await seedInactiveUsers(5);
       await seedInvites(5);
       await seedPullRequests();
+      await seedSecrets();
     });
   } else {
     throw new Error("Seeding aborted");
@@ -59,8 +61,9 @@ const nuke = async () => {
     await prisma.branch.deleteMany();
     await prisma.projectInvite.deleteMany();
     await prisma.pullRequest.deleteMany();
-    await prisma.publicKey.deleteMany();
+    await prisma.userPublicKey.deleteMany();
     await prisma.encryptedProjectKey.deleteMany();
+    await prisma.secret.deleteMany();
   });
 };
 

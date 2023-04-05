@@ -172,7 +172,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
             Link project
           </h3>
           <div className="text-light mt-2 text-sm">
-            From your project's root directory, run the following command to
+            From your {`project's`} root directory, run the following command to
             activate the CLI.
             <CodeWithTabs
               tabs={[
@@ -191,7 +191,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
           </div>
           <p className="text-light text-xs">
             You may skip this step if you have already already have .envless
-            file on your project's root and is already linked.
+            file on your {`project's`} root and is already linked.
           </p>
         </section>
 
@@ -204,7 +204,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
           </h3>
           <div className="text-light mt-2 text-sm">
             Please run the following command to secure and copy your private
-            key. This will securely store your private key in your system's
+            key. This will securely store your private key in your {`system's`}
             keychain and copy it to your clipboard. You will be asked to paste
             the private key in the next step.
             <CodeWithTabs
