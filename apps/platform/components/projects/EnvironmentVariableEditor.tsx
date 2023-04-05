@@ -1,4 +1,5 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
+import useSecret from "@/hooks/useSecret";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
@@ -12,9 +13,22 @@ export interface EnvVariable {
   hidden: boolean;
 }
 
+export interface EnvSecret {
+  encryptedKey: string;
+  encryptedValue: string;
+  maskedValue: string;
+  decryptedKey: string;
+  decryptedValue: string;
+}
+
 export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
+
+  const { secrets } = useSecret({
+    branchId: "clg2z7oci004lu6yfkbtazzdn",
+    publicKey: "test",
+  });
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -205,7 +219,7 @@ export function EnvironmentVariableEditor() {
   );
 }
 
-interface InputProps {
+interface CustomInputProps {
   reveal?: boolean;
 }
 
@@ -214,7 +228,7 @@ function CustomInput({
   className,
   reveal,
   ...props
-}: ComponentProps<"input"> & InputProps) {
+}: ComponentProps<"input"> & CustomInputProps) {
   return (
     <input
       {...props}
