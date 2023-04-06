@@ -117,6 +117,8 @@ export const ProjectPage = ({
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
 
+  console.log(encryptionKeys);
+
   return (
     <ProjectLayout
       projects={projects}
@@ -153,7 +155,9 @@ export const ProjectPage = ({
             </div>
           </div>
 
-          <EnvironmentVariableEditor />
+          <EnvironmentVariableEditor
+            encryptedProjectKey={encryptionKeys.project.encryptedProjectKey}
+          />
 
           <CreateBranchModal
             onSuccessCreation={() => {}}

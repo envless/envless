@@ -21,14 +21,20 @@ export interface EnvSecret {
   decryptedValue: string;
 }
 
-export function EnvironmentVariableEditor() {
+export function EnvironmentVariableEditor({
+  encryptedProjectKey,
+}: {
+  encryptedProjectKey: string;
+}) {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const { secrets } = useSecret({
+  /*
+  const { secrets, isSecretsLoading } = useSecret({
     branchId: "clg2z7oci004lu6yfkbtazzdn",
-    publicKey: "test",
+    encryptedProjectKey
   });
+        */
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
