@@ -138,7 +138,6 @@ const EncryptionSetup = ({ ...props }) => {
           privateKey: privateKey,
         },
       });
-
     } catch (error) {
       showToast({
         duration: 3000,

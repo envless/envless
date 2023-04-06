@@ -14,20 +14,13 @@ function useSecret({
   // publicKey: string;
   // encryptedProjectKey: string;
 }) {
-  const [decryptedPrivateKey, setDecryptedPrivateKey] = useState("");
+  const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
+  const [encryptedProjectKey, setEncryptedProjectKey] = useState("");
 
-  useUpdateEffect(() => {
-    const privateKey = sessionStorage.getItem("privateKey");
+  // useUpdateEffect(() => {
+  const privateKey = sessionStorage.getItem("privateKey");
 
-    (async () => {
-      const decryptedProjectKey = (await OpenPGP.decrypt(
-        decryptedPrivateKey,
-        privateKey as string,
-      )) as string;
-
-      setDecryptedPrivateKey(decryptedProjectKey);
-    })();
-  }, [decryptedPrivateKey]);
+  // }, [encryptedProjectKey]);
 
   const secretsQuery = trpc.secrets.getSecretesByBranchId.useQuery(
     { branchId },
@@ -40,16 +33,31 @@ function useSecret({
   let hasDecryptionCompleted = false;
 
   if (!secretsQuery.isLoading && secretsQuery.data) {
-    secretsQuery.data.forEach(async (secret) => {
-      console.log("secret", decryptedPrivateKey);
+    const _encryptedProjectKey =
+      secretsQuery.data.branches[0].project.encryptedProjectKey?.encryptedKey;
 
+    (async () => {
+      const decryptedProjectKey = (await OpenPGP.decrypt(
+        _encryptedProjectKey as string,
+        privateKey as string,
+      )) as string;
+
+      console.log({
+        decryptedProjectKey,
+      });
+
+      setDecryptedProjectKey(decryptedProjectKey);
+      setEncryptedProjectKey(_encryptedProjectKey as string);
+    })();
+
+    secretsQuery.data.secrets.forEach(async (secret) => {
       const decryptedKey = await decryptString(
-        secret.encryptedKey,
-        decryptedPrivateKey,
+        secret.encryptedKey as string,
+        decryptedProjectKey as string,
       );
       const decryptedValue = await decryptString(
-        secret.encryptedValue,
-        decryptedPrivateKey,
+        secret.encryptedValue as string,
+        decryptedProjectKey as string,
       );
 
       envSecrets.push({
@@ -60,9 +68,9 @@ function useSecret({
         maskedValue: repeat("*", decryptedValue.length),
       });
 
-      if (secretsQuery.data.length === envSecrets.length) {
-        hasDecryptionCompleted = true;
-      }
+      // if (secretsQuery.data.length === envSecrets.length) {
+      //   hasDecryptionCompleted = true;
+      // }
     });
   }
 
