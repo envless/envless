@@ -7,10 +7,9 @@ import { withAccessControl } from "@/utils/withAccessControl";
 import type { Branch, Project, UserRole } from "@prisma/client";
 import { CheckCheck, Copy, ShieldCheck, ShieldOff } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import DateTimeAgo from "@/components/DateTimeAgo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import ProjectSettings from "@/components/projects/ProjectSettings";
-import { Badge, Button } from "@/components/theme";
+import { Button } from "@/components/theme";
 import { Table } from "@/components/theme/Table/Table";
 import Textarea from "@/components/theme/TextareaGroup";
 import { showToast } from "@/components/theme/showToast";
@@ -105,9 +104,6 @@ export const ProtectedBranch = ({
               {info.row.original.name}
             </div>
             <div className="text-light">{info.row.original.description}</div>
-            <div className="text-light">
-              Protected <DateTimeAgo date={info.row.original.protectedAt} />
-            </div>
           </div>
         </div>
       ),
@@ -187,22 +183,9 @@ export const ProtectedBranch = ({
   return (
     <ProjectLayout tab="settings" {...props}>
       <ProjectSettings active="branches" {...props}>
-        <h3 className="mb-3 text-lg">Protected branches</h3>
-        <div className="w-full lg:w-3/5">
-          <Table
-            data={protectedBranches}
-            columns={columns}
-            emptyStateProps={{
-              title: "Protected branches",
-              description: "No protected branches yet",
-              icon: ShieldCheck,
-              actionText: "",
-            }}
-            hasFilters={false}
-          />
-        </div>
-        <div className="mt-5 flex flex-col">
-          <label>Branches</label>
+        <h3 className="mb-8 text-lg">Protected branches</h3>
+        <div className="flex flex-col">
+          <label className="text-sm">Select a branch</label>
           <BranchDropdown
             label="Selected Branch"
             dropdownLabel="Choose any branch"
@@ -219,7 +202,9 @@ export const ProtectedBranch = ({
         </div>
         <div className="mt-6 w-full lg:w-3/5">
           <form onSubmit={handleSubmit(submitForm)}>
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description" className="text-sm">
+              Description
+            </label>
             <Textarea
               id="description"
               name="description"
@@ -236,6 +221,20 @@ export const ProtectedBranch = ({
               Protect
             </Button>
           </form>
+        </div>
+
+        <div className="mt-5 w-full lg:w-3/5">
+          <Table
+            data={protectedBranches}
+            columns={columns}
+            emptyStateProps={{
+              title: "Protected branches",
+              description: "No protected branches yet",
+              icon: ShieldCheck,
+              actionText: "",
+            }}
+            hasFilters={false}
+          />
         </div>
       </ProjectSettings>
     </ProjectLayout>

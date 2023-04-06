@@ -128,8 +128,8 @@ export function withAccessControl<P = Record<string, unknown>>({
 
     return {
       props: {
-        ...serverPropsFromParent.props,
         ...encryptionProps,
+        ...serverPropsFromParent.props,
         currentProject: JSON.parse(JSON.stringify(currentProject.project)),
         currentRole: currentProject.role,
         projects: JSON.parse(JSON.stringify(projects)),
