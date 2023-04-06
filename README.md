@@ -14,6 +14,9 @@
   <a href="https://twitter.com/envless">
     <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt="Twitter" />
   </a>
+  <a href="https://github.com/envless/envless/actions/workflows/ci.yml">
+    <img src="https://github.com/envless/envless/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
+  </a>
   <a href="https://github.com/envless/envless/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/envless/envless?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
   </a>
