@@ -12,27 +12,21 @@ export const secrets = createRouter({
       const { branchId } = input;
       const { user } = ctx.session;
 
-      const secrets = await ctx.prisma.secret.findMany({
+      const branches = await ctx.prisma.branch.findMany({
         where: {
-          branchId,
-          // userId: user.id
+          id: branchId,
         },
-        include: {
-          branch: {
+
+        select: {
+          id: true,
+          name: true,
+          project: {
             select: {
               id: true,
               name: true,
-            },
-            include: {
-              project: {
+              encryptedProjectKey: {
                 select: {
-                  id: true,
-                  name: true,
-                  encryptedProjectKey: {
-                    select: {
-                      encryptedKey: true,
-                    },
-                  },
+                  encryptedKey: true,
                 },
               },
             },
@@ -40,6 +34,21 @@ export const secrets = createRouter({
         },
       });
 
-      return secrets;
+      const secrets = await ctx.prisma.secret.findMany({
+        where: {
+          branchId,
+          // userId: user.id
+        },
+        select: {
+          id: true,
+          encryptedKey: true,
+          encryptedValue: true,
+        },
+      });
+
+      return {
+        branches,
+        secrets,
+      };
     }),
 });
