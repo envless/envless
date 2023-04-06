@@ -17,6 +17,27 @@ export const secrets = createRouter({
           branchId,
           // userId: user.id
         },
+        include: {
+          branch: {
+            select: {
+              id: true,
+              name: true,
+            },
+            include: {
+              project: {
+                select: {
+                  id: true,
+                  name: true,
+                  encryptedProjectKey: {
+                    select: {
+                      encryptedKey: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       });
 
       return secrets;
