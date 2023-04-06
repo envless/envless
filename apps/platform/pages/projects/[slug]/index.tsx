@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
+import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { EncryptedProjectKey, UserPublicKey } from "@prisma/client";
@@ -11,6 +13,7 @@ import EncryptionSetup from "@/components/projects/EncryptionSetup";
 import { EnvironmentVariableEditor } from "@/components/projects/EnvironmentVariableEditor";
 import { Button } from "@/components/theme";
 import OpenPGP from "@/lib/encryption/openpgp";
+import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -86,7 +89,12 @@ export const ProjectPage = ({
 
   useUpdateEffect(() => {
     (async () => {
-      const privateKey = encryptionKeys.personal.privateKey;
+      let privateKey = encryptionKeys.personal.privateKey;
+
+      if (!privateKey) {
+        privateKey = sessionStorage.getItem("privateKey") as string;
+      }
+
       const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
 
       if (privateKey) {
@@ -96,7 +104,10 @@ export const ProjectPage = ({
         )) as string;
 
         setEncryptionKeys({
-          ...encryptionKeys,
+          personal: {
+            ...encryptionKeys.personal,
+            privateKey: privateKey,
+          },
           project: {
             ...encryptionKeys.project,
             decryptedProjectKey: decryptedProjectKey,
@@ -162,6 +173,52 @@ export const getServerSideProps = withAccessControl({
     maintainer: true,
     developer: true,
     guest: true,
+  },
+
+  getServerSideProps: async (context) => {
+    const session = await getServerSideSession(context);
+    const user = session?.user;
+    // @ts-ignore
+    const { slug } = context.params;
+
+    const currentProject = await prisma.project.findFirst({
+      where: { slug: slug as string },
+      select: {
+        id: true,
+        encryptedProjectKey: {
+          select: { id: true, encryptedKey: true },
+        },
+      },
+    });
+
+    const userPublicKey = await prisma.userPublicKey.findFirst({
+      where: { userId: user?.id },
+      select: { key: true },
+    });
+
+    const publicKey = userPublicKey?.key;
+    let encryptedProjectKey = currentProject?.encryptedProjectKey;
+
+    if (publicKey && !encryptedProjectKey) {
+      const decryptedProjectKey = await generateKey();
+
+      const encryptedKey = (await OpenPGP.encrypt(decryptedProjectKey, [
+        publicKey,
+      ])) as string;
+
+      encryptedProjectKey = await prisma.encryptedProjectKey.create({
+        data: {
+          encryptedKey,
+          projectId: currentProject?.id as string,
+        },
+      });
+    }
+
+    return {
+      props: {
+        encryptedProjectKey,
+      },
+    };
   },
 });
 
