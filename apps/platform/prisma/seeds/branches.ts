@@ -23,7 +23,8 @@ const seedBranches = async () => {
 
   for (let i = 0; i < users.length; i++) {
     for (let j = 0; j < projects.length; j++) {
-      const isProtected = random() < 0.5;
+      // const isProtected = random() < 0.5;
+      const isProtected = false;
       branches.push({
         name: `${faker.git.branch()}-${random(1, 5000)}`,
         projectId: projects[j].id,

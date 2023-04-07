@@ -5,12 +5,16 @@ import fs from "fs";
 import OpenPGP from "../../lib/encryption/openpgp";
 
 const prisma = new PrismaClient();
+const decryptedProjectKey = generateKey();
 
 colors.enable();
 
 const e2eeSetup = async () => {
   const email = "envless@example.com";
-  console.log(`Setting up E2EE for ${email}`.blue);
+  console.log(
+    `Setting up E2EE for ${email} with decryptedProjectKey ${decryptedProjectKey}`
+      .blue,
+  );
 
   const user = await prisma.user.findFirst({
     where: {
@@ -40,7 +44,7 @@ const e2eeSetup = async () => {
     });
 
     user.access.forEach(async (access) => {
-      const decryptedProjectKey = await generateKey();
+      // const decryptedProjectKey = await generateKey();
       const encryptedProjectKey = await OpenPGP.encrypt(decryptedProjectKey, [
         publicKey,
       ]);
