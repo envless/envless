@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/*": ["lib/*"],
+      "@/trpc/*": ["trpc/*"],
+      "@/pages/*": ["pages/*"],
+      "@/utils/*": ["utils/*"],
+      "@/emails/*": ["emails/*"],
+      "@/styles/*": ["styles/*"],
+      "@/api/*": ["pages/api/*"],
+      "@/types/*": ["types/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/layouts/*": ["layouts/*"],
+      "@/models/*": ["models/*"],
+      "@/components/*": ["components/*"],
+      "@/env/*": ["env/*"],
+      "@/store/*": ["store/*"],
+      "@/blog/*": ["blog/*"]
+    },
+    "strict": false
+  },
+  "include": [
+    "next-env.d.ts",
+    "node_modules/cypress",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mjs",
+    "emails/index.ts",
+    "pages/auth/index.js",
+    "pages/projects/index.tsx",
+    "test/cypress/support/component.ts",
+    "jest.setup.js"
+  ],
+  "types": ["node", "jest", "@testing-library/jest-dom"],
+  "exclude": ["node_modules", "cypress.config.ts"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}

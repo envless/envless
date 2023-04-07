@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { Logo } from "@/components/theme/index";
 import { Button } from "@/components/theme/index";
 
@@ -8,7 +7,6 @@ type Props = {
 };
 
 const Nav: React.FC<Props> = ({ menu }) => {
-  const { status } = useSession();
   const defaultMenu = [
     {
       name: "Docs",
@@ -48,15 +46,9 @@ const Nav: React.FC<Props> = ({ menu }) => {
       </div>
 
       <div className="flex items-center text-center">
-        {status === "authenticated" ? (
-          <Button sr="Signup or Login" href="/projects">
-            Projects
-          </Button>
-        ) : (
-          <Button sr="Signup or Login" href="/auth">
-            Get started
-          </Button>
-        )}
+        <Button sr="Signup or Login" href="https://console.envless.dev/projects">
+          Console
+        </Button>
       </div>
     </nav>
   );
