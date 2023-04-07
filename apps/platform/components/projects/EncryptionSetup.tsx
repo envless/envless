@@ -44,10 +44,10 @@ const EncryptionSetup = ({ ...props }) => {
   const createKeys = trpc.keys.create.useMutation({
     onSuccess: (data) => {
       showToast({
-        duration: 10000,
+        duration: 3000,
         type: "success",
         title: "Download completed",
-        subtitle: `You have generated a private key for yourself, please save it in a safe place. You will need this private key next time you login, to decrypt your encrypted app secrets.`,
+        subtitle: `You have generated a private key for yourself, please continue with the next step.`,
       });
 
       const { projectKey, publicKey } = data;
@@ -138,6 +138,7 @@ const EncryptionSetup = ({ ...props }) => {
           privateKey: privateKey,
         },
       });
+
     } catch (error) {
       showToast({
         duration: 3000,
@@ -171,7 +172,7 @@ const EncryptionSetup = ({ ...props }) => {
         >
           <div className="flex flex-col items-center justify-center">
             {pageState === "uploadKey" && (
-              <div className="mb-10 max-w-xl">
+              <div className="mb-10 w-full max-w-xl">
                 <textarea
                   name="privateKey"
                   autoComplete="off"
@@ -181,11 +182,11 @@ const EncryptionSetup = ({ ...props }) => {
                   onChange={(e) => setPrivateKey(e.target.value)}
                   placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----"
                   className={
-                    "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full "
+                    "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full"
                   }
                 />
 
-                <p className="mt-2 w-full text-xs">
+                <p className="mt-2 w-full text-center text-xs">
                   ⚡ Protip: Run{" "}
                   <code className="px-1 text-red-400">
                     envless privateKey --copy
@@ -244,7 +245,7 @@ const EncryptionSetup = ({ ...props }) => {
           setCliModal(false);
         }}
         footer={
-          <div className="flex flex-shrink-0 justify-end px-4 py-4">
+          <div className="flex flex-shrink-0 justify-start px-4 py-4">
             <Button
               className="ml-4"
               onClick={async () => {

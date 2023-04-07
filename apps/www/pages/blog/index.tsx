@@ -4,7 +4,7 @@ import Hero from "@/components/blog/Hero";
 import PostCard, { type PostCardProps } from "@/components/blog/PostCard";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
-import { getBlogPosts } from "@/lib/static/blog";
+import { getBlogPosts } from "@/lib/blog";
 
 type Props = {
   posts: PostCardProps[];

@@ -63,10 +63,8 @@ model UserPublicKey {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   key       String
-  userId    String?  @unique
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
 }
 
 enum UserRole {
@@ -259,7 +257,6 @@ model User {
   sessions          Session[]
   sessionHistories  SessionHistory[]
   access            Access[]
-  userPublicKeys    UserPublicKey[]
   secrets           Secret[]
   auditsCreatedBy   Audit[]          @relation(name: "createdBy")
   auditsCreatedFor  Audit[]          @relation(name: "createdFor")
@@ -268,6 +265,7 @@ model User {
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
   locked            LockedUser?
+  publicKey         UserPublicKey?
 
   // Two factor authentication
   encryptedTwoFactorSecret Json?

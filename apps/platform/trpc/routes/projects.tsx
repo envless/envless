@@ -80,6 +80,7 @@ export const projects = createRouter({
             create: {
               name: "main",
               protected: true,
+              description: "Main branch is protected by default",
               protectedAt: new Date(),
               createdById: user.id,
             },

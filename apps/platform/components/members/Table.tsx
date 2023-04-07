@@ -7,7 +7,15 @@ import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { UserRole } from "@prisma/client";
 import clsx from "clsx";
-import { Lock, MailCheck, Trash, Unlock, UserCog, UserX } from "lucide-react";
+import {
+  Lock,
+  MailCheck,
+  RotateCwIcon,
+  Trash,
+  Unlock,
+  UserCog,
+  UserX,
+} from "lucide-react";
 import MemberTabs from "@/components/members/MemberTabs";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { showToast } from "../theme/showToast";
@@ -226,6 +234,32 @@ const MembersTable = ({
         </button>
       );
     }
+
+    if (tab === "inactive") {
+      return (
+        <button
+          onClick={() =>
+            onUpdateMemberStatus(
+              {
+                currentRole: member.role,
+                newRole: member.role,
+                userId: member.id,
+              },
+              true,
+            )
+          }
+          aria-label={`Re-activate ${member.name}`}
+          data-balloon-pos="up"
+          className="hover:text-teal-400 hover:disabled:text-current"
+          disabled={fetching}
+        >
+          <Fragment>
+            <RotateCwIcon className="h-5 w-5" strokeWidth={2} />
+            <span className="sr-only">Re-activate {member?.name}</span>
+          </Fragment>
+        </button>
+      );
+    }
     return (
       <button
         onClick={() =>
@@ -290,7 +324,7 @@ const MembersTable = ({
                   </div>
                 </td>
 
-                {tab === "pending" ? (
+                {tab === "pending" || tab === "inactive" ? (
                   <td className="relative mt-4 inline-block w-full max-w-[200px]">
                     <div className="w-full">
                       <div className="border-dark bg-dark inline-flex w-full items-center justify-center truncate rounded border px-3 py-2 text-sm">
@@ -322,7 +356,7 @@ const MembersTable = ({
                     />
                   </td>
                 )}
-                {tab != "pending" && (
+                {tab != "pending" && tab !== "inactive" && (
                   <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
                     <div className="inline-flex">
                       2FA

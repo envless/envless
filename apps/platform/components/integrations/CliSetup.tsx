@@ -59,7 +59,6 @@ const CliSetup = ({ currentProject }: CliProps) => {
   const createOrUpdateCLiToken = async () => {
     const token = randomBytes(32).toString("hex");
     const salt = randomBytes(32).toString("hex");
-    setCli({ ...cli, token });
 
     const { encoded: hashedToken } = (await argon2.hash({
       pass: token,
@@ -67,8 +66,15 @@ const CliSetup = ({ currentProject }: CliProps) => {
     })) as { encoded: string };
 
     if (cli.id) {
-      await updateCliTokenMutation({ hashedToken });
+      const confirm = window.confirm(
+        "Are you sure you want to rotate your CLI token? All previous CLI access will be revoked. This action cannot be undone.",
+      );
+      if (confirm) {
+        setCli({ ...cli, token });
+        await updateCliTokenMutation({ hashedToken });
+      }
     } else {
+      setCli({ ...cli, token });
       await createCliTokenMutation({ hashedToken });
     }
   };

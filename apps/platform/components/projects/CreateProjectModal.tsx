@@ -30,23 +30,24 @@ const CreateProjectModal = () => {
 
   const { projects } = trpc.useContext();
 
-  const projectMutation = trpc.projects.create.useMutation({
-    onSuccess: (data) => {
-      const { slug } = data;
-      router.push(`/projects/${slug}`);
-    },
+  const { mutate: projectMutation, isLoading } =
+    trpc.projects.create.useMutation({
+      onSuccess: (data) => {
+        const { slug } = data;
+        router.push(`/projects/${slug}`);
+      },
 
-    onError: (error) => {
-      if (error.message.includes("Unique constraint failed")) {
-        setError("name", {
-          type: "custom",
-          message: "Project name already exists",
-        });
-      }
+      onError: (error) => {
+        if (error.message.includes("Unique constraint failed")) {
+          setError("name", {
+            type: "custom",
+            message: "Project name already exists",
+          });
+        }
 
-      setLoading(false);
-    },
-  });
+        setLoading(false);
+      },
+    });
 
   const createNewProject: SubmitHandler<Project> = async (data) => {
     const { name } = data;
@@ -57,8 +58,7 @@ const CreateProjectModal = () => {
       return;
     }
 
-    projectMutation.mutate({ project: { name, slug: kebabSlug } });
-    reset();
+    await projectMutation({ project: { name, slug: kebabSlug } });
   };
 
   useEffect(() => {
