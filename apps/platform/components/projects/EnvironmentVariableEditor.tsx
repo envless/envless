@@ -14,6 +14,7 @@ export interface EnvVariable {
 }
 
 export interface EnvSecret {
+  id: string;
   encryptedKey: string;
   encryptedValue: string;
   maskedValue: string;
