@@ -117,8 +117,6 @@ export const ProjectPage = ({
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
 
-  console.log(encryptionKeys);
-
   return (
     <ProjectLayout
       projects={projects}

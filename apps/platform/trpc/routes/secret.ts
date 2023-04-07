@@ -12,7 +12,7 @@ export const secrets = createRouter({
       const { branchId } = input;
       const { user } = ctx.session;
 
-      const branches = await ctx.prisma.branch.findMany({
+      const branch = await ctx.prisma.branch.findUnique({
         where: {
           id: branchId,
         },
@@ -47,7 +47,7 @@ export const secrets = createRouter({
       });
 
       return {
-        branches,
+        branch,
         secrets,
       };
     }),

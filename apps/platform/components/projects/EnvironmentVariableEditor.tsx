@@ -30,10 +30,8 @@ export function EnvironmentVariableEditor({
   const pastingInputIndex = useRef(0);
 
   const { secrets, isSecretsLoading } = useSecret({
-    branchId: "clg4t0w06004qu66qw7bi1paz",
+    branchId: "clg5lqt5900411nh7l07e73sc",
   });
-
-  console.log("secrets", secrets);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -65,8 +63,6 @@ export function EnvironmentVariableEditor({
 
         return envVariable.hidden;
       };
-
-      console.log(envVariable);
 
       return {
         envKey: envVariable.envKey,
