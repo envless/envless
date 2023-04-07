@@ -4,7 +4,7 @@ import { NextSeo } from "next-seo";
 import Zoom from "react-medium-image-zoom";
 import Nav from "@/components/static/Nav";
 import Container from "@/components/theme/Container";
-import { getBlogPosts } from "@/lib/static/blog";
+import { getBlogPosts } from "@/lib/blog";
 
 type ArticleProps = {
   post: {

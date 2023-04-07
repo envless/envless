@@ -1,0 +1,38 @@
+---
+title: Introducing envless #required
+description: The most secure, open source and frictionless way to share and manage app secrets across teams. #required
+author: Puru Dahal #required
+avatar: /blogs/author/dahal.jpeg #required
+twitter: itspuru #optional
+github: dahal #optional
+preview: /blogs/post/envless.png #required
+date: Feb 1, 2023 #required
+---
+
+As a developer, you know how important it is to keep your app's secrets safe and secure. But managing those secrets can be a hassle, especially when working with a team. That's where Envless comes in.
+
+[Envless](https://envless.dev/) is an open-source solution that makes it easy to share and manage app secrets across teams. With end-to-end encryption, unlimited projects and team members, and complete CLI support, Envless is the most secure and frictionless way to manage your secrets.
+
+One of the key features of [Envless](https://envless.dev/) is its version control capabilities. Just like with Git, you can create branches and track changes to your secrets over time. This helps ensure that your team is always working with the most up-to-date information, and helps boost overall productivity.
+
+## Here is how it works
+
+```bash
+npx envless init
+envless checkout -b branchname
+envless create NODE_ENV=dev
+envless update REDIS_URL=...
+envless delete SMTP_PASSWORD
+
+# Working with npm/yarn
+envless -r npm start
+envless -r yarn start
+
+# Merge branch to staging
+envless checkout staging
+envles merge branchname
+```
+
+But [Envless](https://envless.dev/) isn't just a tool for managing secrets. It's also extremely flexible and can be deployed anywhere. No longer do you need to worry about maintaining an .env file or worrying about security breaches. With Envless, you can have complete control and peace of mind.
+
+So if you're tired of managing app secrets the old-fashioned way, give [Envless](https://envless.dev/) a try. It's the simplest and most secure way to share and manage your secrets across teams.
