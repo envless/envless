@@ -17,8 +17,7 @@
     "test": "npx vitest",
     "test:e2e": "yarn playwright test",
     "test:e2e:codegen": "yarn playwright codegen",
-    "test:e2e:watch": "playwright-watch test",
-    "start:docker": "yarn build && node --inspect=0.0.0.0 dist/index.js"
+    "test:e2e:watch": "playwright-watch test"
   },
   "dependencies": {
     "@47ng/cloak": "^1.1.0",

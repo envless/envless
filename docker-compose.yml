@@ -9,6 +9,7 @@ services:
     restart: on-failure
     env_file: .env.example
     working_dir: /opt/envless
+    command: "yarn install && yarn db:migrate && yarn db:seed && yarn dev"
     volumes:
       - ./apps/platform:/app/apps/platform
       - ./:/opt/envless
@@ -45,6 +46,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports: 
       - "5432:5432"
-
+g
 volumes:
   pgdata:
