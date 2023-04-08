@@ -14,12 +14,12 @@ export interface EnvVariable {
   hidden: boolean;
 }
 
-export function EnvironmentVariableEditor() {
+export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
   const { secrets, setSecrets } = useSecret({
-    branchId: "clg7jxnl2003tilri6uobm95q",
+    branchId,
   });
 
   console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
