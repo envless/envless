@@ -1,38 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { decryptString } from "@47ng/cloak";
-import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { trpc } from "@/utils/trpc";
 import { repeat } from "lodash";
-import { EnvSecret } from "@/components/projects/EnvironmentVariableEditor";
 import OpenPGP from "@/lib/encryption/openpgp";
+import { EnvSecret } from "../types";
 
 function useSecret({ branchId }: { branchId: string }) {
-  const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
-  const [encryptedProjectKey, setEncryptedProjectKey] = useState("");
+  // const [isSecretsLoading, setIsSecretsLoading] = useState(true);
+  const [secrets, setSecrets] = useState<EnvSecret[]>([]);
   const privateKey = sessionStorage.getItem("privateKey");
+  const utils = trpc.useContext();
 
-  const secretsQuery = trpc.secrets.getSecretesByBranchId.useQuery(
-    { branchId },
-    { refetchOnWindowFocus: false, refetchOnMount: false },
-  );
-
-  const envSecrets: EnvSecret[] = [];
-  let hasDecryptionCompleted = false;
-
-  if (!secretsQuery.isLoading && secretsQuery.data) {
-    const { branch, secrets } = secretsQuery.data;
-
-    const _encryptedProjectKey =
-      branch?.project.encryptedProjectKey?.encryptedKey;
+  useEffect(() => {
+    const envSecrets: EnvSecret[] = [];
 
     (async () => {
+      const { branch, secrets } =
+        await utils.secrets.getSecretesByBranchId.fetch({
+          branchId,
+        });
+
+      const _encryptedProjectKey =
+        branch?.project.encryptedProjectKey?.encryptedKey;
+
       const _decryptedProjectKey = (await OpenPGP.decrypt(
         _encryptedProjectKey as string,
         privateKey as string,
       )) as string;
-
-      setDecryptedProjectKey(_decryptedProjectKey);
-      setEncryptedProjectKey(_encryptedProjectKey as string);
 
       for (const secret of secrets) {
         const { encryptedKey, encryptedValue } = secret;
@@ -54,16 +48,19 @@ function useSecret({ branchId }: { branchId: string }) {
           decryptedKey,
           decryptedValue,
           maskedValue: repeat("*", decryptedValue.length),
+          hidden: true,
         });
       }
 
-      console.log({ envSecrets });
+      // setIsSecretsLoading(false);
+      setSecrets(envSecrets);
     })();
-  }
+  }, [branchId]);
 
   return {
-    secrets: secretsQuery.data,
-    isSecretsLoading: secretsQuery.isLoading && hasDecryptionCompleted,
+    secrets,
+    //isSecretsLoading: isSecretsLoading,
+    setSecrets,
   };
 }
 

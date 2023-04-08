@@ -24,8 +24,8 @@ const nextConfig = {
         source: "/",
         destination: "/projects",
         permanent: true,
-      }
-    ]
+      },
+    ];
   },
 
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

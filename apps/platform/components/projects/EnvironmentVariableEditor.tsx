@@ -1,5 +1,6 @@
 import { ComponentProps, useCallback, useRef, useState } from "react";
 import useSecret from "@/hooks/useSecret";
+import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
@@ -13,26 +14,15 @@ export interface EnvVariable {
   hidden: boolean;
 }
 
-export interface EnvSecret {
-  id: string;
-  encryptedKey: string;
-  encryptedValue: string;
-  maskedValue: string;
-  decryptedKey: string;
-  decryptedValue: string;
-}
-
-export function EnvironmentVariableEditor({
-  encryptedProjectKey,
-}: {
-  encryptedProjectKey: string;
-}) {
+export function EnvironmentVariableEditor() {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const { secrets, isSecretsLoading } = useSecret({
-    branchId: "clg5lqt5900411nh7l07e73sc",
+  const { secrets, setSecrets } = useSecret({
+    branchId: "clg7jxnl2003tilri6uobm95q",
   });
+
+  console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -45,18 +35,26 @@ export function EnvironmentVariableEditor({
   });
 
   const handleAddMoreEnvClick = () => {
-    setEnvKeys([
-      ...(envKeys as EnvVariable[]),
-      { envKey: "", envValue: "", hidden: false },
+    setSecrets([
+      ...secrets,
+      {
+        encryptedKey: "",
+        encryptedValue: "",
+        decryptedKey: "",
+        decryptedValue: "",
+        hidden: false,
+        maskedValue: "",
+      },
     ]);
   };
+
   const handleRemoveEnvPairClick = (index: number) => {
-    const updatedPairs = envKeys.filter((_, i) => i !== index);
-    setEnvKeys(updatedPairs);
+    const updatedSecrets = [...secrets.filter((_, i) => index !== i)];
+    setSecrets(updatedSecrets);
   };
 
   const handleToggleHiddenEnvPairClick = (index: number) => {
-    const newEnvKeys = envKeys.map((envVariable, i) => {
+    const newEnvKeys = secrets.map((envVariable, i) => {
       const isHidden = () => {
         if (i === index) {
           return !envVariable.hidden;
@@ -66,13 +64,12 @@ export function EnvironmentVariableEditor({
       };
 
       return {
-        envKey: envVariable.envKey,
-        envValue: envVariable.envValue,
+        ...envVariable,
         hidden: isHidden(),
-      } as EnvVariable;
+      } as EnvSecret;
     });
 
-    setEnvKeys(newEnvKeys);
+    setSecrets(newEnvKeys);
   };
 
   const handleEnvValueChange = (index: number) => (e) => {
@@ -120,19 +117,19 @@ export function EnvironmentVariableEditor({
 
   return (
     <>
-      {envKeys.length > 0 ? (
+      {secrets.length > 0 ? (
         <div className="w-full py-8">
-          {envKeys.map((envPair, index) => (
+          {secrets.map((envPair, index) => (
             <div
-              key={envPair.envKey}
+              key={index}
               className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
             >
               <div className="col-span-3">
                 <CustomInput
-                  name={envPair.envKey}
+                  name={envPair.encryptedKey}
                   onFocus={() => (pastingInputIndex.current = index)}
                   type="text"
-                  defaultValue={envPair.envKey}
+                  defaultValue={envPair.decryptedKey}
                   className="my-1 w-full font-mono"
                   onPaste={handlePaste}
                   placeholder="eg. CLIENT_ID"
@@ -150,16 +147,20 @@ export function EnvironmentVariableEditor({
                         <EyeOff className="text-light h-4 w-4" />
                       )
                     }
-                    name={envPair.envValue}
+                    name={envPair.encryptedValue}
                     autoComplete="off"
                     iconActionClick={() =>
                       handleToggleHiddenEnvPairClick(index)
                     }
                     onChange={handleEnvValueChange(index)}
-                    value={envPair.envValue}
-                    disabled={envPair.hidden}
+                    value={
+                      envPair.hidden
+                        ? envPair.maskedValue
+                        : envPair.decryptedValue
+                    }
+                    disabled={false}
                     className={clsx(
-                      envPair.hidden ? "obscure" : "",
+                      // envPair.hidden ? "obscure" : "",
                       "inline-block font-mono",
                     )}
                   />

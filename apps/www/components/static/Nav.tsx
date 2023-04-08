@@ -46,7 +46,10 @@ const Nav: React.FC<Props> = ({ menu }) => {
       </div>
 
       <div className="flex items-center text-center">
-        <Button sr="Signup or Login" href="https://console.envless.dev/projects">
+        <Button
+          sr="Signup or Login"
+          href="https://console.envless.dev/projects"
+        >
           Console
         </Button>
       </div>
