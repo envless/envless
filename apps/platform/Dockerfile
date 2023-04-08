@@ -1,18 +1,24 @@
-FROM node:lts AS builder
-# RUN apk update
+FROM node:18-alpine AS builder
+
+ENV NODE_ENV development
+
+RUN apk add --no-cache libc6-compat
+RUN apk add --update --no-cache openssl1.1-compat
+RUN yarn global add turbo@1.6.3
+RUN apk update
+
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo
 COPY . .
 RUN turbo prune --scope=platform --docker
 
 # Add lockfile and package.json's of isolated subworkspace
-FROM node:lts AS installer
+FROM node:18-alpine AS installer
 # RUN apk update
 WORKDIR /app
 
 # First install dependencies (as they change less often)
-COPY .gitignore .gitignore
+#COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install
@@ -22,7 +28,7 @@ COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 RUN yarn turbo run build --filter=platform...
 
-FROM node:lts AS runner
+FROM node:18-alpine AS runner
 WORKDIR /app
 
 # # Don't run production as root
