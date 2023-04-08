@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import { trpc } from "@/utils/trpc";
@@ -10,7 +11,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import { useRouter } from "next/router";
 
 interface MemberProps {
   email: string;

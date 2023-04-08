@@ -74,7 +74,7 @@ export const projects = createRouter({
             create: {
               userId: user.id,
               role: "owner",
-              status: "active"
+              status: "active",
             },
           },
           branches: {
