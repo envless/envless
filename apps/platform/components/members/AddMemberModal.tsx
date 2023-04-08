@@ -10,6 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
+import { useRouter } from "next/router";
 
 interface MemberProps {
   email: string;
@@ -26,6 +27,7 @@ const AddMemberModal = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
 
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
+  const router = useRouter();
 
   const {
     register,
@@ -44,6 +46,7 @@ const AddMemberModal = ({ projectId }) => {
   const inviteMutation = trpc.members.invite.useMutation({
     onSuccess: (_data) => {
       setLoading(false);
+      router.replace(router.asPath);
       showToast({
         type: "success",
         title: "Invitation sent",
