@@ -7,15 +7,11 @@ services:
       context: .
       dockerfile: ./apps/platform/Dockerfile
     restart: on-failure
-    env_file: .env.local
+    env_file: .env.example
     working_dir: /opt/envless
     volumes:
-      - ./apps/backend:/app/apps/backend
-      - /app/apps/backend/node_modules
+      - ./apps/platform:/app/apps/platform
       - ./:/opt/envless
-    environment:
-      - "NODE_ENV=development"
-      -  "DATABASE_URL: postgres://postgres@postgres/webapp_dev"
     depends_on:
       - postgres
       - redis-webdis

@@ -10,7 +10,7 @@ RUN apk update
 # Set working directory
 WORKDIR /app
 COPY . .
-RUN turbo prune --scope=platform --docker
+RUN turbo prune --scope=docs --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
@@ -26,7 +26,7 @@ RUN yarn install
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-RUN yarn turbo run build --filter=platform...
+RUN yarn turbo run build --filter=docs...
 
 FROM node:18-alpine AS runner
 WORKDIR /app
