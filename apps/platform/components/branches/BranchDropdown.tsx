@@ -14,7 +14,7 @@ interface BranchDropdownProps {
   branches: Branch[] | any;
   selectedBranch: any;
   full?: boolean;
-  // onClick: (branch: Branch | any) => void;
+  onClick?: (branch: Branch | any) => void;
   currentProjectSlug: string;
 }
 
@@ -24,7 +24,7 @@ export default function BranchDropdown({
   branches,
   selectedBranch,
   full,
-  // onClick,
+  onClick,
   currentProjectSlug,
 }: BranchDropdownProps) {
   const [searchData, setSearchData] = useState(branches);
@@ -124,7 +124,7 @@ export default function BranchDropdown({
               <Menu.Item
                 as="button"
                 key={branch.id}
-                // onClick={() => onClick(branch)}
+                onClick={() => onClick && onClick(branch)}
               >
                 {({ active }) => (
                   <Link href={branchLink(branch.name)}>

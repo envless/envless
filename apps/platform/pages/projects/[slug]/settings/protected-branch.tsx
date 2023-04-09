@@ -192,6 +192,7 @@ export const ProtectedBranch = ({
             branches={unprotectedBranches}
             selectedBranch={selectedBranch}
             onClick={(branch) => setSelectedBranch(branch)}
+            currentProjectSlug={currentProject.slug}
             full
           />
           {isSubmitted && !selectedBranch.id && (
