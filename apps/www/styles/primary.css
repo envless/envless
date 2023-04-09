@@ -1,0 +1,12 @@
+.input-primary {
+  @apply border-dark bg-darker placeholder-light ring-light/50 focus:border-dark focus:ring-light block appearance-none rounded border px-3 shadow-sm ring-1 focus:outline-none sm:text-sm;
+}
+
+.obscure {
+  color: transparent;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+}
+
+.scrollbar {
+  @apply scrollbar-thin scrollbar-track-dark scrollbar-thumb-light/80;
+}

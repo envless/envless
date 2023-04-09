@@ -18,16 +18,6 @@ const nextConfig = {
     ],
   },
 
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/projects",
-        permanent: true,
-      }
-    ]
-  },
-
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.module.rules.push({
       test: /\.wasm$/,
