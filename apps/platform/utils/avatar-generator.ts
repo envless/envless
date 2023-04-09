@@ -4,11 +4,12 @@ import { getInitials } from "./helpers";
 
 export const getAvatar = (member: UserType) => {
   const hash = md5(member.email);
-  const getDefaultAvatar = `https://avatar.vercel.sh/${getInitials(
+
+  const defaultAvatar = `https://avatar.vercel.sh/${getInitials(
     member.name || member.email,
   )}.svg?text=${getInitials(member.name || member.email)}`;
 
-  const avatar = `https://www.gravatar.com/avatar/${hash}?d=${getDefaultAvatar}`;
+  const avatar = `https://www.gravatar.com/avatar/${hash}?d=${defaultAvatar}`;
 
   return avatar;
 };
