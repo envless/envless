@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import type { PendingInvite } from "@/pages/projects/[slug]/members";
 import { UserType } from "@/types/resources";
-import { getInitials } from "@/utils/helpers";
+import { getAvatar } from "@/utils/avatar-generator";
 import { trpc } from "@/utils/trpc";
 import { UserRole } from "@prisma/client";
 import clsx from "clsx";
@@ -286,17 +286,6 @@ const MembersTable = ({
     );
   };
 
-  const getMemberAvatar = (member: UserType) => {
-    if (member.image) return member.image;
-    if (member.name || member.email) {
-      const memberAvatar = `https://avatar.vercel.sh/${getInitials(
-        member.name || member.email,
-      )}.svg?text=${getInitials(member.name || member.email)}`;
-
-      return memberAvatar;
-    }
-  };
-
   return (
     <React.Fragment>
       <MemberTabs tab={tab} setTab={setTab} setQuery={setQuery} />
@@ -318,7 +307,7 @@ const MembersTable = ({
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={getMemberAvatar(member)}
+                        src={getAvatar(member)}
                         alt=""
                       />
                     </div>
