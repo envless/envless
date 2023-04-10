@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { Fragment, useCallback, useMemo } from "react";
 import type { MemberType, UserType } from "@/types/resources";
-import { getInitials } from "@/utils/helpers";
+import { getAvatar } from "@/utils/getAvatar";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { UseMutationResult } from "@tanstack/react-query";
 import {
@@ -16,15 +16,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Circle,
-  CircleSlashed,
   Lock,
-  MailCheck,
-  Trash,
+  MoreVertical,
   Unlock,
 } from "lucide-react";
-import MenuButton, { type MenuButtonAction } from "../MenuButton";
+import { Dropdown } from "../theme";
 import MemberDropDown from "./MemberDropDown";
-import { getAvatar } from "@/utils/getAvatar";
 
 type PaginatedMembersTableProps = {
   members: MemberType[];
@@ -74,6 +71,15 @@ const PaginatedMembersTable = ({
 }: PaginatedMembersTableProps) => {
   const renderSettingsButton = useCallback(
     (member: MemberType) => {
+      const MoreIconButton = () => (
+        <button className="flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-100 focus-within:bg-white/25 hover:bg-white/10 focus:bg-white/25 active:bg-white/25 disabled:opacity-50">
+          <MoreVertical
+            aria-hidden="true"
+            className="shrink-0 justify-self-end"
+          />
+        </button>
+      );
+
       if (member.status === MembershipStatus.pending) {
         const expired = hasExpired(
           member.projectInvite?.invitationTokenExpiresAt,
@@ -97,29 +103,27 @@ const PaginatedMembersTable = ({
           }
         };
 
-        const action: MenuButtonAction = {
-          label: expired
-            ? `Re-invite ${member.email}`
-            : `Delete invite for ${member.email}`,
-          onClick: expired ? handleReInvite : handleDeleteInvite,
-          icon: expired ? (
-            <MailCheck color="yellow" className="h-5 w-5" strokeWidth={2} />
-          ) : (
-            <Trash className="h-5 w-5" strokeWidth={2} />
-          ),
+        const action = {
+          title: expired
+            ? `Re-invite ${member.name || member.email}`
+            : `Delete invite for ${member.name || member.email}`,
+          handleClick: expired ? handleReInvite : handleDeleteInvite,
+          disabled: fetching || member.id === user.id,
         };
+
         return (
-          <MenuButton
-            disabled={fetching || member.id === user.id}
-            actions={[action]}
+          <Dropdown
+            button={<MoreIconButton />}
+            items={[action]}
+            itemsPosition="right-0 top-3/4"
           />
         );
       }
 
       if (member.status === MembershipStatus.inactive) {
-        const action: MenuButtonAction = {
-          label: `Re-activate ${member.name}`,
-          onClick: () => {
+        const action = {
+          title: `Re-activate ${member.name}`,
+          handleClick: () => {
             handleUpdateMemberStatus(
               {
                 currentRole: member.role,
@@ -129,20 +133,21 @@ const PaginatedMembersTable = ({
               MembershipStatus.active,
             );
           },
-          icon: <Unlock color="#1A8CD8" className="h-5 w-5" strokeWidth={2} />,
+          disabled: fetching || member.id === user.id,
         };
         return (
-          <MenuButton
-            disabled={fetching || member.id === user.id}
-            actions={[action]}
+          <Dropdown
+            button={<MoreIconButton />}
+            items={[action]}
+            itemsPosition="right-0 top-3/4"
           />
         );
       }
 
       if (member.status === MembershipStatus.active) {
-        const action: MenuButtonAction = {
-          label: `De-activate ${member.name}`,
-          onClick: () => {
+        const action = {
+          title: `De-activate ${member.name}`,
+          handleClick: () => {
             handleUpdateMemberStatus(
               {
                 currentRole: member.role,
@@ -152,23 +157,17 @@ const PaginatedMembersTable = ({
               MembershipStatus.inactive,
             );
           },
-          icon: (
-            <CircleSlashed
-              color="#F87171"
-              className="float-right h-5 w-5"
-              strokeWidth={2}
-            />
-          ),
+          disabled:
+            fetching ||
+            member.id === user.id ||
+            (currentRole === UserRole.maintainer &&
+              member.role === UserRole.owner),
         };
         return (
-          <MenuButton
-            disabled={
-              fetching ||
-              member.id === user.id ||
-              (currentRole === UserRole.maintainer &&
-                member.role === UserRole.owner)
-            }
-            actions={[action]}
+          <Dropdown
+            button={<MoreIconButton />}
+            items={[action]}
+            itemsPosition="right-0 top-3/4"
           />
         );
       }
@@ -195,24 +194,22 @@ const PaginatedMembersTable = ({
           const member = info.row.original;
 
           return (
-            <div className="inline-flex items-center sm:pl-6">
-              <div className="h-10 w-10 flex-shrink-0">
-                <Image
-                  className="h-10 w-10 rounded-full"
-                  src={getAvatar(member)}
-                  alt={`${member.email} picture`}
-                  width={40}
-                  height={40}
-                />
-              </div>
-              <div className="ml-4">
+            <div className="flex items-center gap-x-3">
+              <Image
+                className="h-10 w-10 rounded-full"
+                src={getAvatar(member)}
+                alt={`${member.email} picture`}
+                width={40}
+                height={40}
+              />
+              <div>
                 <div className="text-base font-medium">
                   {member.name}
                   {member.email === user.email && " (Me)"}
                 </div>
                 <div
                   className={clsx(
-                    "text-sm",
+                    "block text-sm",
                     member.status === "pending" ? "text-medium" : "text-light",
                   )}
                 >
@@ -252,11 +249,19 @@ const PaginatedMembersTable = ({
         },
       },
       {
-        header: "Enabled 2FA",
-        id: "enabledTwoFactor",
+        header: "2FA Status",
+        id: "twoFactorStatus",
         accessorFn: (row) => row.twoFactorEnabled,
         cell: (info) => (
-          <div className="inline-flex">
+          <div
+            className="inline-flex"
+            aria-label={
+              info.row.original.twoFactorEnabled
+                ? "Two-factor is enabled"
+                : "Two-factor is disabled"
+            }
+            data-balloon-pos="up"
+          >
             2FA
             {info.row.original.twoFactorEnabled ? (
               <Lock className="ml-2 h-4 w-4 text-teal-400" />
@@ -292,14 +297,14 @@ const PaginatedMembersTable = ({
   return (
     <Fragment>
       <table className="divide-dark min-w-full table-auto divide-y">
-        <thead className="border-y border-gray-700">
+        <thead className="border-dark border-b">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <th
                     key={header.id}
-                    className="whitespace-nowrap py-4 pl-4 pr-3 text-left text-sm sm:pl-6"
+                    className="whitespace-nowrap py-4 pl-4 pr-3 text-left text-xs font-medium sm:pl-6"
                   >
                     {header.isPlaceholder ? null : (
                       <div>
@@ -315,13 +320,13 @@ const PaginatedMembersTable = ({
             </tr>
           ))}
         </thead>
-        <tbody className="bg-dark">
+        <tbody className="divide-dark bg-darker divide-y">
           {table.getRowModel().rows.map((row) => {
             return (
-              <tr key={row.id} className="align-middle">
+              <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td
-                    className="whitespace-nowrap py-3 px-6"
+                    className="whitespace-nowrap py-3 px-6 text-xs"
                     key={cell.id}
                     style={{ width: cell.column.getSize() }}
                   >
@@ -376,21 +381,20 @@ interface StatusChipProps {
 }
 
 const StatusChip = ({ status }: StatusChipProps) => {
-  let bgColor = "";
   let iconFillColor = "";
   let textColor = "";
   let borderColor = "";
 
   switch (status) {
     case MembershipStatus.active:
-      bgColor = "bg-green-600";
-      iconFillColor = "green";
-      textColor = "text-white";
+      borderColor = "border-teal-400";
+      iconFillColor = "#2CD4BE";
+      textColor = "text-teal-400";
       break;
     case MembershipStatus.pending:
-      bgColor = "bg-yellow-500";
+      borderColor = "border-[#AD8301]";
       iconFillColor = "#ac8301";
-      textColor = "text-gray-900";
+      textColor = "text-[#AD8301]";
       break;
     case MembershipStatus.inactive:
       iconFillColor = "#F87171";
@@ -404,12 +408,11 @@ const StatusChip = ({ status }: StatusChipProps) => {
   return (
     <div
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full border border-transparent py-1 px-2",
-        bgColor && bgColor,
-        borderColor && borderColor,
+        "inline-flex items-center gap-1 rounded-full border py-1 px-2",
+        borderColor,
       )}
     >
-      <Circle size={16} fill={iconFillColor} color={bgColor} />
+      <Circle size={16} fill={iconFillColor} color={iconFillColor} />
       <span className={`text-xs font-medium ${textColor && textColor}`}>
         {status}
       </span>

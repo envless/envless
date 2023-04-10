@@ -7,9 +7,10 @@ import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
-import { Download, UserX } from "lucide-react";
+import { Columns, Download, Filter, Search, UserX } from "lucide-react";
 import * as csvParser from "papaparse";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
+import { BaseInput } from "../theme";
 import { showToast } from "../theme/showToast";
 import AddMemberModal from "./AddMemberModal";
 import PaginatedMembersTable from "./PaginatedMembersTable";
@@ -182,69 +183,88 @@ const MembersTableContainer = ({
   );
 
   return (
-    <React.Fragment>
-      <div className="bg-darker min-w-full rounded-t p-5 md:w-auto">
-        <nav className="flex w-full items-center gap-4" aria-label="Tabs">
-          <h1 className="text-lg">Team members</h1>
-          <div className="flex-shrink-0 md:flex-1">
-            <input
-              type="text"
-              className="input-primary float-right w-full max-w-md justify-end py-1.5 text-sm"
+    <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
+      <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
+        <div className="flex w-full items-center justify-between px-4">
+          <div className="group relative w-full">
+            <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
+              <Search className="h-4 w-4" />
+            </div>
+            <BaseInput
               placeholder="Search members..."
+              type="text"
+              className="w-full max-w-xs py-1.5 !pl-9"
               onChange={(e) => setQuery(e.target.value)}
+              full={false}
             />
           </div>
-          <AddMemberModal
-            triggerRefetchMembers={refetchMembersAfterUpdate}
-            projectId={projectId}
-          />
-          <button
-            aria-label="Download as CSV"
-            data-balloon-pos="up"
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-            onClick={() => {
-              const dataForCSV = team.map((team) => {
-                return {
-                  name: team.name,
-                  email: team.email,
-                  role: team.role,
-                };
-              });
 
-              const csv = csvParser.unparse(dataForCSV);
-              downloadAsTextFile("members-data.csv", csv);
-            }}
-          >
-            <Download className="h-5 w-5" />
-          </button>
-        </nav>
+          <div className="flex shrink-0 items-center">
+            <button
+              aria-label="Apply Filters"
+              data-balloon-pos="up"
+              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+            >
+              <Filter className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex shrink-0 items-center">
+            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
+              <Columns className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex shrink-0 items-center">
+            <button
+              aria-label="Download as CSV"
+              data-balloon-pos="up"
+              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+              onClick={() => {
+                const dataForCSV = team.map((team) => {
+                  return {
+                    name: team.name,
+                    email: team.email,
+                    role: team.role,
+                  };
+                });
+
+                const csv = csvParser.unparse(dataForCSV);
+                downloadAsTextFile("members-data.csv", csv);
+              }}
+            >
+              <Download className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
       </div>
-
-      {team.length === 0 ? (
-        <BaseEmptyState
-          icon={<UserX className="mx-auto mb-3 h-10 w-10" />}
-          title="Members not found"
-          subtitle="You can invite team member by clicking on the 'Invite team member' button."
-        />
-      ) : (
-        <PaginatedMembersTable
-          members={members}
-          setFetching={setFetching}
-          totalMembers={totalMembers}
-          pagination={pagination}
-          setPagination={setPagination}
-          handleUpdateMemberAccess={onUpdateMemberAccess}
-          handleUpdateMemberStatus={onUpdateMemberStatus}
-          memberReinviteMutation={memberReinviteMutation}
-          memberDeleteInviteMutation={memberDeleteInviteMutation}
-          fetching={fetching}
-          currentRole={currentRole}
-          projectId={projectId}
-          pageCount={pageCount}
-          user={user}
-        />
-      )}
-    </React.Fragment>
+      <div className="w-full min-w-full overflow-x-auto">
+        {team.length === 0 ? (
+          <BaseEmptyState
+            icon={<UserX className="mx-auto mb-3 h-10 w-10" />}
+            title="Members not found"
+            subtitle="You can invite team member by clicking on the 'Invite team member' button."
+          />
+        ) : (
+          <PaginatedMembersTable
+            members={team}
+            setFetching={setFetching}
+            totalMembers={totalMembers}
+            pagination={pagination}
+            setPagination={setPagination}
+            handleUpdateMemberAccess={onUpdateMemberAccess}
+            handleUpdateMemberStatus={onUpdateMemberStatus}
+            memberReinviteMutation={memberReinviteMutation}
+            memberDeleteInviteMutation={memberDeleteInviteMutation}
+            fetching={fetching}
+            currentRole={currentRole}
+            projectId={projectId}
+            pageCount={pageCount}
+            user={user}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 

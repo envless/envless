@@ -8,6 +8,7 @@ import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
+import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTableContainer from "@/components/members/MembersTableContainer";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 import prisma from "@/lib/prisma";
@@ -67,23 +68,29 @@ export const MembersPage = ({
       currentRole={currentRole}
     >
       <div className="w-full">
-        <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="ring-darker shadow ring-1 ring-opacity-5 md:rounded">
-              <MembersTableContainer
-                members={memoizedMembers}
-                currentRole={currentRole}
-                projectId={currentProject.id}
-                user={user}
-                totalMembers={totalMembers}
-                pageCount={pageCount}
-                pagination={pagination}
-                setPagination={setPagination}
-                refetchMembersAfterUpdate={refetch}
-              />
-            </div>
+        <div className="grid grid-cols-12 gap-2">
+          <div className="col-span-6">
+            <h1 className="text-lg">Team members</h1>
+          </div>
+
+          <div className="col-span-6">
+            <AddMemberModal
+              projectId={currentProject.id}
+              triggerRefetchMembers={refetch}
+            />
           </div>
         </div>
+        <MembersTableContainer
+          members={memoizedMembers}
+          currentRole={currentRole}
+          projectId={currentProject.id}
+          user={user}
+          totalMembers={totalMembers}
+          pageCount={pageCount}
+          pagination={pagination}
+          setPagination={setPagination}
+          refetchMembersAfterUpdate={refetch}
+        />
       </div>
     </ProjectLayout>
   );
