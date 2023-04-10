@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { UserRole } from "@prisma/client";
 import clsx from "clsx";
-import { Check, ChevronDown, UserCog } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 
 interface MemberDropdownProps {
   roles: UserRole[];
@@ -22,17 +22,12 @@ export default function MemberDropDown({
   };
 
   return (
-    <Menu as="div" className="relative mt-4 inline-block w-full max-w-[200px]">
+    <Menu as="div" className="relative inline-block ">
       <div className="w-full">
         <Menu.Button
           disabled={disabled}
           className="border-dark bg-dark hover:bg-darker inline-flex w-full items-center truncate rounded border px-3 py-2 text-sm transition-colors duration-75 disabled:opacity-50 hover:disabled:text-current"
         >
-          <div className="flex items-center">
-            <UserCog className="mr-2 h-4 w-4 shrink-0" />
-            <span className="text-light mr-2 block text-xs">Role</span>
-          </div>
-
           <div className="flex items-center space-x-2 justify-self-end">
             <span className="max-w-[100px] truncate text-sm font-semibold">
               {selectedRole}

@@ -3,6 +3,7 @@ import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { ACCESS_CREATED } from "@/types/auditActions";
+import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
@@ -11,6 +12,7 @@ import { addHours } from "date-fns";
 import sendMail from "emails";
 import { z } from "zod";
 import Audit from "@/lib/audit";
+import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 
 interface CheckAccessAndPermissionArgs {
   ctx: any;
@@ -577,58 +579,97 @@ export const members = createRouter({
         });
       }
 
-      // Update the user name here
-      const newUser = await ctx.prisma.user.update({
-        where: { email },
-        data: { name },
-      });
+      try {
+        // Update the user name here
+        const newUser = await ctx.prisma.user.update({
+          where: { email },
+          data: { name },
+        });
 
-      // update access.status to "active"
-      const updatedAccess = await ctx.prisma.access.update({
-        where: {
-          projectInviteId: invite.id,
-        },
-        data: {
-          status: MembershipStatus.active,
-          projectInvite: {
-            update: {
-              invitationTokenExpiresAt: new Date(), // expire the token
+        // update access.status to "active"
+        const updatedAccess = await ctx.prisma.access.update({
+          where: {
+            projectInviteId: invite.id,
+          },
+          data: {
+            status: MembershipStatus.active,
+            projectInvite: {
+              update: {
+                invitationTokenExpiresAt: new Date(), // expire the token
+              },
             },
           },
-        },
-      });
+        });
 
-      if (!updatedAccess) {
+        if (!updatedAccess) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Failed to accept invite",
+          });
+        }
+
+        await Audit.create({
+          projectId: invite.projectId,
+          createdById: newUser.id,
+          action: "invite.accepted",
+          data: {
+            invite: {
+              id: invite.id,
+              email: email,
+              role: updatedAccess.role,
+            },
+          },
+        });
+
+        await Audit.create({
+          createdById: invite.invitedById as string,
+          createdForId: newUser.id,
+          projectId: invite.projectId,
+          action: ACCESS_CREATED,
+          data: {
+            access: {
+              id: updatedAccess.id,
+              role: updatedAccess.role,
+            },
+          },
+        });
+      } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Failed to accept invite",
+          message: "Failed to accept invite, invalid or expired invitation link",
         });
       }
-
-      await Audit.create({
-        projectId: invite.projectId,
-        createdById: newUser.id,
-        action: "invite.accepted",
-        data: {
-          invite: {
-            id: invite.id,
-            email: email,
-            role: updatedAccess.role,
-          },
+    }),
+  getAll: withAuth
+    .input(z.object({ page: z.number(), projectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const accesses = await ctx.prisma.access.findMany({
+        where: {
+          projectId: input.projectId,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: true,
+          projectInvite: true,
+        },
+        take: QUERY_ITEMS_PER_PAGE,
+        skip: (input.page - 1) * QUERY_ITEMS_PER_PAGE,
       });
 
-      await Audit.create({
-        createdById: invite.invitedById as string,
-        createdForId: newUser.id,
-        projectId: invite.projectId,
-        action: ACCESS_CREATED,
-        data: {
-          access: {
-            id: updatedAccess.id,
-            role: updatedAccess.role,
-          },
-        },
+      return accesses.map((access) => {
+        return {
+          id: access.user.id,
+          projectInviteId: access.projectInviteId,
+          projectInvite: access.projectInvite,
+          name: access.user.name,
+          email: access.user.email,
+          image: access.user.image,
+          twoFactorEnabled: access.user.twoFactorEnabled,
+          role: access.role,
+          status: access.status,
+        } as MemberType;
       });
     }),
 });

@@ -18,12 +18,19 @@ interface MemberProps {
   role: UserRole;
 }
 
+interface AddMemberModalProps {
+  projectId: string;
+  triggerRefetchMembers: () => void;
+}
 const selectOptions = Object.values(UserRole).map((role) => ({
   value: role,
   label: capitalize(role),
 }));
 
-const AddMemberModal = ({ projectId }) => {
+const AddMemberModal = ({
+  projectId,
+  triggerRefetchMembers,
+}: AddMemberModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
@@ -47,6 +54,7 @@ const AddMemberModal = ({ projectId }) => {
     onSuccess: (_data) => {
       setLoading(false);
       router.replace(router.asPath);
+      triggerRefetchMembers();
       showToast({
         type: "success",
         title: "Invitation sent",
