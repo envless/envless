@@ -518,6 +518,9 @@ export const members = createRouter({
             },
           },
         },
+        include: {
+          access: true,
+        },
       });
 
       if (!invite) {
@@ -529,10 +532,7 @@ export const members = createRouter({
 
       await ctx.prisma.access.delete({
         where: {
-          userId_projectId: {
-            projectId,
-            userId: user.id,
-          },
+          projectInviteId,
         },
       });
 
@@ -636,7 +636,8 @@ export const members = createRouter({
       } catch (error) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Failed to accept invite, invalid or expired invitation link",
+          message:
+            "Failed to accept invite, invalid or expired invitation link",
         });
       }
     }),
