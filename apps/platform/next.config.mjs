@@ -15,6 +15,7 @@ const nextConfig = {
       "avatar.vercel.sh",
       "avatars.githubusercontent.com",
       "user-images.githubusercontent.com",
+      "www.gravatar.com",
     ],
   },
 
