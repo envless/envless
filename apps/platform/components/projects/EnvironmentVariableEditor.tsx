@@ -64,7 +64,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       decryptedKey: "",
       decryptedValue: "",
       hidden: false,
-      maskedValue: "",
+      hiddenValue: "",
     });
   };
 

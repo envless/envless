@@ -2,7 +2,7 @@ export interface EnvSecret {
   id?: string;
   encryptedKey: string;
   encryptedValue: string;
-  maskedValue: string;
+  hiddenValue: string;
   decryptedKey: string;
   decryptedValue: string;
   hidden: boolean;

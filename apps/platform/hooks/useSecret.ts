@@ -47,7 +47,7 @@ function useSecret({ branchId }: { branchId: string }) {
           encryptedValue: secret.encryptedValue,
           decryptedKey,
           decryptedValue,
-          maskedValue: repeat("*", decryptedValue.length),
+          hiddenValue: repeat("*", decryptedValue.length),
           hidden: true,
         });
       }
