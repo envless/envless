@@ -51,4 +51,22 @@ export const secrets = createRouter({
         secrets,
       };
     }),
+  saveSecrets: withAuth
+    .input(
+      z.object({
+        secrets: z.array(
+          z.object({
+            encryptedKey: z.string(),
+            encryptedValue: z.string(),
+            decryptedKey: z.string().min(1),
+            decryptedValue: z.string().min(1),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { user } = ctx.session;
+      const { secrets } = input;
+    }),
 });

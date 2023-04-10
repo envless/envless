@@ -10,6 +10,7 @@ import {
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -32,11 +33,15 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   });
 
   const { control, setValue, handleSubmit } = useForm<any>();
-  const { fields, append, remove } = useFieldArray({ name: "env", control });
+  const { fields, append, remove } = useFieldArray({
+    name: "secrets",
+    control,
+  });
+  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation();
 
   useEffect(() => {
     if (secrets) {
-      setValue("env", secrets);
+      setValue("secrets", secrets);
     }
   }, [secrets, setValue]);
 
@@ -125,8 +130,12 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     ]);
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log("This data need to be send to the server ", data);
+
+    try {
+      await saveSecretsMutation.mutateAsync({ secrets: data });
+    } catch (err) {}
   };
 
   return (
@@ -142,7 +151,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                 <div className="col-span-3">
                   <Controller
                     control={control}
-                    name={`env.${index}.decryptedKey` as const}
+                    name={`secrets.${index}.decryptedKey` as const}
                     render={({ field }) => (
                       <CustomInput
                         onFocus={() => (pastingInputIndex.current = index)}
@@ -160,7 +169,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                   <div className="flex items-center gap-3">
                     <Controller
                       control={control}
-                      name={`env.${index}.decryptedValue` as const}
+                      name={`secrets.${index}.decryptedValue` as const}
                       render={({ field }) => (
                         <TextareaGroup
                           full
