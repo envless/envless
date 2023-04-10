@@ -7841,6 +7841,15 @@ md5-hex@^3.0.1:
   dependencies:
     blueimp-md5 "^2.10.0"
 
+md5@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/md5/-/md5-2.3.0.tgz#c3da9a6aae3a30b46b7b0c349b87b110dc3bda4f"
+  integrity sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==
+  dependencies:
+    charenc "0.0.2"
+    crypt "0.0.2"
+    is-buffer "~1.1.6"
+
 mdast-util-definitions@^5.0.0:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/mdast-util-definitions/-/mdast-util-definitions-5.1.2.tgz#9910abb60ac5d7115d6819b57ae0bcef07a3f7a7"
