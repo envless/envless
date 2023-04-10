@@ -33,7 +33,7 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
-    "@types/node": "^16.18.11",
+    "@types/node": "^18.15.11",
     "oclif": "^3",
     "shx": "^0.3.3",
     "ts-node": "^10.9.1",
