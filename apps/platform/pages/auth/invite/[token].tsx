@@ -19,14 +19,12 @@ interface ProjectInviteForm {
 const ProjectInvitePage = (props: {
   token: string;
   expired: boolean;
-  accepted?: boolean;
   project?: { id: string; name: string };
 }) => {
   const [complete, setComplete] = useState(false);
-  const { token, expired, accepted, project } = props;
+  const { token, expired, project } = props;
 
   const {
-    reset,
     setError,
     register,
     handleSubmit,
@@ -67,7 +65,7 @@ const ProjectInvitePage = (props: {
             src="/logo.png"
             alt="Your Company"
           />
-          {expired || accepted ? (
+          {expired ? (
             <>
               <h2 className="mt-6 text-center text-2xl">
                 Invalid invite link!
@@ -196,7 +194,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     select: {
       invitationToken: true,
       invitationTokenExpiresAt: true,
-      accepted: true,
       project: {
         select: {
           name: true,
@@ -223,7 +220,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       token,
       expired,
-      accepted: invite.accepted,
       project: invite.project,
     },
   };
