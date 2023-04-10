@@ -5,11 +5,11 @@ services:
     container_name: platform
     build:
       context: .
-      dockerfile: ./apps/platform/Dockerfile
+      dockerfile: Dockerfile
     restart: on-failure
     env_file: .env.example
     working_dir: /opt/envless
-    command: "yarn add && yarn db:migrate && yarn db:seed && yarn dev"
+    #command: "yarn add && yarn db:migrate && yarn db:seed && yarn dev"
     volumes:
       - ./apps/platform:/app/apps/platform
       - ./:/opt/envless

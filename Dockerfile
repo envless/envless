@@ -27,6 +27,7 @@ COPY --from=builder /app/out/full/ .
 
 ENV SKIP_ENV_VALIDATION true
 ENV EMAIL_FROM envless@example.com
+RUN npx turbo run db:generate
 RUN yarn turbo run build --filter=platform...
 
 CMD ["yarn","dev"]
