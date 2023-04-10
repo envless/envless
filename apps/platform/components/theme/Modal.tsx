@@ -13,7 +13,9 @@ import { Logo } from "@/components/theme";
 type Props = {
   title: string;
   button: React.ReactNode;
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((prop: { closeModal: () => void }) => React.ReactNode);
 };
 
 /**
@@ -87,7 +89,11 @@ const Modal = (props: Props) => {
                   >
                     {title}
                   </Dialog.Title>
-                  <div className="mt-4">{children}</div>
+                  <div className="mt-4">
+                    {typeof children === "function"
+                      ? children({ closeModal })
+                      : children}
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
