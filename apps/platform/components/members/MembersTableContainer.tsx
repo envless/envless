@@ -184,7 +184,7 @@ const MembersTableContainer = ({
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
       <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
-        <div className="flex w-full items-center justify-between px-4">
+        <div className="flex flex-col sm:flex-row w-full items-start gap-2 sm:items-center justify-between px-4">
           <div className="group relative w-full">
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
               <Search className="h-4 w-4" />
@@ -192,48 +192,49 @@ const MembersTableContainer = ({
             <BaseInput
               placeholder="Search members..."
               type="text"
-              className="w-full max-w-xs py-1.5 !pl-9"
+              className="w-full sm:max-w-xs  py-1.5 !pl-9"
               onChange={(e) => setQuery(e.target.value)}
               full={false}
             />
           </div>
+          <div className="flex items-center">
+            <div className="flex shrink-0 items-center">
+              <button
+                aria-label="Apply Filters"
+                data-balloon-pos="up"
+                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+              >
+                <Filter className="h-5 w-5" />
+              </button>
+            </div>
 
-          <div className="flex shrink-0 items-center">
-            <button
-              aria-label="Apply Filters"
-              data-balloon-pos="up"
-              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-            >
-              <Filter className="h-5 w-5" />
-            </button>
-          </div>
+            <div className="flex shrink-0 items-center">
+              <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
+                <Columns className="h-5 w-5" />
+              </button>
+            </div>
 
-          <div className="flex shrink-0 items-center">
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
-              <Columns className="h-5 w-5" />
-            </button>
-          </div>
+            <div className="flex shrink-0 items-center">
+              <button
+                aria-label="Download as CSV"
+                data-balloon-pos="up"
+                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+                onClick={() => {
+                  const dataForCSV = team.map((team) => {
+                    return {
+                      name: team.name,
+                      email: team.email,
+                      role: team.role,
+                    };
+                  });
 
-          <div className="flex shrink-0 items-center">
-            <button
-              aria-label="Download as CSV"
-              data-balloon-pos="up"
-              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-              onClick={() => {
-                const dataForCSV = team.map((team) => {
-                  return {
-                    name: team.name,
-                    email: team.email,
-                    role: team.role,
-                  };
-                });
-
-                const csv = csvParser.unparse(dataForCSV);
-                downloadAsTextFile("members-data.csv", csv);
-              }}
-            >
-              <Download className="h-5 w-5" />
-            </button>
+                  const csv = csvParser.unparse(dataForCSV);
+                  downloadAsTextFile("members-data.csv", csv);
+                }}
+              >
+                <Download className="h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
