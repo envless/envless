@@ -164,6 +164,7 @@ export const PullRequestPage = ({
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        currentProject={currentProject}
       />
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
