@@ -12,7 +12,6 @@ import * as csvParser from "papaparse";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { BaseInput } from "../theme";
 import { showToast } from "../theme/showToast";
-import AddMemberModal from "./AddMemberModal";
 import PaginatedMembersTable from "./PaginatedMembersTable";
 
 interface TableProps {
