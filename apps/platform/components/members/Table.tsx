@@ -1,10 +1,9 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import React from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { MemberType, UserType } from "@/types/resources";
-import { getInitials } from "@/utils/helpers";
+import { getAvatar } from "@/utils/getAvatar";
 import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import clsx from "clsx";
@@ -309,12 +308,6 @@ const MembersTable = ({
         <table className="divide-dark min-w-full divide-y">
           <tbody className=" bg-dark">
             {team.map((member) => {
-              const initials = getInitials(member.name || member.email);
-
-              const avatar =
-                member.image ||
-                `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
-
               return (
                 <tr key={member.id}>
                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -323,7 +316,7 @@ const MembersTable = ({
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <Image
                           className="h-10 w-10 rounded-full"
-                          src={avatar}
+                          src={getAvatar(member)}
                           alt={`${member.email} picture`}
                           width={40}
                           height={40}
