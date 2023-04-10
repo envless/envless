@@ -1,3 +1,5 @@
+import type { MemberType } from "@/types/resources";
+import { MembershipStatus } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 const getOne = async (id: string) => {
@@ -8,14 +10,18 @@ const getOne = async (id: string) => {
   return member;
 };
 
-const getMany = async (projectId: string, active: boolean = true) => {
+const getMany = async (
+  projectId: string,
+  status: MembershipStatus = MembershipStatus.active,
+): Promise<MemberType[]> => {
   const accesses = await prisma.access.findMany({
     where: {
       projectId,
-      active: active ?? true,
+      status: status ?? MembershipStatus.active,
     },
     include: {
       user: true,
+      projectInvite: true,
     },
     orderBy: {
       createdAt: "asc",
@@ -25,6 +31,8 @@ const getMany = async (projectId: string, active: boolean = true) => {
   return accesses.map((access) => {
     return {
       id: access.user.id,
+      projectInviteId: access.projectInviteId,
+      projectInvite: access.projectInvite,
       name: access.user.name,
       email: access.user.email,
       image: access.user.image,
@@ -34,30 +42,9 @@ const getMany = async (projectId: string, active: boolean = true) => {
   });
 };
 
-const getPending = async (projectId: string) => {
-  const invites = await prisma.projectInvite.findMany({
-    where: {
-      AND: [{ projectId }, { accepted: false }],
-    },
-
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      invitationTokenExpiresAt: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
-  return invites;
-};
-
 const Member = {
   getOne,
   getMany,
-  getPending,
 };
 
 export default Member;

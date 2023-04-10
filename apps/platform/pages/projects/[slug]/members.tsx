@@ -2,20 +2,13 @@ import { type GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Member from "@/models/member";
-import type { UserType } from "@/types/resources";
+import type { MemberType, UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTable from "@/components/members/Table";
 import prisma from "@/lib/prisma";
-
-export interface PendingInvite extends UserType {
-  email: string;
-  id: string;
-  invitationTokenExpiresAt: Date;
-  role: UserRole;
-}
 
 interface Props {
   projects: Project[];
@@ -23,9 +16,9 @@ interface Props {
   currentRole: UserRole;
   members: UserType[];
   user: UserType;
-  activeMembers: UserType[];
-  inactiveMembers: UserType[];
-  pendingMembers: PendingInvite[];
+  activeMembers: MemberType[];
+  inactiveMembers: MemberType[];
+  pendingMembers: MemberType[];
 }
 
 export const MembersPage = ({
@@ -157,13 +150,19 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   }
 
   const activeMembers = await Member.getMany(currentProject.id);
-  const inactiveMembers = await Member.getMany(currentProject.id, false);
-  const pendingMembers = await Member.getPending(currentProject.id);
+  const inactiveMembers = await Member.getMany(
+    currentProject.id,
+    MembershipStatus.inactive,
+  );
+  const pendingMembers = await Member.getMany(
+    currentProject.id,
+    MembershipStatus.pending,
+  );
 
   return {
     props: {
-      activeMembers,
-      inactiveMembers,
+      activeMembers: JSON.parse(JSON.stringify(activeMembers)),
+      inactiveMembers: JSON.parse(JSON.stringify(inactiveMembers)),
       pendingMembers: JSON.parse(JSON.stringify(pendingMembers)),
     },
   };

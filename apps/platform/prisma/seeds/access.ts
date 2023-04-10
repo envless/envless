@@ -38,10 +38,14 @@ const seedAccesses = async () => {
               "guest",
             ]) as AccessType["role"]);
 
+      const status =
+        projectOwner[project.id] === user.id ? "active" : "inactive";
+
       accesses.push({
         userId: user.id as string,
         projectId: project.id as string,
         role,
+        status,
       });
 
       if (role === "owner") {

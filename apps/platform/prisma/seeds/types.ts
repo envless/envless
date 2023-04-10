@@ -13,11 +13,9 @@ export type ProjectType = {
 
 export type ProjectInviteType = {
   id?: string;
-  email: string;
   projectId: string;
   invitationToken: string;
   invitationTokenExpiresAt: Date;
-  role: AccessType["role"];
   hashedPassword: string;
   createdAt?: Date;
 };
@@ -26,7 +24,8 @@ export type AccessType = {
   userId: string;
   projectId: string;
   role: "owner" | "maintainer" | "developer" | "guest";
-  active?: boolean;
+  status: "active" | "inactive" | "pending";
+  projectInviteId?: string;
 };
 
 export type AuditType = {
