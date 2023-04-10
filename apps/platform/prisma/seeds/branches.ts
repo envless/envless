@@ -16,14 +16,29 @@ const seedBranches = async () => {
   });
 
   const users = await prisma.user.findMany({
-    select: { id: true },
+    select: { id: true, email: true },
   });
 
   console.log(`Seeding branches for ${projects.length} projects`.blue);
 
   for (let i = 0; i < users.length; i++) {
     for (let j = 0; j < projects.length; j++) {
-      const isProtected = random() < 0.5;
+      // const isProtected = random() < 0.5;
+
+      // create main main on each project for default user
+      if (users[i].email === "envless@example.com") {
+        await prisma.branch.create({
+          data: {
+            name: "main",
+            projectId: projects[j].id,
+            protectedAt: new Date(),
+            createdById: users[i].id,
+            description: faker.lorem.sentence(4),
+          },
+        });
+      }
+
+      const isProtected = false;
       branches.push({
         name: `${faker.git.branch()}-${random(1, 5000)}`,
         projectId: projects[j].id,
