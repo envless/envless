@@ -76,6 +76,20 @@ const seedSecrets = async (count: number = 10) => {
         { REDIS_URL: "redis://localhost:6379" },
         { AWS_CLIENT_ID: "1234567890" },
         { AWS_SECRET: "1234567890ABVCDEFGHIJLKMNOP" },
+        {
+          PGP_PRIVATE_KEY: `-----BEGIN PGP PRIVATE KEY BLOCK-----
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
+-----END PGP PRIVATE KEY BLOCK-----`,
+        },
       ].forEach(async (keypair) => {
         const keyPairObj = Object.keys(keypair);
         const key = keyPairObj[0];

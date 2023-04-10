@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Member from "@/models/member";
 import type { MemberType, UserType } from "@/types/resources";
+import type { MemberType, UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";

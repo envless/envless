@@ -10,6 +10,7 @@ import { projects } from "@/trpc/routes/projects";
 import { pullRequest } from "@/trpc/routes/pullRequest";
 import { twoFactor } from "@/trpc/routes/twoFactor";
 import { auditLogs } from "./routes/auditLog";
+import { secrets } from "./routes/secret";
 
 export const appRouter = createRouter({
   cli,
@@ -22,6 +23,7 @@ export const appRouter = createRouter({
   branches,
   pullRequest,
   auditLogs,
+  secrets,
 });
 
 // export type definition of API

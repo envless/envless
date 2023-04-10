@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
@@ -29,6 +30,7 @@ interface Props {
   currentRole: UserRole;
   publicKey: UserPublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
+  branches: any;
 }
 
 interface PersonalKey {
@@ -41,13 +43,6 @@ interface ProjectKey {
   encryptedProjectKey: EncryptedProjectKey["encryptedKey"];
 }
 
-const defaultBranches = [
-  { id: 1, name: "main", isSelected: true },
-  { id: 2, name: "staging", isSelected: false },
-  { id: 3, name: "production", isSelected: false },
-  { id: 4, name: "feat/upload-env-file", isSelected: false },
-];
-
 export const ProjectPage = ({
   user,
   projects,
@@ -55,6 +50,7 @@ export const ProjectPage = ({
   currentRole,
   publicKey,
   encryptedProjectKey,
+  branches,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [encryptionKeys, setEncryptionKeys] = useState<{
@@ -71,7 +67,20 @@ export const ProjectPage = ({
     },
   });
 
-  const [selectedBranch, setSelectedBranch] = useState(defaultBranches[0]);
+  const router = useRouter();
+  const { branch } = router.query;
+
+  const getSelectedBranch = () => {
+    if (branch) {
+      return branches.filter((b) => b.name === branch)[0];
+    }
+    return branches.filter((b) => b.name === "main")[0];
+  };
+
+  const memoizedSelectedBranch = useMemo(
+    () => getSelectedBranch(),
+    [getSelectedBranch],
+  );
 
   useUpdateEffect(() => {
     const getPrivateKey = sessionStorage.getItem("privateKey");
@@ -137,9 +146,9 @@ export const ProjectPage = ({
               <BranchDropdown
                 label="Current Branch"
                 dropdownLabel="Switch between branches"
-                branches={defaultBranches}
-                selectedBranch={selectedBranch}
-                onClick={(branches) => setSelectedBranch(branches)}
+                branches={branches}
+                selectedBranch={memoizedSelectedBranch}
+                currentProjectSlug={currentProject.slug}
               />
 
               <Button
@@ -153,7 +162,7 @@ export const ProjectPage = ({
             </div>
           </div>
 
-          <EnvironmentVariableEditor />
+          <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
             onSuccessCreation={() => {}}
@@ -188,6 +197,13 @@ export const getServerSideProps = withAccessControl({
         encryptedProjectKey: {
           select: { id: true, encryptedKey: true },
         },
+        branches: {
+          select: {
+            id: true,
+            name: true,
+            protected: true,
+          },
+        },
       },
     });
 
@@ -198,6 +214,7 @@ export const getServerSideProps = withAccessControl({
 
     const publicKey = userPublicKey?.key;
     let encryptedProjectKey = currentProject?.encryptedProjectKey;
+    const branches = currentProject?.branches;
 
     if (publicKey && !encryptedProjectKey) {
       const decryptedProjectKey = await generateKey();
@@ -217,6 +234,7 @@ export const getServerSideProps = withAccessControl({
     return {
       props: {
         encryptedProjectKey,
+        branches,
       },
     };
   },
