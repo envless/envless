@@ -15,6 +15,7 @@ const nextConfig = {
       "avatar.vercel.sh",
       "avatars.githubusercontent.com",
       "user-images.githubusercontent.com",
+      "www.gravatar.com",
     ],
   },
 
@@ -24,8 +25,8 @@ const nextConfig = {
         source: "/",
         destination: "/projects",
         permanent: true,
-      }
-    ]
+      },
+    ];
   },
 
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

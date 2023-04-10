@@ -1,8 +1,8 @@
-import { UserType } from "@/types/resources";
+import { MemberType } from "@/types/resources";
 import md5 from "md5";
 import { getInitials } from "./helpers";
 
-export const getAvatar = (member: UserType) => {
+export const getAvatar = (member: MemberType) => {
   if (member.image) return member.image;
 
   const hash = md5(member.email);

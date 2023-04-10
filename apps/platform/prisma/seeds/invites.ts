@@ -17,11 +17,10 @@ const seedInvites = async (count: number = 10) => {
     select: { id: true },
   });
 
-  const inviteArray: ProjectInviteType[] = [];
   const password = await randomBytes(32).toString("hex");
   const hashedPassword = await argon2.hash(password);
 
-  projects.forEach((project) => {
+  for (const project of projects) {
     for (let i = 0; i < count; i++) {
       const invitationToken = randomBytes(32).toString("hex");
       const createdAt = sub(new Date(), {
@@ -30,28 +29,40 @@ const seedInvites = async (count: number = 10) => {
 
       const expiresAt = addHours(createdAt, random(0, 48));
 
-      inviteArray.push({
-        email: toLower(faker.internet.email()),
-        role: sample([
-          "maintainer",
-          "developer",
-          "guest",
-        ]) as AccessType["role"],
-        projectId: project.id,
-        invitationToken,
-        invitationTokenExpiresAt: expiresAt,
-        hashedPassword,
-        createdAt,
+      const projectInvite = await prisma.projectInvite.create({
+        data: {
+          projectId: project.id,
+          invitationToken,
+          invitationTokenExpiresAt: expiresAt,
+          hashedPassword,
+          createdAt,
+        },
+      });
+
+      const user = await prisma.user.create({
+        data: {
+          email: faker.internet.email(),
+          name: faker.name.fullName(),
+        },
+      });
+
+      await prisma.access.create({
+        data: {
+          user: { connect: { id: user.id } },
+          project: { connect: { id: project.id } },
+          projectInvite: { connect: { id: projectInvite.id } },
+          role: sample([
+            "maintainer",
+            "developer",
+            "guest",
+          ]) as AccessType["role"],
+          status: "pending",
+        },
       });
     }
-  });
+  }
 
-  const records = await prisma.projectInvite.createMany({
-    data: inviteArray,
-    skipDuplicates: true,
-  });
-
-  console.log(`🎉 Seeded ${records.count} invites.`.green);
+  console.log(`🎉 Seeded invites for ${projects.length} projects.`.green);
 };
 
 export default seedInvites;
