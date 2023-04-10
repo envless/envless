@@ -1,11 +1,11 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import React from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
-import type { PendingInvite } from "@/pages/projects/[slug]/members";
-import { UserType } from "@/types/resources";
+import { MemberType, UserType } from "@/types/resources";
+import { getAvatar } from "@/utils/getAvatar";
 import { trpc } from "@/utils/trpc";
-import { UserRole } from "@prisma/client";
+import { MembershipStatus, UserRole } from "@prisma/client";
 import clsx from "clsx";
 import {
   Lock,
@@ -26,7 +26,7 @@ export type Tab = "active" | "pending" | "inactive";
 interface TableProps {
   tab: Tab;
   setTab: (tab: Tab) => void;
-  members: UserType[];
+  members: MemberType[];
   currentRole: UserRole;
   projectId: string;
   user: UserType;
@@ -39,9 +39,10 @@ interface SelectedMember {
 }
 const roles: UserRole[] = Object.values(UserRole);
 
-function hasExpired(invite: PendingInvite) {
+function hasExpired(timeString: Date) {
   const now = Date.now();
-  const inviteTime = new Date(invite.invitationTokenExpiresAt).getTime();
+  const inviteTime = new Date(timeString).getTime();
+
   return now > inviteTime;
 }
 
@@ -70,7 +71,7 @@ const MembersTable = ({
     }
   }, [members, query, results]);
 
-  const memberStatusMutation = trpc.members.updateActiveStatus.useMutation({
+  const memberStatusMutation = trpc.members.updateUserAccessStatus.useMutation({
     onSuccess: (data) => {
       showToast({
         type: "success",
@@ -167,7 +168,7 @@ const MembersTable = ({
   );
 
   const onUpdateMemberStatus = useCallback(
-    (user: SelectedMember, status: boolean) => {
+    (user: SelectedMember, status: MembershipStatus) => {
       const confirmed = confirm(
         "Are you sure you want to change this user's status?",
       );
@@ -192,43 +193,50 @@ const MembersTable = ({
       projectId,
     });
   };
-  const handleDeleteInvite = (email: string) => {
+
+  const handleDeleteInvite = (projectInviteId: string) => {
     setFetching(true);
     memberDeleteInviteMutation.mutate({
-      email,
       projectId,
+      projectInviteId,
     });
   };
 
-  const renderSettingsButton = (member: UserType) => {
+  const renderSettingsButton = (member: MemberType) => {
     if (tab === "pending") {
-      const invite = member as PendingInvite;
-
+      const invite = member as MemberType & {
+        projectInviteId: NonNullable<MemberType["projectInviteId"]>;
+        projectInvite: NonNullable<MemberType["projectInvite"]>;
+      };
       return (
         <button
           onClick={
-            hasExpired(invite)
+            hasExpired(invite.projectInvite?.invitationTokenExpiresAt)
               ? () => {
-                  handleReInvite(invite.email);
+                  handleReInvite(member.email);
                 }
               : () => {
-                  handleDeleteInvite(invite.email);
+                  handleDeleteInvite(invite.projectInviteId);
                 }
           }
-          aria-label={hasExpired(invite) ? "Re-invite member" : "Delete invite"}
+          aria-label={
+            hasExpired(invite.projectInvite.invitationTokenExpiresAt)
+              ? "Re-invite member"
+              : "Delete invite"
+          }
           data-balloon-pos="up"
           className="hover:text-teal-400 hover:disabled:text-current"
-          disabled={fetching || invite.id === user.id}
+          disabled={fetching || member.id === user.id}
         >
-          {hasExpired(invite) ? (
+          {hasExpired(invite.projectInvite.invitationTokenExpiresAt) ? (
             <Fragment>
               <MailCheck className="h-5 w-5" strokeWidth={2} />
-              <span className="sr-only">Re-invite {invite.email}</span>
+              <span className="sr-only">Re-invite {member.email}</span>
             </Fragment>
           ) : (
             <Fragment>
               <Trash className="h-5 w-5" strokeWidth={2} />
-              <span className="sr-only">Delete invite for {invite.email}</span>
+              <span className="sr-only">Delete invite for {member.email}</span>
             </Fragment>
           )}
         </button>
@@ -245,7 +253,7 @@ const MembersTable = ({
                 newRole: member.role,
                 userId: member.id,
               },
-              true,
+              MembershipStatus.active,
             )
           }
           aria-label={`Re-activate ${member.name}`}
@@ -269,7 +277,7 @@ const MembersTable = ({
               newRole: member.role,
               userId: member.id,
             },
-            false,
+            MembershipStatus.inactive,
           )
         }
         className="hover:text-teal-400 disabled:opacity-50 hover:disabled:text-current"
@@ -299,81 +307,85 @@ const MembersTable = ({
       ) : (
         <table className="divide-dark min-w-full divide-y">
           <tbody className=" bg-dark">
-            {team.map((member) => (
-              <tr key={member.id}>
-                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 flex-shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={member.image}
-                        alt=""
-                      />
-                    </div>
-                    <div className="ml-4">
-                      <div className="font-medium ">{member.name}</div>
-                      <div
-                        className={clsx(
-                          tab === "pending" ? "text-medium" : "text-light",
-                        )}
-                      >
-                        {member.email}
+            {team.map((member) => {
+              return (
+                <tr key={member.id}>
+                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <Image
+                          className="h-10 w-10 rounded-full"
+                          src={getAvatar(member)}
+                          alt={`${member.email} picture`}
+                          width={40}
+                          height={40}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <div className="font-medium ">{member.name}</div>
+                        <div
+                          className={clsx(
+                            tab === "pending" ? "text-medium" : "text-light",
+                          )}
+                        >
+                          {member.email}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {tab === "pending" || tab === "inactive" ? (
-                  <td className="relative mt-4 inline-block w-full max-w-[200px]">
-                    <div className="w-full">
-                      <div className="border-dark bg-dark inline-flex w-full items-center justify-center truncate rounded border px-3 py-2 text-sm">
-                        <div className="flex items-center">
-                          <UserCog className="mr-2 h-4 w-4 shrink-0" />
-                          <span className="text-light mr-2 block text-xs">
-                            Role
+                  {tab === "pending" || tab === "inactive" ? (
+                    <td className="relative mt-4 inline-block w-full max-w-[200px]">
+                      <div className="w-full">
+                        <div className="border-dark bg-dark inline-flex w-full items-center justify-center truncate rounded border px-3 py-2 text-sm">
+                          <div className="flex items-center">
+                            <UserCog className="mr-2 h-4 w-4 shrink-0" />
+                            <span className="text-light mr-2 block text-xs">
+                              Role
+                            </span>
+                          </div>
+                          <span className="max-w-[100px] truncate text-sm font-semibold">
+                            {member.role}
                           </span>
                         </div>
-                        <span className="max-w-[100px] truncate text-sm font-semibold">
-                          {member.role}
-                        </span>
                       </div>
-                    </div>
-                  </td>
-                ) : (
-                  <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
-                    <MemberDropDown
-                      roles={roles}
-                      setSelectedRole={(role) =>
-                        onUpdateMemberAccess({
-                          currentRole: member.role,
-                          newRole: role,
-                          userId: member.id,
-                        })
-                      }
-                      selectedRole={member.role}
-                      disabled={fetching}
-                    />
-                  </td>
-                )}
-                {tab != "pending" && tab !== "inactive" && (
-                  <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
-                    <div className="inline-flex">
-                      2FA
-                      {member.twoFactorEnabled ? (
-                        <Lock className="ml-2 h-4 w-4 text-teal-400" />
-                      ) : (
-                        <Unlock className="ml-2 h-4 w-4 text-red-400" />
-                      )}
-                    </div>
-                  </td>
-                )}
+                    </td>
+                  ) : (
+                    <td className="mt-3 py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
+                      <MemberDropDown
+                        roles={roles}
+                        setSelectedRole={(role) =>
+                          onUpdateMemberAccess({
+                            currentRole: member.role,
+                            newRole: role,
+                            userId: member.id,
+                          })
+                        }
+                        selectedRole={member.role}
+                        disabled={fetching}
+                      />
+                    </td>
+                  )}
+                  {tab != "pending" && tab !== "inactive" && (
+                    <td className="mt-3 hidden py-4 pl-3 pr-4 text-sm font-medium sm:pr-6 md:block">
+                      <div className="inline-flex">
+                        2FA
+                        {member.twoFactorEnabled ? (
+                          <Lock className="ml-2 h-4 w-4 text-teal-400" />
+                        ) : (
+                          <Unlock className="ml-2 h-4 w-4 text-red-400" />
+                        )}
+                      </div>
+                    </td>
+                  )}
 
-                <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                  {renderSettingsButton(member)}
-                </td>
-              </tr>
-            ))}
+                  <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    {renderSettingsButton(member)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

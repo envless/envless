@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import { trpc } from "@/utils/trpc";
@@ -26,6 +27,7 @@ const AddMemberModal = ({ projectId }) => {
   const [loading, setLoading] = useState(false);
 
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
+  const router = useRouter();
 
   const {
     register,
@@ -44,6 +46,7 @@ const AddMemberModal = ({ projectId }) => {
   const inviteMutation = trpc.members.invite.useMutation({
     onSuccess: (_data) => {
       setLoading(false);
+      router.replace(router.asPath);
       showToast({
         type: "success",
         title: "Invitation sent",

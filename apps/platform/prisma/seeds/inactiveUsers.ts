@@ -49,7 +49,7 @@ const seedInactiveUsers = async (count: number = 10) => {
           "developer",
           "guest",
         ]) as AccessType["role"],
-        active: false,
+        status: "inactive",
       });
     });
   });

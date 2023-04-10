@@ -76,7 +76,6 @@ enum UserRole {
 
 model ProjectInvite {
   id                       String   @id @default(cuid())
-  email                    String
   project                  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId                String
   createdAt                DateTime @default(now())
@@ -85,30 +84,36 @@ model ProjectInvite {
   hashedPassword           String
   retryCount               Int      @default(0)
   invitedById              String?
-  role                     UserRole @default(developer)
-  accepted                 Boolean  @default(false)
+  access                   Access[]
 
-  @@unique(fields: [email, projectId], name: "uniq_email_project")
   @@unique([invitationToken])
   @@index([projectId])
   @@index([invitationToken])
-  @@index([email, invitationToken])
+}
+
+enum MembershipStatus {
+  active
+  pending
+  inactive
 }
 
 model Access {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  projectId String
-  role      UserRole
-  active    Boolean  @default(true)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userId          String
+  projectId       String
+  role            UserRole         @default(guest)
+  status          MembershipStatus @default(pending)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectInviteId String?          @unique
+  projectInvite   ProjectInvite?   @relation(fields: [projectInviteId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
   @@index([userId])
   @@index([projectId])
+  @@index([projectInviteId])
 }
 
 model Branch {

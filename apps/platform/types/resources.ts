@@ -1,4 +1,4 @@
-import { LockedUser, UserRole } from "@prisma/client";
+import type { LockedUser, ProjectInvite, UserRole } from "@prisma/client";
 
 export interface UserType {
   id: string;
@@ -9,4 +9,14 @@ export interface UserType {
   twoFactorEnabled: boolean;
   clientSideTwoFactorVerified: boolean;
   locked: LockedUser | null;
+}
+export interface MemberType {
+  id: string;
+  projectInviteId: string | null;
+  projectInvite: ProjectInvite | null;
+  name: string | null;
+  email: string;
+  image: string | null;
+  twoFactorEnabled: boolean;
+  role: UserRole;
 }

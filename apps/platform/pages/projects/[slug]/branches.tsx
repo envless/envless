@@ -292,7 +292,7 @@ export const BranchesPage = ({
               actionText: "from project settings page.",
               onActionClick: () => {
                 router.push(
-                  `/project/${projectSlug}/settings/protected-branches`,
+                  `/projects/${projectSlug}/settings/protected-branch`,
                 );
               },
             }}

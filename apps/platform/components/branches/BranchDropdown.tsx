@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { Branch } from "@prisma/client";
@@ -13,7 +14,8 @@ interface BranchDropdownProps {
   branches: Branch[] | any;
   selectedBranch: any;
   full?: boolean;
-  onClick: (branch: Branch | any) => void;
+  onClick?: (branch: Branch | any) => void;
+  currentProjectSlug: string;
 }
 
 export default function BranchDropdown({
@@ -23,6 +25,7 @@ export default function BranchDropdown({
   selectedBranch,
   full,
   onClick,
+  currentProjectSlug,
 }: BranchDropdownProps) {
   const [searchData, setSearchData] = useState(branches);
   const { register } = useForm();
@@ -44,6 +47,10 @@ export default function BranchDropdown({
     const result = fuse.search(event.target.value);
 
     setSearchData(result.length ? result.map((item) => item.item) : branches);
+  };
+
+  const branchLink = (branchName: string) => {
+    return `/projects/${currentProjectSlug}?branch=${branchName}`;
   };
 
   return (
@@ -117,23 +124,25 @@ export default function BranchDropdown({
               <Menu.Item
                 as="button"
                 key={branch.id}
-                onClick={() => onClick(branch)}
+                onClick={() => onClick && onClick(branch)}
               >
                 {({ active }) => (
-                  <li
-                    className={clsx(
-                      "inline-flex w-full items-center justify-between px-3 py-2",
-                      active && "bg-dark",
-                    )}
-                  >
-                    <span className="truncate">{branch.name}</span>
-                    {branch.name === selectedBranch.name && (
-                      <Check
-                        className="h-4 w-4 shrink-0 text-teal-300"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </li>
+                  <Link href={branchLink(branch.name)}>
+                    <li
+                      className={clsx(
+                        "inline-flex w-full items-center justify-between px-3 py-2",
+                        active && "bg-dark",
+                      )}
+                    >
+                      <span className="truncate">{branch.name}</span>
+                      {branch.name === selectedBranch.name && (
+                        <Check
+                          className="h-4 w-4 shrink-0 text-teal-300"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </li>
+                  </Link>
                 )}
               </Menu.Item>
             ))}
