@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { MemberType, UserType } from "@/types/resources";
-import { getAvatar } from "@/utils/avatar-generator";
+import { getAvatar } from "@/utils/getAvatar";
 import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import clsx from "clsx";

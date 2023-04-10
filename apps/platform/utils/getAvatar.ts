@@ -6,11 +6,8 @@ export const getAvatar = (member: MemberType) => {
   if (member.image) return member.image;
 
   const hash = md5(member.email);
-
-  const defaultAvatar = `https://avatar.vercel.sh/${getInitials(
-    member.name || member.email,
-  )}.svg?text=${getInitials(member.name || member.email)}`;
-
+  const initials = getInitials(member.name || member.email);
+  const defaultAvatar = `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
   const avatar = `https://www.gravatar.com/avatar/${hash}?d=${defaultAvatar}`;
 
   return avatar;
