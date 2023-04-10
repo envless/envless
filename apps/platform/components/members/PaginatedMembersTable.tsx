@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import MenuButton, { type MenuButtonAction } from "../MenuButton";
 import MemberDropDown from "./MemberDropDown";
+import { getAvatar } from "@/utils/getAvatar";
 
 type PaginatedMembersTableProps = {
   members: MemberType[];
@@ -193,18 +194,12 @@ const PaginatedMembersTable = ({
         cell: (info) => {
           const member = info.row.original;
 
-          const initials = getInitials(member.name || member.email);
-
-          const avatar =
-            member.image ||
-            `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
-
           return (
             <div className="inline-flex items-center sm:pl-6">
               <div className="h-10 w-10 flex-shrink-0">
                 <Image
                   className="h-10 w-10 rounded-full"
-                  src={avatar}
+                  src={getAvatar(member)}
                   alt={`${member.email} picture`}
                   width={40}
                   height={40}
