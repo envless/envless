@@ -14,6 +14,7 @@ RUN rm -rf apps/cli apps/docs apps/www
 FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
+RUN npm install -g dotenv-cli
 WORKDIR /app
  
 # First install the dependencies (as they change less often)
@@ -28,8 +29,8 @@ COPY --from=builder /app/out/full/ .
 ENV SKIP_ENV_VALIDATION true
 ENV EMAIL_FROM envless@example.com
 RUN npx turbo run db:generate
+
 RUN yarn turbo run build --filter=platform...
 
-CMD ["yarn","dev"]
 
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
