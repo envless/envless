@@ -84,15 +84,10 @@ const CreatePullRequestModal = ({
   useEffect(() => {
     if (branchQuery.data) {
       setBranches(branchQuery.data);
+      setBaseBranchFrom(branchQuery.data[0]);
+      setCurrentBranch(branchQuery.data[0]);
     }
   }, [branchQuery.data]);
-
-  useEffect(() => {
-    if (branches) {
-      setBaseBranchFrom(branches[0]);
-      setCurrentBranch(branches[0]);
-    }
-  }, [branches]);
 
   return (
     <BaseModal title="New Pull Request" isOpen={isOpen} setIsOpen={setIsOpen}>
