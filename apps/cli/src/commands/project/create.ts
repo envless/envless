@@ -1,6 +1,6 @@
 import { intro, isCancel, outro, select, spinner, text } from "@clack/prompts";
 import { Args, Command, Flags } from "@oclif/core";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { blue, bold, cyan, grey, red, underline } from "kleur/colors";
 import { triggerCancel } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
@@ -16,12 +16,15 @@ const API_BASE = process.env.API_BASE || `http://localhost:3000`;
 const LINKS = {
   projectsPage: `${API_BASE}/projects`,
   documentation: `${API_BASE}/docs/cli/projects`,
+  auth: `${API_BASE}/cli/auth`,
 };
 
 export default class ProjectCreate extends Command {
-  static description =
-    "Create a new project in the Envles. This command will create a new project with the specified name and add it to the list of projects in the Envless project. If no name is provided, You'll be prompted to provide one";
-
+  static description = `Create a new Envless project.\n${grey(
+    `⚡ Please make sure you are running this command from your development project's root directory and make sure you're authenticated. If not, please do so at \n${cyan(
+      LINKS.auth,
+    )}`,
+  )}`;
   static examples = [
     `
       $ envless project create
@@ -29,13 +32,15 @@ export default class ProjectCreate extends Command {
       `,
   ];
 
-  static args = {
-    name: Args.string({
+  static flags = {
+    name: Flags.string({
       description: `This is the project's name`,
+      char: "n",
       dependsOn: ["slug"],
     }),
-    slug: Args.string({
+    slug: Flags.string({
       description: `This will be used as the slug for the project`,
+      char: "s",
       dependsOn: ["name"],
     }),
   };
@@ -73,29 +78,27 @@ export default class ProjectCreate extends Command {
         },
       );
 
-      if (response) {
-        const data = response.data as NewProjectResponse;
-        await loader.stop(
-          `🎉 Project created succcesfully ${bold(cyan(projectName))}`,
-        );
-        await outro(
-          `Visit this link on your web browser: ${underline(
-            blue(`${LINKS.projectsPage}/${data.slug}`),
-          )}`,
-        );
-      }
-    } catch (e: any) {
-      await outro(`${bold(red(`Project creation failed`))}`);
-      throw new Error(e?.message || e);
+      const data = response.data as NewProjectResponse;
+      await loader.stop(
+        `🎉 Project created succcesfully ${bold(cyan(projectName))}`,
+      );
+      await outro(
+        `Visit this link on your web browser: ${underline(
+          blue(`${LINKS.projectsPage}/${data.slug}`),
+        )}`,
+      );
+    } catch (error) {
+      loader.stop(`Unauthorized error while creating the project`);
+      triggerCancel();
     }
   }
 
   public async run(): Promise<void> {
     const version = this.config.version;
-    const { args } = await this.parse(ProjectCreate);
+    const { flags } = await this.parse(ProjectCreate);
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    if (!args.name || !args.slug) {
+    if (!flags.name || !flags.slug) {
       const projectName: any = await text({
         message: `Enter project name:`,
         validate: (input: string) => {
@@ -117,8 +120,8 @@ export default class ProjectCreate extends Command {
         return;
       }
     } else {
-      if (args.name && args.slug) {
-        this.createProject(args.name, args.slug);
+      if (flags.name && flags.slug) {
+        this.createProject(flags.name, flags.slug);
         return;
       }
     }
@@ -126,7 +129,9 @@ export default class ProjectCreate extends Command {
       `Use the command ${cyan(
         "envless project create",
       )} to get prompt or ${cyan(
-        `envless project create ${bold("[PROJECT_NAME] [PROJECT_SLUG]")}`,
+        `envless project create ${bold(
+          '--name "[PROJECT_NAME]" --slug "[PROJECT_SLUG]"',
+        )}`,
       )} to create a project`,
     );
     triggerCancel();
