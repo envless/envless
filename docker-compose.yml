@@ -1,6 +1,38 @@
 version: "3"
 
 services:
+  redis:
+    image: "redis:7-alpine"
+    hostname: "envless-redis"
+    init: true
+    networks:
+      - envless_network
+    ports: 
+      - "6379:6379"
+
+  redis-rest:
+    image: "nicolas/webdis:0.1.21"
+    hostname: "envless-redis-rest"
+    depends_on:
+      - "redis"
+    ports: 
+      - "7379:7379"
+
+  postgres:
+    image: "postgres:13-alpine"
+    hostname: "envless-postgres"
+    restart: "always"
+    environment:
+        POSTGRES_USER: "envless"
+        POSTGRES_DB: "envless"
+        POSTGRES_PASSWORD: "envless"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - envless_network
+    ports: 
+      - "5433:5433"
+
   platform:
     container_name: platform
     build:
@@ -8,6 +40,16 @@ services:
       dockerfile: Dockerfile
     restart: always
     env_file: .env.example
-#    command: yarn run dev
     ports:
       - 3000:3000
+    networks:
+      - envless_network
+    depends_on:
+      - postgres
+      - redis-rest
+
+networks:
+  envless_network:
+
+volumes:
+  postgres_data:
