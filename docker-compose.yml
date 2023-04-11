@@ -6,45 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: on-failure
+    restart: always
     env_file: .env.example
-    working_dir: /opt/envless
-    volumes:
-      - ./apps/platform:/app/apps/platform
-      - ./:/opt/envless
-    depends_on:
-      - postgres
-      - redis-webdis
+    command: yarn run dev
     ports:
       - 3000:3000
-  
-  redis:
-    image: "redis:7-alpine"
-    hostname: "envless-redis"
-    init: true
-    ports: 
-      - "6379:6379"
-
-  redis-webdis:
-    image: nicolas/webdis:0.1.21
-    hostname: "envless-redis-webdis"
-    depends_on:
-      - redis
-    ports:
-      - "7379:7379"
-
-  postgres:
-    image: "postgres:13-alpine"
-    hostname: "envless-postgres"
-    restart: "always"
-    environment:
-      POSTGRES_USER: "envless"
-      POSTGRES_DB: "envless"
-      POSTGRES_PASSWORD: "envless"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports: 
-      - "5432:5432"
-
-volumes:
-  pgdata:

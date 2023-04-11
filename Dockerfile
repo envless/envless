@@ -15,6 +15,7 @@ FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
 RUN npm install -g dotenv-cli
+
 WORKDIR /app
  
 # First install the dependencies (as they change less often)
