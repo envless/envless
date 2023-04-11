@@ -8,6 +8,6 @@ services:
       dockerfile: Dockerfile
     restart: always
     env_file: .env.example
-    command: yarn run dev
+#    command: yarn run dev
     ports:
       - 3000:3000
