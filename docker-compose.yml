@@ -44,7 +44,6 @@ services:
       dockerfile: Dockerfile
     restart: always
     command: "yarn dev"
-#    command: "yarn db:migrate && yarn db:seed && yarn dev"
     env_file: .env.example
     ports:
       - 3000:3000
