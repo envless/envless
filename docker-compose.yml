@@ -12,6 +12,7 @@ services:
 
   redis-rest:
     image: "nicolas/webdis:0.1.21"
+    platform: linux/amd64
     hostname: "envless-redis-rest"
     depends_on:
       - "redis"
