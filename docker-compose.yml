@@ -37,22 +37,6 @@ services:
     ports: 
       - "5433:5433"
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    depends_on:
-      - postgres
-    ports:
-      - "5555:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    restart: unless-stopped
-    networks:
-      - envless_network
-
   platform:
     container_name: platform
     build:
