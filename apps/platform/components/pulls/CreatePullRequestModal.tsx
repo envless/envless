@@ -1,14 +1,12 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Project, PullRequest } from "@prisma/client";
+import { Branch, Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
 import BranchComboBox from "../branches/BranchComboBox";
-import { BranchPopover } from "../branches/BranchPopover";
-import { BranchWithNameAndId } from "../branches/CreateBranchModal";
 import BaseModal from "../theme/BaseModal";
 import { showToast } from "../theme/showToast";
 
@@ -20,21 +18,18 @@ interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onSuccessCreation: (pullRequest: PullRequest & { project: Project }) => void;
+  currentProject: Project;
 }
 
 const CreatePullRequestModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
+  currentProject,
 }: BranchModalProps) => {
-  const defaultBranches: BranchWithNameAndId[] = [
-    { id: "1", name: "main" },
-    { id: "2", name: "staging" },
-    { id: "3", name: "production" },
-  ];
-  const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
-  const [currentBranch, setCurrentBranch] = useState(defaultBranches[1]);
-  const [branches, setBranches] = useState(defaultBranches);
+  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
+  const [currentBranch, setCurrentBranch] = useState({} as Branch);
+  const [branches, setBranches] = useState([] as Branch[]);
 
   const router = useRouter();
 
@@ -65,6 +60,15 @@ const CreatePullRequestModal = ({
     },
   });
 
+  const branchQuery = trpc.branches.getAll.useQuery(
+    {
+      projectId: currentProject.id,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
+
   const createNewBranch: SubmitHandler<PullRequestType> = async (data) => {
     const { title } = data;
 
@@ -76,6 +80,14 @@ const CreatePullRequestModal = ({
 
     pullRequestMutation.mutate({ pullRequest: { title, projectSlug } });
   };
+
+  useEffect(() => {
+    if (branchQuery.data) {
+      setBranches(branchQuery.data);
+      setBaseBranchFrom(branchQuery.data[0]);
+      setCurrentBranch(branchQuery.data[0]);
+    }
+  }, [branchQuery.data]);
 
   return (
     <BaseModal title="New Pull Request" isOpen={isOpen} setIsOpen={setIsOpen}>
