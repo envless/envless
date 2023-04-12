@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
@@ -59,6 +60,7 @@ export const BranchesPage = ({
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
+  const { setBranches } = useBranchesStore();
 
   const projectSlug = router.query.slug as string;
 
@@ -73,6 +75,10 @@ export const BranchesPage = ({
 
   const { protected: protectedBranches, unprotected: allOtherBranches } =
     useSeperateBranches(branchQuery.data || []);
+
+  useEffect(() => {
+    setBranches(branchQuery.data || []);
+  }, [branchQuery.data, setBranches]);
 
   const branchesColumnVisibility = {
     details: true,
@@ -257,7 +263,6 @@ export const BranchesPage = ({
         }}
         isOpen={isPrModalOpen}
         setIsOpen={setIsPrModalOpen}
-        currentProject={currentProject}
       />
 
       <div className="w-full">
