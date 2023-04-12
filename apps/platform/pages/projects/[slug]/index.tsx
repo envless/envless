@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
+import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
   EncryptedProjectKey,
@@ -70,6 +72,7 @@ export const ProjectPage = ({
       encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     },
   });
+  const { setBranches } = useBranchesStore();
 
   const router = useRouter();
   const { branch } = router.query;
@@ -84,6 +87,15 @@ export const ProjectPage = ({
   const memoizedSelectedBranch = useMemo(
     () => getSelectedBranch(),
     [getSelectedBranch],
+  );
+
+  const branchQuery = trpc.branches.getAll.useQuery(
+    {
+      projectId: currentProject.id,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
   );
 
   useUpdateEffect(() => {
@@ -129,6 +141,10 @@ export const ProjectPage = ({
       }
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
+
+  useEffect(() => {
+    setBranches(branchQuery.data || []);
+  }, [branchQuery.data, setBranches]);
 
   return (
     <ProjectLayout
