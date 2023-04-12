@@ -256,6 +256,7 @@ export const BranchesPage = ({
         }}
         isOpen={isPrModalOpen}
         setIsOpen={setIsPrModalOpen}
+        currentProject={currentProject}
       />
 
       <div className="w-full">
@@ -292,7 +293,7 @@ export const BranchesPage = ({
               actionText: "from project settings page.",
               onActionClick: () => {
                 router.push(
-                  `/project/${projectSlug}/settings/protected-branches`,
+                  `/projects/${projectSlug}/settings/protected-branch`,
                 );
               },
             }}
