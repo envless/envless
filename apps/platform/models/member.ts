@@ -1,3 +1,5 @@
+import type { MemberType } from "@/types/resources";
+import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 
 const getOne = async (id: string) => {
@@ -8,56 +10,39 @@ const getOne = async (id: string) => {
   return member;
 };
 
-const getMany = async (projectId: string, active: boolean = true) => {
+const getMany = async (projectId: string): Promise<MemberType[]> => {
   const accesses = await prisma.access.findMany({
     where: {
       projectId,
-      active: active ?? true,
     },
     include: {
       user: true,
+      projectInvite: true,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
+    take: QUERY_ITEMS_PER_PAGE,
   });
 
   return accesses.map((access) => {
     return {
       id: access.user.id,
+      projectInviteId: access.projectInviteId,
+      projectInvite: access.projectInvite,
       name: access.user.name,
       email: access.user.email,
       image: access.user.image,
       twoFactorEnabled: access.user.twoFactorEnabled,
       role: access.role,
+      status: access.status,
     };
   });
-};
-
-const getPending = async (projectId: string) => {
-  const invites = await prisma.projectInvite.findMany({
-    where: {
-      AND: [{ projectId }, { accepted: false }],
-    },
-
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      invitationTokenExpiresAt: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
-  return invites;
 };
 
 const Member = {
   getOne,
   getMany,
-  getPending,
 };
 
 export default Member;

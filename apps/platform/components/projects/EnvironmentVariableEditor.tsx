@@ -1,8 +1,20 @@
-import { ComponentProps, useCallback, useRef, useState } from "react";
+import {
+  ComponentProps,
+  MutableRefObject,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import useSecret from "@/hooks/useSecret";
+import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 
@@ -12,9 +24,28 @@ export interface EnvVariable {
   hidden: boolean;
 }
 
-export function EnvironmentVariableEditor() {
+export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
+
+  const { secrets, setSecrets } = useSecret({
+    branchId,
+  });
+
+  const { control, setValue, handleSubmit } = useForm<any>();
+  const { fields, append, remove } = useFieldArray({
+    name: "secrets",
+    control,
+  });
+  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation();
+
+  useEffect(() => {
+    if (secrets) {
+      setValue("secrets", secrets);
+    }
+  }, [secrets, setValue]);
+
+  console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -27,18 +58,18 @@ export function EnvironmentVariableEditor() {
   });
 
   const handleAddMoreEnvClick = () => {
-    setEnvKeys([
-      ...(envKeys as EnvVariable[]),
-      { envKey: "", envValue: "", hidden: false },
-    ]);
-  };
-  const handleRemoveEnvPairClick = (index: number) => {
-    const updatedPairs = envKeys.filter((_, i) => i !== index);
-    setEnvKeys(updatedPairs);
+    append({
+      encryptedKey: "",
+      encryptedValue: "",
+      decryptedKey: "",
+      decryptedValue: "",
+      hidden: false,
+      hiddenValue: "",
+    });
   };
 
   const handleToggleHiddenEnvPairClick = (index: number) => {
-    const newEnvKeys = envKeys.map((envVariable, i) => {
+    const newEnvKeys = secrets.map((envVariable, i) => {
       const isHidden = () => {
         if (i === index) {
           return !envVariable.hidden;
@@ -47,16 +78,13 @@ export function EnvironmentVariableEditor() {
         return envVariable.hidden;
       };
 
-      console.log(envVariable);
-
       return {
-        envKey: envVariable.envKey,
-        envValue: envVariable.envValue,
+        ...envVariable,
         hidden: isHidden(),
-      } as EnvVariable;
+      } as EnvSecret;
     });
 
-    setEnvKeys(newEnvKeys);
+    setSecrets(newEnvKeys);
   };
 
   const handleEnvValueChange = (index: number) => (e) => {
@@ -102,70 +130,85 @@ export function EnvironmentVariableEditor() {
     ]);
   };
 
+  const onSubmit = async (data: any) => {
+    console.log("This data need to be send to the server ", data);
+
+    try {
+      await saveSecretsMutation.mutateAsync({ secrets: data });
+    } catch (err) {}
+  };
+
   return (
     <>
-      {envKeys.length > 0 ? (
-        <div className="w-full py-8">
-          {envKeys.map((envPair, index) => (
-            <div
-              key={envPair.envKey}
-              className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
-            >
-              <div className="col-span-3">
-                <CustomInput
-                  name={envPair.envKey}
-                  onFocus={() => (pastingInputIndex.current = index)}
-                  type="text"
-                  defaultValue={envPair.envKey}
-                  className="my-1 w-full font-mono"
-                  onPaste={handlePaste}
-                  placeholder="eg. CLIENT_ID"
-                />
-              </div>
-
-              <div className="col-span-9">
-                <div className="flex items-center gap-3">
-                  <TextareaGroup
-                    full
-                    icon={
-                      envPair.hidden ? (
-                        <Eye className="text-lighter h-4 w-4" />
-                      ) : (
-                        <EyeOff className="text-light h-4 w-4" />
-                      )
-                    }
-                    name={envPair.envValue}
-                    autoComplete="off"
-                    iconActionClick={() =>
-                      handleToggleHiddenEnvPairClick(index)
-                    }
-                    onChange={handleEnvValueChange(index)}
-                    value={envPair.envValue}
-                    disabled={envPair.hidden}
-                    className={clsx(
-                      envPair.hidden ? "obscure" : "",
-                      "inline-block font-mono",
+      {secrets.length > 0 ? (
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+          <div className="w-full py-8">
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="mt-2 grid grid-cols-12 items-center gap-5 space-x-3"
+              >
+                <div className="col-span-3">
+                  <Controller
+                    control={control}
+                    name={`secrets.${index}.decryptedKey` as const}
+                    render={({ field }) => (
+                      <CustomInput
+                        onFocus={() => (pastingInputIndex.current = index)}
+                        type="text"
+                        className="my-1 w-full font-mono"
+                        onPaste={handlePaste}
+                        placeholder="eg. CLIENT_ID"
+                        {...field}
+                      />
                     )}
                   />
+                </div>
 
-                  <MinusCircle
-                    className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
-                    onClick={() => handleRemoveEnvPairClick(index)}
-                  />
+                <div className="col-span-9">
+                  <div className="flex items-center gap-3">
+                    <Controller
+                      control={control}
+                      name={`secrets.${index}.decryptedValue` as const}
+                      render={({ field }) => (
+                        <TextareaGroup
+                          full
+                          icon={<Eye className="text-lighter h-4 w-4" />}
+                          autoComplete="off"
+                          className={clsx(
+                            // envPair.hidden ? "obscure" : "",
+                            "inline-block font-mono",
+                          )}
+                          disabled={false}
+                          iconActionClick={() =>
+                            handleToggleHiddenEnvPairClick(index)
+                          }
+                          {...field}
+                        />
+                      )}
+                    />
+
+                    <MinusCircle
+                      className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
+                      onClick={() => remove(index)}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          <div className="float-right mt-4 inline-flex gap-3 ">
-            <Button variant="secondary" onClick={() => handleAddMoreEnvClick()}>
-              Add more
-            </Button>
-            <Button onClick={() => handleAddMoreEnvClick()}>
-              Save changes
-            </Button>
+            <div className="float-right mt-4 inline-flex gap-3 ">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => handleAddMoreEnvClick()}
+              >
+                Add more
+              </Button>
+              <Button>Save changes</Button>
+            </div>
           </div>
-        </div>
+        </form>
       ) : (
         <Container
           className={clsx(
@@ -205,25 +248,23 @@ export function EnvironmentVariableEditor() {
   );
 }
 
-interface InputProps {
+interface CustomInputProps extends ComponentProps<"input"> {
   reveal?: boolean;
 }
 
-function CustomInput({
-  disabled,
-  className,
-  reveal,
-  ...props
-}: ComponentProps<"input"> & InputProps) {
-  return (
-    <input
-      {...props}
-      disabled={disabled}
-      className={clsx(
-        "input-primary",
-        className,
-        disabled ? "cursor-not-allowed" : "",
-      )}
-    />
-  );
-}
+const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+  function CustomInput({ className, disabled, ...props }, ref) {
+    return (
+      <input
+        {...props}
+        ref={ref as MutableRefObject<HTMLInputElement>}
+        disabled={disabled}
+        className={clsx(
+          "input-primary",
+          className,
+          disabled ? "cursor-not-allowed" : "",
+        )}
+      />
+    );
+  },
+);

@@ -1,31 +1,25 @@
 import { type GetServerSidePropsContext } from "next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Member from "@/models/member";
-import type { UserType } from "@/types/resources";
+import type { MemberType, UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
+import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { Project, UserRole } from "@prisma/client";
+import { PaginationState } from "@tanstack/react-table";
 import AddMemberModal from "@/components/members/AddMemberModal";
-import MembersTable from "@/components/members/Table";
+import MembersTableContainer from "@/components/members/MembersTableContainer";
+import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 import prisma from "@/lib/prisma";
-
-export interface PendingInvite extends UserType {
-  email: string;
-  id: string;
-  invitationTokenExpiresAt: Date;
-  role: UserRole;
-}
 
 interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
-  members: UserType[];
   user: UserType;
-  activeMembers: UserType[];
-  inactiveMembers: UserType[];
-  pendingMembers: PendingInvite[];
+  initialMembers: MemberType[];
+  totalMembers: number;
 }
 
 export const MembersPage = ({
@@ -33,11 +27,38 @@ export const MembersPage = ({
   currentProject,
   currentRole,
   user,
-  activeMembers,
-  pendingMembers,
-  inactiveMembers,
+  totalMembers,
+  initialMembers,
 }: Props) => {
-  const [tab, setTab] = useState("active");
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: QUERY_ITEMS_PER_PAGE,
+  });
+
+  const pagination = useMemo(
+    () => ({
+      pageIndex,
+      pageSize,
+    }),
+    [pageIndex, pageSize],
+  );
+
+  const pageCount = Math.ceil(totalMembers / pagination.pageSize);
+
+  const { data: members, refetch } = trpc.members.getAll.useQuery(
+    {
+      page: pagination.pageIndex + 1,
+      projectId: currentProject.id,
+    },
+    {
+      initialData: initialMembers,
+      keepPreviousData: true,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const memoizedMembers = useMemo(() => members, [members]);
 
   return (
     <ProjectLayout
@@ -53,48 +74,23 @@ export const MembersPage = ({
           </div>
 
           <div className="col-span-6">
-            <AddMemberModal projectId={currentProject.id} />
+            <AddMemberModal
+              projectId={currentProject.id}
+              triggerRefetchMembers={refetch}
+            />
           </div>
         </div>
-
-        <div className="mt-3 flex flex-col">
-          <div className="inline-block min-w-full py-4 align-middle">
-            <div className="ring-darker shadow ring-1 ring-opacity-5 md:rounded">
-              {tab === "active" && (
-                <MembersTable
-                  members={activeMembers}
-                  tab={tab}
-                  setTab={setTab}
-                  currentRole={currentRole}
-                  projectId={currentProject.id}
-                  user={user}
-                />
-              )}
-
-              {tab === "pending" && (
-                <MembersTable
-                  members={pendingMembers}
-                  tab={tab}
-                  setTab={setTab}
-                  currentRole={currentRole}
-                  projectId={currentProject.id}
-                  user={user}
-                />
-              )}
-
-              {tab === "inactive" && (
-                <MembersTable
-                  members={inactiveMembers}
-                  tab={tab}
-                  setTab={setTab}
-                  currentRole={currentRole}
-                  projectId={currentProject.id}
-                  user={user}
-                />
-              )}
-            </div>
-          </div>
-        </div>
+        <MembersTableContainer
+          members={memoizedMembers}
+          currentRole={currentRole}
+          projectId={currentProject.id}
+          user={user}
+          totalMembers={totalMembers}
+          pageCount={pageCount}
+          pagination={pagination}
+          setPagination={setPagination}
+          refetchMembersAfterUpdate={refetch}
+        />
       </div>
     </ProjectLayout>
   );
@@ -156,15 +152,15 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
     };
   }
 
-  const activeMembers = await Member.getMany(currentProject.id);
-  const inactiveMembers = await Member.getMany(currentProject.id, false);
-  const pendingMembers = await Member.getPending(currentProject.id);
+  const membersInProject = await Member.getMany(currentProject.id);
+  const totalMembers = await prisma.access.count({
+    where: { projectId: currentProject.id },
+  });
 
   return {
     props: {
-      activeMembers,
-      inactiveMembers,
-      pendingMembers: JSON.parse(JSON.stringify(pendingMembers)),
+      initialMembers: JSON.parse(JSON.stringify(membersInProject)),
+      totalMembers,
     },
   };
 };

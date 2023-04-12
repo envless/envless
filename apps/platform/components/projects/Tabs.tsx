@@ -2,15 +2,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { getNavigationTabs } from "@/utils/helpers";
 import type { UserRole } from "@prisma/client";
-import {
-  GitBranch,
-  GitPullRequest,
-  LayoutGrid,
-  LayoutList,
-  Settings2,
-  Users,
-  Zap,
-} from "lucide-react";
 import { Container } from "@/components/theme";
 
 function classNames(...classes) {
@@ -29,7 +20,7 @@ export default function Tabs({ active, projectSlug, currentRole }: Props) {
   const tabs = getNavigationTabs(currentRole, projectUrl);
 
   return (
-    <div>
+    <div className="mb-5">
       <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">
           Select a tab
