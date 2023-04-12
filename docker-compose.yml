@@ -20,7 +20,7 @@ services:
       - "7379:7379"
 
   postgres:
-    image: "postgres:13-alpine"
+    image: "postgres:15.2-alpine"
     hostname: "envless-postgres"
     restart: "always"
     environment:
