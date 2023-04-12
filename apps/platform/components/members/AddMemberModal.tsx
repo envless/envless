@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +18,19 @@ interface MemberProps {
   role: UserRole;
 }
 
+interface AddMemberModalProps {
+  projectId: string;
+  triggerRefetchMembers: () => void;
+}
 const selectOptions = Object.values(UserRole).map((role) => ({
   value: role,
   label: capitalize(role),
 }));
 
-const AddMemberModal = ({ projectId }) => {
+const AddMemberModal = ({
+  projectId,
+  triggerRefetchMembers,
+}: AddMemberModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
@@ -43,39 +50,41 @@ const AddMemberModal = ({ projectId }) => {
     ),
   });
 
-  const inviteMutation = trpc.members.invite.useMutation({
-    onSuccess: (_data) => {
-      setLoading(false);
-      router.replace(router.asPath);
-      showToast({
-        type: "success",
-        title: "Invitation sent",
-        subtitle: "You have succefully sent an invitation.",
-      });
-    },
+  const inviteMutation = trpc.members.invite.useMutation();
 
-    onError: (error) => {
-      setLoading(false);
-      setError("email", { message: error.message });
-    },
-  });
-
-  const inviteMembers: SubmitHandler<MemberProps> = async (data) => {
+  const inviteMembers = async (data: MemberProps, closeModal: () => void) => {
     const { email, role } = data;
     setLoading(true);
 
-    await inviteMutation.mutate({
-      email,
-      projectId,
-      role: role,
-    });
-
-    setLoading(false);
+    await inviteMutation.mutate(
+      {
+        email,
+        projectId,
+        role: role,
+      },
+      {
+        onSuccess: (_data) => {
+          setLoading(false);
+          closeModal();
+          router.replace(router.asPath);
+          triggerRefetchMembers();
+          showToast({
+            type: "success",
+            title: "Invitation sent",
+            subtitle: "You have succefully sent an invitation.",
+          });
+        },
+        onError: (error) => {
+          setLoading(false);
+          setError("email", { message: error.message });
+        },
+      },
+    );
   };
 
-  const submitHandler = (data) => {
+  const submitHandler = (data: any, cb: () => void) => {
     withTwoFactorAuth(() => {
-      inviteMembers(data as MemberProps);
+      inviteMembers(data as MemberProps, cb);
     });
   };
 
@@ -90,53 +99,58 @@ const AddMemberModal = ({ projectId }) => {
       }
       title="Invite team member"
     >
-      <TwoFactorModal />
+      {({ closeModal }) => (
+        <Fragment>
+          <TwoFactorModal />
+          <form
+            onSubmit={handleSubmit((data) => submitHandler(data, closeModal))}
+          >
+            <Input
+              type="email"
+              name="email"
+              label="Email"
+              required
+              full
+              register={register}
+              errors={errors}
+            />
 
-      <form onSubmit={handleSubmit(submitHandler)}>
-        <Input
-          type="email"
-          name="email"
-          label="Email"
-          required
-          full
-          register={register}
-          errors={errors}
-        />
-
-        <div className="mb-6">
-          <Select
-            id="role"
-            name="role"
-            label="Assign a role"
-            className="w-full"
-            required
-            options={selectOptions}
-            help={
-              <p className="text-light pt-2 text-xs">
-                Learn more about the{" "}
-                <Link href="#" className="text-teal-400">
-                  roles
-                </Link>
-                . You can also invite team members and do lot more using{" "}
-                <Link
-                  href="https://envless.dev/docs/cli/members"
-                  target={"_blank"}
-                  className="text-teal-400"
-                >
-                  Envless CLI
-                </Link>{" "}
-                commands.
-              </p>
-            }
-            register={register}
-            errors={errors}
-          />
-        </div>
-        <Button className="float-right" type="submit" disabled={loading}>
-          Send an invite
-          <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
-        </Button>
-      </form>
+            <div className="mb-6">
+              <Select
+                id="role"
+                name="role"
+                label="Assign a role"
+                className="w-full"
+                required
+                options={selectOptions}
+                help={
+                  <p className="text-light pt-2 text-xs">
+                    Learn more about the{" "}
+                    <Link href="#" className="text-teal-400">
+                      roles
+                    </Link>
+                    . You can also invite team members and do lot more using{" "}
+                    <Link
+                      href="https://envless.dev/docs/cli/members"
+                      target={"_blank"}
+                      className="text-teal-400"
+                    >
+                      Envless CLI
+                    </Link>{" "}
+                    commands.
+                  </p>
+                }
+                register={register}
+                errors={errors}
+              />
+            </div>
+            <Button className="float-right" type="submit" disabled={loading}>
+              Send an invite
+              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+            </Button>
+          </form>
+        </Fragment>
+      )}
     </Modal>
   );
 };

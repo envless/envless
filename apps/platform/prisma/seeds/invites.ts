@@ -4,8 +4,8 @@ import argon2 from "argon2";
 import colors from "colors";
 import { randomBytes } from "crypto";
 import { addHours, sub } from "date-fns";
-import { random, sample, toLower } from "lodash";
-import type { AccessType, ProjectInviteType } from "./types";
+import { random, sample } from "lodash";
+import type { AccessType } from "./types";
 
 const prisma = new PrismaClient();
 colors.enable();
@@ -62,7 +62,7 @@ const seedInvites = async (count: number = 10) => {
     }
   }
 
-  console.log(`🎉 Seeded invites for ${projects.length} projects.`.green);
+  console.log(`🎉 Seeded ${count} invites for each projects.`.green);
 };
 
 export default seedInvites;
