@@ -20,7 +20,7 @@ services:
       - "7379:7379"
 
   postgres:
-    image: "postgres:15.2-alpine"
+    image: "postgres:13-alpine"
     hostname: "envless-postgres"
     restart: "always"
     environment:
@@ -43,6 +43,7 @@ services:
     env_file: .env.example
     ports:
       - 3000:3000
+      - 3883:3883
     networks:
       - envless_network
     depends_on:
