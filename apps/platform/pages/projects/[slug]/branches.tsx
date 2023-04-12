@@ -76,10 +76,6 @@ export const BranchesPage = ({
   const { protected: protectedBranches, unprotected: allOtherBranches } =
     useSeperateBranches(branchQuery.data || []);
 
-  useEffect(() => {
-    setBranches(branchQuery.data || []);
-  }, [branchQuery.data, setBranches]);
-
   const branchesColumnVisibility = {
     details: true,
     author: false,
@@ -238,6 +234,10 @@ export const BranchesPage = ({
       ),
     },
   ];
+
+  useEffect(() => {
+    setBranches(branchQuery.data || []);
+  }, [branchQuery.data, setBranches]);
 
   return (
     <ProjectLayout
