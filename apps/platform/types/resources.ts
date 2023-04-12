@@ -1,4 +1,9 @@
-import type { LockedUser, ProjectInvite, UserRole } from "@prisma/client";
+import type {
+  LockedUser,
+  MembershipStatus,
+  ProjectInvite,
+  UserRole,
+} from "@prisma/client";
 
 export interface UserType {
   id: string;
@@ -19,4 +24,5 @@ export interface MemberType {
   image: string | null;
   twoFactorEnabled: boolean;
   role: UserRole;
+  status: MembershipStatus;
 }

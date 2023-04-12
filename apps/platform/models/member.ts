@@ -1,5 +1,5 @@
 import type { MemberType } from "@/types/resources";
-import { MembershipStatus } from "@prisma/client";
+import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 import prisma from "@/lib/prisma";
 
 const getOne = async (id: string) => {
@@ -10,22 +10,19 @@ const getOne = async (id: string) => {
   return member;
 };
 
-const getMany = async (
-  projectId: string,
-  status: MembershipStatus = MembershipStatus.active,
-): Promise<MemberType[]> => {
+const getMany = async (projectId: string): Promise<MemberType[]> => {
   const accesses = await prisma.access.findMany({
     where: {
       projectId,
-      status: status ?? MembershipStatus.active,
     },
     include: {
       user: true,
       projectInvite: true,
     },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
+    take: QUERY_ITEMS_PER_PAGE,
   });
 
   return accesses.map((access) => {
@@ -38,6 +35,7 @@ const getMany = async (
       image: access.user.image,
       twoFactorEnabled: access.user.twoFactorEnabled,
       role: access.role,
+      status: access.status,
     };
   });
 };
