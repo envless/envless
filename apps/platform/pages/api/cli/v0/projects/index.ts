@@ -1,45 +1,19 @@
 import type { NextApiResponse } from "next";
+import { createProject, getProjects } from "@/utils/api/projects.controller";
 import withCliAuth, { type NextCliApiRequest } from "@/utils/withCliAuth";
-import prisma from "@/lib/prisma";
 
-type Data = {
-  id?: string;
-  name?: string;
-  message?: string;
-};
-
-const projects = async (req: NextCliApiRequest, res: NextApiResponse<Data>) => {
-  if (req.method != "GET") {
-    return res.status(404).json({ message: "Not found" });
+const projects = async (req: NextCliApiRequest, res: NextApiResponse) => {
+  if (req.method === "GET") {
+    getProjects(req, res);
+    return;
   }
 
-  const user = req.user;
-  const access = await prisma.access.findMany({
-    where: {
-      userId: user.id,
-    },
-    select: {
-      projectId: true,
-    },
-  });
+  if (req.method === "POST") {
+    createProject(req, res);
+    return;
+  }
 
-  const projectIds = access.map((a) => a.projectId);
-
-  const projects = await prisma.project.findMany({
-    where: {
-      id: {
-        in: projectIds,
-      },
-      deletedAt: null,
-    },
-
-    select: {
-      id: true,
-      name: true,
-    },
-  });
-
-  return res.status(200).json(projects as Data);
+  return res.status(404).json({ message: "Not found" });
 };
 
 export default withCliAuth(projects);

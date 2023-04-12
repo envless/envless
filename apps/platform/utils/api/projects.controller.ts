@@ -1,14 +1,13 @@
-import type { NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import {
   ACCESS_CREATED,
   BRANCH_CREATED,
   PROJECT_CREATED,
 } from "@/types/auditActions";
-import withCliAuth, { type NextCliApiRequest } from "@/utils/withCliAuth";
-import { Access, Branch, Project } from "@prisma/client";
 import { kebabCase } from "lodash";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
+import { NextCliApiRequest } from "../withCliAuth";
 
 type ErrorMessage = {
   message?: string;
@@ -20,7 +19,85 @@ type NewProjectResponse = {
   createdAt: Date;
 };
 
-const doesProjectConflict = async (name: string, slug: string) => {
+type Data = {
+  id?: string;
+  name?: string;
+  message?: string;
+};
+
+export const getProjects = async (
+  req: NextCliApiRequest,
+  res: NextApiResponse<Data>,
+) => {
+  const user = req.user;
+  const access = await prisma.access.findMany({
+    where: {
+      userId: user.id,
+    },
+    select: {
+      projectId: true,
+    },
+  });
+
+  const projectIds = access.map((a) => a.projectId);
+
+  const projects = await prisma.project.findMany({
+    where: {
+      id: {
+        in: projectIds,
+      },
+      deletedAt: null,
+    },
+
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  return res.status(200).json(projects as Data);
+};
+
+export const createProject = async (
+  req: NextCliApiRequest,
+  res: NextApiResponse<NewProjectResponse | ErrorMessage>,
+) => {
+  if (req.method != "POST") {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  //   Project Info
+  const projectName = req.body.name as string;
+
+  if (!projectName) {
+    res.status(400).json({
+      message: "Params to create project is not complete",
+    } as ErrorMessage);
+    return;
+  }
+
+  const projectSlug = kebabCase(projectName);
+
+  try {
+    const newProject = await createEnvlessProject(
+      { name: projectName, slug: projectSlug },
+      req,
+      res,
+    );
+    if (newProject) {
+      res.status(200).json({
+        name: newProject.name,
+        slug: newProject.slug,
+        createdAt: newProject.createdAt,
+      });
+    }
+  } catch (e: any) {
+    res.status(400).json(e);
+  }
+  return;
+};
+
+export const doesProjectConflict = async (name: string, slug: string) => {
   const project = await prisma.project.findFirst({
     where: {
       OR: [
@@ -130,44 +207,3 @@ const createEnvlessProject = async (
     return newProject;
   }
 };
-
-const create = async (
-  req: NextCliApiRequest,
-  res: NextApiResponse<NewProjectResponse | ErrorMessage>,
-) => {
-  if (req.method != "POST") {
-    return res.status(404).json({ message: "Not found" });
-  }
-
-  //   Project Info
-  const projectName = req.body.name as string;
-
-  if (!projectName) {
-    res.status(400).json({
-      message: "Params to create project is not complete",
-    } as ErrorMessage);
-    return;
-  }
-
-  const projectSlug = kebabCase(projectName);
-
-  try {
-    const newProject = await createEnvlessProject(
-      { name: projectName, slug: projectSlug },
-      req,
-      res,
-    );
-    if (newProject) {
-      res.status(200).json({
-        name: newProject.name,
-        slug: newProject.slug,
-        createdAt: newProject.createdAt,
-      });
-    }
-  } catch (e: any) {
-    res.status(400).json(e);
-  }
-  return;
-};
-
-export default withCliAuth(create);

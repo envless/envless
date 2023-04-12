@@ -63,7 +63,7 @@ export default class ProjectCreate extends Command {
     await intro(`${bold(cyan(`Creating Envless project`))}`);
     try {
       const response = await axios.post(
-        `${API_BASE}/api/cli/v0/projects/create`,
+        `${API_BASE}/api/cli/v0/projects`,
         {
           name: projectName,
         },
@@ -93,7 +93,6 @@ export default class ProjectCreate extends Command {
         triggerCancel();
         return;
       }
-      console.log(err);
       loader.stop(`Unauthorized error while creating the project`);
       triggerCancel();
     }
