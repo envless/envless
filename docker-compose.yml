@@ -40,6 +40,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
+    command: "yarn dev"
+#    command: "yarn db:migrate && yarn db:seed && yarn dev"
     env_file: .env.example
     ports:
       - 3000:3000
@@ -47,8 +49,10 @@ services:
     networks:
       - envless_network
     depends_on:
-      - postgres
-      - redis-rest
+      redis-rest:
+        condition: service_started
+      postgres:
+        condition: service_started
 
 networks:
   envless_network:
