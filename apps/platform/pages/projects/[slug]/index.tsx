@@ -5,8 +5,12 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project, UserRole } from "@prisma/client";
-import { EncryptedProjectKey, UserPublicKey } from "@prisma/client";
+import {
+  EncryptedProjectKey,
+  Project,
+  UserPublicKey,
+  UserRole,
+} from "@prisma/client";
 import { GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
@@ -168,6 +172,7 @@ export const ProjectPage = ({
             onSuccessCreation={() => {}}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
+            currentProject={currentProject}
           />
         </>
       )}
