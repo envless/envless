@@ -106,24 +106,20 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     const content = event.clipboardData.getData("text/plain") as string;
     const pastedEnvKeyValuePairs = await parseEnvContent(content);
 
-    if (
-      !(
-        pastedEnvKeyValuePairs[0]?.envKey && pastedEnvKeyValuePairs[0]?.envValue
-      )
-    ) {
-      return;
-    }
-
+    // check for the pastedLength of secrets
     event.preventDefault();
-    const envKeysBeforePastingInput = envKeys.slice(
+    const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
     );
 
-    const envKeysAfterPastingInput = envKeys.slice(
+    const envKeysAfterPastingInput = fields.slice(
       pastingInputIndex.current + 1,
     );
-    setEnvKeys([
+
+    remove();
+
+    append([
       ...envKeysBeforePastingInput,
       ...pastedEnvKeyValuePairs,
       ...envKeysAfterPastingInput,
@@ -134,7 +130,16 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     console.log("This data need to be send to the server ", data);
 
     try {
-      await saveSecretsMutation.mutateAsync({ secrets: data });
+      const secretsToSave = data.secrets.map((secret: EnvSecret) => {
+        return {
+          id: secret?.id || null,
+          encryptedKey: secret.encryptedKey,
+          encryptedValue: secret.encryptedValue,
+          branchId,
+        };
+      });
+
+      await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
     } catch (err) {}
   };
 

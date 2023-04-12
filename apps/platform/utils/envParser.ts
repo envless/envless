@@ -1,4 +1,4 @@
-import { EnvVariable } from "@/components/projects/EnvironmentVariableEditor";
+import { EnvSecret } from "@/types/index";
 
 export const parseEnvFile = async (file: File, setEnvKeys) => {
   const reader = new FileReader();
@@ -16,20 +16,23 @@ export const parseEnvFile = async (file: File, setEnvKeys) => {
 
 export const parseEnvContent = async (contents: string) => {
   const pairs = parse(contents);
-  const keyValues: EnvVariable[] = [];
+  const secrets: EnvSecret[] = [];
 
   Object.keys(pairs).forEach((key) => {
     const value = pairs[key];
-    const keyValue = {
-      envKey: key,
-      envValue: value,
+    const secret = {
+      encryptedKey: key,
+      encryptedValue: value,
+      decryptedKey: key,
+      decryptedValue: value,
+      hiddenValue: "*",
       hidden: true,
     };
 
-    keyValues.push(keyValue);
+    secrets.push(secret);
   });
 
-  return keyValues;
+  return secrets;
 };
 
 // Borrowed from https://github.com/motdotla/dotenv/blob/master/lib/main.js
