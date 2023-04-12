@@ -256,6 +256,7 @@ export const BranchesPage = ({
         }}
         isOpen={isPrModalOpen}
         setIsOpen={setIsPrModalOpen}
+        currentProject={currentProject}
       />
 
       <div className="w-full">
