@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { Branch, Project } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
@@ -27,14 +28,12 @@ interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onSuccessCreation: () => void;
-  currentProject: Project;
 }
 
 const CreateBranchModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
-  currentProject,
 }: BranchModalProps) => {
   const router = useRouter();
 
@@ -56,8 +55,8 @@ const CreateBranchModal = ({
     schema,
   });
 
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
-  const [branches, setBranches] = useState([] as Branch[]);
+  const { branches } = useBranchesStore();
+  const [baseBranchFrom, setBaseBranchFrom] = useState(branches[0]);
 
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {
@@ -81,15 +80,6 @@ const CreateBranchModal = ({
     },
   });
 
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
-
   const createNewBranch: SubmitHandler<Project> = async (data) => {
     const { name } = data;
 
@@ -101,13 +91,6 @@ const CreateBranchModal = ({
 
     branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
-
-  useEffect(() => {
-    if (branchQuery.data) {
-      setBranches(branchQuery.data);
-      setBaseBranchFrom(branchQuery.data[0]);
-    }
-  }, [branchQuery.data]);
 
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>

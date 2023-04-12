@@ -252,7 +252,6 @@ export const BranchesPage = ({
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        currentProject={currentProject}
       />
 
       <CreatePullRequestModal

@@ -172,7 +172,6 @@ export const ProjectPage = ({
             onSuccessCreation={() => {}}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            currentProject={currentProject}
           />
         </>
       )}
