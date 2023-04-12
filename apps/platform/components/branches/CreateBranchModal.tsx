@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
 import { trpc } from "@/utils/trpc";
-import { Branch } from "@prisma/client";
+import { Branch, Project } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
 import { SubmitHandler } from "react-hook-form";
 import * as z from "zod";
@@ -18,10 +18,6 @@ import {
 import BaseModal from "@/components/theme/BaseModal";
 import { showToast } from "@/components/theme/showToast";
 
-interface Project {
-  name: string;
-}
-
 export interface BranchWithNameAndId {
   id: string;
   name: string;
@@ -31,12 +27,14 @@ interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onSuccessCreation: () => void;
+  currentProject: Project;
 }
 
 const CreateBranchModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
+  currentProject,
 }: BranchModalProps) => {
   const router = useRouter();
 
@@ -58,14 +56,8 @@ const CreateBranchModal = ({
     schema,
   });
 
-  const defaultBranches: BranchWithNameAndId[] = [
-    { id: "1", name: "main" },
-    { id: "2", name: "staging" },
-    { id: "3", name: "production" },
-  ];
-
-  const [baseBranchFrom, setBaseBranchFrom] = useState(defaultBranches[0]);
-  const [branches, setBranches] = useState(defaultBranches);
+  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
+  const [branches, setBranches] = useState([] as Branch[]);
 
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {
@@ -89,6 +81,15 @@ const CreateBranchModal = ({
     },
   });
 
+  const branchQuery = trpc.branches.getAll.useQuery(
+    {
+      projectId: currentProject.id,
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
+
   const createNewBranch: SubmitHandler<Project> = async (data) => {
     const { name } = data;
 
@@ -100,6 +101,13 @@ const CreateBranchModal = ({
 
     branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
+
+  useEffect(() => {
+    if (branchQuery.data) {
+      setBranches(branchQuery.data);
+      setBaseBranchFrom(branchQuery.data[0]);
+    }
+  }, [branchQuery.data]);
 
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>
