@@ -35,6 +35,10 @@ export default function Textarea({
           disabled={disabled}
           {...(register ? { ...register(name, validationSchema) } : {})}
           className={clsx(className, "input-primary scrollbar w-full")}
+          autoComplete="off"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck="false"
         />
 
         {icon && (

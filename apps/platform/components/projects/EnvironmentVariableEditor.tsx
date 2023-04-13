@@ -103,11 +103,15 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   };
 
   const handlePaste = async (event: any) => {
+    event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedEnvKeyValuePairs = await parseEnvContent(content);
+    const pastedSecrets = await parseEnvContent(content);
+
+    if (pastedSecrets && pastedSecrets.length === 0) {
+      return;
+    }
 
     // check for the pastedLength of secrets
-    event.preventDefault();
     const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
@@ -121,14 +125,12 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
     append([
       ...envKeysBeforePastingInput,
-      ...pastedEnvKeyValuePairs,
+      ...pastedSecrets,
       ...envKeysAfterPastingInput,
     ]);
   };
 
   const onSubmit = async (data: any) => {
-    console.log("This data need to be send to the server ", data);
-
     try {
       const secretsToSave = data.secrets.map((secret: EnvSecret) => {
         return {
@@ -269,6 +271,10 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           className,
           disabled ? "cursor-not-allowed" : "",
         )}
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
       />
     );
   },
