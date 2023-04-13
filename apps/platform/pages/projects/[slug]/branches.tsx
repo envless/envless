@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useBranches } from "@/hooks/useBranches";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
-import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
@@ -60,21 +60,12 @@ export const BranchesPage = ({
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
-  const { setBranches } = useBranchesStore();
+  const { branches } = useBranches({ currentProject });
 
   const projectSlug = router.query.slug as string;
 
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
-
   const { protected: protectedBranches, unprotected: allOtherBranches } =
-    useSeperateBranches(branchQuery.data || []);
+    useSeperateBranches(branches);
 
   const branchesColumnVisibility = {
     details: true,
@@ -234,10 +225,6 @@ export const BranchesPage = ({
       ),
     },
   ];
-
-  useEffect(() => {
-    setBranches(branchQuery.data || []);
-  }, [branchQuery.data, setBranches]);
 
   return (
     <ProjectLayout
