@@ -39,10 +39,10 @@ export type AuditType = {
 export type BranchType = {
   id?: string;
   name: string;
-  description?: string;
+  description?: string | null;
   protected: boolean;
   protectedAt?: Date | null;
-  status?: string;
+  status?: string | null;
   createdById: string;
   projectId: string;
 };
