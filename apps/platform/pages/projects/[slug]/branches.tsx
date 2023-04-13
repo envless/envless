@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
+import clsx from "clsx";
 import {
   CheckCheck,
   Copy,
@@ -14,12 +15,14 @@ import {
   GitBranchPlus,
   Settings2,
   ShieldCheck,
+  Trash,
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
+import { showToast } from "@/components/theme/showToast";
 
 const filterOptions: FilterOptions = {
   status: [
@@ -56,6 +59,10 @@ export const BranchesPage = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
+  // Keep track of deletedAt status for each row
+  const [deletedRows, setDeletedRows] = useState<{ [id: string]: boolean }>({});
+  const [fetching, setFetching] = useState(false);
+
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
@@ -71,6 +78,54 @@ export const BranchesPage = ({
     },
   );
 
+  const branchRestoreMutation = trpc.branches.restoreBranch.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      // update the deletedRows state to remove the deleted status for the restored row
+      setDeletedRows((prevDeletedRows) => ({
+        ...prevDeletedRows,
+        [data.id]: false,
+      }));
+      showToast({
+        type: "success",
+        title: "Branch successfully restored",
+        subtitle: `Branch '${data.name}' has been restored`,
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Failed to restore branch",
+        subtitle: error.message,
+      });
+    },
+  });
+
+  const branchDeleteMutation = trpc.branches.delete.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      // update the deletedRows state to reflect the deleted status for the deleted row
+      setDeletedRows((prevDeletedRows) => ({
+        ...prevDeletedRows,
+        [data.id]: true,
+      }));
+      showToast({
+        type: "success",
+        title: "Branch successfully deleted",
+        subtitle: `Branch '${data.name}' has been deleted`,
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Failed to delete branch",
+        subtitle: error.message,
+      });
+    },
+  });
+
   const { protected: protectedBranches, unprotected: allOtherBranches } =
     useSeperateBranches(branchQuery.data || []);
 
@@ -83,91 +138,157 @@ export const BranchesPage = ({
     protected: false,
   };
 
-  const branchesColumns = [
-    {
-      id: "author",
-      accessorFn: (row) => row.createdBy.name,
-    },
-    {
-      id: "protected",
-      accessorFn: (row) => row.protected,
-    },
-    {
-      id: "createdAt",
-      accessorFn: (row) => row.createdAt,
-    },
-    {
-      id: "updatedAt",
-      accessorFn: (row) => row.updatedAt,
-    },
-    {
-      id: "status",
-      accessorFn: (row) => row.status,
-    },
-    {
-      id: "details",
-      accessorFn: (row) => `${row.name}`,
-      header: "Details",
-      cell: (info) => (
-        <div className="flex items-center">
-          <div className="h-10 w-10 flex-shrink-0">
-            <Badge type="info">
-              <GitBranch className="h-6 w-6" strokeWidth={2} />
-            </Badge>
-          </div>
-          <div className="ml-4">
-            <div className="flex items-center">
-              {copiedValue === info.row.original.name ? (
-                <button
-                  aria-label="Copied!"
-                  data-balloon-pos="down"
-                  className="inline-flex cursor-copy font-medium"
-                >
-                  <CheckCheck
-                    className="mr-2 h-4 w-4 text-teal-400"
-                    strokeWidth={2}
-                  />
-                </button>
-              ) : (
-                <button className="inline-flex cursor-copy font-medium">
-                  <Copy
-                    onClick={() => {
-                      copy(info.row.original.name as string);
-                      setTimeout(() => {
-                        setCopiedValue("");
-                      }, 2000);
-                    }}
-                    className="mr-2 h-4 w-4"
-                    strokeWidth={2}
-                  />
-                </button>
-              )}
-              {info.row.original.name}
-            </div>
-            <div className="text-light">
-              Created by {info.row.original.createdBy.name}{" "}
-              <DateTimeAgo date={info.row.original.createdAt} />
-            </div>
-          </div>
-        </div>
-      ),
-    },
+  const branchesColumns = useMemo(
+    () => [
+      {
+        id: "author",
+        accessorFn: (row) => row.createdBy.name,
+      },
+      {
+        id: "protected",
+        accessorFn: (row) => row.protected,
+      },
+      {
+        id: "createdAt",
+        accessorFn: (row) => row.createdAt,
+      },
+      {
+        id: "updatedAt",
+        accessorFn: (row) => row.updatedAt,
+      },
+      {
+        id: "status",
+        accessorFn: (row) => row.status,
+      },
+      {
+        id: "details",
+        accessorFn: (row) => `${row.name}`,
+        header: "Details",
+        cell: (info) => {
+          const isDeleted = !!deletedRows[info.row.original.id];
 
-    {
-      id: "actions",
-      header: "Action",
-      cell: () => (
-        <Button
-          onClick={() => setIsPrModalOpen(true)}
-          variant="primary-outline"
-          size="sm"
-          className="float-right"
-        >
-          Open pull request
-        </Button>
-      ),
-    },
-  ];
+          return (
+            <div className="flex items-center">
+              <div className="h-10 w-10 flex-shrink-0">
+                <Badge type="info">
+                  <GitBranch className="h-6 w-6" strokeWidth={2} />
+                </Badge>
+              </div>
+              <div className="ml-4">
+                <div
+                  className={clsx(
+                    "mb-1 flex items-center",
+                    isDeleted && "line-through",
+                  )}
+                >
+                  {copiedValue === info.row.original.name ? (
+                    <button
+                      aria-label="Copied!"
+                      data-balloon-pos="down"
+                      className="inline-flex cursor-copy font-medium"
+                    >
+                      <CheckCheck
+                        className="mr-2 h-4 w-4 text-teal-400"
+                        strokeWidth={2}
+                      />
+                    </button>
+                  ) : (
+                    <button className="inline-flex cursor-copy font-medium">
+                      <Copy
+                        onClick={() => {
+                          copy(info.row.original.name as string);
+                          setTimeout(() => {
+                            setCopiedValue("");
+                          }, 2000);
+                        }}
+                        className="mr-2 h-4 w-4"
+                        strokeWidth={2}
+                      />
+                    </button>
+                  )}
+                  {info.row.original.name}
+                </div>
+
+                {isDeleted ? (
+                  <div className="text-light">Deleted just now</div>
+                ) : (
+                  <div className="text-light">
+                    Created by {info.row.original.createdBy.name}{" "}
+                    <DateTimeAgo date={info.row.original.createdAt} />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: "actions",
+        header: "Action",
+        cell: (info) =>
+          !deletedRows[info.row.original.id] && (
+            <Button
+              onClick={() => setIsPrModalOpen(true)}
+              variant="primary-outline"
+              size="sm"
+              className="float-right"
+              disabled={fetching}
+            >
+              Open pull request
+            </Button>
+          ),
+      },
+      {
+        id: "deleteBranch",
+        header: "Delete Branch",
+        cell: (info) => {
+          const isDeleted = !!deletedRows[info.row.original.id];
+
+          if (isDeleted) {
+            return (
+              <Button
+                onClick={() => {
+                  branchRestoreMutation.mutate({
+                    branchId: info.row.original.id,
+                  });
+                }}
+                variant="primary-outline"
+                size="sm"
+                className="float-right"
+                disabled={fetching}
+              >
+                Restore
+              </Button>
+            );
+          } else {
+            return (
+              <button
+                onClick={() => {
+                  branchDeleteMutation.mutate({
+                    branchId: info.row.original.id,
+                  });
+                }}
+                className="float-right cursor-pointer pr-4 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={fetching}
+              >
+                <Trash />
+                <span className="sr-only">Delete branch</span>
+              </button>
+            );
+          }
+        },
+      },
+    ],
+    [
+      branchDeleteMutation,
+      branchRestoreMutation,
+      copiedValue,
+      copy,
+      deletedRows,
+      fetching,
+      setCopiedValue,
+    ],
+  );
 
   const protectedBranchesColumns = [
     {

@@ -37,13 +37,14 @@ export type AuditType = {
 };
 
 export type BranchType = {
-  id?: string;
+  id: string;
   name: string;
-  description?: string;
+  description: string | null;
   protected: boolean;
   protectedAt?: Date | null;
-  status?: string;
+  status: string | null;
   createdById: string;
+  deletedAt: Date | null;
   projectId: string;
 };
 

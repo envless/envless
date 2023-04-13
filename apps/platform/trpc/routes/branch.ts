@@ -15,18 +15,22 @@ export const branches = createRouter({
           project: true,
         },
         where: {
-          projectId: input.projectId,
+          AND: {
+            projectId: input.projectId,
+            deletedAt: null,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       });
     }),
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-      return { id };
-    }),
+    return { id };
+  }),
 
   create: withAuth
     .input(
@@ -157,5 +161,54 @@ export const branches = createRouter({
       });
 
       return updatedBranch;
+    }),
+  delete: withAuth
+    .input(z.object({ branchId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { branchId } = input;
+
+      try {
+        const softDeletedBranch = await ctx.prisma.branch.update({
+          where: {
+            id: branchId,
+          },
+          data: {
+            deletedAt: new Date(),
+          },
+        });
+
+        return softDeletedBranch;
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Branch does not exist",
+        });
+      }
+    }),
+  restoreBranch: withAuth
+    .input(
+      z.object({
+        branchId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { branchId } = input;
+
+      try {
+        const restoredBranch = await ctx.prisma.branch.update({
+          where: {
+            id: branchId,
+          },
+          data: {
+            deletedAt: null,
+          },
+        });
+        return restoredBranch;
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Branch does not exist",
+        });
+      }
     }),
 });

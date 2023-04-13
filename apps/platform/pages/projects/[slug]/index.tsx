@@ -75,17 +75,12 @@ export const ProjectPage = ({
   const router = useRouter();
   const { branch } = router.query;
 
-  const getSelectedBranch = () => {
+  const memoizedSelectedBranch = useMemo(() => {
     if (branch) {
       return branches.filter((b) => b.name === branch)[0];
     }
     return branches.filter((b) => b.name === "main")[0];
-  };
-
-  const memoizedSelectedBranch = useMemo(
-    () => getSelectedBranch(),
-    [getSelectedBranch],
-  );
+  }, [branch, branches]);
 
   useUpdateEffect(() => {
     const getPrivateKey = sessionStorage.getItem("privateKey");
@@ -158,7 +153,7 @@ export const ProjectPage = ({
                 />
 
                 <Link
-                  className="group block flex items-center text-sm transition-colors"
+                  className="group flex items-center text-sm transition-colors"
                   href={`/projects/${currentProject.slug}/branches`}
                 >
                   <GitBranch className="text-lighter mr-1 h-4 w-4 group-hover:text-teal-400" />
@@ -217,6 +212,9 @@ export const getServerSideProps = withAccessControl({
           select: { id: true, encryptedKey: true },
         },
         branches: {
+          where: {
+            deletedAt: null,
+          },
           select: {
             id: true,
             name: true,
