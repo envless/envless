@@ -84,7 +84,7 @@ function BranchSearchInput() {
         type="text"
         name="search"
         id="search"
-        className="w-full border-none bg-transparent pr-3 pl-6 pb-3 text-sm focus:outline-none focus:ring-0"
+        className="w-full border-none bg-transparent pb-3 pl-6 pr-3 text-sm focus:outline-none focus:ring-0"
         placeholder="Find a branch..."
       />
     </>

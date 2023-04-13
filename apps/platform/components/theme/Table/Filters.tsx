@@ -161,7 +161,7 @@ export default function Filters<T extends RowData>({
 
         {/* Active filters */}
         <div className="bg-darker/25">
-          <div className="mx-auto max-w-7xl py-3 px-4 sm:flex sm:items-center sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 py-3 sm:flex sm:items-center sm:px-6 lg:px-8">
             <h3 className="text-light text-sm font-medium">
               Filters
               <span className="sr-only">, active</span>
@@ -172,7 +172,7 @@ export default function Filters<T extends RowData>({
               className="bg-light hidden h-5 w-px sm:ml-4 sm:block"
             />
 
-            <div className="mt-2 sm:mt-0 sm:ml-4">
+            <div className="mt-2 sm:ml-4 sm:mt-0">
               <div className="-m-1 flex flex-wrap items-center">
                 {table.getState().columnFilters.map((columnFilter, index) => {
                   return (

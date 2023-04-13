@@ -32,7 +32,7 @@ export default function Markdown({ children }) {
 
           return !inline && match ? (
             <Code
-              className="my-10 mx-3"
+              className="mx-3 my-10"
               language={lang as string}
               code={children as string}
             />
@@ -61,7 +61,7 @@ export default function Markdown({ children }) {
           return (
             <h1
               {...props}
-              className="mt-10 mb-2 text-2xl tracking-tight md:text-4xl"
+              className="mb-2 mt-10 text-2xl tracking-tight md:text-4xl"
             >
               {children}
             </h1>
@@ -73,7 +73,7 @@ export default function Markdown({ children }) {
           return (
             <h1
               {...props}
-              className="mt-10 mb-2 text-xl tracking-tight md:text-3xl"
+              className="mb-2 mt-10 text-xl tracking-tight md:text-3xl"
             >
               {children}
             </h1>
@@ -85,7 +85,7 @@ export default function Markdown({ children }) {
           return (
             <h1
               {...props}
-              className="mt-10 mb-2 text-lg tracking-tight md:text-2xl"
+              className="mb-2 mt-10 text-lg tracking-tight md:text-2xl"
             >
               {children}
             </h1>

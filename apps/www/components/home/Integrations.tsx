@@ -165,7 +165,7 @@ const integrations = [
 export const Integrations = () => {
   return (
     <>
-      <div className="mt-32 mb-16 text-center">
+      <div className="mb-16 mt-32 text-center">
         <h2 className="heading text-3xl text-gray-300 sm:text-4xl">
           Build anything, deploy anywhere
         </h2>

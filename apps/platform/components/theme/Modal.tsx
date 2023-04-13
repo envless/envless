@@ -70,7 +70,7 @@ const Modal = (props: Props) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel className="bg-darker w-full max-w-md transform overflow-hidden rounded p-8 text-left align-middle shadow-xl shadow-black ring-1 ring-[#222] transition-all">
-                  <div className="absolute top-0 right-0 p-3">
+                  <div className="absolute right-0 top-0 p-3">
                     <button
                       type="button"
                       className="text-light hover:text-gray-200"

@@ -110,7 +110,7 @@ export default function BranchDropdown({
               <input
                 type="text"
                 id="search"
-                className="w-full border-none bg-transparent pr-3 pl-6 text-sm focus:outline-none focus:ring-0"
+                className="w-full border-none bg-transparent pl-6 pr-3 text-sm focus:outline-none focus:ring-0"
                 placeholder="Find a branch..."
                 {...register("search", {
                   onChange: fuzzySearch,
