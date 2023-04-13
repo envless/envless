@@ -6,6 +6,10 @@ interface BranchesStore {
   setBranches: (branches: Branch[]) => void;
   currentBranch: Branch;
   setCurrentBranch: (branch: Branch) => void;
+  baseBranch: Branch;
+  setBaseBranch: (branch: Branch) => void;
+  addBranch: (branch: Branch) => void;
+  removeBranch: (branch: Branch) => void;
 }
 
 export const useBranchesStore = create<BranchesStore>((set) => ({
@@ -21,5 +25,23 @@ export const useBranchesStore = create<BranchesStore>((set) => ({
     set({
       currentBranch: branch,
     });
+  },
+  baseBranch: {} as Branch,
+  setBaseBranch: (branch: Branch) => {
+    set({
+      baseBranch: branch,
+    });
+  },
+  addBranch: (branch: Branch) => {
+    set((state) => ({
+      branches: [...state.branches, branch],
+    }));
+  },
+  removeBranch: (branchToBeRemoved: Branch) => {
+    set((state) => ({
+      branches: state.branches.filter(
+        (branch) => branch.id !== branchToBeRemoved.id,
+      ),
+    }));
   },
 }));
