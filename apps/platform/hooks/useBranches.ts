@@ -23,6 +23,6 @@ export const useBranches = ({ currentProject }: Props) => {
   );
 
   return {
-    branches: branchQuery.data ?? [],
+    allBranches: branchQuery.data ?? [],
   };
 };

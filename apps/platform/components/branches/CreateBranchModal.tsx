@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
 import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
@@ -55,8 +55,7 @@ const CreateBranchModal = ({
     schema,
   });
 
-  const { branches } = useBranchesStore();
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
+  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
 
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {
@@ -91,12 +90,6 @@ const CreateBranchModal = ({
 
     branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
-
-  useEffect(() => {
-    if (branches) {
-      setBaseBranchFrom(branches[0]);
-    }
-  }, [branches]);
 
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -141,8 +134,8 @@ const CreateBranchModal = ({
         <div className="mb-4">
           <BranchComboBox
             branches={branches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={baseBranch}
+            setSelectedBranch={setBaseBranch}
             inputLabel="Base Branch"
           />
         </div>

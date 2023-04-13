@@ -18,6 +18,7 @@ export const useBranchesStore = create<BranchesStore>((set) => ({
     set({
       branches: branches,
       currentBranch: branches[0],
+      baseBranch: branches[0],
     });
   },
   currentBranch: {} as Branch,

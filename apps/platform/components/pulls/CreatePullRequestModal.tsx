@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Branch, Project, PullRequest } from "@prisma/client";
+import { Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
@@ -26,8 +26,13 @@ const CreatePullRequestModal = ({
   setIsOpen,
   onSuccessCreation,
 }: BranchModalProps) => {
-  const { branches, currentBranch, setCurrentBranch } = useBranchesStore();
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
+  const {
+    branches,
+    currentBranch,
+    setCurrentBranch,
+    baseBranch,
+    setBaseBranch,
+  } = useBranchesStore();
 
   const router = useRouter();
 
@@ -70,12 +75,6 @@ const CreatePullRequestModal = ({
     pullRequestMutation.mutate({ pullRequest: { title, projectSlug } });
   };
 
-  useEffect(() => {
-    if (branches) {
-      setBaseBranchFrom(branches[0]);
-    }
-  }, [branches]);
-
   return (
     <BaseModal title="New Pull Request" isOpen={isOpen} setIsOpen={setIsOpen}>
       <form onSubmit={handleSubmit(createNewBranch)}>
@@ -104,8 +103,8 @@ const CreatePullRequestModal = ({
         <div className="mb-4 w-full">
           <BranchComboBox
             branches={branches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={baseBranch}
+            setSelectedBranch={setBaseBranch}
             inputLabel="Base Branch"
           />
         </div>
