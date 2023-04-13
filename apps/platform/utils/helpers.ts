@@ -84,12 +84,6 @@ export const getNavigationTabs = (currentUserRole, projectUrl) => {
       icon: LayoutGrid,
     },
     {
-      id: "branches",
-      name: "Branches",
-      href: `${projectUrl}/branches`,
-      icon: GitBranch,
-    },
-    {
       id: "pr",
       name: "Pull requests",
       href: `${projectUrl}/pulls`,
