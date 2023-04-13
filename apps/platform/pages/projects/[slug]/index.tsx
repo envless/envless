@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
@@ -12,7 +13,7 @@ import {
   UserPublicKey,
   UserRole,
 } from "@prisma/client";
-import { GitBranchPlus } from "lucide-react";
+import { GitBranch, GitBranchPlus } from "lucide-react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -152,13 +153,26 @@ export const ProjectPage = ({
         <>
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
-              <BranchDropdown
-                label="Current Branch"
-                dropdownLabel="Switch between branches"
-                branches={branches}
-                selectedBranch={memoizedSelectedBranch}
-                currentProjectSlug={currentProject.slug}
-              />
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <BranchDropdown
+                  label="Current Branch"
+                  dropdownLabel="Switch between branches"
+                  branches={branches}
+                  selectedBranch={memoizedSelectedBranch}
+                  currentProjectSlug={currentProject.slug}
+                />
+
+                <Link
+                  className="group block flex items-center text-sm transition-colors"
+                  href={`/projects/${currentProject.slug}/branches`}
+                >
+                  <GitBranch className="text-lighter mr-1 h-4 w-4 group-hover:text-teal-400" />
+                  <span className="text-light group-hover:text-teal-400">
+                    {branches.length}{" "}
+                    {branches.length === 1 ? "branch" : "branches"}
+                  </span>
+                </Link>
+              </div>
 
               <Button
                 onClick={() => setIsOpen(true)}

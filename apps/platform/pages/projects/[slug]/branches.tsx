@@ -228,7 +228,7 @@ export const BranchesPage = ({
 
   return (
     <ProjectLayout
-      tab="branches"
+      tab="project"
       projects={projects}
       currentProject={currentProject}
       currentRole={currentRole}

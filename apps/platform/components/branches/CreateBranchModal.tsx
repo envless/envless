@@ -107,7 +107,7 @@ const CreateBranchModal = ({
             <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <AlertCircle className="hover:text-lighter absolute top-0 -right-5 h-3.5 w-3.5" />
+                  <AlertCircle className="hover:text-lighter absolute -right-5 top-0 h-3.5 w-3.5" />
                 </TooltipTrigger>
 
                 <TooltipContent>

@@ -11,3 +11,14 @@ export const isValidEmail = (email: string) => {
 
   return regex.test(String(email).toLowerCase());
 };
+
+export const ENVLESS_PLATFORM_URL =
+  process.env.ENVLESS_PLATFORM_URL || "https://localhost:3000";
+
+export const LINKS = {
+  base: ENVLESS_PLATFORM_URL,
+  api: `${ENVLESS_PLATFORM_URL}/api`,
+  login: `${ENVLESS_PLATFORM_URL}/auth`,
+  projects: `${ENVLESS_PLATFORM_URL}/projects`,
+  docs: "https://envles.dev/docs",
+};

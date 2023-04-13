@@ -10,10 +10,9 @@ import {
 } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import { blue, bold, cyan, grey, underline } from "kleur/colors";
+import { LINKS } from "../lib/helpers";
 
-const API_BASE = process.env.API_BASE || `http://localhost:3000`;
 const opn = require("better-opn");
-
 const loader = spinner();
 export default class Auth extends Command {
   static description = "Login to Envless or create an account";
@@ -53,7 +52,7 @@ export default class Auth extends Command {
       flags.with = response;
     }
 
-    const loginUrl = `${API_BASE}/auth?clientId=xxx`;
+    const loginUrl = `${LINKS.base}/auth?clientId=xxx`;
     await loader.start(`Please wait while verify few things...`);
     await new Promise((r) => setTimeout(r, 2000));
     await loader.stop(

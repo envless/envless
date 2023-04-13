@@ -66,7 +66,7 @@ export default function BranchComboBox({
         >
           <Combobox.Options className="border-dark bg-darker absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-xs">
             {filteredBranches.length === 0 && query !== "" ? (
-              <div className="relative cursor-default select-none py-2 px-4 text-white">
+              <div className="relative cursor-default select-none px-4 py-2 text-white">
                 Nothing found.
               </div>
             ) : (
