@@ -89,7 +89,7 @@ export default function AuditLogTable({
                 setAuditLogDetail(info.row.original);
                 setSlideOverOpen(true);
               }}
-              className="py-2 px-3 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
+              className="px-3 py-2 font-medium text-teal-400 duration-150 hover:text-teal-300 hover:underline"
             >
               Detail
             </button>
@@ -115,7 +115,7 @@ export default function AuditLogTable({
 
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
-      <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
+      <div className="border-dark flex items-center justify-between border-b px-2 py-2 font-medium">
         <div className="flex w-full items-center justify-between px-4">
           <div className="group relative w-full">
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
@@ -176,7 +176,7 @@ export default function AuditLogTable({
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th key={header.id} className="py-3 px-6 text-xs font-medium">
+                  <th key={header.id} className="px-6 py-3 text-xs font-medium">
                     {header.isPlaceholder ? null : (
                       <div>
                         {flexRender(
@@ -197,7 +197,7 @@ export default function AuditLogTable({
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td
-                  className="whitespace-nowrap py-3 px-6 text-xs"
+                  className="whitespace-nowrap px-6 py-3 text-xs"
                   key={cell.id}
                   style={{ width: cell.column.getSize() }}
                 >
@@ -209,7 +209,7 @@ export default function AuditLogTable({
         </tbody>
       </table>
 
-      <div className="flex items-center justify-between py-3 px-4 font-medium">
+      <div className="flex items-center justify-between px-4 py-3 font-medium">
         <p className="text-xs">
           Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
           {(pagination.pageIndex + 1) * pagination.pageSize > totalAuditLogs

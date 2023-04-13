@@ -183,7 +183,7 @@ const MembersTableContainer = ({
 
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
-      <div className="border-dark flex items-center justify-between border-b py-2 px-2 font-medium">
+      <div className="border-dark flex items-center justify-between border-b px-2 py-2 font-medium">
         <div className="flex w-full flex-col items-start justify-between gap-2 px-4 sm:flex-row sm:items-center">
           <div className="group relative w-full">
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">

@@ -326,7 +326,7 @@ const PaginatedMembersTable = ({
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <td
-                    className="whitespace-nowrap py-3 px-6 text-xs"
+                    className="whitespace-nowrap px-6 py-3 text-xs"
                     key={cell.id}
                     style={{ width: cell.column.getSize() }}
                   >
@@ -339,7 +339,7 @@ const PaginatedMembersTable = ({
         </tbody>
       </table>
 
-      <div className="flex items-center justify-between py-3 px-4 font-medium">
+      <div className="flex items-center justify-between px-4 py-3 font-medium">
         <p className="text-xs">
           Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
           {(pagination.pageIndex + 1) * pagination.pageSize > totalMembers
@@ -408,7 +408,7 @@ const StatusChip = ({ status }: StatusChipProps) => {
   return (
     <div
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full border py-1 px-2",
+        "inline-flex items-center gap-1 rounded-full border px-2 py-1",
         borderColor,
       )}
     >
