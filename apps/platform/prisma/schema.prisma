@@ -189,6 +189,9 @@ model Secret {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  version 	Int @default(1)
+  parentId	String?
+
   userId   String
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
