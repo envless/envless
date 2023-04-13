@@ -47,10 +47,13 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    await parseEnvFile(file, setEnvKeys);
-  }, []);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      await parseEnvFile(file, setSecrets);
+    },
+    [setSecrets],
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
@@ -147,7 +150,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   return (
     <>
-      {secrets.length > 0 ? (
+      {fields.length > 0 ? (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="w-full py-8">
             {fields.map((field, index) => (
@@ -230,7 +233,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               {...getInputProps()}
               type="file"
               className="hidden"
-              accept="env"
+              accept=".env,.yaml,.yml,.json"
             />
             <p className="text-lighter mx-auto mt-1 max-w-md text-sm">
               You can also{" "}

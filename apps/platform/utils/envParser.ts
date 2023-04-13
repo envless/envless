@@ -1,6 +1,11 @@
+import { Dispatch, SetStateAction } from "react";
 import { EnvSecret } from "@/types/index";
 
-export const parseEnvFile = async (file: File, setEnvKeys) => {
+export const parseEnvFile = async (
+  file: File,
+  setEnvKeys: Dispatch<SetStateAction<EnvSecret[]>>,
+) => {
+  /*
   const reader = new FileReader();
 
   const readFile = new Promise((resolve, reject) => {
@@ -10,9 +15,38 @@ export const parseEnvFile = async (file: File, setEnvKeys) => {
 
   reader.readAsText(file, "UTF-8");
   const contents = (await readFile) as string;
-  const pairs = await parseEnvContent(contents);
+  */
+
+  const fileContents = await readFileContents(file);
+
+  const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
+
+  switch (fileExtension) {
+    case "env":
+      break;
+
+    case "json":
+      break;
+  }
+
+  // now parse based on the file type
+
+  const pairs = await parseEnvContent(fileContents);
   setEnvKeys([...pairs]);
 };
+
+async function readFileContents(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = (event: ProgressEvent<FileReader>) => {
+      resolve(event.target?.result as string);
+    };
+    reader.onerror = (error: ProgressEvent<FileReader>) => {
+      reject(error);
+    };
+    reader.readAsText(file);
+  });
+}
 
 export const parseEnvContent = async (contents: string) => {
   const pairs = parse(contents);
