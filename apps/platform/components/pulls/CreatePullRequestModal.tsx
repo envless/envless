@@ -33,7 +33,6 @@ const CreatePullRequestModal = ({
     baseBranch,
     setBaseBranch,
   } = useBranchesStore();
-
   const router = useRouter();
 
   const schema = z.object({

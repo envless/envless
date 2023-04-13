@@ -35,6 +35,7 @@ const CreateBranchModal = ({
   setIsOpen,
   onSuccessCreation,
 }: BranchModalProps) => {
+  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -54,8 +55,6 @@ const CreateBranchModal = ({
   } = useZodForm({
     schema,
   });
-
-  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
 
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {

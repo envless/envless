@@ -9,7 +9,7 @@ interface BranchesStore {
   baseBranch: Branch;
   setBaseBranch: (branch: Branch) => void;
   addBranch: (branch: Branch) => void;
-  removeBranch: (branch: Branch) => void;
+  removeBranch: (branchId: string) => void;
 }
 
 export const useBranchesStore = create<BranchesStore>((set) => ({
@@ -38,11 +38,9 @@ export const useBranchesStore = create<BranchesStore>((set) => ({
       branches: [...state.branches, branch],
     }));
   },
-  removeBranch: (branchToBeRemoved: Branch) => {
+  removeBranch: (branchId: string) => {
     set((state) => ({
-      branches: state.branches.filter(
-        (branch) => branch.id !== branchToBeRemoved.id,
-      ),
+      branches: state.branches.filter((branch) => branch.id !== branchId),
     }));
   },
 }));
