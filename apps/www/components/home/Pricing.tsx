@@ -3,7 +3,7 @@ import { Verified } from "lucide-react";
 
 const Pricing = ({ ...props }) => {
   return (
-    <section className="relative overflow-hidden pt-48 pb-36">
+    <section className="relative overflow-hidden pb-36 pt-48">
       <div className="container relative z-10 mx-auto px-4">
         <div className="-m-7 flex flex-wrap">
           <div className="w-full p-7 md:w-1/3">
@@ -51,7 +51,7 @@ const Pricing = ({ ...props }) => {
                 target="_self"
                 className="font-heading tracking-px group relative mb-3 w-full rounded text-center text-xs font-semibold uppercase text-gray-900 md:w-auto"
               >
-                <div className="bg-lightest rounded py-4 px-9 hover:bg-gray-300 ">
+                <div className="bg-lightest rounded px-9 py-4 hover:bg-gray-300 ">
                   <p className="relative z-10 ">Forever free</p>
                 </div>
               </Link>
@@ -89,7 +89,7 @@ const Pricing = ({ ...props }) => {
                   target="_self"
                   className="font-heading tracking-px text-light group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase md:w-auto"
                 >
-                  <div className="bg-darkest hover:bg-dark overflow-hidden rounded py-4 px-9">
+                  <div className="bg-darkest hover:bg-dark overflow-hidden rounded px-9 py-4">
                     <p className="relative z-10">$5 per month per user</p>
                   </div>
                 </Link>

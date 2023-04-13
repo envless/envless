@@ -39,7 +39,7 @@ const Code: React.FC<Props> = ({ code, copy, language, className }) => {
       {copy && (
         <div className="flex justify-end">
           <button
-            className="absolute mt-5 mr-3 flex items-center justify-center"
+            className="absolute mr-3 mt-5 flex items-center justify-center"
             onClick={() => {
               copyToClipboard(code);
             }}

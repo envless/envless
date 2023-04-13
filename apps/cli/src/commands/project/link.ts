@@ -4,19 +4,15 @@ import axios from "axios";
 import { bold, cyan, grey } from "kleur/colors";
 import { writeToDotEnvless } from "../../lib/dotEnvless";
 import { triggerCancel } from "../../lib/helpers";
+import { LINKS } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
 
 const loader = spinner();
-const API_BASE = process.env.API_BASE || `http://localhost:3000`;
-const LINKS = {
-  projectsPage: `${API_BASE}/projects`,
-  documentation: `${API_BASE}/docs/cli/projects`,
-};
 
 export default class LinkProject extends Command {
   static description = `Link your development project to the Envless project.\n${grey(
     `⚡ Please make sure you are running this command from your development project's root directory and have created a project. If you haven't, create one at \n${cyan(
-      LINKS.projectsPage,
+      LINKS.projects,
     )}`,
   )}`;
 
@@ -66,7 +62,7 @@ export default class LinkProject extends Command {
 
       try {
         const { data: projects } = await axios.get(
-          `${API_BASE}/api/cli/v0/projects`,
+          `${LINKS.api}/cli/v0/projects`,
           {
             auth: {
               username: cliId as string,

@@ -25,7 +25,7 @@ export default function AuditLogSideOver({
     >
       <div className="flex h-full flex-col">
         <div className="flex-1 overflow-y-auto">
-          <div className="divide divide-dark divide-y-2 py-2 px-4 sm:px-6">
+          <div className="divide divide-dark divide-y-2 px-4 py-2 sm:px-6">
             <dl className="grid grid-cols-2 py-2">
               <dt className="text-sm leading-relaxed">Created By</dt>
               <dd className="text-sm">{auditLogDetail?.createdBy.name}</dd>

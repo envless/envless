@@ -1,38 +1,27 @@
-import { intro, isCancel, outro, select, spinner, text } from "@clack/prompts";
-import { Args, Command, Flags } from "@oclif/core";
-import axios, { Axios, AxiosError, AxiosResponse } from "axios";
+import { intro, outro, spinner, text } from "@clack/prompts";
+import { Command, Flags } from "@oclif/core";
+import axios, { AxiosError } from "axios";
 import { blue, bold, cyan, grey, red, underline } from "kleur/colors";
 import { triggerCancel } from "../../lib/helpers";
+import { LINKS } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
 
-type NewProjectResponse = {
+const loader = spinner();
+
+type ProjectResponse = {
   name: string;
   slug: string;
   createdAt: Date;
 };
 
-type ErrorMessage = {
-  message: string;
-};
-
-const loader = spinner();
-const API_BASE = process.env.API_BASE || `http://localhost:3000`;
-const LINKS = {
-  projectsPage: `${API_BASE}/projects`,
-  documentation: `${API_BASE}/docs/cli/projects`,
-  projects: `${API_BASE}/cli/projects`,
-};
-
 export default class ProjectCreate extends Command {
   static description = `Create a new Envless project.\n${grey(
-    `⚡ Please make sure you are running this command from your project's root directory and make sure you have completed your CLI setup. If not, please do so at \n${cyan(
-      LINKS.projects,
-    )}`,
+    `⚡ Please make sure you are running this command from your project's root directory and make sure you have completed your CLI setup. If not, please do so at envless platform.`,
   )}`;
   static examples = [
     `
       $ envless project create
-      $ envless project create {project name}
+      $ envless project create --name Project X
       `,
   ];
 
@@ -63,7 +52,7 @@ export default class ProjectCreate extends Command {
     await intro(`${bold(cyan(`Creating Envless project`))}`);
     try {
       const response = await axios.post(
-        `${API_BASE}/api/cli/v0/projects`,
+        `${LINKS.api}/cli/v0/projects`,
         {
           name: projectName,
         },
@@ -75,13 +64,13 @@ export default class ProjectCreate extends Command {
         },
       );
 
-      const data = response.data as NewProjectResponse;
+      const data = response.data as ProjectResponse;
       await loader.stop(
         `🎉 Project created succcesfully ${bold(cyan(projectName))}`,
       );
       await outro(
         `Visit this link on your web browser: ${underline(
-          blue(`${LINKS.projectsPage}/${data.slug}`),
+          blue(`${LINKS.projects}/${data.slug}`),
         )}`,
       );
     } catch (err: any) {

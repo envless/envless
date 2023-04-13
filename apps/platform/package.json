@@ -63,6 +63,7 @@
     "next-auth": "^4.21.1",
     "next-mdx-remote": "^4.4.1",
     "next-seo": "^5.14.1",
+    "next-swagger-doc": "^0.3.6",
     "nextjs-progressbar": "^0.0.16",
     "node-html-parser": "^6.1.5",
     "nodemailer": "^6.9.1",

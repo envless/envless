@@ -90,11 +90,11 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
       <h3 className="mb-8 text-lg">
         Two factor authentication
         {enabled ? (
-          <span className="ml-5 mr-1 inline-block rounded-full bg-teal-200 py-[2px] px-2 text-xs text-teal-600 last:mr-0">
+          <span className="ml-5 mr-1 inline-block rounded-full bg-teal-200 px-2 py-[2px] text-xs text-teal-600 last:mr-0">
             Enabled
           </span>
         ) : (
-          <span className="ml-5 mr-1 inline-block rounded-full bg-red-200 py-[2px] px-2 text-xs text-red-600 last:mr-0">
+          <span className="ml-5 mr-1 inline-block rounded-full bg-red-200 px-2 py-[2px] text-xs text-red-600 last:mr-0">
             Not enabled
           </span>
         )}
@@ -142,7 +142,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
             </Paragraph>
             <Paragraph color="light" size="sm" className="m-5 text-center">
               <code
-                className="bg-dark text-lightest cursor-copy rounded py-1 px-2 font-mono text-xs tracking-wider"
+                className="bg-dark text-lightest cursor-copy rounded px-2 py-1 font-mono text-xs tracking-wider"
                 onClick={() => {
                   navigator.clipboard.writeText(`${twoFactor.secret}`);
                 }}
