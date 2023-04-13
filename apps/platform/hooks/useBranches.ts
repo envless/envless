@@ -1,7 +1,3 @@
-/**
- * A functional component that represents a project.
- * @param {currentProject} props.currentProject - The current project.
- */
 import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { Project } from "@prisma/client";
