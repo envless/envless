@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
@@ -28,12 +29,12 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const { secrets, setSecrets } = useSecret({
+  const { secrets, setSecrets, decryptedProjectKey } = useSecret({
     branchId,
   });
 
   const { control, setValue, handleSubmit } = useForm<any>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: "secrets",
     control,
   });
@@ -44,8 +45,6 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       setValue("secrets", secrets);
     }
   }, [secrets, setValue]);
-
-  console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -59,6 +58,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
+      id: null,
       encryptedKey: "",
       encryptedValue: "",
       decryptedKey: "",
@@ -131,10 +131,19 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   };
 
   const onSubmit = async (data: any) => {
-    console.log("This data need to be send to the server ", data);
-
     try {
-      await saveSecretsMutation.mutateAsync({ secrets: data });
+      console.log("data", data);
+
+      const secretsToSave = data.secrets.map((secret: EnvSecret) => {
+        return {
+          id: secret?.id || null,
+          encryptedKey: secret.encryptedKey,
+          encryptedValue: secret.encryptedValue,
+          branchId,
+        };
+      });
+
+      await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
     } catch (err) {}
   };
 
@@ -152,14 +161,27 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                   <Controller
                     control={control}
                     name={`secrets.${index}.decryptedKey` as const}
-                    render={({ field }) => (
+                    render={({ field: { value, onChange } }) => (
                       <CustomInput
                         onFocus={() => (pastingInputIndex.current = index)}
                         type="text"
                         className="my-1 w-full font-mono"
                         onPaste={handlePaste}
                         placeholder="eg. CLIENT_ID"
-                        {...field}
+                        value={value}
+                        onChange={async (e) => {
+                          onChange(e.target.value);
+
+                          const encryptedSecretKey = await encryptString(
+                            e.target.value,
+                            decryptedProjectKey,
+                          );
+
+                          setValue(
+                            `secrets.${index}.encryptedKey`,
+                            encryptedSecretKey,
+                          );
+                        }}
                       />
                     )}
                   />
@@ -170,7 +192,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                     <Controller
                       control={control}
                       name={`secrets.${index}.decryptedValue` as const}
-                      render={({ field }) => (
+                      render={({ field: { onChange, value, name } }) => (
                         <TextareaGroup
                           full
                           icon={<Eye className="text-lighter h-4 w-4" />}
@@ -183,7 +205,21 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                           iconActionClick={() =>
                             handleToggleHiddenEnvPairClick(index)
                           }
-                          {...field}
+                          name={name}
+                          value={value}
+                          onChange={async (e) => {
+                            onChange(e.target.value);
+
+                            const encryptedSecretValue = await encryptString(
+                              e.target.value,
+                              decryptedProjectKey,
+                            );
+
+                            setValue(
+                              `secrets.${index}.encryptedValue`,
+                              encryptedSecretValue,
+                            );
+                          }}
                         />
                       )}
                     />

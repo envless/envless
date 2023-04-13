@@ -8,6 +8,7 @@ import { EnvSecret } from "../types";
 function useSecret({ branchId }: { branchId: string }) {
   // const [isSecretsLoading, setIsSecretsLoading] = useState(true);
   const [secrets, setSecrets] = useState<EnvSecret[]>([]);
+  const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const privateKey = sessionStorage.getItem("privateKey");
   const utils = trpc.useContext();
 
@@ -27,6 +28,8 @@ function useSecret({ branchId }: { branchId: string }) {
         _encryptedProjectKey as string,
         privateKey as string,
       )) as string;
+
+      setDecryptedProjectKey(_decryptedProjectKey as string);
 
       for (const secret of secrets) {
         const { encryptedKey, encryptedValue } = secret;
@@ -61,6 +64,7 @@ function useSecret({ branchId }: { branchId: string }) {
     secrets,
     //isSecretsLoading: isSecretsLoading,
     setSecrets,
+    decryptedProjectKey,
   };
 }
 
