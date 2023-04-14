@@ -128,7 +128,7 @@ model Branch {
   protectedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  deletedAt DateTime?
+  deletedAt   DateTime?
 
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdBy User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
