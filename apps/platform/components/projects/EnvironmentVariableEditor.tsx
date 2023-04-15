@@ -28,7 +28,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const { secrets, setSecrets } = useSecret({
+  const { secrets, setSecrets, decryptedProjectKey } = useSecret({
     branchId,
   });
 
@@ -50,9 +50,10 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
-      await parseEnvFile(file, setSecrets);
+      const pairs = await parseEnvFile(file, decryptedProjectKey);
+      setValue("secrets", pairs);
     },
-    [setSecrets],
+    [setValue, decryptedProjectKey],
   );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -108,7 +109,11 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const handlePaste = async (event: any) => {
     event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedSecrets = await parseEnvContent(content);
+    const pastedSecrets = await parseEnvContent(
+      "env",
+      content,
+      decryptedProjectKey,
+    );
 
     if (pastedSecrets && pastedSecrets.length === 0) {
       return;

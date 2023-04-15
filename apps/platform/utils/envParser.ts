@@ -1,38 +1,20 @@
-import { Dispatch, SetStateAction } from "react";
+import { encryptString } from "@47ng/cloak";
 import { EnvSecret } from "@/types/index";
+import { parseDotEnvContents } from "@/utils/helpers";
+import yaml from "js-yaml";
+import { repeat } from "lodash";
 
-export const parseEnvFile = async (
-  file: File,
-  setEnvKeys: Dispatch<SetStateAction<EnvSecret[]>>,
-) => {
-  /*
-  const reader = new FileReader();
-
-  const readFile = new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-  });
-
-  reader.readAsText(file, "UTF-8");
-  const contents = (await readFile) as string;
-  */
-
+export const parseEnvFile = async (file: File, decryptedProjectKey: string) => {
   const fileContents = await readFileContents(file);
 
   const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
 
-  switch (fileExtension) {
-    case "env":
-      break;
-
-    case "json":
-      break;
-  }
-
-  // now parse based on the file type
-
-  const pairs = await parseEnvContent(fileContents);
-  setEnvKeys([...pairs]);
+  const pairs = await parseEnvContent(
+    fileExtension,
+    fileContents,
+    decryptedProjectKey,
+  );
+  return pairs;
 };
 
 async function readFileContents(file: File): Promise<string> {
@@ -48,64 +30,71 @@ async function readFileContents(file: File): Promise<string> {
   });
 }
 
-export const parseEnvContent = async (contents: string) => {
-  const pairs = parse(contents);
+export const parseEnvContent = async (
+  fileExtension: string,
+  contents: string,
+  decryptedProjectkey: string,
+) => {
   const secrets: EnvSecret[] = [];
 
-  Object.keys(pairs).forEach((key) => {
-    const value = pairs[key];
-    const secret = {
-      encryptedKey: key,
-      encryptedValue: value,
-      decryptedKey: key,
-      decryptedValue: value,
-      hiddenValue: "*",
-      hidden: true,
-    };
+  switch (fileExtension) {
+    case "env":
+      const pairs = parseDotEnvContents(contents);
+      const keyPairEntries = Object.entries(pairs);
 
-    secrets.push(secret);
-  });
+      for (let i = 0; i < keyPairEntries.length; i++) {
+        const [key, value] = keyPairEntries[i];
 
-  return secrets;
-};
+        const encryptedKey = await encryptString(key, decryptedProjectkey);
+        const encryptedValue = await encryptString(
+          value as string,
+          decryptedProjectkey,
+        );
 
-// Borrowed from https://github.com/motdotla/dotenv/blob/master/lib/main.js
-const LINE =
-  /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/gm;
-const parse = (src: string) => {
-  const obj = {};
+        const secret = {
+          encryptedKey,
+          encryptedValue,
+          decryptedKey: key as string,
+          decryptedValue: value as string,
+          hiddenValue: repeat("*", (value as string).length),
+          hidden: true,
+        };
 
-  // Convert buffer to string
-  let lines = src.toString();
+        secrets.push(secret);
+      }
+      break;
 
-  // Convert line breaks to same format
-  lines = lines.replace(/\r\n?/gm, "\n");
+    case "yml":
+      // const yamlPairs = yaml.load(contents);
+      break;
 
-  let match;
-  while ((match = LINE.exec(lines)) != null) {
-    const key = match[1];
+    case "json":
+      const jsonPairs = JSON.parse(contents);
 
-    // Default undefined or null to empty string
-    let value = match[2] || "";
+      const jsonKeyPairEntries = Object.entries(jsonPairs);
 
-    // Remove whitespace
-    value = value.trim();
+      for (let i = 0; i < jsonKeyPairEntries.length; i++) {
+        const [key, value] = jsonKeyPairEntries[i];
 
-    // Check if double quoted
-    const maybeQuote = value[0];
+        const encryptedKey = await encryptString(key, decryptedProjectkey);
+        const encryptedValue = await encryptString(
+          value as string,
+          decryptedProjectkey,
+        );
 
-    // Remove surrounding quotes
-    value = value.replace(/^(['"`])([\s\S]*)\1$/gm, "$2");
+        const secret = {
+          encryptedKey,
+          encryptedValue,
+          decryptedKey: key as string,
+          decryptedValue: value as string,
+          hiddenValue: repeat("*", (value as string).length),
+          hidden: true,
+        };
 
-    // Expand newlines if double quoted
-    if (maybeQuote === '"') {
-      value = value.replace(/\\n/g, "\n");
-      value = value.replace(/\\r/g, "\r");
-    }
-
-    // Add to object
-    obj[key] = value;
+        secrets.push(secret);
+      }
+      break;
   }
 
-  return obj;
+  return secrets;
 };
