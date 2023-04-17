@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -71,7 +72,7 @@ export const ProjectPage = ({
       encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     },
   });
-
+  const { setBranches } = useBranchesStore();
   const router = useRouter();
   const { branch } = router.query;
 
@@ -131,6 +132,10 @@ export const ProjectPage = ({
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
 
+  useEffect(() => {
+    setBranches(branches);
+  }, [branches, setBranches]);
+
   return (
     <ProjectLayout
       projects={projects}
@@ -186,7 +191,6 @@ export const ProjectPage = ({
             onSuccessCreation={() => {}}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            currentProject={currentProject}
           />
         </>
       )}
