@@ -8,6 +8,7 @@ import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
+  Branch,
   EncryptedProjectKey,
   Project,
   UserPublicKey,
@@ -163,7 +164,7 @@ export const ProjectPage = ({
                 />
 
                 <Link
-                  className="group block flex items-center text-sm transition-colors"
+                  className="group flex items-center text-sm transition-colors"
                   href={`/projects/${currentProject.slug}/branches`}
                 >
                   <GitBranch className="text-lighter mr-1 h-4 w-4 group-hover:text-teal-400" />
@@ -188,7 +189,11 @@ export const ProjectPage = ({
           <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
-            onSuccessCreation={() => {}}
+            onSuccessCreation={(data: Branch) => {
+              router.push(
+                `/projects/${currentProject.slug}?branch=${data.name}`,
+              );
+            }}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           />
