@@ -189,9 +189,9 @@ export const ProjectPage = ({
           <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
-            onSuccessCreation={(data: Branch) => {
+            onSuccessCreation={(branch: Branch) => {
               router.push(
-                `/projects/${currentProject.slug}?branch=${data.name}`,
+                `/projects/${currentProject.slug}?branch=${branch.name}`,
               );
             }}
             isOpen={isOpen}
