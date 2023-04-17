@@ -53,7 +53,7 @@ const Projects = ({ ...props }) => {
               <div>
                 <h5
                   title={project.name}
-                  className="line-clamp-1 text-lightest max-w-[150px] truncate text-base leading-5"
+                  className="text-lightest line-clamp-1 max-w-[150px] truncate text-base leading-5"
                 >
                   {project?.name}
                 </h5>

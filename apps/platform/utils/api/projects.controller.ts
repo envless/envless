@@ -111,7 +111,7 @@ export const doesProjectConflict = async (name: string, slug: string) => {
   if (project) {
     const conflictField = project.slug === slug ? "slug" : "name";
     if (conflictField == "slug") {
-      const newSlug = `slug-${Date.now()}`;
+      const newSlug = `${slug}-${Date.now()}`;
       doesProjectConflict(name, newSlug);
     }
     return { conflictField, project: { name, slug } };

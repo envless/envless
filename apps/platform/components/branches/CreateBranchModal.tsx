@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { Branch, Project } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
@@ -27,15 +28,14 @@ interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onSuccessCreation: () => void;
-  currentProject: Project;
 }
 
 const CreateBranchModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
-  currentProject,
 }: BranchModalProps) => {
+  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -55,9 +55,6 @@ const CreateBranchModal = ({
   } = useZodForm({
     schema,
   });
-
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
-  const [branches, setBranches] = useState([] as Branch[]);
 
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {
@@ -81,15 +78,6 @@ const CreateBranchModal = ({
     },
   });
 
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
-
   const createNewBranch: SubmitHandler<Project> = async (data) => {
     const { name } = data;
 
@@ -102,13 +90,6 @@ const CreateBranchModal = ({
     branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
 
-  useEffect(() => {
-    if (branchQuery.data) {
-      setBranches(branchQuery.data);
-      setBaseBranchFrom(branchQuery.data[0]);
-    }
-  }, [branchQuery.data]);
-
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>
       <form onSubmit={handleSubmit(createNewBranch)}>
@@ -118,7 +99,7 @@ const CreateBranchModal = ({
             <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <AlertCircle className="hover:text-lighter absolute top-0 -right-5 h-3.5 w-3.5" />
+                  <AlertCircle className="hover:text-lighter absolute -right-5 top-0 h-3.5 w-3.5" />
                 </TooltipTrigger>
 
                 <TooltipContent>
@@ -152,8 +133,8 @@ const CreateBranchModal = ({
         <div className="mb-4">
           <BranchComboBox
             branches={branches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={baseBranch}
+            setSelectedBranch={setBaseBranch}
             inputLabel="Base Branch"
           />
         </div>
