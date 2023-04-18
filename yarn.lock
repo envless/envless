@@ -7748,10 +7748,10 @@ magic-string@^0.30.0:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.13"
 
-mailing-core@^0.9.12:
-  version "0.9.12"
-  resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.12.tgz#af5706282d44a7aec183d568d9e559e256ff13d2"
-  integrity sha512-x8KZT6F6j9EnlL+wM4dEGzipH5RVpHkPrb4XfDPSdzIgevMoHD+s0cgs4DVfHHbBkPfOVNRK1BWNaLDWV8CqHA==
+mailing-core@^0.9.12, mailing-core@^0.9.13:
+  version "0.9.13"
+  resolved "https://registry.yarnpkg.com/mailing-core/-/mailing-core-0.9.13.tgz#ed0fea7c5e5a3253b52877435465c986d71d6917"
+  integrity sha512-0Pp/i+qGADfwiEFCPeFtm3Ae8+N3KiG5SmuB43FLfleZ7OLI57kFvIIBQZpsx5sXTtcR/I88ofjuKF4uaN3MJA==
   dependencies:
     chalk "^4.1.2"
     fs-extra "^10.1.0"
