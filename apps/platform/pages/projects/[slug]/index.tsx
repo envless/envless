@@ -8,12 +8,14 @@ import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
+  Branch,
   EncryptedProjectKey,
   Project,
   UserPublicKey,
   UserRole,
 } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
+import { useSession } from "next-auth/react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -37,6 +39,7 @@ interface Props {
   publicKey: UserPublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
   branches: any;
+  privateKey: string;
 }
 
 interface PersonalKey {
@@ -57,15 +60,18 @@ export const ProjectPage = ({
   publicKey,
   encryptedProjectKey,
   branches,
+  privateKey,
 }: Props) => {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+
   const [encryptionKeys, setEncryptionKeys] = useState<{
     personal: PersonalKey;
     project: ProjectKey;
   }>({
     personal: {
       publicKey: publicKey,
-      privateKey: "",
+      privateKey: privateKey || "",
     },
     project: {
       decryptedProjectKey: "",
@@ -89,7 +95,8 @@ export const ProjectPage = ({
   );
 
   useUpdateEffect(() => {
-    const getPrivateKey = sessionStorage.getItem("privateKey");
+    const sessionUser = session?.user as any;
+    const getPrivateKey = sessionUser?.privateKey as string;
 
     if (getPrivateKey) {
       setEncryptionKeys({
@@ -107,7 +114,8 @@ export const ProjectPage = ({
       let privateKey = encryptionKeys.personal.privateKey;
 
       if (!privateKey) {
-        privateKey = sessionStorage.getItem("privateKey") as string;
+        const sessionUser = session?.user as any;
+        privateKey = sessionUser?.privateKey as string;
       }
 
       const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
@@ -163,7 +171,7 @@ export const ProjectPage = ({
                 />
 
                 <Link
-                  className="group block flex items-center text-sm transition-colors"
+                  className="group flex items-center text-sm transition-colors"
                   href={`/projects/${currentProject.slug}/branches`}
                 >
                   <GitBranch className="text-lighter mr-1 h-4 w-4 group-hover:text-teal-400" />
@@ -188,7 +196,11 @@ export const ProjectPage = ({
           <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
-            onSuccessCreation={() => {}}
+            onSuccessCreation={(branch: Branch) => {
+              router.push(
+                `/projects/${currentProject.slug}?branch=${branch.name}`,
+              );
+            }}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           />
@@ -256,6 +268,7 @@ export const getServerSideProps = withAccessControl({
 
     return {
       props: {
+        privateKey: user?.privateKey,
         encryptedProjectKey,
         branches,
       },
