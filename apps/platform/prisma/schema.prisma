@@ -121,7 +121,6 @@ model Branch {
   projectId   String
   name        String
   description String?
-  status      BranchStatus?
   createdById String
   protected   Boolean       @default(false)
 

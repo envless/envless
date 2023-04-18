@@ -34,7 +34,7 @@ export default class PrivateKey extends Command {
 
     help: Flags.help({
       char: "h",
-      description: "Show help for the link command",
+      description: "Shows help for the link command",
     }),
   };
 
@@ -52,35 +52,50 @@ export default class PrivateKey extends Command {
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
     if (flags.secure) {
-      await loader.start(`Retriving private key from downloads folder...`);
+      loader.start(`Retriving private key from downloads folder...`);
 
       try {
         pKey = await getPrivateKeyFromDownloadsFolder();
+        loader.stop(`Private key successfully retrieved!`);
+        loader.start(`Storing private key to your system's keychain...`);
+        await savePrivateKeyToKeyStore(pKey);
+        loader.stop(`Private key securely stored to your system's keychain!`);
+
+        loader.start(`Deleting private key from downloads folder...`);
+        await deletePrivateKeyFromDownloadsFolder();
+        loader.stop(`Private key deleted from downloads folder!`);
       } catch (error) {
-        await loader.stop(`Private key 'envless.key' not found!`);
-        triggerCancel();
+        loader.stop(
+          `Private key 'envless.key' not found in downloads folder, checking system's keychain...`,
+        );
+        loader.start(`Checking system's keychain for private key...`);
+        pKey = await getPrivateKeyFromKeyStore();
+
+        if (!pKey || pKey.length === 0) {
+          loader.stop(`Private key not found in your system's keychain`);
+          triggerCancel();
+        }
+
+        loader.stop(
+          `Private key successfully retrieved from system's keychain!`,
+        );
       }
-      await loader.stop(`Private key successfully retrieved!`);
-
-      await loader.start(`Storing private key to your system's keychain...`);
-      await savePrivateKeyToKeyStore(pKey);
-      await loader.stop(
-        `Private key securely stored to your system's keychain!`,
-      );
-
-      await loader.start(`Deleting private key from downloads folder...`);
-      await deletePrivateKeyFromDownloadsFolder();
-      await loader.stop(`Private key deleted from downloads folder!`);
     }
 
     if (flags.copy) {
-      await loader.start(
+      loader.start(
         `Copying private key from system's keychain to your clipboard...`,
       );
       pKey = await getPrivateKeyFromKeyStore();
-      await ncp.copy(pKey, async () => {
-        await loader.stop(`Private key copied to your clipboard!`);
-      });
+
+      if (pKey && pKey.length > 0) {
+        await ncp.copy(pKey, async () => {
+          loader.stop(`Private key copied to your clipboard!`);
+        });
+      } else {
+        loader.stop(`Private key not found in your system's keychain`);
+        triggerCancel();
+      }
     }
   }
 }

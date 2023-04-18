@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { Branch, Project } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
@@ -26,16 +27,15 @@ export interface BranchWithNameAndId {
 interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  onSuccessCreation: () => void;
-  currentProject: Project;
+  onSuccessCreation: (branch: Branch) => void;
 }
 
 const CreateBranchModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
-  currentProject,
 }: BranchModalProps) => {
+  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -56,9 +56,6 @@ const CreateBranchModal = ({
     schema,
   });
 
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
-  const [branches, setBranches] = useState([] as Branch[]);
-
   const branchMutation = trpc.branches.create.useMutation({
     onSuccess: (data: Branch) => {
       showToast({
@@ -69,7 +66,7 @@ const CreateBranchModal = ({
       setIsOpen(false);
       reset();
 
-      onSuccessCreation();
+      onSuccessCreation(data);
     },
 
     onError: (error) => {
@@ -80,15 +77,6 @@ const CreateBranchModal = ({
       });
     },
   });
-
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
 
   const createNewBranch: SubmitHandler<Project> = async (data) => {
     const { name } = data;
@@ -101,13 +89,6 @@ const CreateBranchModal = ({
 
     branchMutation.mutate({ branch: { name: name, projectSlug } });
   };
-
-  useEffect(() => {
-    if (branchQuery.data) {
-      setBranches(branchQuery.data);
-      setBaseBranchFrom(branchQuery.data[0]);
-    }
-  }, [branchQuery.data]);
 
   return (
     <BaseModal title="New branch" isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -152,8 +133,8 @@ const CreateBranchModal = ({
         <div className="mb-4">
           <BranchComboBox
             branches={branches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={baseBranch}
+            setSelectedBranch={setBaseBranch}
             inputLabel="Base Branch"
           />
         </div>

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useBranches } from "@/hooks/useBranches";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
@@ -22,11 +24,6 @@ import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 
 const filterOptions: FilterOptions = {
-  status: [
-    { value: "open", label: "Open" },
-    { value: "closed", label: "Closed" },
-    { value: "merged", label: "Merged" },
-  ],
   sort: [
     { label: "Newest", value: "createdAt", order: "desc" },
     { label: "Oldest", value: "createdAt", order: "asc" },
@@ -59,20 +56,13 @@ export const BranchesPage = ({
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
+  const { allBranches } = useBranches({ currentProject });
+  const { setCurrentBranch } = useBranchesStore();
 
   const projectSlug = router.query.slug as string;
 
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
-
   const { protected: protectedBranches, unprotected: allOtherBranches } =
-    useSeperateBranches(branchQuery.data || []);
+    useSeperateBranches(allBranches);
 
   const branchesColumnVisibility = {
     details: true,
@@ -156,9 +146,12 @@ export const BranchesPage = ({
     {
       id: "actions",
       header: "Action",
-      cell: () => (
+      cell: (info) => (
         <Button
-          onClick={() => setIsPrModalOpen(true)}
+          onClick={() => {
+            setCurrentBranch(info.row.original);
+            setIsPrModalOpen(true);
+          }}
           variant="primary-outline"
           size="sm"
           className="float-right"
@@ -246,7 +239,6 @@ export const BranchesPage = ({
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        currentProject={currentProject}
       />
 
       <CreatePullRequestModal
@@ -257,7 +249,6 @@ export const BranchesPage = ({
         }}
         isOpen={isPrModalOpen}
         setIsOpen={setIsPrModalOpen}
-        currentProject={currentProject}
       />
 
       <div className="w-full">

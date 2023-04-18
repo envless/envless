@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Branch, Project, PullRequest } from "@prisma/client";
+import { Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { BaseInput, Button } from "@/components/theme";
@@ -18,19 +19,20 @@ interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   onSuccessCreation: (pullRequest: PullRequest & { project: Project }) => void;
-  currentProject: Project;
 }
 
 const CreatePullRequestModal = ({
   isOpen,
   setIsOpen,
   onSuccessCreation,
-  currentProject,
 }: BranchModalProps) => {
-  const [baseBranchFrom, setBaseBranchFrom] = useState({} as Branch);
-  const [currentBranch, setCurrentBranch] = useState({} as Branch);
-  const [branches, setBranches] = useState([] as Branch[]);
-
+  const {
+    branches,
+    currentBranch,
+    setCurrentBranch,
+    baseBranch,
+    setBaseBranch,
+  } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -60,15 +62,6 @@ const CreatePullRequestModal = ({
     },
   });
 
-  const branchQuery = trpc.branches.getAll.useQuery(
-    {
-      projectId: currentProject.id,
-    },
-    {
-      refetchOnWindowFocus: false,
-    },
-  );
-
   const createNewBranch: SubmitHandler<PullRequestType> = async (data) => {
     const { title } = data;
 
@@ -80,14 +73,6 @@ const CreatePullRequestModal = ({
 
     pullRequestMutation.mutate({ pullRequest: { title, projectSlug } });
   };
-
-  useEffect(() => {
-    if (branchQuery.data) {
-      setBranches(branchQuery.data);
-      setBaseBranchFrom(branchQuery.data[0]);
-      setCurrentBranch(branchQuery.data[0]);
-    }
-  }, [branchQuery.data]);
 
   return (
     <BaseModal title="New Pull Request" isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -117,8 +102,8 @@ const CreatePullRequestModal = ({
         <div className="mb-4 w-full">
           <BranchComboBox
             branches={branches}
-            selectedBranch={baseBranchFrom}
-            setSelectedBranch={setBaseBranchFrom}
+            selectedBranch={baseBranch}
+            setSelectedBranch={setBaseBranch}
             inputLabel="Base Branch"
           />
         </div>

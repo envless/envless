@@ -1,50 +1,50 @@
 name: CI
- 
+
 on:
   push:
     branches: ["main"]
   pull_request:
     types: [opened, synchronize]
- 
+
 jobs:
   build:
-      name: Build and Test
-      timeout-minutes: 15
-      runs-on: ubuntu-latest
-      # To use Remote Caching, uncomment the next lines and follow the steps below.
-      # env:
-      #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
- 
-      steps:
-        - name: Check out code
-          uses: actions/checkout@v3
-          with:
-            fetch-depth: 2
- 
-        - name: Setup Node.js environment
-          uses: actions/setup-node@v3
-          with:
-            node-version: 18
-            cache: 'yarn'
- 
-        - name: Install dependencies
-          run: yarn install
+    name: Build and Test
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    # To use Remote Caching, uncomment the next lines and follow the steps below.
+    # env:
+    #  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+    #  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-        - name: Generate Prisma Types
-          run: yarn run db:generate
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
-        - name: Unit Tests
-          run: yarn test
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "yarn"
 
-        - name: Install Playwright Browsers
-          run: yarn playwright install --with-deps
-        
-        - name: E2E Tests
-          run: yarn test:e2e
+      - name: Install dependencies
+        run: yarn install
 
-        - name: Build
-          run: yarn build
-          env:
-            SKIP_ENV_VALIDATION: true
-            EMAIL_FROM: envless@example.com
+      - name: Generate Prisma Types
+        run: yarn run db:generate
+
+      - name: Unit Tests
+        run: yarn test
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: E2E Tests
+        run: yarn test:e2e
+
+      - name: Build
+        run: yarn build
+        env:
+          SKIP_ENV_VALIDATION: true
+          EMAIL_FROM: envless@example.com
