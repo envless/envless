@@ -27,7 +27,7 @@ export interface BranchWithNameAndId {
 interface BranchModalProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  onSuccessCreation: (branch:Branch) => void;
+  onSuccessCreation: (branch: Branch) => void;
 }
 
 const CreateBranchModal = ({
