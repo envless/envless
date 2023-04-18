@@ -210,9 +210,6 @@ export const getServerSideProps = withAccessControl({
           select: { id: true, encryptedKey: true },
         },
         branches: {
-          where: {
-            deletedAt: null,
-          },
           select: {
             id: true,
             name: true,

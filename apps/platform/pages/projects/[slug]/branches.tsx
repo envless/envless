@@ -8,7 +8,6 @@ import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
-import clsx from "clsx";
 import {
   CheckCheck,
   Copy,
