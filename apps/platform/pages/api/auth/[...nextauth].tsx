@@ -68,7 +68,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, trigger, user, session }) {
       if (trigger === "update") {
-        console.log("Updating JWT", token);
         // Note, that `session` can be any arbitrary object, remember to validate it!
         if (validateSession(session)) {
           const userInSession = session.user;

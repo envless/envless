@@ -19,7 +19,6 @@ import {
   GitPullRequest,
   GitPullRequestClosed,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import PullRequestTitleHoverCard from "@/components/pulls/PullRequestTitleHoverCard";
@@ -55,10 +54,6 @@ export const PullRequestPage = ({
       refetchOnWindowFocus: false,
     },
   );
-
-  const { data: session } = useSession();
-
-  console.log("User session", session?.user);
 
   const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
     {
