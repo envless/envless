@@ -1,7 +1,7 @@
 import { cancel } from "@clack/prompts";
 
 export const triggerCancel = () => {
-  cancel("Opeartion cancelled");
+  cancel("Operation cancelled");
   process.exit(0);
 };
 
@@ -22,3 +22,5 @@ export const LINKS = {
   projects: `${ENVLESS_PLATFORM_URL}/projects`,
   docs: "https://envles.dev/docs",
 };
+
+export const API_VERSION = "v1";
