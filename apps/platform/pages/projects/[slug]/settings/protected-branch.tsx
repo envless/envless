@@ -25,7 +25,6 @@ const initialValue: Branch = {
   protectedAt: null,
   updatedAt: new Date(),
   status: null,
-  deletedAt: null
 };
 
 /**

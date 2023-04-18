@@ -127,7 +127,6 @@ export const branches = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
       const { branch } = input;
 
       const currentBranch = await prisma.branch.findUnique({
