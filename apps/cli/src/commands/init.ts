@@ -41,7 +41,7 @@ export default class Init extends Command {
     flags.token ||= process.env.ENVLESS_CLI_TOKEN;
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    await intro(`${bold(cyan(`Initializing Envless CLI ...`))}`);
+    intro(`${bold(cyan(`Initializing Envless CLI ...`))}`);
 
     if (!flags.id) {
       const id: any = await text({
@@ -83,6 +83,6 @@ export default class Init extends Command {
     };
 
     await saveCliConfigToKeyStore(cli);
-    await outro(`🎉 ${bold(cyan(`Successfully initialized!`))}`);
+    outro(`🎉 ${bold(cyan(`Successfully initialized!`))}`);
   }
 }
