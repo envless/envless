@@ -14,6 +14,7 @@ export interface UserType {
   twoFactorEnabled: boolean;
   clientSideTwoFactorVerified: boolean;
   locked: LockedUser | null;
+  privateKey: string | null;
 }
 export interface MemberType {
   id: string;

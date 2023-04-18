@@ -4,6 +4,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
 import CliSetup from "@/components/integrations/CliSetup";
 import { Button, SlideOver } from "@/components/theme";
@@ -23,6 +24,8 @@ const EncryptionSetup = ({ ...props }) => {
   const [pageState, setPageState] = useState(
     encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
   );
+
+  const { data: session, update } = useSession();
 
   useUpdateEffect(() => {
     if (pageState === "uploadKey" && !cliModal) {
@@ -126,7 +129,15 @@ const EncryptionSetup = ({ ...props }) => {
         privateKey,
       )) as string;
 
-      sessionStorage.setItem("privateKey", privateKey);
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session?.user,
+          privateKey,
+        },
+      };
+
+      await update(updatedSession);
 
       setEncryptionKeys({
         project: {
