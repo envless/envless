@@ -44,6 +44,7 @@ export type BranchType = {
   protectedAt?: Date | null;
   status?: string | null;
   createdById: string;
+  deletedAt?: Date | null;
   projectId: string;
 };
 
