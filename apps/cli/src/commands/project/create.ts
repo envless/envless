@@ -1,9 +1,9 @@
-import { intro, outro, spinner, text } from "@clack/prompts";
+import { cancel, intro, isCancel, outro, spinner, text } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import axios, { AxiosError } from "axios";
 import { blue, bold, cyan, grey, red, underline } from "kleur/colors";
 import { triggerCancel } from "../../lib/helpers";
-import { LINKS } from "../../lib/helpers";
+import { API_VERSION, LINKS } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
 
 const loader = spinner();
@@ -33,7 +33,7 @@ export default class ProjectCreate extends Command {
   };
 
   private async createProject(projectName: string) {
-    await loader.start(
+    loader.start(
       `Creating your Envless project: ${bold(cyan(projectName))}...`,
     );
     const config = await getCliConfigFromKeyStore();
@@ -42,17 +42,17 @@ export default class ProjectCreate extends Command {
     const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
 
     if (!cliId || !cliToken) {
-      await loader.stop(
+      loader.stop(
         `Please initialize the Envless CLI first by running ${bold(
           cyan(`envless init`),
         )}`,
       );
       return;
     }
-    await intro(`${bold(cyan(`Creating Envless project`))}`);
+    intro(`${bold(cyan(`Creating Envless project`))}`);
     try {
       const response = await axios.post(
-        `${LINKS.api}/cli/v0/projects`,
+        `${LINKS.api}/cli/${API_VERSION}/projects`,
         {
           name: projectName,
         },
@@ -68,7 +68,7 @@ export default class ProjectCreate extends Command {
       await loader.stop(
         `🎉 Project created succcesfully ${bold(cyan(projectName))}`,
       );
-      await outro(
+      outro(
         `Visit this link on your web browser: ${underline(
           blue(`${LINKS.projects}/${data.slug}`),
         )}`,
@@ -102,17 +102,17 @@ export default class ProjectCreate extends Command {
         },
       });
 
-      if (projectName) {
-        this.createProject(projectName);
-        return;
-      }
+      isCancel(projectName) && triggerCancel();
+
+      this.createProject(projectName);
+      return;
     } else {
       if (flags.name) {
         this.createProject(flags.name);
         return;
       }
     }
-    await outro(
+    outro(
       `Use the command ${cyan(
         "envless project create",
       )} to get prompt or ${cyan(
