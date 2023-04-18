@@ -24,11 +24,6 @@ import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
 
 const filterOptions: FilterOptions = {
-  status: [
-    { value: "open", label: "Open" },
-    { value: "closed", label: "Closed" },
-    { value: "merged", label: "Merged" },
-  ],
   sort: [
     { label: "Newest", value: "createdAt", order: "desc" },
     { label: "Oldest", value: "createdAt", order: "asc" },
