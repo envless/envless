@@ -260,13 +260,15 @@ export const BranchesPage = ({
           <div className="col-span-6">
             <Button
               className="float-right"
+              leftIcon={
+                <GitBranchPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
+              }
               onClick={() => {
                 router.push(
                   `/projects/${router.query.slug}/settings/protected-branch`,
                 );
               }}
             >
-              <GitBranchPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
               Protect branches
             </Button>
           </div>
@@ -298,8 +300,13 @@ export const BranchesPage = ({
           </div>
 
           <div className="col-span-6">
-            <Button className="float-right" onClick={() => setIsOpen(true)}>
-              <GitBranchPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
+            <Button
+              leftIcon={
+                <GitBranchPlus className="mr-2 h-4 w-4" strokeWidth={2} />
+              }
+              className="float-right"
+              onClick={() => setIsOpen(true)}
+            >
               Create new branch
             </Button>
           </div>

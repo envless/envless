@@ -212,17 +212,17 @@ const EncryptionSetup = ({ ...props }) => {
                   type="submit"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
+                  rightIcon={<ArrowRight className="ml-2 h-5 w-5" />}
                 >
                   Confirm and continue
-                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               ) : (
                 <Button
                   type="button"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
                   onClick={async () => {
                     await generateEncryptionKeys();
                   }}
@@ -258,11 +258,13 @@ const EncryptionSetup = ({ ...props }) => {
           <div className="flex flex-shrink-0 justify-start px-4 py-4">
             <Button
               className="ml-4"
+              leftIcon={
+                <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
+              }
               onClick={async () => {
                 await activateCli({ active: true });
               }}
             >
-              <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
               Confirm and continue
             </Button>
           </div>

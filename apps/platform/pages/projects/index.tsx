@@ -5,7 +5,7 @@ import { Project, User } from "@prisma/client";
 import { SquarePlusIcon } from "@/components/icons";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
-import { Button, Container, EmptyState, Hr, Nav } from "@/components/theme";
+import { Container, EmptyState, Hr, Nav } from "@/components/theme";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
 

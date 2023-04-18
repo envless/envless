@@ -184,11 +184,9 @@ export const ProjectPage = ({
 
               <Button
                 onClick={() => setIsOpen(true)}
-                className="border border-white focus:outline-none"
+                leftIcon={<GitBranchPlus className="mr-3 h-4 w-4" />}
               >
-                <GitBranchPlus className="mr-3 h-4 w-4" />
-                <span className="hidden sm:block">Create new branch</span>
-                <span className="block sm:hidden">Branch</span>
+                Create new branch
               </Button>
             </div>
           </div>

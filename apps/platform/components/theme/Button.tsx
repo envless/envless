@@ -6,10 +6,12 @@ import {
   forwardRef,
 } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
+import clsx from "clsx";
+import { LoaderIcon } from "../icons";
 
 const buttonStyles = cva(
   [
-    "transition-colors focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:ring-2 disabled:cursor-not-allowed disabled:opacity-75",
+    "transition-colors focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none disabled:cursor-not-allowed disabled:opacity-75",
   ],
   {
     variants: {
@@ -23,7 +25,7 @@ const buttonStyles = cva(
           "border-light hover:border-lighter hover:bg-darker",
         ],
         "danger-outline": [
-          "border-2 border-dark hover:border-red-500 text-red-500",
+          "border-2 border-dark hover:border-red-500 text-red-400",
         ],
       },
       size: {
@@ -56,6 +58,9 @@ type ButtonProps = {
   small?: boolean;
   disabled?: boolean;
   children: ReactNode;
+  loading?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
 } & VariantProps<typeof buttonStyles>;
 
 const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
@@ -65,6 +70,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       type = "submit",
       size = "md",
       width = "fit",
+      loading = false,
       sr,
       onClick,
       href,
@@ -72,6 +78,9 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
       className,
       small,
       children,
+      disabled,
+      leftIcon,
+      rightIcon,
       ...props
     },
     ref,
@@ -94,10 +103,21 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
           type={type}
           className={buttonStyles({ variant, size, width, className })}
           ref={ref as MutableRefObject<HTMLButtonElement>}
+          disabled={disabled || loading}
           onClick={onClick}
           {...props}
         >
-          {children}
+          <span className={clsx(loading && "invisible")}>
+            {leftIcon && leftIcon}
+          </span>
+          <span className={clsx(loading && "invisible")}>{children}</span>
+
+          {loading && <LoaderIcon className="absolute h-5 w-5 animate-spin" />}
+
+          <span className={clsx(loading && "invisible")}>
+            {rightIcon && rightIcon}
+          </span>
+
           {sr && <span className="sr-only">{sr}</span>}
         </button>
       );

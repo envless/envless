@@ -140,7 +140,7 @@ const CreateBranchModal = ({
         </div>
 
         <div className="float-right">
-          <Button type="submit" disabled={branchMutation.isLoading}>
+          <Button type="submit" loading={branchMutation.isLoading}>
             Create branch
           </Button>
         </div>

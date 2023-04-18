@@ -172,8 +172,13 @@ export const PullRequestPage = ({
           </div>
 
           <div className="col-span-6">
-            <Button className="float-right" onClick={() => setIsOpen(true)}>
-              <GitPullRequest className="mr-2 h-4 w-4 " strokeWidth={2} />
+            <Button
+              className="float-right"
+              leftIcon={
+                <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+              }
+              onClick={() => setIsOpen(true)}
+            >
               Open pull request
             </Button>
           </div>

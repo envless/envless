@@ -143,7 +143,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
             </div>
           </div>
 
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" loading={loading}>
             Save account settings
           </Button>
         </form>

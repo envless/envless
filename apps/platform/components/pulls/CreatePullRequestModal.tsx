@@ -109,7 +109,9 @@ const CreatePullRequestModal = ({
         </div>
 
         <div className="float-right">
-          <Button type="submit">Create Pull Request</Button>
+          <Button loading={pullRequestMutation.isLoading} type="submit">
+            Create Pull Request
+          </Button>
         </div>
       </form>
     </BaseModal>
