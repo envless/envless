@@ -34,7 +34,7 @@ export default class PrivateKey extends Command {
 
     help: Flags.help({
       char: "h",
-      description: "Show help for the link command",
+      description: "Shows help for the link command",
     }),
   };
 
@@ -78,9 +78,17 @@ export default class PrivateKey extends Command {
         `Copying private key from system's keychain to your clipboard...`,
       );
       pKey = await getPrivateKeyFromKeyStore();
-      await ncp.copy(pKey, async () => {
-        await loader.stop(`Private key copied to your clipboard!`);
-      });
+
+      if (pKey && pKey.length > 0) {
+        await ncp.copy(pKey, async () => {
+          await loader.stop(`Private key copied to your clipboard!`);
+        });
+      } else {
+        loader.stop(
+          `Private key 'envless.key' not found in your system's keychain`,
+        );
+        triggerCancel();
+      }
     }
   }
 }

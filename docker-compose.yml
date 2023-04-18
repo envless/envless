@@ -7,7 +7,7 @@ services:
     init: true
     networks:
       - envless_network
-    ports: 
+    ports:
       - "6379:6379"
 
   redis-rest:
@@ -16,7 +16,7 @@ services:
     hostname: "envless-redis-rest"
     depends_on:
       - "redis"
-    ports: 
+    ports:
       - "7379:7379"
     networks:
       - envless_network
@@ -27,14 +27,14 @@ services:
     container_name: "postgres"
     restart: "always"
     environment:
-        POSTGRES_USER: "envless"
-        POSTGRES_DB: "envless"
-        POSTGRES_PASSWORD: "envless"
+      POSTGRES_USER: "envless"
+      POSTGRES_DB: "envless"
+      POSTGRES_PASSWORD: "envless"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - envless_network
-    ports: 
+    ports:
       - "5432:5432"
 
   platform:

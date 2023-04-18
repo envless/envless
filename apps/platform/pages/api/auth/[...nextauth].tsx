@@ -71,10 +71,12 @@ export const authOptions: NextAuthOptions = {
         // Note, that `session` can be any arbitrary object, remember to validate it!
         if (validateSession(session)) {
           const userInSession = session.user;
+          // @ts-ignore
           token.user = {
             ...userInSession,
             clientSideTwoFactorVerified:
               userInSession.clientSideTwoFactorVerified ?? false,
+            privateKey: userInSession.privateKey ?? null,
           };
         }
       } else if (user) {
@@ -83,6 +85,7 @@ export const authOptions: NextAuthOptions = {
           ...user,
           clientSideTwoFactorVerified:
             session?.user?.clientSideTwoFactorVerified ?? false,
+          privateKey: session?.user?.privateKey ?? null,
         };
 
         // Add the locked information to the token
@@ -110,6 +113,7 @@ export const authOptions: NextAuthOptions = {
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
         clientSideTwoFactorVerified: boolean;
+        privateKey: string | null;
       } = token.user as any;
 
       if (user) {
@@ -124,6 +128,7 @@ export const authOptions: NextAuthOptions = {
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
             clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
+            privateKey: user.privateKey,
           } as any,
         };
       }
@@ -173,6 +178,7 @@ const UserSchema = z.object({
   twoFactorEnabled: z.boolean(),
   clientSideTwoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
+  privateKey: z.string().nullable(),
 });
 
 const SessionSchema = z.object({
