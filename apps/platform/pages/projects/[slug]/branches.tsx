@@ -5,7 +5,6 @@ import { useBranches } from "@/hooks/useBranches";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
-import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
