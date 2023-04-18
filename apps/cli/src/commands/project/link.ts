@@ -42,7 +42,7 @@ export default class LinkProject extends Command {
 
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    await intro(`${bold(cyan(`Linking your project to Envless`))}`);
+    intro(`${bold(cyan(`Linking your project to Envless`))}`);
 
     if (!flags.projectId) {
       await loader.start(`Fetching projects...`);
@@ -96,7 +96,7 @@ export default class LinkProject extends Command {
     };
 
     await writeToDotEnvless(config);
-    await outro(`🎉 ${bold(cyan(`Successfully linked project with config:`))}`);
+    outro(`🎉 ${bold(cyan(`Successfully linked project with config:`))}`);
     console.log(config);
   }
 }

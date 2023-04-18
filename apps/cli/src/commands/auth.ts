@@ -35,7 +35,7 @@ export default class Auth extends Command {
 
   async run(): Promise<void> {
     const version = this.config.version;
-    await intro(`👋 ${bold(cyan(`Welcome to Envless ${grey(`${version}`)}`))}`);
+    intro(`👋 ${bold(cyan(`Welcome to Envless ${grey(`${version}`)}`))}`);
     const { flags } = await this.parse(Auth);
 
     if (!flags.with) {
@@ -53,9 +53,9 @@ export default class Auth extends Command {
     }
 
     const loginUrl = `${LINKS.base}/auth?clientId=xxx`;
-    await loader.start(`Please wait while verify few things...`);
+    loader.start(`Please wait while verify few things...`);
     await new Promise((r) => setTimeout(r, 2000));
-    await loader.stop(
+    loader.stop(
       `Please visit this URL in your web browser: ${underline(
         blue(`${loginUrl}`),
       )}`,
@@ -73,7 +73,7 @@ export default class Auth extends Command {
     });
 
     isCancel(token) && triggerCancel();
-    await outro(
+    outro(
       `👋 ${bold(
         cyan(`Welcome back ${underline(cyan(`${`John Doe`}`))}`),
       )}, you are now logged in!`,
