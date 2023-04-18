@@ -12,7 +12,7 @@
     "dev": "dotenv -- turbo run dev",
     "build": "dotenv -- turbo run build",
     "lint": "dotenv -- turbo run lint",
-    "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
     "build:ui": "dotenv -- turbo run build:ui",
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",
