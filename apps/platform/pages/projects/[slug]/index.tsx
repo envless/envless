@@ -8,6 +8,7 @@ import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
+  Branch,
   EncryptedProjectKey,
   Project,
   UserPublicKey,
@@ -195,7 +196,11 @@ export const ProjectPage = ({
           <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
-            onSuccessCreation={() => {}}
+            onSuccessCreation={(branch: Branch) => {
+              router.push(
+                `/projects/${currentProject.slug}?branch=${branch.name}`,
+              );
+            }}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
           />
