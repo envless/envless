@@ -238,7 +238,7 @@ const MembersTableContainer = ({
           </div>
         </div>
       </div>
-      <div className="w-full min-w-full overflow-x-auto">
+      <div className="w-full min-w-full">
         {team.length === 0 ? (
           <BaseEmptyState
             icon={<UserX className="mx-auto mb-3 h-10 w-10" />}
