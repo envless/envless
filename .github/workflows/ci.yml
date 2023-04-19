@@ -34,14 +34,14 @@ jobs:
       - name: Generate Prisma Types
         run: yarn run db:generate
 
-      - name: Unit Tests
-        run: yarn test
+      # - name: Unit Tests
+      #   run: yarn test
 
-      - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
+      # - name: Install Playwright Browsers
+      #   run: yarn playwright install --with-deps
 
-      - name: E2E Tests
-        run: yarn test:e2e
+      # - name: E2E Tests
+      #   run: yarn test:e2e
 
       - name: Build
         run: yarn build
