@@ -6,3 +6,4 @@ node_modules/*
 **/.mailing/*
 **/node_modules/*
 out/*
+**/dist/*
