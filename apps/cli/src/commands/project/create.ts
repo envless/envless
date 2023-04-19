@@ -1,4 +1,4 @@
-import { cancel, intro, isCancel, outro, spinner, text } from "@clack/prompts";
+import { intro, isCancel, outro, spinner, text } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import axios, { AxiosError } from "axios";
 import { blue, bold, cyan, grey, red, underline } from "kleur/colors";

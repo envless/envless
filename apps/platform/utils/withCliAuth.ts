@@ -29,6 +29,8 @@ const withCliAuth = (
       ).toString("ascii");
       const [username, password] = credentials.split(":");
 
+      console.log({ username, password });
+
       if (!username || !password) {
         return res.status(401).json({ message: "Unauthorized" });
       }
