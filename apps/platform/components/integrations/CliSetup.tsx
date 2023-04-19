@@ -158,7 +158,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
                 size="sm"
                 variant={cli.id ? "danger-outline" : "secondary"}
                 className="mt-3"
-                disabled={loadingCreate || loadingUpdate}
+                loading={loadingCreate || loadingUpdate}
                 onClick={async () => {
                   await createOrUpdateCLiToken();
                 }}

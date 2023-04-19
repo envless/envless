@@ -105,8 +105,7 @@ const CreateProjectModal = () => {
   return (
     <Modal
       button={
-        <Button>
-          <Plus className="mr-2 h-5 w-5" aria-hidden="true" />
+        <Button leftIcon={<Plus className="mr-2 h-5 w-5" aria-hidden="true" />}>
           New project
         </Button>
       }
@@ -139,9 +138,13 @@ const CreateProjectModal = () => {
         />
 
         <div className="float-right">
-          <Button disabled={loading}>
+          <Button
+            leftIcon={
+              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+            }
+            loading={loading}
+          >
             Save and continue
-            <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
           </Button>
         </div>
       </form>

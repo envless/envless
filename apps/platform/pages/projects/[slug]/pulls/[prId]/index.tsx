@@ -68,12 +68,17 @@ EMAIL_FROM=email@example.com
             />
           </div>
           <div className="col-span-2">
-            <Button variant="danger-outline" className="float-right">
-              <GitPullRequestClosed
-                className="mr-2 h-4 w-4 text-red-400"
-                strokeWidth={2}
-              />
-              <span className="text-red-400">Close pull request</span>
+            <Button
+              leftIcon={
+                <GitPullRequestClosed
+                  className="mr-2 h-4 w-4"
+                  strokeWidth={2}
+                />
+              }
+              variant="danger-outline"
+              className="float-right"
+            >
+              Close pull request
             </Button>
           </div>
         </div>
