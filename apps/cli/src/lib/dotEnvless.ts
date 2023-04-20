@@ -1,7 +1,14 @@
 const fs = require("fs");
 const yaml = require("js-yaml");
 
-export const readFromDotEnvless = async () => {};
+export const readFromDotEnvless = async () => {
+  try {
+    const envless = await yaml.load(fs.readFileSync("./.envless.yml", "utf8"));
+    return envless;
+  } catch (e) {
+    return {};
+  }
+};
 
 export const writeToDotEnvless = async (data: object) => {
   let config;
