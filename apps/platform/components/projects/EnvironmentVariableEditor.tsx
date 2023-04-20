@@ -5,7 +5,6 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
@@ -19,14 +18,7 @@ import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 
-export interface EnvVariable {
-  envKey: string;
-  envValue: string;
-  hidden: boolean;
-}
-
 export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
-  const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
   const { secrets, setSecrets, decryptedProjectKey } = useSecret({
@@ -70,40 +62,6 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       hidden: false,
       hiddenValue: "",
     });
-  };
-
-  const handleToggleHiddenEnvPairClick = (index: number) => {
-    const newEnvKeys = secrets.map((envVariable, i) => {
-      const isHidden = () => {
-        if (i === index) {
-          return !envVariable.hidden;
-        }
-
-        return envVariable.hidden;
-      };
-
-      return {
-        ...envVariable,
-        hidden: isHidden(),
-      } as EnvSecret;
-    });
-
-    setSecrets(newEnvKeys);
-  };
-
-  const handleEnvValueChange = (index: number) => (e) => {
-    setEnvKeys(
-      envKeys.map((envVariable, i) => {
-        if (i === index) {
-          return {
-            ...envVariable,
-            envValue: i === index ? e.target.value : envVariable.envValue,
-          } as EnvVariable;
-        }
-
-        return envVariable;
-      }),
-    );
   };
 
   const handlePaste = async (event: any) => {
@@ -197,7 +155,14 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                   <div className="flex items-center gap-3">
                     <ConditionalInput
                       key={field.id}
-                      {...{ control, index, field, update }}
+                      {...{
+                        control,
+                        index,
+                        field,
+                        update,
+                        decryptedProjectKey,
+                        setValue,
+                      }}
                     />
 
                     <MinusCircle
@@ -264,7 +229,14 @@ interface CustomInputProps extends ComponentProps<"input"> {
   reveal?: boolean;
 }
 
-const ConditionalInput = ({ control, index, field, update }) => {
+const ConditionalInput = ({
+  control,
+  index,
+  field,
+  update,
+  decryptedProjectKey,
+  setValue,
+}) => {
   const watchedValue = useWatch({
     name: "secrets",
     control,
@@ -284,7 +256,7 @@ const ConditionalInput = ({ control, index, field, update }) => {
     <Controller
       control={control}
       name={`secrets.${index}.decryptedValue` as const}
-      render={({ field }) => (
+      render={({ field: { onChange, ...rest } }) => (
         <TextareaGroup
           full
           icon={
@@ -300,10 +272,20 @@ const ConditionalInput = ({ control, index, field, update }) => {
             "inline-block font-mono",
           )}
           {...{
-            ...field,
+            ...rest,
             value: watchedValue[index]?.hidden
               ? watchedValue[index]?.hiddenValue || ""
-              : field.value,
+              : rest.value,
+          }}
+          onChange={async (e) => {
+            onChange(e.target.value);
+
+            const encryptedSecretValue = await encryptString(
+              e.target.value,
+              decryptedProjectKey,
+            );
+
+            setValue(`secrets.${index}.encryptedValue`, encryptedSecretValue);
           }}
           disabled={false}
           iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
