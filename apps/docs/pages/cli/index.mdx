@@ -11,54 +11,22 @@ The Envless CLI is compatible with any programming languages, frameworks, hostin
 To download and install Envless CLI, run the following command:
 
 <Tabs items={["npm", "yarn", "brew"]}>
-  <Tab>``` npm i -g envless ```</Tab>
-  <Tab>``` yarn global add envless ```</Tab>
-  <Tab>``` brew install envless ```</Tab>
-</Tabs>
-
-### Authentication
-
-The Envless CLI offers a convenient way to authenticate to your account directly from the command line. With a single command, you can easily log in or sign up.
-
-To authenticate with the Envless CLI, follow these steps:
-
-<Tabs items={["Terminal", "Help"]}>
+  {/* prettier-ignore */}
   <Tab>
-    ```ts
-    envless auth
+    ```ts copy filename="npm"
+    npm i -g envless
     ```
   </Tab>
-
+  {/* prettier-ignore */}
   <Tab>
-    ```ts
-    envless auth --help
-
-    Login to Envless or create an account
-
-    USAGE
-      $ envless auth [-w email|github|gitlab]
-
-    FLAGS
-      -w, --with=<option>  <options: email|github|gitlab>
-
-    DESCRIPTION
-      Login to Envless or create an account
-
-    EXAMPLES
-      $ envless auth
-      $ envless auth --with email
-      $ envless auth --with github
-      $ envless auth --with gitlab
+    ```ts copy filename="yarn" 
+    yarn global add envless
     ```
-
+  </Tab>
+  {/* prettier-ignore */}
+  <Tab>
+    ```ts copy filename="brew"
+    brew install envless
+    ```
   </Tab>
 </Tabs>
-
-{/* TODO - needs some  ♥️ */}
-
-- This will open the `https://envless.dev/cli/auth` page in your default web browser.
-- Enter your email address when prompted.
-- You will receive a secure login link via email.
-- If you do not already have an Envless account, you will be asked to create a public/private encryption key.
-- This private key will be securely saved on your device for future use with the Envless CLI.
-- If you already have an Envless account, the authentication process will be completed and you will be able to use the CLI.

@@ -1,6 +1,6 @@
 {
   "index": "Quickstart",
-  "init": "Initialize Envless",
+  "initialize": "Initialize Envless",
   "start": "Start your server",
   "project": "Project commands",
   "env": "ENV Variables",
