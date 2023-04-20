@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
@@ -45,7 +46,6 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     }
   }, [secrets, setValue]);
 
-  console.log("secrets::: Re-rendering issue 💀💀💀", secrets);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -63,6 +63,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
+      id: null,
       encryptedKey: "",
       encryptedValue: "",
       decryptedKey: "",
@@ -167,14 +168,27 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                   <Controller
                     control={control}
                     name={`secrets.${index}.decryptedKey` as const}
-                    render={({ field }) => (
+                    render={({ field: { value, onChange } }) => (
                       <CustomInput
                         onFocus={() => (pastingInputIndex.current = index)}
                         type="text"
                         className="my-1 w-full font-mono"
                         onPaste={handlePaste}
                         placeholder="eg. CLIENT_ID"
-                        {...field}
+                        value={value}
+                        onChange={async (e) => {
+                          onChange(e.target.value);
+
+                          const encryptedSecretKey = await encryptString(
+                            e.target.value,
+                            decryptedProjectKey,
+                          );
+
+                          setValue(
+                            `secrets.${index}.encryptedKey`,
+                            encryptedSecretKey,
+                          );
+                        }}
                       />
                     )}
                   />
@@ -185,7 +199,6 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                     <ConditionalInput
                       key={field.id}
                       {...{ control, index, field, update }}
-                    />
 
                     <MinusCircle
                       className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"

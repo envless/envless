@@ -61,7 +61,7 @@ export default function Tabs({ active, projectSlug, currentRole }: Props) {
                     tab.id === active
                       ? "border-teal-300 text-teal-300"
                       : "lighter hover:border-dark border-transparent hover:text-teal-300",
-                    "group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium",
+                    "group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium",
                   )}
                   aria-current={tab.id === active ? "page" : undefined}
                 >

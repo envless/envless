@@ -4,6 +4,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { Encryption as EncryptionIcon } from "@/components/icons";
 import CliSetup from "@/components/integrations/CliSetup";
 import { Button, SlideOver } from "@/components/theme";
@@ -23,6 +24,8 @@ const EncryptionSetup = ({ ...props }) => {
   const [pageState, setPageState] = useState(
     encryptionKeys.personal.publicKey ? "uploadKey" : "generateKey",
   );
+
+  const { data: session, update } = useSession();
 
   useUpdateEffect(() => {
     if (pageState === "uploadKey" && !cliModal) {
@@ -126,7 +129,15 @@ const EncryptionSetup = ({ ...props }) => {
         privateKey,
       )) as string;
 
-      sessionStorage.setItem("privateKey", privateKey);
+      const updatedSession = {
+        ...session,
+        user: {
+          ...session?.user,
+          privateKey,
+        },
+      };
+
+      await update(updatedSession);
 
       setEncryptionKeys({
         project: {
@@ -201,17 +212,17 @@ const EncryptionSetup = ({ ...props }) => {
                   type="submit"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
+                  rightIcon={<ArrowRight className="ml-2 h-5 w-5" />}
                 >
                   Confirm and continue
-                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               ) : (
                 <Button
                   type="button"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
                   onClick={async () => {
                     await generateEncryptionKeys();
                   }}
@@ -247,11 +258,13 @@ const EncryptionSetup = ({ ...props }) => {
           <div className="flex flex-shrink-0 justify-start px-4 py-4">
             <Button
               className="ml-4"
+              leftIcon={
+                <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
+              }
               onClick={async () => {
                 await activateCli({ active: true });
               }}
             >
-              <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
               Confirm and continue
             </Button>
           </div>

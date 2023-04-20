@@ -5,3 +5,5 @@ node_modules/*
 **/.next/*
 **/.mailing/*
 **/node_modules/*
+out/*
+**/dist/*

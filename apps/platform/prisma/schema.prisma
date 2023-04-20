@@ -121,7 +121,6 @@ model Branch {
   projectId   String
   name        String
   description String?
-  status      BranchStatus?
   createdById String
   protected   Boolean       @default(false)
 
@@ -188,6 +187,9 @@ model Secret {
   encryptedValue String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  version 	Int @default(1)
+  parentId	String?
 
   userId   String
   branchId String

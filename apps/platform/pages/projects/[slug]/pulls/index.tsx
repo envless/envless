@@ -164,7 +164,6 @@ export const PullRequestPage = ({
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        currentProject={currentProject}
       />
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
@@ -173,8 +172,13 @@ export const PullRequestPage = ({
           </div>
 
           <div className="col-span-6">
-            <Button className="float-right" onClick={() => setIsOpen(true)}>
-              <GitPullRequest className="mr-2 h-4 w-4 " strokeWidth={2} />
+            <Button
+              className="float-right"
+              leftIcon={
+                <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+              }
+              onClick={() => setIsOpen(true)}
+            >
               Open pull request
             </Button>
           </div>

@@ -2,14 +2,8 @@ import { intro, isCancel, outro, text } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import { bold, cyan, grey } from "kleur/colors";
 import { triggerCancel } from "../lib/helpers";
+import { LINKS } from "../lib/helpers";
 import { saveCliConfigToKeyStore } from "../lib/keyStore";
-
-const API_BASE = process.env.API_BASE || `http://localhost:3000`;
-const LINKS = {
-  login: `${API_BASE}/auth/login`,
-  cliTokenDoc: `${API_BASE}/docs/cli/auth`,
-  privateKeySetupDoc: `${API_BASE}/docs/cli/private-key`,
-};
 
 export default class Init extends Command {
   static description = `Initialize Envless CLI \n${grey(
@@ -47,7 +41,7 @@ export default class Init extends Command {
     flags.token ||= process.env.ENVLESS_CLI_TOKEN;
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    await intro(`${bold(cyan(`Initializing Envless CLI ...`))}`);
+    intro(`${bold(cyan(`Initializing Envless CLI ...`))}`);
 
     if (!flags.id) {
       const id: any = await text({
@@ -69,7 +63,7 @@ export default class Init extends Command {
     if (!flags.token) {
       const token: any = await text({
         message: `Enter your CLI TOKEN: ${grey(
-          `Please follow this instruction to get your token: ${LINKS.cliTokenDoc}`,
+          `Please follow this instruction to get your token: ${LINKS.docs}/cli/auth`,
         )}`,
 
         validate: (input: string) => {
@@ -89,6 +83,6 @@ export default class Init extends Command {
     };
 
     await saveCliConfigToKeyStore(cli);
-    await outro(`🎉 ${bold(cyan(`Successfully initialized!`))}`);
+    outro(`🎉 ${bold(cyan(`Successfully initialized!`))}`);
   }
 }

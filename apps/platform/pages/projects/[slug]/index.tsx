@@ -1,17 +1,21 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
+  Branch,
   EncryptedProjectKey,
   Project,
   UserPublicKey,
   UserRole,
 } from "@prisma/client";
-import { GitBranchPlus } from "lucide-react";
+import { GitBranch, GitBranchPlus } from "lucide-react";
+import { useSession } from "next-auth/react";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -35,6 +39,7 @@ interface Props {
   publicKey: UserPublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
   branches: any;
+  privateKey: string;
 }
 
 interface PersonalKey {
@@ -55,22 +60,25 @@ export const ProjectPage = ({
   publicKey,
   encryptedProjectKey,
   branches,
+  privateKey,
 }: Props) => {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+
   const [encryptionKeys, setEncryptionKeys] = useState<{
     personal: PersonalKey;
     project: ProjectKey;
   }>({
     personal: {
       publicKey: publicKey,
-      privateKey: "",
+      privateKey: privateKey || "",
     },
     project: {
       decryptedProjectKey: "",
       encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     },
   });
-
+  const { setBranches } = useBranchesStore();
   const router = useRouter();
   const { branch } = router.query;
 
@@ -87,7 +95,8 @@ export const ProjectPage = ({
   );
 
   useUpdateEffect(() => {
-    const getPrivateKey = sessionStorage.getItem("privateKey");
+    const sessionUser = session?.user as any;
+    const getPrivateKey = sessionUser?.privateKey as string;
 
     if (getPrivateKey) {
       setEncryptionKeys({
@@ -105,7 +114,8 @@ export const ProjectPage = ({
       let privateKey = encryptionKeys.personal.privateKey;
 
       if (!privateKey) {
-        privateKey = sessionStorage.getItem("privateKey") as string;
+        const sessionUser = session?.user as any;
+        privateKey = sessionUser?.privateKey as string;
       }
 
       const encryptedProjectKey = encryptionKeys.project.encryptedProjectKey;
@@ -130,6 +140,10 @@ export const ProjectPage = ({
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
 
+  useEffect(() => {
+    setBranches(branches);
+  }, [branches, setBranches]);
+
   return (
     <ProjectLayout
       projects={projects}
@@ -147,21 +161,32 @@ export const ProjectPage = ({
         <>
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
-              <BranchDropdown
-                label="Current Branch"
-                dropdownLabel="Switch between branches"
-                branches={branches}
-                selectedBranch={memoizedSelectedBranch}
-                currentProjectSlug={currentProject.slug}
-              />
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <BranchDropdown
+                  label="Current Branch"
+                  dropdownLabel="Switch between branches"
+                  branches={branches}
+                  selectedBranch={memoizedSelectedBranch}
+                  currentProjectSlug={currentProject.slug}
+                />
+
+                <Link
+                  className="group flex items-center text-sm transition-colors"
+                  href={`/projects/${currentProject.slug}/branches`}
+                >
+                  <GitBranch className="text-lighter mr-1 h-4 w-4 group-hover:text-teal-400" />
+                  <span className="text-light group-hover:text-teal-400">
+                    {branches.length}{" "}
+                    {branches.length === 1 ? "branch" : "branches"}
+                  </span>
+                </Link>
+              </div>
 
               <Button
                 onClick={() => setIsOpen(true)}
-                className="border border-white focus:outline-none"
+                leftIcon={<GitBranchPlus className="mr-3 h-4 w-4" />}
               >
-                <GitBranchPlus className="mr-3 h-4 w-4" />
-                <span className="hidden sm:block">Create new branch</span>
-                <span className="block sm:hidden">Branch</span>
+                Create new branch
               </Button>
             </div>
           </div>
@@ -169,10 +194,13 @@ export const ProjectPage = ({
           <EnvironmentVariableEditor branchId={memoizedSelectedBranch.id} />
 
           <CreateBranchModal
-            onSuccessCreation={() => {}}
+            onSuccessCreation={(branch: Branch) => {
+              router.push(
+                `/projects/${currentProject.slug}?branch=${branch.name}`,
+              );
+            }}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            currentProject={currentProject}
           />
         </>
       )}
@@ -238,6 +266,7 @@ export const getServerSideProps = withAccessControl({
 
     return {
       props: {
+        privateKey: user?.privateKey,
         encryptedProjectKey,
         branches,
       },
