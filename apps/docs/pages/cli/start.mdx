@@ -1,21 +1,56 @@
+import { Callout, Tab, Tabs } from "nextra-theme-docs";
+
 ## Start your server
 
-To securely inject ENV variables for your project, use the `envless -r` command followed by the command that you would normally use to start your server.
+To securely inject app secrets (ENV variables) for your project, use the `envless start` command followed by the command that you would normally use to start your server.
 
-Here's an example of how to start your server using Envless:
+For example, if you are using Node.js and you would normally start your server with `npm start` , you would use the following command:
 
-{/* TODO - please add other languages and frameworks */}
-| Language/Framework | Before | After |
-|:---|:---|:---|
-| Node.js | `npm start` | `envless -r npm start` |
-| Laravel | `php artisan serve` | `envless -r php artisan serve` |
-| Ruby on Rails | `rails start` | `envless -r rails start` |
+<Tabs items={["Terminal", "Help"]}>
+  <Tab>
+    ```sh filename="Terminal" copy
+    envless start --command 'npm start'
 
-Note that this is just a small sample of the many languages and frameworks that Envless works with. To get started with other languages or frameworks, please refer to their respective documentation.
+    # or with alias and short flag
+    envless s -c 'npm start'
+    ```
+
+  </Tab>
+
+  <Tab>
+    ```ts filename="Help"
+    $ envless start --help
+
+    Inject environment variables and run a command.
+    ⚡ This command can be used to start your application on production,staging,
+      development, review apps, on a CI/CD pipeline, platforms or anywhere else.
+
+    USAGE
+      $ envless start -r <value> [-h]
+
+    FLAGS
+      -h, --help         Show help for the start command
+      -r, --run=<value>  (required) The command to run
+
+    ALIASES
+      $ envless s
+
+    EXAMPLES
+      $ envless s -r "yarn dev"
+      $ envless start --run "npm run start"
+    ```
+
+  </Tab>
+</Tabs>
+
+This command is programming language, framework, platform, infrastructure agnostic and can be used in any environment, such as **development**, **production**, **staging**, **review apps**, **CI/CD pipelines**, **platforms**, **infrastructures**, etc. Please be sure to follow the steps below to setup Envless CLI for your environment.
+
+- [Setup Envless CLI for development environment](/platform/projects/setup)
+- [Setup Envless CLI for production and other environments](/platform/projects/setup)
 
 ### How it works?
 
-When you run the `envless -r` command, Envless CLI will:
+When you run the `envless run` command, Envless CLI will:
 
 1. Pull down encrypted ENV variables from our EDGE Network API.
 2. Decrypt these this End to end encrypted variables with your private key.

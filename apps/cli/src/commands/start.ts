@@ -3,7 +3,7 @@ import { decryptString } from "@47ng/cloak";
 import { intro, outro, spinner } from "@clack/prompts";
 import { Command, Flags, ux } from "@oclif/core";
 import axios from "axios";
-import { bold, cyan, green, red } from "kleur/colors";
+import { bold, cyan, green, grey, red } from "kleur/colors";
 import { exec } from "node:child_process";
 import { readFromDotEnvless } from "../lib/dotEnvless";
 import OpenPGP from "../lib/encryption/openpgp";
@@ -14,27 +14,36 @@ import type { DecryptedSecretType, EncryptedSecretType } from "../utils/types";
 
 const loader = spinner();
 
-export default class Run extends Command {
-  static description = `Inject environment variables and run a command. This command can be used to start your application locally, on a CI/CD pipeline, platforms or anywhere else.`;
+export default class Start extends Command {
+  static aliases = ["s"];
+
+  static description = `Inject environment variables and run a command. \n${grey(
+    `⚡ This command can be used to start your application on production, staging, development, review apps, on a CI/CD pipeline, platforms or anywhere else.`,
+  )}`;
 
   static examples = [
     `
-      $ envless run -c "yarn dev"
-      $ envless run --command "npm run start"
+      $ envless start -r "yarn dev"
+      $ envless start --run "npm run start"
     `,
   ];
 
   static flags = {
-    command: Flags.string({
+    run: Flags.string({
       description: `The command to run`,
-      char: "c",
+      char: "r",
       required: true,
+    }),
+
+    help: Flags.help({
+      char: "h",
+      description: "Show help for the start command",
     }),
   };
 
   async run(): Promise<void> {
     const version = this.config.version;
-    const { flags } = await this.parse(Run);
+    const { flags } = await this.parse(Start);
     const command = flags.command as string;
 
     this.log(`\n`);
