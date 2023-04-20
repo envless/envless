@@ -1,9 +1,10 @@
+// import execa from "execa";
 import { decryptString } from "@47ng/cloak";
-import { intro, isCancel, outro, spinner, text } from "@clack/prompts";
-import { Command, Flags } from "@oclif/core";
+import { intro, outro, spinner } from "@clack/prompts";
+import { Command, Flags, ux } from "@oclif/core";
 import axios from "axios";
-import execa from "execa";
 import { bold, cyan, green, red } from "kleur/colors";
+import { exec } from "node:child_process";
 import { readFromDotEnvless } from "../lib/dotEnvless";
 import OpenPGP from "../lib/encryption/openpgp";
 import { API_VERSION, LINKS, triggerCancel } from "../lib/helpers";
@@ -36,7 +37,8 @@ export default class Run extends Command {
     const { flags } = await this.parse(Run);
     const command = flags.command as string;
 
-    intro(`Envless CLI v${this.config.version}`);
+    this.log(`\n`);
+    intro(`✨ Envless CLI v${this.config.version}`);
 
     const { encryptedSecrets, encryptedProjectKey } =
       await this.getEncryptedSecretsAndProjectKey();
@@ -50,8 +52,36 @@ export default class Run extends Command {
       decryptedProjectKey,
     )) as any;
 
+    loader.stop(
+      `${green(bold("✓"))} Decrypted ${decryptedSecrets.length} secrets...`,
+    );
+
     await this.injectSecrets(decryptedSecrets);
-    await execa.command(command);
+
+    // await execa.command(command);
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`${stdout}`);
+    });
+
+    outro(`${green(bold("✓"))} Running command: $ ${bold(cyan(command))}`);
+
+    this.log(
+      `\nFollowing environment variables have been injected into your process:\n`,
+    );
+    ux.table(decryptedSecrets as any, {
+      key: { header: "Key" },
+      id: { header: "ID" },
+    });
+
+    this.log(`\n`);
   }
 
   async getEncryptedSecretsAndProjectKey() {
@@ -140,26 +170,24 @@ export default class Run extends Command {
     encryptedSecrets: EncryptedSecretType[],
     decryptedProjectKey: string,
   ) {
-    loader.start(`Decrypting secrets`);
-    let decryptedSecrets: DecryptedSecretType[] = [];
-    encryptedSecrets.forEach(async (encryptedSecret: EncryptedSecretType) => {
-      const { id, encryptedKey, encryptedValue } = encryptedSecret;
+    loader.start(`Decrypting ${encryptedSecrets.length} secrets`);
+    return await Promise.all(
+      encryptedSecrets.map(async (encryptedSecret: EncryptedSecretType) => {
+        const { id, encryptedKey, encryptedValue } = encryptedSecret;
 
-      try {
-        const key = await decryptString(encryptedKey, decryptedProjectKey);
-        const value = await decryptString(encryptedValue, decryptedProjectKey);
-        decryptedSecrets.push({ id, key, value });
-      } catch (error) {
-        loader.stop(`Unable to decrypt secrets`);
-        triggerCancel();
-      }
-    });
-
-    loader.stop(
-      `${green(bold("✓"))} Decrypted ${decryptedSecrets.length} secrets...`,
+        try {
+          const key = await decryptString(encryptedKey, decryptedProjectKey);
+          const value = await decryptString(
+            encryptedValue,
+            decryptedProjectKey,
+          );
+          return { id, key, value } as DecryptedSecretType;
+        } catch (error) {
+          loader.stop(`Unable to decrypt secrets`);
+          triggerCancel();
+        }
+      }),
     );
-
-    return decryptedSecrets;
   }
 
   async injectSecrets(decryptedSecrets: DecryptedSecretType[]) {
