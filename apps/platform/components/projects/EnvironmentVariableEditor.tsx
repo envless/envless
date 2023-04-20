@@ -46,7 +46,6 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     }
   }, [secrets, setValue]);
 
-
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -199,6 +198,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                     <ConditionalInput
                       key={field.id}
                       {...{ control, index, field, update }}
+                    />
 
                     <MinusCircle
                       className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
