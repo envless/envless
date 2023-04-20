@@ -39,10 +39,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaTypes>(
             rows={rows || 1}
             disabled={disabled}
             className={clsx(className, "input-primary scrollbar w-full")}
-           autoComplete="off"
-          autoCapitalize="none"
-          autoCorrect="off"
-          spellCheck="false"
+            autoComplete="off"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck="false"
           />
 
           {icon && (
