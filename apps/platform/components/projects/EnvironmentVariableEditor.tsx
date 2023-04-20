@@ -14,7 +14,7 @@ import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 
@@ -33,7 +33,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   });
 
   const { control, setValue, handleSubmit } = useForm<any>();
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     name: "secrets",
     control,
   });
@@ -182,25 +182,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
                 <div className="col-span-9">
                   <div className="flex items-center gap-3">
-                    <Controller
-                      control={control}
-                      name={`secrets.${index}.decryptedValue` as const}
-                      render={({ field }) => (
-                        <TextareaGroup
-                          full
-                          icon={<Eye className="text-lighter h-4 w-4" />}
-                          autoComplete="off"
-                          className={clsx(
-                            // envPair.hidden ? "obscure" : "",
-                            "inline-block font-mono",
-                          )}
-                          disabled={false}
-                          iconActionClick={() =>
-                            handleToggleHiddenEnvPairClick(index)
-                          }
-                          {...field}
-                        />
-                      )}
+                    <ConditionalInput
+                      key={field.id}
+                      {...{ control, index, field, update }}
                     />
 
                     <MinusCircle
@@ -266,6 +250,55 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 interface CustomInputProps extends ComponentProps<"input"> {
   reveal?: boolean;
 }
+
+const ConditionalInput = ({ control, index, field, update }) => {
+  const watchedValue = useWatch({
+    name: "secrets",
+    control,
+  });
+
+  const handleToggleHiddenEnvPairClick = (index: number) => {
+    console.log(index);
+    let { hidden, ...others } = watchedValue[index];
+
+    update(index, {
+      hidden: hidden ? false : true,
+      ...others,
+    });
+  };
+
+  return (
+    <Controller
+      control={control}
+      name={`secrets.${index}.decryptedValue` as const}
+      render={({ field }) => (
+        <TextareaGroup
+          full
+          icon={
+            watchedValue[index]?.hidden ? (
+              <Eye className="text-lighter h-4 w-4" />
+            ) : (
+              <EyeOff className="text-lighter h-4 w-4" />
+            )
+          }
+          autoComplete="off"
+          className={clsx(
+            // envPair.hidden ? "obscure" : "",
+            "inline-block font-mono",
+          )}
+          {...{
+            ...field,
+            value: watchedValue[index]?.hidden
+              ? watchedValue[index]?.hiddenValue || ""
+              : field.value,
+          }}
+          disabled={false}
+          iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
+        />
+      )}
+    />
+  );
+};
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   function CustomInput({ className, disabled, ...props }, ref) {

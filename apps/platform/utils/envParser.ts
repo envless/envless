@@ -35,7 +35,7 @@ export const parseEnvContent = async (
   contents: string,
   decryptedProjectkey: string,
 ) => {
-  const secrets: EnvSecret[] = [];
+  let secrets: EnvSecret[] = [];
 
   switch (fileExtension) {
     case "env":
@@ -65,34 +65,90 @@ export const parseEnvContent = async (
       break;
 
     case "yml":
-      // const yamlPairs = yaml.load(contents);
+      const yamlPairs = yaml.load(contents);
+
+      const traverseAndConvertYml = async (
+        pairs,
+        result: EnvSecret[] = [],
+        parentKey = "",
+      ) => {
+        if (typeof pairs !== "object" || Array.isArray(pairs)) {
+          result[parentKey] = pairs;
+
+          const encryptedKey = await encryptString(
+            parentKey,
+            decryptedProjectkey,
+          );
+          const encryptedValue = await encryptString(
+            pairs as string,
+            decryptedProjectkey,
+          );
+
+          const envSecret = {
+            id: "",
+            encryptedKey,
+            encryptedValue,
+            hiddenValue: repeat("*", String(pairs).length),
+            decryptedKey: parentKey,
+            decryptedValue: pairs,
+            hidden: true,
+          };
+          result.push(envSecret);
+        } else {
+          for (const [key, value] of Object.entries(pairs)) {
+            const newParentKey = parentKey ? `${parentKey}_${key}` : key;
+            await traverseAndConvertYml(value, result, newParentKey);
+          }
+        }
+
+        return result;
+      };
+
+      secrets = await traverseAndConvertYml(yamlPairs);
       break;
 
     case "json":
       const jsonPairs = JSON.parse(contents);
 
-      const jsonKeyPairEntries = Object.entries(jsonPairs);
+      const traverseAndConvertJson = async (
+        pairs,
+        result: EnvSecret[] = [],
+        parentKey = "",
+      ) => {
+        if (typeof pairs !== "object" || Array.isArray(pairs)) {
+          result[parentKey] = pairs;
 
-      for (let i = 0; i < jsonKeyPairEntries.length; i++) {
-        const [key, value] = jsonKeyPairEntries[i];
+          const encryptedKey = await encryptString(
+            parentKey,
+            decryptedProjectkey,
+          );
+          const encryptedValue = await encryptString(
+            pairs as string,
+            decryptedProjectkey,
+          );
 
-        const encryptedKey = await encryptString(key, decryptedProjectkey);
-        const encryptedValue = await encryptString(
-          value as string,
-          decryptedProjectkey,
-        );
+          const envSecret = {
+            id: "",
+            encryptedKey,
+            encryptedValue,
+            hiddenValue: repeat("*", String(pairs).length),
+            decryptedKey: parentKey,
+            decryptedValue: pairs,
+            hidden: true,
+          };
+          result.push(envSecret);
+        } else {
+          for (const [key, value] of Object.entries(pairs)) {
+            const newParentKey = parentKey ? `${parentKey}_${key}` : key;
+            await traverseAndConvertJson(value, result, newParentKey);
+          }
+        }
 
-        const secret = {
-          encryptedKey,
-          encryptedValue,
-          decryptedKey: key as string,
-          decryptedValue: value as string,
-          hiddenValue: repeat("*", (value as string).length),
-          hidden: true,
-        };
+        return result;
+      };
 
-        secrets.push(secret);
-      }
+      secrets = await traverseAndConvertJson(jsonPairs);
+
       break;
   }
 
