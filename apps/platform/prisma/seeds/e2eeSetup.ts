@@ -43,7 +43,9 @@ const e2eeSetup = async () => {
       },
     });
 
-    user.access.forEach(async (access) => {
+    const accesses = user.access;
+
+    for (let access of accesses) {
       // const decryptedProjectKey = await generateKey();
       const encryptedProjectKey = await OpenPGP.encrypt(decryptedProjectKey, [
         publicKey,
@@ -55,7 +57,7 @@ const e2eeSetup = async () => {
           projectId: access.projectId,
         },
       });
-    });
+    }
 
     fs.writeFileSync(`.envless.key`, privateKey);
     console.log(
