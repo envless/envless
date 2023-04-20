@@ -82,17 +82,12 @@ export const ProjectPage = ({
   const router = useRouter();
   const { branch } = router.query;
 
-  const getSelectedBranch = () => {
+  const memoizedSelectedBranch = useMemo(() => {
     if (branch) {
       return branches.filter((b) => b.name === branch)[0];
     }
     return branches.filter((b) => b.name === "main")[0];
-  };
-
-  const memoizedSelectedBranch = useMemo(
-    () => getSelectedBranch(),
-    [getSelectedBranch],
-  );
+  }, [branch, branches]);
 
   useUpdateEffect(() => {
     const sessionUser = session?.user as any;

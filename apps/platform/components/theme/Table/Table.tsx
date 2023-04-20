@@ -115,30 +115,32 @@ export function Table<T extends object>({
             </div>
           </div>
         ) : (
-          <table className="divide-light min-w-full divide-y">
-            <tbody
-              className={clsx({
-                "bg-dark": variant === "dark",
-                "bg-darker": variant === "darker",
-              })}
-            >
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="w-full overflow-x-auto">
+            <table className="divide-light min-w-full divide-y">
+              <tbody
+                className={clsx({
+                  "bg-dark": variant === "dark",
+                  "bg-darker": variant === "darker",
+                })}
+              >
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className="min-w-max whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
