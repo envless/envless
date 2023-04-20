@@ -57,7 +57,7 @@ export default class Init extends Command {
       });
 
       flags.id = id;
-      isCancel(id) && triggerCancel();
+      isCancel(id) && triggerCancel("Operation cancelled");
     }
 
     if (!flags.token) {
@@ -74,7 +74,7 @@ export default class Init extends Command {
       });
 
       flags.token = token;
-      isCancel(token) && triggerCancel();
+      isCancel(token) && triggerCancel("Operation cancelled");
     }
 
     const cli = {

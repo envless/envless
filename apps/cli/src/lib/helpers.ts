@@ -1,7 +1,7 @@
 import { cancel } from "@clack/prompts";
 
-export const triggerCancel = () => {
-  cancel("Operation cancelled");
+export const triggerCancel = (message: string = "") => {
+  cancel(message);
   process.exit(0);
 };
 
@@ -13,14 +13,16 @@ export const isValidEmail = (email: string) => {
 };
 
 export const ENVLESS_PLATFORM_URL =
-  process.env.ENVLESS_PLATFORM_URL || "https://localhost:3000";
+  process.env.ENVLESS_PLATFORM_URL || "http://localhost:3000";
 
 export const LINKS = {
   base: ENVLESS_PLATFORM_URL,
   api: `${ENVLESS_PLATFORM_URL}/api`,
   login: `${ENVLESS_PLATFORM_URL}/auth`,
   projects: `${ENVLESS_PLATFORM_URL}/projects`,
-  docs: "https://envles.dev/docs",
+  docs: "https://envless.dev/docs",
+  devCliDocs: "https://envless.dev/docs/cli/development",
+  prodCliDocs: "https://envless.dev/docs/cli/production",
 };
 
 export const API_VERSION = "v1";

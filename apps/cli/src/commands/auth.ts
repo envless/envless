@@ -10,7 +10,7 @@ import {
 } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import { blue, bold, cyan, grey, underline } from "kleur/colors";
-import { LINKS } from "../lib/helpers";
+import { LINKS, triggerCancel } from "../lib/helpers";
 
 const opn = require("better-opn");
 const loader = spinner();
@@ -48,7 +48,7 @@ export default class Auth extends Command {
         ],
       });
 
-      isCancel(response) && triggerCancel();
+      isCancel(response) && triggerCancel("Operation cancelled");
       flags.with = response;
     }
 
@@ -72,7 +72,7 @@ export default class Auth extends Command {
       },
     });
 
-    isCancel(token) && triggerCancel();
+    isCancel(token) && triggerCancel("Operation cancelled");
     outro(
       `👋 ${bold(
         cyan(`Welcome back ${underline(cyan(`${`John Doe`}`))}`),
@@ -80,8 +80,3 @@ export default class Auth extends Command {
     );
   }
 }
-
-const triggerCancel = () => {
-  cancel("Opeartion cancelled");
-  process.exit(0);
-};
