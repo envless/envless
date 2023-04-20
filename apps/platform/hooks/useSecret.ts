@@ -31,7 +31,7 @@ function useSecret({ branchId }: { branchId: string }) {
         _encryptedProjectKey as string,
         privateKey as string,
       )) as string;
-
+      
       setDecryptedProjectKey(_decryptedProjectKey as string);
 
       for (const secret of secrets) {
@@ -61,7 +61,7 @@ function useSecret({ branchId }: { branchId: string }) {
       // setIsSecretsLoading(false);
       setSecrets(envSecrets);
     })();
-  }, [branchId]);
+  }, [branchId, privateKey]);
 
   return {
     secrets,

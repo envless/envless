@@ -15,7 +15,7 @@ import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 
@@ -46,10 +46,14 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     }
   }, [secrets, setValue]);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    await parseEnvFile(file, setEnvKeys);
-  }, []);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      const pairs = await parseEnvFile(file, decryptedProjectKey);
+      setValue("secrets", pairs);
+    },
+    [setValue, decryptedProjectKey],
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
@@ -103,37 +107,39 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   };
 
   const handlePaste = async (event: any) => {
+    event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedEnvKeyValuePairs = await parseEnvContent(content);
+    const pastedSecrets = await parseEnvContent(
+      "env",
+      content,
+      decryptedProjectKey,
+    );
 
-    if (
-      !(
-        pastedEnvKeyValuePairs[0]?.envKey && pastedEnvKeyValuePairs[0]?.envValue
-      )
-    ) {
+    if (pastedSecrets && pastedSecrets.length === 0) {
       return;
     }
 
-    event.preventDefault();
-    const envKeysBeforePastingInput = envKeys.slice(
+    // check for the pastedLength of secrets
+    const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
     );
 
-    const envKeysAfterPastingInput = envKeys.slice(
+    const envKeysAfterPastingInput = fields.slice(
       pastingInputIndex.current + 1,
     );
-    setEnvKeys([
+
+    remove();
+
+    append([
       ...envKeysBeforePastingInput,
-      ...pastedEnvKeyValuePairs,
+      ...pastedSecrets,
       ...envKeysAfterPastingInput,
     ]);
   };
 
   const onSubmit = async (data: any) => {
     try {
-      console.log("data", data);
-
       const secretsToSave = data.secrets.map((secret: EnvSecret) => {
         return {
           id: secret?.id || null,
@@ -149,7 +155,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   return (
     <>
-      {secrets.length > 0 ? (
+      {fields.length > 0 ? (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="w-full py-8">
             {fields.map((field, index) => (
@@ -189,39 +195,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
                 <div className="col-span-9">
                   <div className="flex items-center gap-3">
-                    <Controller
-                      control={control}
-                      name={`secrets.${index}.decryptedValue` as const}
-                      render={({ field: { onChange, value, name } }) => (
-                        <TextareaGroup
-                          full
-                          icon={<Eye className="text-lighter h-4 w-4" />}
-                          autoComplete="off"
-                          className={clsx(
-                            // envPair.hidden ? "obscure" : "",
-                            "inline-block font-mono",
-                          )}
-                          disabled={false}
-                          iconActionClick={() =>
-                            handleToggleHiddenEnvPairClick(index)
-                          }
-                          name={name}
-                          value={value}
-                          onChange={async (e) => {
-                            onChange(e.target.value);
-
-                            const encryptedSecretValue = await encryptString(
-                              e.target.value,
-                              decryptedProjectKey,
-                            );
-
-                            setValue(
-                              `secrets.${index}.encryptedValue`,
-                              encryptedSecretValue,
-                            );
-                          }}
-                        />
-                      )}
+                    <ConditionalInput
+                      key={field.id}
+                      {...{ control, index, field, update }}
                     />
 
                     <MinusCircle
@@ -259,7 +235,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               {...getInputProps()}
               type="file"
               className="hidden"
-              accept="env"
+              accept=".env,.yaml,.yml,.json"
             />
             <p className="text-lighter mx-auto mt-1 max-w-md text-sm">
               You can also{" "}
@@ -288,6 +264,55 @@ interface CustomInputProps extends ComponentProps<"input"> {
   reveal?: boolean;
 }
 
+const ConditionalInput = ({ control, index, field, update }) => {
+  const watchedValue = useWatch({
+    name: "secrets",
+    control,
+  });
+
+  const handleToggleHiddenEnvPairClick = (index: number) => {
+    console.log(index);
+    let { hidden, ...others } = watchedValue[index];
+
+    update(index, {
+      hidden: hidden ? false : true,
+      ...others,
+    });
+  };
+
+  return (
+    <Controller
+      control={control}
+      name={`secrets.${index}.decryptedValue` as const}
+      render={({ field }) => (
+        <TextareaGroup
+          full
+          icon={
+            watchedValue[index]?.hidden ? (
+              <Eye className="text-lighter h-4 w-4" />
+            ) : (
+              <EyeOff className="text-lighter h-4 w-4" />
+            )
+          }
+          autoComplete="off"
+          className={clsx(
+            // envPair.hidden ? "obscure" : "",
+            "inline-block font-mono",
+          )}
+          {...{
+            ...field,
+            value: watchedValue[index]?.hidden
+              ? watchedValue[index]?.hiddenValue || ""
+              : field.value,
+          }}
+          disabled={false}
+          iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
+        />
+      )}
+    />
+  );
+};
+
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   function CustomInput({ className, disabled, ...props }, ref) {
     return (
@@ -300,6 +325,10 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           className,
           disabled ? "cursor-not-allowed" : "",
         )}
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
       />
     );
   },
