@@ -14,27 +14,34 @@ import type { DecryptedSecretType, EncryptedSecretType } from "../utils/types";
 
 const loader = spinner();
 
-export default class Run extends Command {
+export default class Start extends Command {
+  static aliases = ["s"];
+
   static description = `Inject environment variables and run a command. This command can be used to start your application locally, on a CI/CD pipeline, platforms or anywhere else.`;
 
   static examples = [
     `
-      $ envless run -c "yarn dev"
-      $ envless run --command "npm run start"
+      $ envless start -r "yarn dev"
+      $ envless start --run "npm run start"
     `,
   ];
 
   static flags = {
-    command: Flags.string({
+    run: Flags.string({
       description: `The command to run`,
-      char: "c",
+      char: "r",
       required: true,
+    }),
+
+    help: Flags.help({
+      char: "h",
+      description: "Show help for the start command",
     }),
   };
 
   async run(): Promise<void> {
     const version = this.config.version;
-    const { flags } = await this.parse(Run);
+    const { flags } = await this.parse(Start);
     const command = flags.command as string;
 
     this.log(`\n`);

@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { Inter } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import "../styles/code.css";
 import "../styles/font.css";
 
 const font = Inter({ subsets: ["latin"], weight: "400" });
