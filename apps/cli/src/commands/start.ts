@@ -3,7 +3,7 @@ import { decryptString } from "@47ng/cloak";
 import { intro, outro, spinner } from "@clack/prompts";
 import { Command, Flags, ux } from "@oclif/core";
 import axios from "axios";
-import { bold, cyan, green, red } from "kleur/colors";
+import { bold, cyan, green, grey, red } from "kleur/colors";
 import { exec } from "node:child_process";
 import { readFromDotEnvless } from "../lib/dotEnvless";
 import OpenPGP from "../lib/encryption/openpgp";
@@ -17,7 +17,9 @@ const loader = spinner();
 export default class Start extends Command {
   static aliases = ["s"];
 
-  static description = `Inject environment variables and run a command. This command can be used to start your application locally, on a CI/CD pipeline, platforms or anywhere else.`;
+  static description = `Inject environment variables and run a command. \n${grey(
+    `⚡ This command can be used to start your application on production, staging, development, review apps, on a CI/CD pipeline, platforms or anywhere else.`,
+  )}`;
 
   static examples = [
     `
