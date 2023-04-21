@@ -70,47 +70,47 @@ export const secrets = createRouter({
       const { user } = ctx.session;
       const { secrets } = input;
 
-      const secretsToInsert = secrets.map((secret) => {
-        if (!secret.id) {
-          return {
-            encryptedKey: secret.encryptedKey,
-            encryptedValue: secret.encryptedValue,
-            userId: user.id,
-            branchId: secret.branchId,
-          };
-        }
-      });
+      const secretsToInsert = secrets
+        .filter((secret) => !secret.id)
+        .map((secret) => ({
+          encryptedKey: secret.encryptedKey,
+          encryptedValue: secret.encryptedValue,
+          userId: user?.id,
+          branchId: secret.branchId,
+        }));
 
-      const secretsToUpdate = secrets.map((secret) => {
-        if (secret.id) {
-          return {
-            id: secret.id,
-            encryptedKey: secret.encryptedKey,
-            encryptedValue: secret.encryptedValue,
-            branchId: secret.branchId,
-          };
-        }
-      });
+      const secretsToUpdate = secrets
+        .filter((secret) => secret.id)
+        .map((secret) => ({
+          id: secret.id,
+          encryptedKey: secret.encryptedKey,
+          encryptedValue: secret.encryptedValue,
+          branchId: secret.branchId,
+        }));
 
-      if (secretsToInsert) {
-        await prisma.secret.createMany({
-          data: secretsToInsert as never,
-        });
-      }
-
-      if (secretsToUpdate && secretsToUpdate.length > 0) {
-        secretsToUpdate.forEach(async (secret) => {
-          await prisma.secret.update({
-            data: {
-              encryptedKey: secret?.encryptedKey,
-              encryptedValue: secret?.encryptedValue,
-              branchId: secret?.branchId,
-            },
-            where: {
-              id: secret?.id,
-            },
+      try {
+        if (secretsToInsert.length > 0) {
+          await prisma.secret.createMany({
+            data: secretsToInsert as never,
           });
-        });
+        }
+
+        if (secretsToUpdate && secretsToUpdate.length > 0) {
+          for (let secret of secretsToUpdate) {
+            await prisma.secret.update({
+              data: {
+                encryptedKey: secret?.encryptedKey,
+                encryptedValue: secret?.encryptedValue,
+                branchId: secret?.branchId,
+              },
+              where: {
+                id: secret?.id || undefined,
+              },
+            });
+          }
+        }
+      } catch (err) {
+        throw new Error(err.message);
       }
     }),
 });
