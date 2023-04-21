@@ -1,11 +1,9 @@
-import { forwardRef, Fragment, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Transition } from '@headlessui/react'
-
 import { Button } from '@/components/Button'
+import { Transition } from '@headlessui/react'
 import { navigation } from '@/components/Navigation'
-import { Slack as SlackIcon } from 'lucide-react'
+import { forwardRef, Fragment, useState } from 'react'
 
 function CheckIcon(props) {
   return (
@@ -186,6 +184,31 @@ function DiscordIcon(props) {
   )
 }
 
+function SlackIcon(props) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      className="lucide lucide-slack"
+      {...props}
+    >
+      <rect width="3" height="8" x="13" y="2" rx="1.5"></rect>
+      <path d="M19 8.5V10h1.5A1.5 1.5 0 1 0 19 8.5"></path>
+      <rect width="3" height="8" x="8" y="14" rx="1.5"></rect>
+      <path d="M5 15.5V14H3.5A1.5 1.5 0 1 0 5 15.5"></path>
+      <rect width="8" height="3" x="14" y="13" rx="1.5"></rect>
+      <path d="M15.5 19H14v1.5a1.5 1.5 0 1 0 1.5-1.5"></path>
+      <rect width="8" height="3" x="2" y="8" rx="1.5"></rect>
+      <path d="M8.5 5H10V3.5A1.5 1.5 0 1 0 8.5 5"></path>
+    </svg>
+  )
+}
+
 function SocialLink({ href, icon: Icon, children, target = '_blank' }) {
   return (
     <Link href={href} className="group" target={target}>
@@ -199,8 +222,7 @@ function SmallPrint() {
   return (
     <div className="flex flex-col items-center justify-between gap-5 border-t border-zinc-900/5 pt-8 dark:border-white/5 sm:flex-row">
       <p className="text-xs text-zinc-600 dark:text-zinc-400">
-        &copy; Envless {new Date().getFullYear()}. All rights
-        reserved.
+        &copy; Envless {new Date().getFullYear()}. All rights reserved.
       </p>
       <div className="flex gap-4">
         <SocialLink href="https://twitter.com/envless" icon={TwitterIcon}>
