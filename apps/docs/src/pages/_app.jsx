@@ -27,9 +27,9 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         {router.pathname === '/' ? (
-          <title>Envless Documentation</title>
+          <title>Envless</title>
         ) : (
-          <title>{`${pageProps.title} - Envless Documentation`}</title>
+          <title>{`${pageProps.title} - Envless`}</title>
         )}
         <meta name="description" content={pageProps.description} />
       </Head>

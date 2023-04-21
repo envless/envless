@@ -3,66 +3,6 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion'
 
 import { GridPattern } from '@/components/GridPattern'
 import { Heading } from '@/components/Heading'
-import { ChatBubbleIcon } from '@/components/icons/ChatBubbleIcon'
-import { EnvelopeIcon } from '@/components/icons/EnvelopeIcon'
-import { UserIcon } from '@/components/icons/UserIcon'
-import { UsersIcon } from '@/components/icons/UsersIcon'
-
-const resources = [
-  {
-    href: '/contacts',
-    name: 'Contacts',
-    description:
-      'Learn about the contact model and how to create, retrieve, update, delete, and list contacts.',
-    icon: UserIcon,
-    pattern: {
-      y: 16,
-      squares: [
-        [0, 1],
-        [1, 3],
-      ],
-    },
-  },
-  {
-    href: '/conversations',
-    name: 'Conversations',
-    description:
-      'Learn about the conversation model and how to create, retrieve, update, delete, and list conversations.',
-    icon: ChatBubbleIcon,
-    pattern: {
-      y: -6,
-      squares: [
-        [-1, 2],
-        [1, 3],
-      ],
-    },
-  },
-  {
-    href: '/messages',
-    name: 'Messages',
-    description:
-      'Learn about the message model and how to create, retrieve, update, delete, and list messages.',
-    icon: EnvelopeIcon,
-    pattern: {
-      y: 32,
-      squares: [
-        [0, 2],
-        [1, 4],
-      ],
-    },
-  },
-  {
-    href: '/groups',
-    name: 'Groups',
-    description:
-      'Learn about the group model and how to create, retrieve, update, delete, and list groups.',
-    icon: UsersIcon,
-    pattern: {
-      y: 22,
-      squares: [[0, 1]],
-    },
-  },
-]
 
 function ResourceIcon({ icon: Icon }) {
   return (
@@ -88,7 +28,7 @@ function ResourcePattern({ mouseX, mouseY, ...gridProps }) {
         />
       </div>
       <motion.div
-        className="absolute inset-0 rounded bg-gradient-to-r from-[#D7EDEA] to-[#F4FBDF] opacity-0 transition duration-300 group-hover:opacity-100 dark:from-[#202D2E] dark:to-[#188b67]"
+        className="absolute inset-0 rounded bg-gradient-to-r from-teal-300 to-cyan-300 opacity-0 transition duration-300 group-hover:opacity-100 dark:from-teal-300/30 dark:to-cyan-300/30"
         style={style}
       />
       <motion.div
@@ -117,13 +57,21 @@ function Resource({ resource }) {
     mouseY.set(clientY - top)
   }
 
+  const pattern = {
+    y: 16,
+    squares: [
+      [0, 1],
+      [1, 3],
+    ],
+  }
+
   return (
     <div
-      key={resource.href}
+      key={resource.name}
       onMouseMove={onMouseMove}
       className="group relative flex rounded bg-zinc-50 transition-shadow hover:shadow-md hover:shadow-zinc-900/5 dark:bg-zinc-900/50 dark:hover:shadow-black/5"
     >
-      <ResourcePattern {...resource.pattern} mouseX={mouseX} mouseY={mouseY} />
+      <ResourcePattern {...pattern} mouseX={mouseX} mouseY={mouseY} />
       <div className="absolute inset-0 rounded ring-1 ring-inset ring-zinc-900/7.5 group-hover:ring-zinc-900/10 dark:ring-white/10 dark:group-hover:ring-white/20" />
       <div className="relative rounded px-6 py-6">
         <ResourceIcon icon={resource.icon} />
@@ -141,15 +89,20 @@ function Resource({ resource }) {
   )
 }
 
-export function Resources() {
+export function Resources(props) {
+  const { title, resources } = props
+
   return (
-    <div className="my-16 xl:max-w-none">
-      <Heading level={2} id="resources">
-        Resources
-      </Heading>
+    <div className="xl:max-w-none">
+      {title && (
+        <Heading level={2} id="resources">
+          Resources
+        </Heading>
+      )}
+
       <div className="not-prose mt-4 grid grid-cols-1 gap-8 border-t border-zinc-900/5 pt-10 dark:border-white/5 sm:grid-cols-2 xl:grid-cols-3">
         {resources.map((resource) => (
-          <Resource key={resource.href} resource={resource} />
+          <Resource key={resource.name} resource={resource} />
         ))}
       </div>
     </div>

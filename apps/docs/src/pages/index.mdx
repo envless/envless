@@ -1,38 +1,51 @@
-import { Guides } from '@/components/Guides'
 import { Resources } from '@/components/Resources'
 import { HeroPattern } from '@/components/HeroPattern'
+
+import { Zap, Terminal, Link as LinkIcon } from 'lucide-react'
 
 export const description =
   'Learn everything there is to know about the Protocol API and integrate Protocol into your product.'
 
-export const sections = [
-  { title: 'Guides', id: 'guides' },
-  { title: 'Resources', id: 'resources' },
-]
+<HeroPattern />
 
-{/* <HeroPattern /> */}
+# Introduction
 
-# API Documentation
+Envless is the end-to-end encrypted, open source and frictionless way to share and manage app secrets (**env variables**) across teams, platforms, infrastructures, CI/CD. It's language and framework agonistic and fits right into your development and deployment workflows. {{ className: 'lead' }}
 
-Use the Protocol API to access contacts, conversations, group messages, and more and seamlessly integrate your product into the workflows of dozens of devoted Protocol users. {{ className: 'lead' }}
+## Getting started {{ anchor: true }}
 
-<div className="not-prose mb-16 mt-6 flex gap-3">
-  <Button href="/quickstart" arrow="right" children="Quickstart" />
-  <Button href="/sdks" variant="outline" children="Explore SDKs" />
-</div>
+To get started with Envless, you need to [create an account](https://envless.dev/signup) and create a project. {{ className: 'lead' }}
 
-## Getting started {{ anchor: false }}
-
-To get started, create a new application in your [developer settings](#), then read about how to make requests for the resources you need to access using our HTTP APIs or dedicated client SDKs. When your integration is ready to go live, publish it to our [integrations directory](#) to reach the Protocol community. {{ className: 'lead' }}
-
-<div className="not-prose">
+<div className="not-prose my-6 flex gap-3">
   <Button
-    href="/sdks"
-    variant="text"
+    href="https://envless.dev/signup"
     arrow="right"
-    children="Get your API key"
+    children="Signup to get started"
   />
 </div>
 
-<Guides />
-<Resources />
+<Resources
+  resources={[
+    {
+      name: 'Quickstart',
+      description:
+        'Learn how to get started with Envless. It only take a few minutes to get up and running with your development and deployment workflows.',
+      icon: Zap,
+      href: '#',
+    },
+    {
+      name: 'Envless CLI',
+      description:
+        'Learn how to run Envless CLI on development and all other environments, including platforms, infractures and CI/CD.',
+      icon: Terminal,
+      href: '#',
+    },
+    {
+      name: 'Integrations',
+      description:
+        'Learn how to integrate Envless with different languages, frameworks, platforms, infrastructures and CI/CD pipelines.',
+      icon: LinkIcon,
+      href: '#',
+    },
+  ]}
+/>

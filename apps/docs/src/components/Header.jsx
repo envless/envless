@@ -79,7 +79,6 @@ export const Header = forwardRef(function Header({ className }, ref) {
 
         <div className="flex gap-4">
           <MobileSearch />
-          <ModeToggle />
         </div>
 
         <div className="hidden min-[600px]:contents">
@@ -89,8 +88,10 @@ export const Header = forwardRef(function Header({ className }, ref) {
         </div>
 
         <div className="hidden min-[416px]:contents">
-          <Button href="#" arrow="right" children="Get Started" />
+          <Button href="#" arrow="right" children="Signup" />
         </div>
+
+        <ModeToggle />
       </div>
     </motion.div>
   )

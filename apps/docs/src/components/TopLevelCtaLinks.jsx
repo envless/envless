@@ -15,7 +15,7 @@ export function TopLevelCtaLinks(props) {
   return (
     <>
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <Home className="h-4 w-4" />
         </button>
         <Link href="/" className="text-sm font-semibold ">
@@ -24,7 +24,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <ShieldCheck className="h-4 w-4" />
         </button>
         <a href="/" className="text-sm font-semibold ">
@@ -33,7 +33,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <LayoutGrid className="h-4 w-4" />
         </button>
         <a href="/" className="text-sm font-semibold ">
@@ -42,7 +42,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <LayoutList className="h-4 w-4" />
         </button>
         <Link
@@ -54,7 +54,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <Zap className="h-4 w-4" />
         </button>
         <a href="/" className="text-sm font-semibold ">
@@ -63,7 +63,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <HeartHandshake className="h-4 w-4" />
         </button>
         <a href="/" className="text-sm font-semibold ">
@@ -72,7 +72,7 @@ export function TopLevelCtaLinks(props) {
       </li>
 
       <li className="relative mb-8 mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300 text-zinc-800 transition-colors duration-150 dark:bg-teal-400/30 dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <GitPullRequest className="h-4 w-4" />
         </button>
         <a href="/" className="text-sm font-semibold ">
