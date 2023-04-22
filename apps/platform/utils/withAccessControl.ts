@@ -94,9 +94,9 @@ export function withAccessControl<P = Record<string, unknown>>({
       hasAccess.statuses &&
       hasAccess.statuses.includes(currentProject.status)
     ) {
-      authorizedByRole = true;
+      authorizedByStatus = true;
       if (hasAccess.roles && hasAccess.roles.includes(currentProject.role)) {
-        authorizedByStatus = true;
+        authorizedByRole = true;
       }
     }
 
