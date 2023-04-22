@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useBranches } from "@/hooks/useBranches";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
@@ -16,12 +16,14 @@ import {
   GitBranchPlus,
   Settings2,
   ShieldCheck,
+  Trash,
 } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import { Badge, Button } from "@/components/theme";
 import { type FilterOptions, Table } from "@/components/theme/Table/Table";
+import { showToast } from "@/components/theme/showToast";
 
 const filterOptions: FilterOptions = {
   sort: [
@@ -53,13 +55,36 @@ export const BranchesPage = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPrModalOpen, setIsPrModalOpen] = useState(false);
+  const [fetching, setFetching] = useState(false);
+
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
-  const { allBranches } = useBranches({ currentProject });
   const { setCurrentBranch } = useBranchesStore();
 
   const projectSlug = router.query.slug as string;
+
+  const { allBranches, refetchBranches } = useBranches({ currentProject });
+
+  const branchDeleteMutation = trpc.branches.delete.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      refetchBranches();
+      showToast({
+        type: "success",
+        title: "Branch successfully deleted",
+        subtitle: `Branch '${data.name}' has been deleted`,
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Failed to delete branch",
+        subtitle: error.message,
+      });
+    },
+  });
 
   const { protected: protectedBranches, unprotected: allOtherBranches } =
     useSeperateBranches(allBranches);
@@ -73,94 +98,126 @@ export const BranchesPage = ({
     protected: false,
   };
 
-  const branchesColumns = [
-    {
-      id: "author",
-      accessorFn: (row) => row.createdBy.name,
-    },
-    {
-      id: "protected",
-      accessorFn: (row) => row.protected,
-    },
-    {
-      id: "createdAt",
-      accessorFn: (row) => row.createdAt,
-    },
-    {
-      id: "updatedAt",
-      accessorFn: (row) => row.updatedAt,
-    },
-    {
-      id: "status",
-      accessorFn: (row) => row.status,
-    },
-    {
-      id: "details",
-      accessorFn: (row) => `${row.name}`,
-      header: "Details",
-      cell: (info) => (
-        <div className="flex items-center">
-          <div className="h-10 w-10 flex-shrink-0">
-            <Badge type="info">
-              <GitBranch className="h-6 w-6" strokeWidth={2} />
-            </Badge>
-          </div>
-          <div className="ml-4">
-            <div className="flex items-center">
-              {copiedValue === info.row.original.name ? (
-                <button
-                  aria-label="Copied!"
-                  data-balloon-pos="down"
-                  className="inline-flex cursor-copy font-medium"
-                >
-                  <CheckCheck
-                    className="mr-2 h-4 w-4 text-teal-400"
-                    strokeWidth={2}
-                  />
-                </button>
-              ) : (
-                <button className="inline-flex cursor-copy font-medium">
-                  <Copy
-                    onClick={() => {
-                      copy(info.row.original.name as string);
-                      setTimeout(() => {
-                        setCopiedValue("");
-                      }, 2000);
-                    }}
-                    className="mr-2 h-4 w-4"
-                    strokeWidth={2}
-                  />
-                </button>
-              )}
-              {info.row.original.name}
+  const branchesColumns = useMemo(
+    () => [
+      {
+        id: "author",
+        accessorFn: (row) => row.createdBy.name,
+      },
+      {
+        id: "protected",
+        accessorFn: (row) => row.protected,
+      },
+      {
+        id: "createdAt",
+        accessorFn: (row) => row.createdAt,
+      },
+      {
+        id: "updatedAt",
+        accessorFn: (row) => row.updatedAt,
+      },
+      {
+        id: "status",
+        accessorFn: (row) => row.status,
+      },
+      {
+        id: "details",
+        accessorFn: (row) => `${row.name}`,
+        header: "Details",
+        cell: (info) => (
+          <div className="flex items-center">
+            <div className="h-10 w-10 flex-shrink-0">
+              <Badge type="info">
+                <GitBranch className="h-6 w-6" strokeWidth={2} />
+              </Badge>
             </div>
-            <div className="text-light">
-              Created by {info.row.original.createdBy.name}{" "}
-              <DateTimeAgo date={info.row.original.createdAt} />
+            <div className="ml-4">
+              <div className="flex items-center">
+                {copiedValue === info.row.original.name ? (
+                  <button
+                    aria-label="Copied!"
+                    data-balloon-pos="down"
+                    className="inline-flex cursor-copy font-medium"
+                  >
+                    <CheckCheck
+                      className="mr-2 h-4 w-4 text-teal-400"
+                      strokeWidth={2}
+                    />
+                  </button>
+                ) : (
+                  <button className="inline-flex cursor-copy font-medium">
+                    <Copy
+                      onClick={() => {
+                        copy(info.row.original.name as string);
+                        setTimeout(() => {
+                          setCopiedValue("");
+                        }, 2000);
+                      }}
+                      className="mr-2 h-4 w-4"
+                      strokeWidth={2}
+                    />
+                  </button>
+                )}
+                {info.row.original.name}
+              </div>
+              <div className="text-light">
+                Created by {info.row.original.createdBy.name}{" "}
+                <DateTimeAgo date={info.row.original.createdAt} />
+              </div>
             </div>
           </div>
-        </div>
-      ),
-    },
-
-    {
-      id: "actions",
-      header: "Action",
-      cell: (info) => (
-        <Button
-          onClick={() => {
-            setCurrentBranch(info.row.original);
-            setIsPrModalOpen(true);
-          }}
-          variant="primary-outline"
-          size="sm"
-          className="float-right"
-        >
-          Open pull request
-        </Button>
-      ),
-    },
-  ];
+        ),
+      },
+      {
+        id: "actions",
+        header: "Action",
+        cell: (info) => (
+          <Button
+            onClick={() => {
+              setCurrentBranch(info.row.original);
+              setIsPrModalOpen(true);
+            }}
+            variant="primary-outline"
+            size="sm"
+            className="float-right"
+          >
+            Open pull request
+          </Button>
+        ),
+      },
+      {
+        id: "deleteBranch",
+        header: "Delete Branch",
+        cell: (info) => (
+          <button
+            onClick={() => {
+              const confirmed = window.confirm(
+                "Are you sure you want to delete this branch?",
+              );
+              if (confirmed) {
+                branchDeleteMutation.mutate({
+                  branchId: info.row.original.id,
+                });
+              }
+            }}
+            className="float-right cursor-pointer pr-4 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={fetching}
+          >
+            <Trash />
+            <span className="sr-only">Delete branch</span>
+          </button>
+        ),
+      },
+    ],
+    [
+      branchDeleteMutation,
+      copiedValue,
+      copy,
+      fetching,
+      setCopiedValue,
+      setCurrentBranch,
+    ],
+  );
 
   const protectedBranchesColumns = [
     {

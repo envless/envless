@@ -17,17 +17,16 @@ export const branches = createRouter({
         where: {
           projectId: input.projectId,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
     }),
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
-
-      return { id };
-    }),
-
+    return { id };
+  }),
   create: withAuth
     .input(
       z.object({
@@ -157,5 +156,44 @@ export const branches = createRouter({
       });
 
       return updatedBranch;
+    }),
+  delete: withAuth
+    .input(z.object({ branchId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { branchId } = input;
+
+      const branch = await ctx.prisma.branch.findUnique({
+        where: { id: branchId },
+        select: { protected: true },
+      });
+
+      if (!branch) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Branch does not exist",
+        });
+      }
+
+      if (branch.protected) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You cannot delete protected branches",
+        });
+      }
+
+      try {
+        const deletedBranch = await ctx.prisma.branch.delete({
+          where: {
+            id: branchId,
+          },
+        });
+
+        return deletedBranch;
+      } catch (error) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Branch does not exist",
+        });
+      }
     }),
 });
