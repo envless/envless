@@ -39,7 +39,9 @@ const seedAccesses = async () => {
             ]) as AccessType["role"]);
 
       const status =
-        projectOwner[project.id] === user.id ? "active" : "inactive";
+        projectOwner[project.id] === user.id
+          ? "active"
+          : (sample(["active", "inactive", "pending"]) as AccessType["status"]);
 
       accesses.push({
         userId: user.id as string,

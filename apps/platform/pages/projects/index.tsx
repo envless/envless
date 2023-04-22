@@ -1,7 +1,7 @@
 import { type GetServerSidePropsContext } from "next";
 import { ACCOUNT_UPDATED } from "@/types/auditActions";
 import { getServerSideSession } from "@/utils/session";
-import { Project, User } from "@prisma/client";
+import { MembershipStatus, User } from "@prisma/client";
 import { SquarePlusIcon } from "@/components/icons";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
@@ -60,7 +60,6 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
 };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { req } = context;
   const session = await getServerSideSession(context);
   const userId = session?.user?.id as string;
 
@@ -78,7 +77,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
       include: {
         access: {
-          where: {},
+          where: {
+            status: MembershipStatus.active,
+          },
           include: {
             project: {
               include: {
@@ -105,7 +106,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
 
     const access = userRecord?.access || [];
-    const projects = access.map((a: any) => a.project);
+    const projects = access.map((a) => a.project);
     const projectIds = projects.map((project: any) => project.id);
     const logs = await Audit.logs({
       createdById: userRecord.id,
