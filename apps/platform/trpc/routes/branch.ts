@@ -167,7 +167,14 @@ export const branches = createRouter({
         select: { protected: true },
       });
 
-      if (branch?.protected) {
+      if (!branch) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Branch does not exist",
+        });
+      }
+
+      if (branch.protected) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You cannot delete protected branches",
