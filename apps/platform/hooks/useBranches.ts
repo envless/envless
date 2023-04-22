@@ -7,13 +7,13 @@ interface Props {
 }
 
 export const useBranches = ({ currentProject }: Props) => {
-  const { branches, setBranches } = useBranchesStore();
-  const branchQuery = trpc.branches.getAll.useQuery(
+  const { setBranches } = useBranchesStore();
+  const { data, refetch } = trpc.branches.getAll.useQuery(
     {
       projectId: currentProject.id,
     },
     {
-      enabled: !!currentProject.id && branches.length !== 0,
+      enabled: !!currentProject.id,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       onSuccess: (data) => {
@@ -23,6 +23,7 @@ export const useBranches = ({ currentProject }: Props) => {
   );
 
   return {
-    allBranches: branchQuery.data ?? [],
+    allBranches: data ?? [],
+    refetchBranches: refetch,
   };
 };
