@@ -1,7 +1,16 @@
-import { Fragment } from "react";
+import { useContext, useRef } from "react";
+import {
+  BranchProps,
+  BranchState,
+  BranchStore,
+  BranchesContext,
+  createBranchStore,
+} from "@/store/Branches";
+import { trpc } from "@/utils/trpc";
 import type { Project, UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import { useStore } from "zustand";
 import { Tabs } from "@/components/projects";
 import { Container, Nav } from "@/components/theme";
 
@@ -23,9 +32,35 @@ const ProjectLayout = ({
   const { data: session, status } = useSession();
   const user = session?.user;
 
+  const branchQuery = trpc.branches.getAll.useQuery(
+    {
+      projectId: currentProject.id,
+    },
+    {
+      enabled: !!currentProject.id,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const initialBranches: Partial<BranchProps> = {
+    branches: branchQuery.data ?? [],
+  };
+
+  const storeRef = useRef<BranchStore>();
+  if (!storeRef.current) {
+    storeRef.current = createBranchStore(initialBranches);
+  }
+
+  console.log(storeRef.current, "-----this is storeRef.current-----");
+
+  // const store = useRef(createBranchStore(initialBranches)).current;
+
+  // console.log("---this is store Project.tsx---", store);
+
   if (status === "authenticated") {
     return (
-      <Fragment>
+      <BranchesProvider branches={branchQuery.data ?? []}>
         <Container>
           <Nav
             user={user}
@@ -44,7 +79,7 @@ const ProjectLayout = ({
         </Container>
 
         <Toaster position="top-right" />
-      </Fragment>
+      </BranchesProvider>
     );
   } else {
     return (
@@ -56,3 +91,28 @@ const ProjectLayout = ({
 };
 
 export default ProjectLayout;
+
+// Provider wrapper
+
+type BranchesProviderProps = React.PropsWithChildren<Partial<BranchProps>>;
+
+function BranchesProvider({ children, ...props }: BranchesProviderProps) {
+  const storeRef = useRef<BranchStore>();
+  if (!storeRef.current) {
+    storeRef.current = createBranchStore(props);
+  }
+  return (
+    <BranchesContext.Provider value={storeRef.current}>
+      {children}
+    </BranchesContext.Provider>
+  );
+}
+
+export function useBranchContext<T>(
+  selector: (state: BranchState) => T,
+  equalityFn?: (left: T, right: T) => boolean,
+): T {
+  const store = useContext(BranchesContext);
+  if (!store) throw new Error("Missing BearContext.Provider in the tree");
+  return useStore(store, selector, equalityFn);
+}

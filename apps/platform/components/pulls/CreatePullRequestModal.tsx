@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
-import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Project, PullRequest } from "@prisma/client";
+import { Branch, Project, PullRequest } from "@prisma/client";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+// import { useBranchesStore } from "@/store/Branches";
 import { BaseInput, Button } from "@/components/theme";
 import BranchComboBox from "../branches/BranchComboBox";
 import BaseModal from "../theme/BaseModal";
@@ -26,13 +26,13 @@ const CreatePullRequestModal = ({
   setIsOpen,
   onSuccessCreation,
 }: BranchModalProps) => {
-  const {
-    branches,
-    currentBranch,
-    setCurrentBranch,
-    baseBranch,
-    setBaseBranch,
-  } = useBranchesStore();
+  // const {
+  //   branches,
+  //   currentBranch,
+  //   setCurrentBranch,
+  //   baseBranch,
+  //   setBaseBranch,
+  // } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -91,9 +91,9 @@ const CreatePullRequestModal = ({
 
         <div className="mb-4 w-full">
           <BranchComboBox
-            branches={branches}
-            selectedBranch={currentBranch}
-            setSelectedBranch={setCurrentBranch}
+            branches={[]}
+            selectedBranch={{} as Branch}
+            setSelectedBranch={() => {}}
             inputPadding="lg"
             inputLabel="Current Branch"
           />
@@ -101,9 +101,9 @@ const CreatePullRequestModal = ({
 
         <div className="mb-4 w-full">
           <BranchComboBox
-            branches={branches}
-            selectedBranch={baseBranch}
-            setSelectedBranch={setBaseBranch}
+            branches={[]}
+            selectedBranch={{} as Branch}
+            setSelectedBranch={() => {}}
             inputLabel="Base Branch"
           />
         </div>

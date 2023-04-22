@@ -1,46 +1,64 @@
+import { createContext } from "react";
 import { Branch } from "@prisma/client";
-import { create } from "zustand";
+import { createStore } from "zustand";
 
-interface BranchesStore {
+export interface BranchProps {
   branches: Branch[];
-  setBranches: (branches: Branch[]) => void;
   currentBranch: Branch;
-  setCurrentBranch: (branch: Branch) => void;
   baseBranch: Branch;
+}
+
+export interface BranchState extends BranchProps {
+  setBranches: (branches: Branch[]) => void;
+  setCurrentBranch: (branch: Branch) => void;
   setBaseBranch: (branch: Branch) => void;
   addBranch: (branch: Branch) => void;
   removeBranch: (branchId: string) => void;
 }
 
-export const useBranchesStore = create<BranchesStore>((set) => ({
-  branches: [] as Branch[],
-  setBranches: (branches: Branch[]) => {
-    set({
-      branches: branches,
-      currentBranch: branches[0],
-      baseBranch: branches[0],
-    });
-  },
-  currentBranch: {} as Branch,
-  setCurrentBranch: (branch: Branch) => {
-    set({
-      currentBranch: branch,
-    });
-  },
-  baseBranch: {} as Branch,
-  setBaseBranch: (branch: Branch) => {
-    set({
-      baseBranch: branch,
-    });
-  },
-  addBranch: (branch: Branch) => {
-    set((state) => ({
-      branches: [...state.branches, branch],
-    }));
-  },
-  removeBranch: (branchId: string) => {
-    set((state) => ({
-      branches: state.branches.filter((branch) => branch.id !== branchId),
-    }));
-  },
-}));
+export type BranchStore = ReturnType<typeof createBranchStore>;
+export type BranchProviderProps = React.PropsWithChildren<BranchProps>;
+
+export const createBranchStore = (initProps?: Partial<BranchProps>) => {
+  const DEFAULT_PROPS: BranchProps = {
+    branches: [],
+    currentBranch: {} as Branch,
+    baseBranch: {} as Branch,
+  };
+
+  console.log("----initProps in our zustand----", initProps);
+
+  return createStore<BranchState>()((set) => ({
+    ...DEFAULT_PROPS,
+    ...initProps,
+    setBranches: (branches: Branch[]) => {
+      set({
+        branches: branches,
+        currentBranch: branches[0],
+        baseBranch: branches[0],
+      });
+    },
+    setCurrentBranch: (branch: Branch) => {
+      set({
+        currentBranch: branch,
+      });
+    },
+    setBaseBranch: (branch: Branch) => {
+      set({
+        baseBranch: branch,
+      });
+    },
+    addBranch: (branch: Branch) => {
+      set((state) => ({
+        branches: [...state.branches, branch],
+      }));
+    },
+    removeBranch: (branchId: string) => {
+      set((state) => ({
+        branches: state.branches.filter((branch) => branch.id !== branchId),
+      }));
+    },
+  }));
+};
+
+export const BranchesContext = createContext<BranchStore | null>(null);

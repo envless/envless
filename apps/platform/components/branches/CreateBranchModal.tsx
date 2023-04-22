@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { useZodForm } from "@/hooks/useZodForm";
-import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { Branch, Project } from "@prisma/client";
 import { AlertCircle } from "lucide-react";
@@ -35,7 +34,7 @@ const CreateBranchModal = ({
   setIsOpen,
   onSuccessCreation,
 }: BranchModalProps) => {
-  const { branches, baseBranch, setBaseBranch } = useBranchesStore();
+  // const { branches, baseBranch, setBaseBranch } = useBranchesStore();
   const router = useRouter();
 
   const schema = z.object({
@@ -132,9 +131,9 @@ const CreateBranchModal = ({
 
         <div className="mb-4">
           <BranchComboBox
-            branches={branches}
-            selectedBranch={baseBranch}
-            setSelectedBranch={setBaseBranch}
+            branches={[]}
+            selectedBranch={{} as Branch}
+            setSelectedBranch={() => {}}
             inputLabel="Base Branch"
           />
         </div>

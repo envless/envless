@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
-import { useBranchesStore } from "@/store/Branches";
+import { BranchesContext } from "@/store/Branches";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
+// import { useBranchesStore } from "@/store/Branches";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -62,6 +63,8 @@ export const ProjectPage = ({
   branches,
   privateKey,
 }: Props) => {
+  const store = useContext(BranchesContext);
+  console.log("---this is store inside index-----", store?.getState());
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -78,7 +81,6 @@ export const ProjectPage = ({
       encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     },
   });
-  const { setBranches } = useBranchesStore();
   const router = useRouter();
   const { branch } = router.query;
 
@@ -140,9 +142,9 @@ export const ProjectPage = ({
     })();
   }, [encryptionKeys.project.encryptedProjectKey]);
 
-  useEffect(() => {
-    setBranches(branches);
-  }, [branches, setBranches]);
+  // useEffect(() => {
+  //   setBranches(branches);
+  // }, [branches, setBranches]);
 
   return (
     <ProjectLayout

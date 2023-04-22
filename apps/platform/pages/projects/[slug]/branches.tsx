@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useBranches } from "@/hooks/useBranches";
 import useCopyToClipBoard from "@/hooks/useCopyToClipBoard";
 import { useSeperateBranches } from "@/hooks/useSeperateBranches";
-import ProjectLayout from "@/layouts/Project";
-import { useBranchesStore } from "@/store/Branches";
+import ProjectLayout, { useBranchContext } from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import type { Project, UserRole } from "@prisma/client";
@@ -56,13 +54,16 @@ export const BranchesPage = ({
   const router = useRouter();
   const [copiedValue, copy, setCopiedValue] = useCopyToClipBoard();
   const utils = trpc.useContext();
-  const { allBranches } = useBranches({ currentProject });
-  const { setCurrentBranch } = useBranchesStore();
+  // const { setCurrentBranch } = useBranchesStore();
+  const branches = useBranchContext((s) => s.branches);
+  console.log(branches, "----this is store in branches.tsx----");
+  // if (!store) throw new Error("Missing BranchesContext.Provider in the tree");
+  // const branches = useStore(store!, (state) => state.branches);
 
   const projectSlug = router.query.slug as string;
 
   const { protected: protectedBranches, unprotected: allOtherBranches } =
-    useSeperateBranches(allBranches);
+    useSeperateBranches([]);
 
   const branchesColumnVisibility = {
     details: true,
@@ -149,7 +150,7 @@ export const BranchesPage = ({
       cell: (info) => (
         <Button
           onClick={() => {
-            setCurrentBranch(info.row.original);
+            // setCurrentBranch(info.row.original);
             setIsPrModalOpen(true);
           }}
           variant="primary-outline"
