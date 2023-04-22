@@ -3,6 +3,7 @@ import { EnvSecret } from "@/types/index";
 import { parseDotEnvContents } from "@/utils/helpers";
 import yaml from "js-yaml";
 import { repeat } from "lodash";
+import { showToast } from "@/components/theme/showToast";
 
 export const parseEnvFile = async (file: File, decryptedProjectKey: string) => {
   const fileContents = await readFileContents(file);
@@ -65,46 +66,57 @@ export const parseEnvContent = async (
       break;
 
     case "yml":
-      const yamlPairs = yaml.load(contents);
+      try {
+        const yamlPairs = yaml.load(contents);
 
-      const traverseAndConvertYml = async (
-        pairs,
-        result: EnvSecret[] = [],
-        parentKey = "",
-      ) => {
-        if (typeof pairs !== "object" || Array.isArray(pairs)) {
-          result[parentKey] = pairs;
+        const traverseAndConvertYml = async (
+          pairs,
+          result: EnvSecret[] = [],
+          parentKey = "",
+        ) => {
+          if (typeof pairs !== "object" || Array.isArray(pairs)) {
+            result[parentKey] = pairs;
 
-          const encryptedKey = await encryptString(
-            parentKey,
-            decryptedProjectkey,
-          );
-          const encryptedValue = await encryptString(
-            pairs as string,
-            decryptedProjectkey,
-          );
+            const encryptedKey = await encryptString(
+              parentKey,
+              decryptedProjectkey,
+            );
+            const encryptedValue = await encryptString(
+              pairs as string,
+              decryptedProjectkey,
+            );
 
-          const envSecret = {
-            id: "",
-            encryptedKey,
-            encryptedValue,
-            hiddenValue: repeat("*", String(pairs).length),
-            decryptedKey: parentKey,
-            decryptedValue: pairs,
-            hidden: true,
-          };
-          result.push(envSecret);
-        } else {
-          for (const [key, value] of Object.entries(pairs)) {
-            const newParentKey = parentKey ? `${parentKey}_${key}` : key;
-            await traverseAndConvertYml(value, result, newParentKey);
+            const envSecret = {
+              id: "",
+              encryptedKey,
+              encryptedValue,
+              hiddenValue: repeat("*", String(pairs).length),
+              decryptedKey: parentKey,
+              decryptedValue: pairs,
+              hidden: true,
+            };
+            result.push(envSecret);
+          } else {
+            for (const [key, value] of Object.entries(pairs)) {
+              const newParentKey = parentKey ? `${parentKey}_${key}` : key;
+              await traverseAndConvertYml(value, result, newParentKey);
+            }
           }
+
+          return result;
+        };
+
+        secrets = await traverseAndConvertYml(yamlPairs);
+      } catch (err) {
+        if (err.reason === "duplicated mapping key") {
+          showToast({
+            title: "Duplicate Key",
+            subtitle: "Your uploaded YAML file contains duplicate keys",
+            type: "error",
+            duration: 2000,
+          });
         }
-
-        return result;
-      };
-
-      secrets = await traverseAndConvertYml(yamlPairs);
+      }
       break;
 
     case "json":
