@@ -87,20 +87,28 @@ export function withAccessControl<P = Record<string, unknown>>({
       };
     }
 
-    let authorized = false;
+    let authorizedByRole = false;
+    let authorizedByStatus = false;
 
     // Check if user has a status that is in the `statuses` array (if provided)
     if (
       hasAccess.statuses &&
       hasAccess.statuses.includes(currentProject.status)
     ) {
+      authorizedByRole = true;
       // Check if user has a role that is in the `roles` array
       if (hasAccess.roles && hasAccess.roles.includes(currentProject.role)) {
-        authorized = true;
+        authorizedByStatus = true;
       }
     }
 
-    if (!authorized) {
+    if (!authorizedByStatus) {
+      return {
+        notFound: true,
+      };
+    }
+    
+    if (!authorizedByRole) {
       return {
         redirect: {
           destination: "/projects",
