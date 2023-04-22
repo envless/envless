@@ -166,3 +166,42 @@ export const parseEnvContent = async (
 
   return secrets;
 };
+
+export const attemptToParseCopiedSecrets = async (
+  copiedContent: string,
+  decryptedProjectKey: string,
+) => {
+  let parsedContent: EnvSecret[] = [];
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "json",
+        copiedContent,
+        decryptedProjectKey,
+      );
+    } catch (error) {}
+  }
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "yml",
+        copiedContent,
+        decryptedProjectKey,
+      );
+    } catch (error) {}
+  }
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "env",
+        copiedContent,
+        decryptedProjectKey,
+      );
+    } catch (error) {}
+  }
+
+  return parsedContent;
+};
