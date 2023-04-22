@@ -19,7 +19,6 @@ export const branches = createRouter({
         },
       });
     }),
-
   getOne: withAuth
     .input(z.object({ id: z.number() }))
     .query(({ ctx, input }) => {
@@ -27,7 +26,6 @@ export const branches = createRouter({
 
       return { id };
     }),
-
   create: withAuth
     .input(
       z.object({

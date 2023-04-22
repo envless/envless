@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
@@ -126,7 +126,10 @@ export const SettingsPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { maintainer: true, owner: true },
+  hasAccess: {
+    roles: [UserRole.maintainer, UserRole.owner],
+    statuses: [MembershipStatus.active],
+  },
 });
 
 export default SettingsPage;

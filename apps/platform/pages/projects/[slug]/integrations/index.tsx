@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ProjectLayout from "@/layouts/Project";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import {
   AWSIcon,
   DockerIcon,
@@ -247,7 +247,15 @@ export const IntegrationsPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { maintainer: true, owner: true, developer: true, guest: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
+  },
   withEncryptedProjectKey: false,
 });
 

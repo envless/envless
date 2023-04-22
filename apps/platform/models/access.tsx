@@ -12,6 +12,7 @@ export const accessesWithProject = async ({ userId }: { userId: string }) => {
     select: {
       id: true,
       role: true,
+      status: true,
       project: {
         select: {
           id: true,

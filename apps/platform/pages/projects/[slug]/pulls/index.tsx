@@ -5,6 +5,7 @@ import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
+  MembershipStatus,
   Project,
   PullRequest,
   PullRequestStatus,
@@ -207,7 +208,15 @@ export const PullRequestPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { owner: true, maintainer: true, developer: true, guest: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
+  },
 });
 
 export default PullRequestPage;

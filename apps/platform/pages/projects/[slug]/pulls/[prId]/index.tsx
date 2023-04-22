@@ -3,7 +3,8 @@ import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type {
+import {
+  MembershipStatus,
   Project as ProjectType,
   PullRequest,
   UserRole,
@@ -118,5 +119,13 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
 
 export const getServerSideProps = withAccessControl({
   getServerSideProps: getPageServerSideProps,
-  hasAccess: { owner: true, maintainer: true, developer: true, guest: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
+  },
 });

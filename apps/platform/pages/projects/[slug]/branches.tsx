@@ -8,7 +8,7 @@ import ProjectLayout from "@/layouts/Project";
 import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import {
   CheckCheck,
   Copy,
@@ -331,7 +331,15 @@ export const BranchesPage = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { maintainer: true, developer: true, guest: true, owner: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active]
+  },
 });
 
 export default BranchesPage;

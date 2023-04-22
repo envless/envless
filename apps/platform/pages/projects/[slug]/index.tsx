@@ -10,6 +10,7 @@ import { withAccessControl } from "@/utils/withAccessControl";
 import {
   Branch,
   EncryptedProjectKey,
+  MembershipStatus,
   Project,
   UserPublicKey,
   UserRole,
@@ -211,12 +212,14 @@ export const ProjectPage = ({
 export const getServerSideProps = withAccessControl({
   withEncryptedProjectKey: true,
   hasAccess: {
-    owner: true,
-    maintainer: true,
-    developer: true,
-    guest: true,
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active]
   },
-
   getServerSideProps: async (context) => {
     const session = await getServerSideSession(context);
     const user = session?.user;

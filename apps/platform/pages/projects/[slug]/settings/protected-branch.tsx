@@ -4,7 +4,7 @@ import { useSeperateBranches } from "@/hooks/useSeperateBranches";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type { Branch, Project, UserRole } from "@prisma/client";
+import { Branch, MembershipStatus, Project, UserRole } from "@prisma/client";
 import { CheckCheck, Copy, ShieldCheck, ShieldOff } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import BranchDropdown from "@/components/branches/BranchDropdown";
@@ -242,7 +242,10 @@ export const ProtectedBranch = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { maintainer: true, owner: true },
+  hasAccess: {
+    roles: [UserRole.maintainer, UserRole.owner],
+    statuses: [MembershipStatus.active],
+  },
 });
 
 export default ProtectedBranch;
