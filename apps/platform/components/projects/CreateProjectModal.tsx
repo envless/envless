@@ -139,7 +139,7 @@ const CreateProjectModal = () => {
 
         <div className="float-right">
           <Button
-            leftIcon={
+            rightIcon={
               <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
             }
             loading={loading}

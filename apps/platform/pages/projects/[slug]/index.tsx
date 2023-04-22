@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
@@ -146,6 +147,8 @@ export const ProjectPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
+      <NextSeo title={`${currentProject.name} - Envles project setup`} />
+
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
           user={user}

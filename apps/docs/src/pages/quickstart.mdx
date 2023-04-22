@@ -1,42 +1,99 @@
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
+import CreateFirstProject from '@/images/screenshots/create-first-project.png'
+import DownloadPrivateKey from '@/images/screenshots/download-private-key.png'
+
 export const description =
   'This guide will get you all set up and ready to use the Protocol API. We’ll cover how to get started an API client and how to make your first API request.'
 
 # Quickstart
 
-This guide will get you all set up and ready to use the Protocol API. We'll cover how to get started using one of our API clients and how to make your first API request. We'll also look at where to go next to find all the information you need to take full advantage of our powerful REST API. {{ className: 'lead' }}
+This guide will get you all set up and ready to use the Envless in no time. We will cover following topics: {{ className: 'lead' }}
 
-<Note>
-  Before you can make requests to the Protocol API, you will need to grab your
-  API key from your dashboard. You find it under [Settings &raquo; API](#).
-</Note>
+- [Signup for an account](#signup-for-an-account)
+- [Create your first project](#create-your-first-project)
+- [Download your Private Key](#download-your-private-key)
+- [Install and setup Envless CLI](#install-and-setup-envless-cli)
 
-## Choose your client
+{/\* <Note>
+Before you can make requests to the Protocol API, you will need to grab your
+API key from your dashboard. You find it under [Settings &raquo; API](#).
 
-Before making your first API request, you need to pick which API client you will use. In addition to good ol' cURL HTTP requests, Protocol offers clients for JavaScript, Python, and PHP. In the following example, you can see how to install each client.
+</Note> */}
+
+## Signup for an account
+
+If you haven't already, you will need to [sign up for an account](https://envless.dev/signup) to get started with the Envless. You can sign up for free and get started right away. You can signup using your email address, using your GitHub or GitLab account.
+
+## Create your first project
+
+{/* Reword following paragraph */}
+Go to [projects](https://envless.dev/projects) page and create your first project. You will need to provide a name for your project.
+
+<Image
+  src={CreateFirstProject}
+  alt="Create your first project"
+  width={1200}
+  height={600}
+  lazy
+/>
+
+## Download your Private Key
+
+After you create your first project, you will be asked to download the Private key. This private key will be used to encrypt and decrypt your environment variables. We will walk you through the process of securing your private key in the next section.
+
+<Image
+  src={DownloadPrivateKey}
+  alt="Create your first project"
+  width={1200}
+  height={600}
+  lazy
+/>
+
+## Install and setup Envless CLI
 
 <CodeGroup>
 
-```bash {{ title: 'cURL' }}
-# cURL is most likely already installed on your machine
-curl --version
+```bash {{ title: 'Node', language: 'bash' }}
+# NPM
+npm install -g envless
+
+# Yarn
+yarn global add envless
+
+# PNPM
+pnpm add -g envless
 ```
 
-```bash {{ language: 'js' }}
-# Install the Protocol JavaScript SDK
-npm install @example/protocol-api --save
+```bash {{ title: 'MacOS', language: 'bash' }}
+brew install envless
 ```
 
-```bash {{ language: 'python' }}
-# Install the Protocol Python SDK
-pip install protocol_api
+```bash {{ title: 'Windows', language: 'bash' }}
+brew install envless
 ```
 
-```bash {{ language: 'php' }}
-# Install the Protocol PHP SDK
-composer require protocol/sdk
+```bash {{ title: 'Alpine', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Ubuntu', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'CentOS', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Shell', language: 'bash' }}
+brew install envless
 ```
 
 </CodeGroup>
+
+### Initialize Envless CLI
+
+lorem ipsum
 
 <div className="not-prose">
   <Button
@@ -44,51 +101,6 @@ composer require protocol/sdk
     variant="text"
     arrow="right"
     children="Check out our list of first-party SDKs"
-  />
-</div>
-
-## Making your first API request
-
-After picking your preferred client, you are ready to make your first call to the Protocol API. Below, you can see how to send a GET request to the Conversations endpoint to get a list of all your conversations. In the cURL example, results are limited to ten conversations, the default page length for each client.
-
-<CodeGroup tag="GET" label="/v1/conversations">
-
-```bash {{ title: 'cURL' }}
-curl -G https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}" \
-  -d limit=10
-```
-
-```js
-import ApiClient from '@example/protocol-api'
-
-const client = new ApiClient(token)
-
-await client.conversations.list()
-```
-
-```python
-from protocol_api import ApiClient
-
-client = ApiClient(token)
-
-client.conversations.list()
-```
-
-```php
-$client = new \Protocol\ApiClient($token);
-
-$client->conversations->list();
-```
-
-</CodeGroup>
-
-<div className="not-prose">
-  <Button
-    href="/conversations"
-    variant="text"
-    arrow="right"
-    children="Read the docs for the Conversations endpoint"
   />
 </div>
 

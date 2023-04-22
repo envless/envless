@@ -5,6 +5,7 @@ import en from "javascript-time-ago/locale/en.json";
 const ReactTimeAgo = dynamic(import("react-time-ago"), {
   ssr: false,
 });
+
 TimeAgo.addLocale(en);
 
 interface Props {

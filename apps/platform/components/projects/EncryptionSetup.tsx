@@ -223,11 +223,11 @@ const EncryptionSetup = ({ ...props }) => {
                   variant="primary"
                   size="md"
                   loading={loading}
+                  leftIcon={<Download className="mr-2 h-5 w-5" />}
                   onClick={async () => {
                     await generateEncryptionKeys();
                   }}
                 >
-                  <Download className="mr-2 h-5 w-5" />
                   {loading ? "Generating keys..." : "Download private key"}
                 </Button>
               )}

@@ -198,7 +198,7 @@ export const navigation = [
     ],
   },
   {
-    title: 'Resources',
+    title: 'CLI',
     links: [
       { title: 'Contacts', href: '/contacts' },
       { title: 'Conversations', href: '/conversations' },

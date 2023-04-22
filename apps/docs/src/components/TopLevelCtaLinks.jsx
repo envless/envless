@@ -1,7 +1,6 @@
 import {
   Zap,
   Home,
-  Pencil,
   LayoutGrid,
   LayoutList,
   ShieldCheck,
@@ -9,7 +8,8 @@ import {
   GitPullRequest,
 } from 'lucide-react'
 
-import Link from 'next/link'
+import ActiveLink from './ActiveLink'
+import GithubIcon from './icons/GithubIcon'
 
 export function TopLevelCtaLinks(props) {
   return (
@@ -18,66 +18,108 @@ export function TopLevelCtaLinks(props) {
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <Home className="h-4 w-4" />
         </button>
-        <Link href="/" className="text-sm font-semibold ">
+        <ActiveLink
+          href="/"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
           Home
-        </Link>
+        </ActiveLink>
+      </li>
+
+      <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
+          <GithubIcon className="h-4 w-4 fill-white dark:fill-teal-400" />
+        </button>
+        <ActiveLink
+          href="https://github.com/envless/envless"
+          target="_blank"
+          rel="nofollow"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
+          <span className="inline-block">Github</span>
+          <img
+            className="ml-2 inline-block"
+            src="https://img.shields.io/github/stars/envless/envless??style=flat&label=stars&color=16a34a"
+            alt="Github"
+          />
+        </ActiveLink>
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <ShieldCheck className="h-4 w-4" />
         </button>
-        <a href="/" className="text-sm font-semibold ">
+        <ActiveLink href="/security" className="text-sm font-semibold ">
           Security
-        </a>
+        </ActiveLink>
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <LayoutGrid className="h-4 w-4" />
         </button>
-        <a href="/" className="text-sm font-semibold ">
+        <ActiveLink
+          href="/features"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
           Features
-        </a>
+        </ActiveLink>
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <LayoutList className="h-4 w-4" />
         </button>
-        <Link
+        <ActiveLink
           href="https://envless.dev/changelog"
-          className="text-sm font-semibold "
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
         >
           Changelog
-        </Link>
+        </ActiveLink>
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <Zap className="h-4 w-4" />
         </button>
-        <a href="/" className="text-sm font-semibold ">
+
+        <ActiveLink
+          href="/quickstart"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
           Quickstart
-        </a>
+        </ActiveLink>
       </li>
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <HeartHandshake className="h-4 w-4" />
         </button>
-        <a href="/" className="text-sm font-semibold ">
+        <ActiveLink
+          href="/community"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
           Community
-        </a>
+        </ActiveLink>
       </li>
 
       <li className="relative mb-8 mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <GitPullRequest className="h-4 w-4" />
         </button>
-        <a href="/" className="text-sm font-semibold ">
+        <ActiveLink
+          href="/contribution"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
           Contribution
-        </a>
+        </ActiveLink>
       </li>
     </>
   )

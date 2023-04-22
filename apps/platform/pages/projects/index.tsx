@@ -1,3 +1,4 @@
+import { NextSeo } from "next-seo";
 import { type GetServerSidePropsContext } from "next";
 import { ACCOUNT_UPDATED } from "@/types/auditActions";
 import { getServerSideSession } from "@/utils/session";
@@ -21,6 +22,8 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
 
   return (
     <>
+      <NextSeo title={`Project - Envless`} />
+
       {projects.length === 0 ? (
         <Container>
           <Nav user={user} />
