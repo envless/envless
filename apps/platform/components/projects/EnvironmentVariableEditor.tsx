@@ -12,6 +12,7 @@ import { EnvSecret } from "@/types/index";
 import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
+import { repeat } from "lodash";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
@@ -243,7 +244,6 @@ const ConditionalInput = ({
   });
 
   const handleToggleHiddenEnvPairClick = (index: number) => {
-    console.log(index);
     let { hidden, ...others } = watchedValue[index];
 
     update(index, {
@@ -278,14 +278,18 @@ const ConditionalInput = ({
               : rest.value,
           }}
           onChange={async (e) => {
-            onChange(e.target.value);
+            const plainTextValue = e.target.value;
+            onChange(plainTextValue);
 
             const encryptedSecretValue = await encryptString(
-              e.target.value,
+              plainTextValue,
               decryptedProjectKey,
             );
-
             setValue(`secrets.${index}.encryptedValue`, encryptedSecretValue);
+            setValue(
+              `secrets.${index}.hiddenValue`,
+              repeat("*", plainTextValue.length),
+            );
           }}
           disabled={false}
           iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
