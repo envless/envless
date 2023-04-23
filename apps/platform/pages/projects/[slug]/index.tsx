@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { NextSeo } from "next-seo";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { generateKey } from "@47ng/cloak";
@@ -18,6 +17,7 @@ import {
 } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";

@@ -29,6 +29,20 @@ export function TopLevelCtaLinks(props) {
 
       <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
         <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
+          <Zap className="h-4 w-4" />
+        </button>
+
+        <ActiveLink
+          href="/quickstart"
+          className="text-sm font-semibold"
+          activeClassName="text-teal-400"
+        >
+          Quickstart
+        </ActiveLink>
+      </li>
+
+      <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
+        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
           <GithubIcon className="h-4 w-4 fill-white dark:fill-teal-400" />
         </button>
         <ActiveLink
@@ -79,20 +93,6 @@ export function TopLevelCtaLinks(props) {
           activeClassName="text-teal-400"
         >
           Changelog
-        </ActiveLink>
-      </li>
-
-      <li className="relative mt-4 text-zinc-900 hover:text-teal-400 dark:text-white hover:dark:text-teal-400">
-        <button className="focus:shadow-outline mr-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-white transition-colors duration-150 dark:bg-teal-400/20 dark:text-teal-400">
-          <Zap className="h-4 w-4" />
-        </button>
-
-        <ActiveLink
-          href="/quickstart"
-          className="text-sm font-semibold"
-          activeClassName="text-teal-400"
-        >
-          Quickstart
         </ActiveLink>
       </li>
 
