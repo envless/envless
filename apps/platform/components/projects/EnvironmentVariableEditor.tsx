@@ -9,9 +9,14 @@ import {
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
-import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import {
+  attemptToParseCopiedSecrets,
+  parseEnvContent,
+  parseEnvFile,
+} from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
+import { repeat } from "lodash";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
@@ -67,8 +72,8 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const handlePaste = async (event: any) => {
     event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedSecrets = await parseEnvContent(
-      "env",
+
+    const pastedSecrets = await attemptToParseCopiedSecrets(
       content,
       decryptedProjectKey,
     );
@@ -243,7 +248,6 @@ const ConditionalInput = ({
   });
 
   const handleToggleHiddenEnvPairClick = (index: number) => {
-    console.log(index);
     let { hidden, ...others } = watchedValue[index];
 
     update(index, {
@@ -278,14 +282,18 @@ const ConditionalInput = ({
               : rest.value,
           }}
           onChange={async (e) => {
-            onChange(e.target.value);
+            const plainTextValue = e.target.value;
+            onChange(plainTextValue);
 
             const encryptedSecretValue = await encryptString(
-              e.target.value,
+              plainTextValue,
               decryptedProjectKey,
             );
-
             setValue(`secrets.${index}.encryptedValue`, encryptedSecretValue);
+            setValue(
+              `secrets.${index}.hiddenValue`,
+              repeat("*", plainTextValue.length),
+            );
           }}
           disabled={false}
           iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
