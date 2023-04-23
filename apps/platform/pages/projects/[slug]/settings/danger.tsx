@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import ConfirmationModal from "@/components/projects/ConfirmationModal";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Paragraph } from "@/components/theme";
@@ -121,7 +121,10 @@ export const DangerZone = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { owner: true },
+  hasAccess: {
+    roles: [UserRole.owner],
+    statuses: [MembershipStatus.active],
+  },
 });
 
 export default DangerZone;

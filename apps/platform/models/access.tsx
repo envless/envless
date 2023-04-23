@@ -1,17 +1,21 @@
+import { MembershipStatus } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 export const accessesWithProject = async ({ userId }: { userId: string }) => {
   const access = await prisma.access.findMany({
     where: {
-      // @ts-ignore
-      userId,
-      project: {
-        deletedAt: null,
+      AND: {
+        userId,
+        project: {
+          deletedAt: null,
+        },
+        status: MembershipStatus.active,
       },
     },
     select: {
       id: true,
       role: true,
+      status: true,
       project: {
         select: {
           id: true,
