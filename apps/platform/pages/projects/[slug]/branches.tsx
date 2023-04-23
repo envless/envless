@@ -197,6 +197,7 @@ export const BranchesPage = ({
               if (confirmed) {
                 branchDeleteMutation.mutate({
                   branchId: info.row.original.id,
+                  projectId: currentProject.id,
                 });
               }
             }}
