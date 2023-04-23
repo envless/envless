@@ -1,6 +1,7 @@
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import { BRANCH_CREATED } from "@/types/auditActions";
+import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import Audit from "@/lib/audit";
@@ -158,14 +159,44 @@ export const branches = createRouter({
       return updatedBranch;
     }),
   delete: withAuth
-    .input(z.object({ branchId: z.string() }))
+    .input(z.object({ branchId: z.string(), projectId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { branchId } = input;
+      const { branchId, projectId } = input;
 
       const branch = await ctx.prisma.branch.findUnique({
         where: { id: branchId },
         select: { protected: true },
       });
+
+      const access = await ctx.prisma.access.findUnique({
+        where: {
+          userId_projectId: {
+            projectId,
+            userId: ctx.session.user.id,
+          },
+        },
+        select: {
+          role: true,
+        },
+      });
+
+      if (!access) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to delete this branch",
+        });
+      }
+
+      const allowedRoles: UserRole[] = [UserRole.owner, UserRole.maintainer];
+
+      const isAllowed = allowedRoles.includes(access.role);
+
+      if (!isAllowed) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to delete this branch",
+        });
+      }
 
       if (!branch) {
         throw new TRPCError({
