@@ -9,7 +9,11 @@ import {
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
-import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import {
+  attemptToParseCopiedSecrets,
+  parseEnvContent,
+  parseEnvFile,
+} from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { repeat } from "lodash";
@@ -68,8 +72,8 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const handlePaste = async (event: any) => {
     event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedSecrets = await parseEnvContent(
-      "env",
+
+    const pastedSecrets = await attemptToParseCopiedSecrets(
       content,
       decryptedProjectKey,
     );
