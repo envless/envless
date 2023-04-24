@@ -2,8 +2,10 @@ import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import SetupCli from '@/images/screenshots/setup-cli.png'
 import SetupE2EE from '@/images/screenshots/setup-e2ee.png'
+import InjectAndStartApp from '@/images/screenshots/inject-and-start-app.png'
 import CreateFirstProject from '@/images/screenshots/create-first-project.png'
 import DownloadPrivateKey from '@/images/screenshots/download-private-key.png'
+import DragAndDropSecrets from '@/images/screenshots/drag-and-drop-secrets.png'
 
 export const description =
   'This guide will get you all set up and ready to use the Protocol API. We’ll cover how to get started an API client and how to make your first API request.'
@@ -18,6 +20,8 @@ This guide will get you all set up and ready to use the Envless in no time. We w
 - [Install and setup Envless CLI](#install-and-setup-envless-cli)
 - [Secure & copy your private key](#secure-and-copy-your-private-key)
 - [Setup end to end encryption](#setup-end-to-end-encryption)
+- [Upload or add your app secrets](#upload-or-add-your-app-secrets)
+- [Inject secrets and start your app](#inject-secrets-and-start-your-app)
 
 ## Signup for an account
 
@@ -33,7 +37,7 @@ Go to [projects](https://go.envless.dev/projects) page and create your first pro
   alt="Create your first project"
   width={1200}
   height={600}
-  lazy
+  lazy={true}
 />
 
 ## Download your private key
@@ -45,7 +49,7 @@ After you create your first project, you will be asked to download the Private k
   alt="Download your private key"
   width={1200}
   height={600}
-  lazy
+  lazy={true}
 />
 
 ## Install and setup Envless CLI
@@ -88,7 +92,13 @@ brew install envless
 
 </CodeGroup>
 
-<Image src={SetupCli} alt="Setup Envless CLI" width={1200} height={600} lazy />
+<Image
+  src={SetupCli}
+  alt="Setup Envless CLI"
+  width={1200}
+  height={600}
+  lazy={true}
+/>
 
 <CodeGroup title="Initialize Envless CLI">
   ```bash {{ title: 'Command', language: 'bash' }}
@@ -155,6 +165,13 @@ EXAMPLES
 
 </CodeGroup>
 
+When you link your project with Envless, it will create a `.envless.yml` file in your project's root directory. This directory will contain the project id and branch name. You can change the branch name in this file to point to a different branch. Its recommended to commit this file to your project's repository.
+
+```yaml {{ title: '.envless.yml' }}
+branch: development
+projectId: xxxxxxxxxxxxxxxxxxxx
+```
+
 ## Secure & copy your private key
 
 Run the following command to secure and/or copy your private key. If you are doing this fors the first time, it will securely store your private key in your {`system's`} keychain and copy it to your clipboard. You will be asked to paste the private key on next step and every time you login to your account using a new device.
@@ -201,5 +218,61 @@ After you hav run the above command, you will have your private key security sto
   alt="Setup end to end encryption"
   width={1200}
   height={600}
-  lazy
+  lazy={true}
+/>
+
+## Upload or add your app secrets
+
+You can simply drag and drop your existing `.env`, `.json` or `.yml` file or add your secrets manually. These app secrets will be encrypted on client side using your's and project's private key and stored in the database. Plaintext version of your app secrets will never leave your browser.
+
+<Image
+  src={DragAndDropSecrets}
+  alt="Upload or add your app secrets"
+  width={1200}
+  height={600}
+  lazy={true}
+/>
+
+## Inject secrets and start your app
+
+You are all set. Now you can inject your secrets into your app and start your app using following command:
+
+<CodeGroup title="Inject secrets and start your app">
+  ```bash {{ title: 'Command', language: 'bash' }}
+  envless start --run="command to start your app"
+  ```
+
+```bash {{ title: 'Help', language: 'bash' }}
+$ envless start --help
+
+Inject environment variables and run a command.
+
+USAGE
+  $ envless start -r <value> [-h]
+
+FLAGS
+  -h, --help         Show help for the start command
+  -r, --run=<value>  (required) The command to run
+
+DESCRIPTION
+  Inject environment variables and run a command.
+  ⚡ This command can be used to start your application on production,
+  staging, development, review apps, on a CI/CD pipeline, platforms or anywhere else.
+
+ALIASES
+  $ envless s
+
+EXAMPLES
+  $ envless start -r "yarn dev"
+  $ envless start --run "npm run start"
+```
+
+</CodeGroup>
+
+<Image
+  src={InjectAndStartApp}
+  alt="Inject secrets and start your app"
+  width={1200}
+  height={600}
+  lazy={true}
 />

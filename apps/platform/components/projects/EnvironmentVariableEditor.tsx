@@ -200,7 +200,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
         >
           <div {...getRootProps()} className="py-32 text-center">
             <DragDropIcon className="mx-auto h-12 w-12" />
-            <h3 className="mt-2 text-xl">Drag and drop .env files</h3>
+            <h3 className="mt-2 text-xl">
+              Drag and drop .env, .yml or .json files
+            </h3>
             <input
               {...getInputProps()}
               type="file"
@@ -215,12 +217,12 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               >
                 click here
               </span>{" "}
-              to import, copy/paste contents in .env file, or create{" "}
+              to import, copy/paste contents in .env, .yml or .json file, or add{" "}
               <span
                 onClick={handleAddMoreEnvClick}
                 className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
               >
-                one at a time.
+                one secret at a time.
               </span>
             </p>
           </div>
