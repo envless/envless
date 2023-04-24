@@ -33,6 +33,6 @@
     "node": "18.x"
   },
   "dependencies": {
-    "dotenv-cli": "^7.1.0"
+    "dotenv-cli": "^7.2.1"
   }
 }
