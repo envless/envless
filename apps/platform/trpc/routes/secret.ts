@@ -1,5 +1,5 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { Secret } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const secrets = createRouter({
@@ -70,6 +70,31 @@ export const secrets = createRouter({
       const { user } = ctx.session;
       const { secrets } = input;
 
+      const branchId = secrets[0].branchId;
+
+      const latestVersionOfSecret = (await prisma.$queryRaw(
+        Prisma.sql`SELECT id, version FROM "Secret"
+           where version = (SELECT MAX(version) FROM "Secret") 
+           and "branchId" = ${branchId}
+           limit 1`,
+      )) as [{ id: string; version: number }];
+      let newVersion = 1;
+
+      if (latestVersionOfSecret.length > 0) {
+        newVersion =
+          latestVersionOfSecret[0].version === 0
+            ? newVersion
+            : latestVersionOfSecret[0].version + 1;
+      }
+
+      // this may not be used
+      ctx.prisma.$use(async (params, next) => {
+        if (params.model == "Secret" && params.action == "create") {
+        }
+
+        return next(params);
+      });
+
       const secretsToInsert = secrets
         .filter((secret) => !secret.id)
         .map((secret) => ({
@@ -93,6 +118,19 @@ export const secrets = createRouter({
           await prisma.secret.createMany({
             data: secretsToInsert as never,
           });
+
+          for (let secret of secretsToInsert) {
+            await prisma.secret.create({
+              data: {
+                encryptedKey: secret.encryptedKey as string,
+                encryptedValue: secret.encryptedValue as string,
+                branchId: secret.branchId,
+                version: newVersion,
+                originalId: null, // this will change
+                userId: user.id,
+              },
+            });
+          }
         }
 
         if (secretsToUpdate && secretsToUpdate.length > 0) {

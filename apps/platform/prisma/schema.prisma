@@ -188,13 +188,16 @@ model Secret {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  version  Int     @default(1)
-  parentId String?
+  version  Int     @default(0)
+  originalId String? @unique
 
   userId   String
   branchId String
   branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  original Secret? @relation("OriginalSecretHistory", fields: [originalId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  current Secret? @relation("OriginalSecretHistory")
 
   @@index([userId])
   @@index([branchId])
