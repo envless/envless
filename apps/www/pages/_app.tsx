@@ -6,7 +6,7 @@ import "ui/styles/tailwind.css";
 import ErrorBoundary from "@/components/errorboundary";
 import Fallback from "@/components/errorboundary/Fallback";
 import "@/styles/primary.css";
-import "@/styles/zoom.css";
+import "ui/styles/zoom.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

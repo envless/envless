@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import Zoom from 'react-medium-image-zoom'
 import SetupCli from '@/images/screenshots/setup-cli.png'
 import SetupE2EE from '@/images/screenshots/setup-e2ee.png'
 import InjectAndStartApp from '@/images/screenshots/inject-and-start-app.png'
@@ -32,25 +33,29 @@ If you haven't already, you will need to [sign up for an account](https://go.env
 {/* Reword following paragraph */}
 Go to [projects](https://go.envless.dev/projects) page and create your first project. You will need to provide a name for your project.
 
-<Image
-  src={CreateFirstProject}
-  alt="Create your first project"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={CreateFirstProject}
+    alt="Create your first project"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
 
 ## Download your private key
 
 After you create your first project, you will be asked to download the Private key. This private key will be used to encrypt and decrypt your environment variables. We will walk you through the process of securing your private key in the next section.
 
-<Image
-  src={DownloadPrivateKey}
-  alt="Download your private key"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={DownloadPrivateKey}
+    alt="Download your private key"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
 
 ## Install and setup Envless CLI
 
@@ -92,13 +97,15 @@ brew install envless
 
 </CodeGroup>
 
-<Image
-  src={SetupCli}
-  alt="Setup Envless CLI"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={SetupCli}
+    alt="Setup Envless CLI"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
 
 <CodeGroup title="Initialize Envless CLI">
   ```bash {{ title: 'Command', language: 'bash' }}
@@ -213,25 +220,29 @@ EXAMPLES
 
 After you hav run the above command, you will have your private key security stored in your {`system's`} keychain and copied to your clipboard. Please paste the private key in the following input field and click on the "Confirm and continue" button.
 
-<Image
-  src={SetupE2EE}
-  alt="Setup end to end encryption"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={SetupE2EE}
+    alt="Setup end to end encryption"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
 
 ## Upload or add your app secrets
 
 You can simply drag and drop your existing `.env`, `.json` or `.yml` file or add your secrets manually. These app secrets will be encrypted on client side using your's and project's private key and stored in the database. Plaintext version of your app secrets will never leave your browser.
 
-<Image
-  src={DragAndDropSecrets}
-  alt="Upload or add your app secrets"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={DragAndDropSecrets}
+    alt="Upload or add your app secrets"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
 
 ## Inject secrets and start your app
 
@@ -269,10 +280,12 @@ EXAMPLES
 
 </CodeGroup>
 
-<Image
-  src={InjectAndStartApp}
-  alt="Inject secrets and start your app"
-  width={1200}
-  height={600}
-  lazy={true}
-/>
+<Zoom>
+  <Image
+    src={InjectAndStartApp}
+    alt="Inject secrets and start your app"
+    width={1200}
+    height={600}
+    lazy={true}
+  />
+</Zoom>
