@@ -15,11 +15,11 @@ export default class Init extends Command {
   static flags = {
     id: Flags.string({
       char: "i",
-      description: "Cli ID",
+      description: "Unique identifier for CLI",
     }),
     token: Flags.string({
       char: "t",
-      description: "Cli Token",
+      description: "Unique CLI token for authentication",
     }),
     help: Flags.help({
       char: "h",

@@ -2,6 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import { ACCOUNT_UPDATED } from "@/types/auditActions";
 import { getServerSideSession } from "@/utils/session";
 import { MembershipStatus, User } from "@prisma/client";
+import { NextSeo } from "next-seo";
 import { SquarePlusIcon } from "@/components/icons";
 import { AuditLogs, Projects } from "@/components/projects";
 import CreateProjectModal from "@/components/projects/CreateProjectModal";
@@ -21,6 +22,8 @@ const ConsoleHome: React.FC<Props> = ({ user, logs }) => {
 
   return (
     <>
+      <NextSeo title={`Project - Envless`} />
+
       {projects.length === 0 ? (
         <Container>
           <Nav user={user} />

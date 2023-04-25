@@ -14,7 +14,7 @@ const loader = spinner();
 const ncp = require("copy-paste");
 
 export default class PrivateKey extends Command {
-  static description = `Securely store your private key to your system's keychain.\n${grey(`
+  static description = `Securely store your private key to your system's keychain and/or copy it to your clipboard.\n${grey(`
     ⚡ Please make sure you have created a project and downloaded envless.key to your downloads folder. If you haven't, create one at \n${cyan(
       LINKS.projects,
     )}`)}`;
@@ -34,7 +34,7 @@ export default class PrivateKey extends Command {
 
     help: Flags.help({
       char: "h",
-      description: "Shows help for the link command",
+      description: "Shows help for the privateKey command",
     }),
   };
 

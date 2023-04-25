@@ -396,7 +396,7 @@ export const getServerSideProps = withAccessControl({
       UserRole.guest,
       UserRole.owner,
     ],
-    statuses: [MembershipStatus.active]
+    statuses: [MembershipStatus.active],
   },
 });
 
