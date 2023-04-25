@@ -14,9 +14,6 @@
   <a href="https://twitter.com/envless">
     <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt="Twitter" />
   </a>
-  <a href="https://github.com/envless/envless/actions/workflows/ci.yml">
-    <img src="https://github.com/envless/envless/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
-  </a>
   <a href="https://github.com/envless/envless/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/envless/envless?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
   </a>
@@ -57,12 +54,12 @@
   <tr>
      <td style="text-align: center;">
       <a href="https://dub.sh/envless-discord">
-        <img src="./.github/images/discord-banner.png" width="380" alt="Discord invite banner">
+        <img src="../../.github/images/discord-banner.png" width="380" alt="Discord invite banner">
       </a>
     </td>
      <td style="text-align: center;">
       <a href="https://dub.sh/envless-slack">
-        <img src="./.github/images/slack-banner.png" width="380" alt="Slack invite banner">
+        <img src="../../.github/images/slack-banner.png" width="380" alt="Slack invite banner">
       </a>
     </td>
   </tr>
@@ -95,4 +92,4 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 <p>
 Don't forget to leave a star ⭐️
 </p>
-<image src=".github/images/envless.gif">
+<image src="../../.github/images/envless.gif">

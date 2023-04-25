@@ -15,7 +15,7 @@ export default class Init extends Command {
   static flags = {
     id: Flags.string({
       char: "i",
-      description: "CUnique identifier for CLI",
+      description: "Unique identifier for CLI",
     }),
     token: Flags.string({
       char: "t",
