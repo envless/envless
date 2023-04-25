@@ -9,7 +9,8 @@ import { useMobileNavigationStore } from '@/components/MobileNavigation'
 
 import '@/styles/tailwind.css'
 import 'focus-visible'
-import 'ui/styles/zoom.css'
+// import 'ui/styles/zoom.css'
+import '@/styles/zoom.css'
 
 const font = Inter({ subsets: ['latin'], weight: '400' })
 
