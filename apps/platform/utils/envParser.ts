@@ -176,7 +176,7 @@ export const attemptToParseCopiedSecrets = async (
   if (parsedContent.length === 0) {
     try {
       parsedContent = await parseEnvContent(
-        "yml",
+        "json",
         copiedContent,
         decryptedProjectKey,
       );
@@ -186,10 +186,15 @@ export const attemptToParseCopiedSecrets = async (
   if (parsedContent.length === 0) {
     try {
       parsedContent = await parseEnvContent(
-        "json",
+        "yml",
         copiedContent,
         decryptedProjectKey,
       );
+
+      // this is the special case when pasting on secret key field only
+      if (parsedContent.length === 1 && !parsedContent[0].decryptedKey) {
+        parsedContent = [];
+      }
     } catch (error) {}
   }
 
