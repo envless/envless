@@ -82,7 +82,18 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       return;
     }
 
-    // check for the pastedLength of secrets
+    // this is the special case when pasting on secret key field only
+    if (pastedSecrets.length === 1 && !pastedSecrets[0].decryptedKey) {
+      const encryptedSecretKey = await encryptString(
+        content,
+        decryptedProjectKey,
+      );
+      setValue(`secrets.${fields.length - 1}.encryptedKey`, encryptedSecretKey);
+      setValue(`secrets.${fields.length - 1}.decryptedKey`, content);
+
+      return;
+    }
+
     const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,

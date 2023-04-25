@@ -176,7 +176,7 @@ export const attemptToParseCopiedSecrets = async (
   if (parsedContent.length === 0) {
     try {
       parsedContent = await parseEnvContent(
-        "json",
+        "yml",
         copiedContent,
         decryptedProjectKey,
       );
@@ -186,7 +186,7 @@ export const attemptToParseCopiedSecrets = async (
   if (parsedContent.length === 0) {
     try {
       parsedContent = await parseEnvContent(
-        "yml",
+        "json",
         copiedContent,
         decryptedProjectKey,
       );
