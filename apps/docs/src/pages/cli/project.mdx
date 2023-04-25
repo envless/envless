@@ -1,0 +1,129 @@
+export const description =
+  'Lean how to create and update projects using Envless CLI'
+
+# Project
+
+Commands to perform project related actions. Available actions are: link, create and update
+
+```bash
+$ envless project --help
+
+Commands to perform project related actions. Available actions are: link, create and update
+
+USAGE
+  $ envless project
+
+DESCRIPTION
+  Commands to perform project related actions. Available actions are: link, create and
+  update
+
+EXAMPLES
+  $ envless project link
+  $ envless project create
+  $ envless project update
+
+
+COMMANDS
+  $ project link    Link your development project to the Envless project.
+  $ project create  Create a new Envless project.
+  $ project update  Update an existing Envless project.
+```
+
+## Link
+
+From your project's root directory run following command to link your project with Envless:
+
+<CodeGroup title="Link your project with Envless project">
+  ```bash {{ title: 'Command', language: 'bash' }}
+  envless project link --projectId xxxxxxxx
+  ```
+
+```bash {{ title: 'Help', language: 'bash' }}
+$ envless project link --help
+
+Link your development project to the Envless project.
+
+USAGE
+  $ envless project link [-p <value>] [-b <value>] [-h]
+
+FLAGS
+  -b, --branch=<value>     [default: development] Envless project branch name
+  -h, --help               Show help for the link command
+  -p, --projectId=<value>  Envless Project ID
+
+DESCRIPTION
+  Link your development project to the Envless project.
+  ⚡ Please make sure you are running this command from your development project root
+  directory and have created a project. If you have not, create one at
+  https://go.envless.dev/projects
+
+EXAMPLES
+  $ envless project link
+  $ envless project link --projectId xxxxxxxx
+  $ envless project link --projectId xxxxxxxx --branch development
+```
+
+</CodeGroup>
+
+When you link your project with Envless, it will create a `.envless.yml` file in your project's root directory. This directory will contain the project id and branch name. You can change the branch name in this file to point to a different branch. Its recommended to commit this file to your project's repository.
+
+```yaml {{ title: '.envless.yml' }}
+branch: development
+projectId: xxxxxxxxxxxxxxxxxxxx
+```
+
+<Note>
+  For IaaS providers with Docker, K8S and others, PaaS (Vercel, Supabase,
+  Netlify and others) and CI/CD pipelines (Github actions, Gitlab CI/CD, Circle
+  CI and others), you can use ENV variables to initialize Envless CLI.
+</Note>
+
+```bash {{ title: 'Envless ENV variables', language: 'bash' }}
+export ENVLESS_CLI_ID=xxxxxxxx
+export ENVLESS_CLI_TOKEN=xxxxxxxx
+export ENVLESS_PROJECT_ID=xxxxxxxx
+export ENVLESS_BRANCH_NAME=xxxxxxxx
+export ENVLESS_PRIVATE_KEY="
+  -----BEGIN PGP PRIVATE KEY BLOCK-----
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+"
+```
+
+## Create
+
+To create a new project, run the following command in your terminal:
+
+<CodeGroup title="Create a project">
+```bash {{ title: 'Command', language: 'bash' }}
+envless project create --name xxxxxxxx
+```
+
+```bash {{ title: 'Help', language: 'bash' }}
+$ envless project create --help
+
+Create a new Envless project.
+
+USAGE
+  $ envless project create [-n <value>]
+
+FLAGS
+  -n, --name=<value>  This is the project\'s name
+
+DESCRIPTION
+  Create a new Envless project.
+  ⚡ Please make sure you are running this command from your project root directory
+  and make sure you have completed your CLI setup. If not, please do so at envless
+  platform.
+
+EXAMPLES
+  $ envless project create
+  $ envless project create --name Project X
+```
+
+</CodeGroup>
+
+This command will prompt you for the necessary information to create the project, including the project name, description, and any team members you want to add to the project.
+
+## Update
+
+TODO: Add update command

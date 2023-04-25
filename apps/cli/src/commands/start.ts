@@ -44,7 +44,7 @@ export default class Start extends Command {
   async run(): Promise<void> {
     const version = this.config.version;
     const { flags } = await this.parse(Start);
-    const command = flags.command as string;
+    const command = flags.run as string;
 
     this.log(`\n`);
     intro(`✨ Envless CLI v${this.config.version}`);

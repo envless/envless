@@ -17,6 +17,7 @@ import {
 } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -146,6 +147,8 @@ export const ProjectPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
+      <NextSeo title={`${currentProject.name} - Envles project setup`} />
+
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
           user={user}
@@ -213,7 +216,7 @@ export const getServerSideProps = withAccessControl({
       UserRole.guest,
       UserRole.owner,
     ],
-    statuses: [MembershipStatus.active]
+    statuses: [MembershipStatus.active],
   },
   getServerSideProps: async (context) => {
     const session = await getServerSideSession(context);
