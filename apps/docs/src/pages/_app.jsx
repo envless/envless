@@ -4,6 +4,7 @@ import { MDXProvider } from '@mdx-js/react'
 import { Layout } from '@/components/Layout'
 import * as mdxComponents from '@/components/mdx'
 import { useMobileNavigationStore } from '@/components/MobileNavigation'
+import OgImage from '@/images/og.png'
 
 import '@/styles/tailwind.css'
 import 'focus-visible'
@@ -20,16 +21,32 @@ Router.events.on('routeChangeError', onRouteChange)
 
 export default function App({ Component, pageProps }) {
   let router = useRouter()
+  const title =
+    router.pathname === '/'
+      ? 'Envless Docs'
+      : `${pageProps.title} - Envless Docs`
 
   return (
     <>
       <Head>
-        {router.pathname === '/' ? (
-          <title>Envless</title>
-        ) : (
-          <title>{`${pageProps.title} - Envless`}</title>
-        )}
+        <title>{title}</title>
         <meta name="description" content={pageProps.description} />
+        <meta name="title" content={title} />
+
+        {/* Open Graph / Facebook */}
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://envless.dev/docs" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={pageProps.description} />
+        <meta property="og:image" content={OgImage.src} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://envless.dev/docs" />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={pageProps.description} />
+        <meta property="twitter:image" content={OgImage.src} />
       </Head>
       <MDXProvider components={mdxComponents}>
         <Layout {...pageProps}>
