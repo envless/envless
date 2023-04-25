@@ -1,5 +1,4 @@
 import Image from 'next/image'
-
 import { Button } from '@/components/Button'
 import { Heading } from '@/components/Heading'
 import logoGo from '@/images/logos/go.svg'

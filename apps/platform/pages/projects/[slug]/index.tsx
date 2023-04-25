@@ -216,7 +216,7 @@ export const getServerSideProps = withAccessControl({
       UserRole.guest,
       UserRole.owner,
     ],
-    statuses: [MembershipStatus.active]
+    statuses: [MembershipStatus.active],
   },
   getServerSideProps: async (context) => {
     const session = await getServerSideSession(context);

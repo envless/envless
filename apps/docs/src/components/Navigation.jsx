@@ -190,21 +190,16 @@ export const navigation = [
     links: [
       { title: 'Introduction', href: '/' },
       { title: 'Quickstart', href: '/quickstart' },
-      { title: 'SDKs', href: '/sdks' },
-      { title: 'Authentication', href: '/authentication' },
-      { title: 'Pagination', href: '/pagination' },
-      { title: 'Errors', href: '/errors' },
-      { title: 'Webhooks', href: '/webhooks' },
     ],
   },
   {
     title: 'CLI',
     links: [
-      { title: 'Contacts', href: '/contacts' },
-      { title: 'Conversations', href: '/conversations' },
-      { title: 'Messages', href: '/messages' },
-      { title: 'Groups', href: '/groups' },
-      { title: 'Attachments', href: '/attachments' },
+      { title: 'Setup', href: '/cli/setup' },
+      { title: 'Project', href: '/cli/project' },
+      { title: 'Branches', href: '/cli/branches' },
+      { title: 'Members', href: '/cli/members' },
+      { title: 'App secrets', href: '/cli/app-secrets' },
     ],
   },
 ]
