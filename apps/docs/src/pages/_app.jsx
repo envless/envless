@@ -1,8 +1,6 @@
-import { Inter } from '@next/font/google'
 import Head from 'next/head'
 import { Router, useRouter } from 'next/router'
 import { MDXProvider } from '@mdx-js/react'
-
 import { Layout } from '@/components/Layout'
 import * as mdxComponents from '@/components/mdx'
 import { useMobileNavigationStore } from '@/components/MobileNavigation'
@@ -11,8 +9,6 @@ import '@/styles/tailwind.css'
 import 'focus-visible'
 // import 'ui/styles/zoom.css'
 import '@/styles/zoom.css'
-
-const font = Inter({ subsets: ['latin'], weight: '400' })
 
 function onRouteChange() {
   useMobileNavigationStore.getState().close()
@@ -36,7 +32,7 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content={pageProps.description} />
       </Head>
       <MDXProvider components={mdxComponents}>
-        <Layout {...pageProps} className={font.className}>
+        <Layout {...pageProps}>
           <Component {...pageProps} />
         </Layout>
       </MDXProvider>
