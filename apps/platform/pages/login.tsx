@@ -11,7 +11,7 @@ const Login = ({ csrfToken }) => {
     subtitle:
       process.env.NEXT_PUBLIC_SIGNUP_DISABLED != "true" ? (
         <>
-          Don't have an account?{" "}
+          Don{"'"}t have an account?{" "}
           <Link href="/signup" className="text-teal-400">
             Signup
           </Link>
