@@ -88,10 +88,6 @@ const Session = (props: Props) => {
                   }
                   validationSchema={{
                     required: "Name is required",
-                    pattern: {
-                      value: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/i,
-                      message: "Invalid full name",
-                    },
                   }}
                 />
               )}
