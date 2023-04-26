@@ -147,7 +147,7 @@ export const ProjectPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
-      <NextSeo title={`${currentProject.name} - Envles project setup`} />
+      <NextSeo title={`${currentProject.name} - Envless project setup`} />
 
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
@@ -160,7 +160,7 @@ export const ProjectPage = ({
         <>
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
-              <div className="mt-4 flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <BranchDropdown
                   label="Current Branch"
                   dropdownLabel="Switch between branches"

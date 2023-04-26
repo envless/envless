@@ -40,7 +40,7 @@ const ProjectLayout = ({
         />
 
         <Container>
-          <div className="my-10 flex flex-wrap">{children}</div>
+          <div className="flex flex-wrap">{children}</div>
         </Container>
 
         <Toaster position="top-right" />

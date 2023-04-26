@@ -114,7 +114,7 @@ export default function AuditLogTable({
   });
 
   return (
-    <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
+    <div className="border-dark w-full rounded-md border-2 shadow-sm">
       <div className="border-dark flex items-center justify-between border-b px-2 py-2 font-medium">
         <div className="flex w-full items-center justify-between px-4">
           <div className="group relative w-full">
