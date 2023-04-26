@@ -146,6 +146,10 @@ export const authOptions: NextAuthOptions = {
         return "/error/locked";
       }
 
+      if (!signInUser && process.env.NEXT_PUBLIC_SIGNUP_DISABLED === "true") {
+        return "/error/forbidden";
+      }
+
       return true;
     },
   },

@@ -77,7 +77,7 @@ const Session = (props: Props) => {
                 <Input
                   name="name"
                   type="text"
-                  label="Your name"
+                  label="Full name"
                   required={true}
                   full={true}
                   register={register}
@@ -119,12 +119,12 @@ const Session = (props: Props) => {
               />
 
               <Button
-                sr="Send magic link"
+                sr={page === "signup" ? "Create an account" : "Send magic link"}
                 type="submit"
                 width="full"
                 disabled={loading}
               >
-                Send magic link
+                {page === "signup" ? "Create an account" : "Send magic link"}
               </Button>
             </form>
 
