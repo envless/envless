@@ -106,7 +106,7 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   if (!user) {
     return {
       redirect: {
-        destination: "/auth",
+        destination: "/login",
         permanent: false,
       },
     };

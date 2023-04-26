@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
           ),
         });
       },
+
+      normalizeIdentifier: (identifier) => identifier.toLowerCase().trim(),
     }),
 
     GithubProvider({
@@ -54,8 +56,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/auth",
-    signOut: "/auth",
+    signIn: "/login",
+    signOut: "/login",
   },
 
   adapter: PrismaAdapter(prisma),
@@ -144,6 +146,10 @@ export const authOptions: NextAuthOptions = {
 
       if (signInUser && signInUser.locked) {
         return "/error/locked";
+      }
+
+      if (!signInUser && process.env.NEXT_PUBLIC_SIGNUP_DISABLED === "true") {
+        return "/error/forbidden";
       }
 
       return true;
