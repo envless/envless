@@ -47,7 +47,7 @@ const Pricing = ({ ...props }) => {
                 </li>
               </ul>
               <Link
-                href="/auth"
+                href="/signup"
                 target="_self"
                 className="font-heading tracking-px group relative mb-3 w-full rounded text-center text-xs font-semibold uppercase text-gray-900 md:w-auto"
               >
@@ -85,7 +85,7 @@ const Pricing = ({ ...props }) => {
                   </li>
                 </ul>
                 <Link
-                  href="/auth"
+                  href="/signup"
                   target="_self"
                   className="font-heading tracking-px text-light group relative mb-3 w-full overflow-hidden rounded text-center text-xs font-semibold uppercase md:w-auto"
                 >

@@ -22,7 +22,7 @@ export function ProjectRestorationNoticeEmail() {
       }
       greeting="Hi there,"
       buttonText="Login"
-      buttonLink={`${env.BASE_URL}/auth`}
+      buttonLink={`${env.BASE_URL}/login`}
     />
   );
 }

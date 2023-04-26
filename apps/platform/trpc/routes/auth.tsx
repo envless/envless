@@ -8,19 +8,21 @@ import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
 import log from "@/lib/log";
+import prisma from "@/lib/prisma";
 import redis from "@/lib/redis";
 
 export const auth = createRouter({
   verify: withAuth
     .input(
       z.object({
-        fingerprint: z.string(),
         sessionId: z.string(),
+        fingerprint: z.string(),
+        name: z.string().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx.session;
-      const { fingerprint, sessionId } = input;
+      const { fingerprint, sessionId, name } = input;
 
       if (sessionId !== ctx.session.id) {
         return new TRPCError({
@@ -88,6 +90,28 @@ export const auth = createRouter({
                 }
               />
             ),
+          });
+        }
+
+        const currentUser = await prisma.user.findUnique({
+          where: {
+            id: user.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        });
+
+        if (!currentUser?.name) {
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              name,
+            },
           });
         }
       }

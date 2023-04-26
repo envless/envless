@@ -26,7 +26,7 @@ export default withAuth(
     const { token } = req.nextauth;
     const { user } = token as any;
 
-    const authUrl = `${origin}/auth`;
+    const authUrl = `${origin}/login`;
     const twoFaUrl = `${origin}/auth/2fa`;
     const forbidden = `${origin}/error/forbidden`;
     const verifyAuthUrl = `${origin}/auth/verify`;
@@ -83,7 +83,8 @@ export default withAuth(
     }
 
     if (
-      url.pathname === "/auth" ||
+      url.pathname === "/login" ||
+      url.pathname === "/signup" ||
       url.pathname === "/auth/2fa" ||
       url.pathname === "/auth/verify"
     ) {

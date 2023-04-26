@@ -41,7 +41,7 @@ export function withAccessControl<P = Record<string, unknown>>({
     if (!user) {
       return {
         redirect: {
-          destination: "/auth",
+          destination: "/login",
           permanent: false,
         },
       };
