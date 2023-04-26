@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
 import {
   ColumnDef,
@@ -8,16 +8,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Columns,
-  Download,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Search } from "lucide-react";
 import * as csvParser from "papaparse";
-import { BaseInput, Button } from "@/components/theme";
+import { BaseInput } from "@/components/theme";
 
 type AuditLogTableProps = {
   auditLogs: any;
@@ -121,30 +114,12 @@ export default function AuditLogTable({
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
               <Search className="h-4 w-4" />
             </div>
-
             <BaseInput
               placeholder="Search"
               className="w-full max-w-xs py-1.5 !pl-9"
               full={false}
             />
           </div>
-
-          <div className="flex shrink-0 items-center">
-            <button
-              aria-label="Apply Filters"
-              data-balloon-pos="up"
-              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-            >
-              <Filter className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="flex shrink-0 items-center">
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
-              <Columns className="h-5 w-5" />
-            </button>
-          </div>
-
           <div className="flex shrink-0 items-center">
             <button
               aria-label="Download as CSV"
