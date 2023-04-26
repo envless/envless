@@ -164,25 +164,21 @@ export const projects = createRouter({
         project: z.object({
           name: z.string(),
           id: z.string(),
-          enforce2FA: z.boolean(),
+          twoFactorRequired: z.boolean(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { project } = input;
-      const enforce2FA = project.enforce2FA || false;
+      const { name } = project;
+      const twoFactorRequired = project.twoFactorRequired || false;
 
       const updatedProject = await prisma.project.update({
         where: {
           id: project.id,
         },
-        data: {
-          name: project.name,
-          settings: {
-            enforce2FA: project.enforce2FA,
-          },
-        },
+        data: { name, twoFactorRequired },
       });
 
       return updatedProject;
