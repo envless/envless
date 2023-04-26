@@ -9,11 +9,7 @@ import {
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
-import {
-  attemptToParseCopiedSecrets,
-  parseEnvContent,
-  parseEnvFile,
-} from "@/utils/envParser";
+import { attemptToParseCopiedSecrets, parseEnvFile } from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { repeat } from "lodash";
@@ -79,10 +75,18 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     );
 
     if (pastedSecrets && pastedSecrets.length === 0) {
+      const encryptedSecretKey = await encryptString(
+        content,
+        decryptedProjectKey,
+      );
+      setValue(
+        `secrets.${pastingInputIndex.current}.encryptedKey`,
+        encryptedSecretKey,
+      );
+      setValue(`secrets.${pastingInputIndex.current}.decryptedKey`, content);
       return;
     }
 
-    // check for the pastedLength of secrets
     const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
@@ -92,6 +96,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       pastingInputIndex.current + 1,
     );
 
+    // this is creating workaround. We need to find the better solution. (state is being reset)
     remove();
 
     append([
