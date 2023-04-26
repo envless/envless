@@ -17,6 +17,7 @@ function useSecret({ branchId }: { branchId: string }) {
 
   useEffect(() => {
     const envSecrets: EnvSecret[] = [];
+    if (!privateKey) return;
 
     (async () => {
       const { branch, secrets } =
