@@ -195,7 +195,7 @@ export const navigation = [
   {
     title: 'CLI',
     links: [
-      { title: 'Setup', href: '/cli/setup' },
+      { title: 'Getting started', href: '/cli' },
       { title: 'Project', href: '/cli/project' },
       { title: 'Branches', href: '/cli/branches' },
       { title: 'Members', href: '/cli/members' },
@@ -209,10 +209,6 @@ export function Navigation(props) {
     <nav {...props}>
       <ul role="list">
         <TopLevelCtaLinks />
-
-        {/* <TopLevelNavItem href="/">API</TopLevelNavItem>
-        <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="#">Support</TopLevelNavItem> */}
 
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
