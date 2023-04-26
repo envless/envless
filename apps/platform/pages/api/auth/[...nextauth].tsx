@@ -172,7 +172,7 @@ const LockedUserSchema = z.object({
 
 const UserSchema = z.object({
   id: z.string(),
-  name: z.string().optional(),
+  name: z.string().nullable(),
   email: z.string().email(),
   image: z.string().optional(),
   twoFactorEnabled: z.boolean(),
