@@ -54,8 +54,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/auth",
-    signOut: "/auth",
+    signIn: "/login",
+    signOut: "/login",
   },
 
   adapter: PrismaAdapter(prisma),

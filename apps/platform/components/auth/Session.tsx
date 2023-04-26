@@ -1,25 +1,28 @@
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { getServerSideSession } from "@/utils/session";
-import { Plus } from "lucide-react";
-import { getCsrfToken, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { GithubFullIcon, GitlabFullIcon } from "@/components/icons";
 import { Button, Input } from "@/components/theme";
 
-const Login = ({ csrfToken }) => {
-  const router = useRouter();
+type Props = {
+  page: string;
+  title: string;
+  subtitle?: React.ReactNode;
+  csrfToken: string;
+};
+
+const Session = (props: Props) => {
   const { query } = useRouter();
+  const { page, title, subtitle, csrfToken } = props;
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
 
@@ -27,16 +30,10 @@ const Login = ({ csrfToken }) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
     signIn("email", data);
-    reset();
   };
 
   return (
     <>
-      <Head>
-        <title>Get started with Envless</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-
       <div className="flex h-screen flex-col justify-center px-12">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Image
@@ -46,13 +43,8 @@ const Login = ({ csrfToken }) => {
             src="/logo.png"
             alt="Envless"
           />
-          <h2 className="mt-6 text-center text-2xl">
-            Get started with Envless
-          </h2>
-
-          <p className="text-light mt-2 text-center text-sm">
-            Login or Sign up
-          </p>
+          <h2 className="mt-6 text-center text-2xl">{title}</h2>
+          <p className="text-light mt-2 text-center text-sm">{subtitle}</p>
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -81,6 +73,28 @@ const Login = ({ csrfToken }) => {
                 full={true}
               />
 
+              {page === "signup" && (
+                <Input
+                  name="name"
+                  type="text"
+                  label="Your name"
+                  required={true}
+                  full={true}
+                  register={register}
+                  errors={errors}
+                  defaultValue={
+                    process.env.NODE_ENV === "development" ? "John Doe" : ""
+                  }
+                  validationSchema={{
+                    required: "Name is required",
+                    pattern: {
+                      value: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/i,
+                      message: "Invalid name",
+                    },
+                  }}
+                />
+              )}
+
               <Input
                 name="email"
                 type="email"
@@ -90,7 +104,11 @@ const Login = ({ csrfToken }) => {
                 full={true}
                 register={register}
                 errors={errors}
-                defaultValue="envless@example.com"
+                defaultValue={
+                  process.env.NODE_ENV === "development"
+                    ? "envless@example.com"
+                    : ""
+                }
                 validationSchema={{
                   required: "Email is required",
                   pattern: {
@@ -159,11 +177,17 @@ const Login = ({ csrfToken }) => {
 
             <p className="text-light mt-8 text-center text-sm">
               By continuing, you agree to our{" "}
-              <Link className="hover:text-gray-200" href="/terms">
+              <Link
+                className="text-teal-400/60 hover:text-gray-200"
+                href="/terms"
+              >
                 Terms of service
               </Link>{" "}
               and{" "}
-              <Link className="hover:text-gray-200" href="/privacy">
+              <Link
+                className="text-teal-400/60 hover:text-gray-200"
+                href="/privacy"
+              >
                 Privacy policy
               </Link>
             </p>
@@ -176,21 +200,4 @@ const Login = ({ csrfToken }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { res } = context;
-  const session = await getServerSideSession(context);
-
-  if (session) {
-    res.writeHead(301, { Location: "/projects" });
-    res.end();
-  }
-
-  return {
-    props: {
-      session,
-      csrfToken: await getCsrfToken(context),
-    },
-  };
-}
-
-export default Login;
+export default Session;

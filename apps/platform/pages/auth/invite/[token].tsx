@@ -89,7 +89,7 @@ const ProjectInvitePage = (props: {
                   </p>
 
                   <Button
-                    href="/auth"
+                    href="/login"
                     type="submit"
                     className={clsx("mt-10")}
                     width="full"
