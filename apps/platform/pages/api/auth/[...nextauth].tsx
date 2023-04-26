@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
           ),
         });
       },
+
+      normalizeIdentifier: (identifier) => identifier.toLowerCase().trim(),
     }),
 
     GithubProvider({

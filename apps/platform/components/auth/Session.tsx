@@ -29,6 +29,7 @@ const Session = (props: Props) => {
   const onSubmit = async (data) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
+    localStorage.setItem("fullName", data.name);
     signIn("email", data);
   };
 
@@ -89,7 +90,7 @@ const Session = (props: Props) => {
                     required: "Name is required",
                     pattern: {
                       value: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/i,
-                      message: "Invalid name",
+                      message: "Invalid full name",
                     },
                   }}
                 />
