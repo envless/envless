@@ -15,7 +15,7 @@ const Projects = ({ ...props }) => {
   });
 
   const Card = ({ project }) => {
-    const twoFactorAuth = project.settings.enforce2FA;
+    const twoFactorAuth = project.twoFactorRequired as boolean;
 
     const navigateToProjectDetailPage = () => {
       router.push(`/projects/${project.slug}`);

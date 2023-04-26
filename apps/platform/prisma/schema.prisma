@@ -37,7 +37,7 @@ model Project {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   deletedAt           DateTime?
-  settings            Json                 @default("{}")
+  twoFactorRequired   Boolean              @default(false)
   branches            Branch[]
   access              Access[]
   audits              Audit[]
