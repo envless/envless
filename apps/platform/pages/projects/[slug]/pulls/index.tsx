@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useState } from "react";
@@ -157,6 +158,10 @@ export const PullRequestPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
+      <Head>
+        <title>{`${currentProject.name} - Envless pull requests`}</title>
+      </Head>
+
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
