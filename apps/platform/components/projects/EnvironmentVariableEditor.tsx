@@ -18,6 +18,7 @@ import { useDropzone } from "react-dropzone";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const pastingInputIndex = useRef(0);
@@ -31,7 +32,15 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     name: "secrets",
     control,
   });
-  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation();
+  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation({
+    onSuccess: (data) => {
+      showToast({
+        type: "success",
+        title: "Secrets successfully updated",
+        subtitle: `${data} secrets are updated successfully`,
+      });
+    },
+  });
 
   useEffect(() => {
     if (secrets) {
@@ -192,7 +201,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               >
                 Add more
               </Button>
-              <Button>Save changes</Button>
+              <Button loading={saveSecretsMutation.isLoading}>
+                Save changes
+              </Button>
             </div>
           </div>
         </form>

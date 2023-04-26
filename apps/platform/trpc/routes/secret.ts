@@ -70,6 +70,8 @@ export const secrets = createRouter({
       const { user } = ctx.session;
       const { secrets } = input;
 
+      let secretsUpdateCount = 0;
+
       const secretsToInsert = secrets
         .filter((secret) => !secret.id)
         .map((secret) => ({
@@ -90,9 +92,17 @@ export const secrets = createRouter({
 
       try {
         if (secretsToInsert.length > 0) {
-          await prisma.secret.createMany({
-            data: secretsToInsert as never,
-          });
+          for (let secret of secretsToInsert) {
+            await prisma.secret.create({
+              data: {
+                encryptedKey: secret.encryptedKey,
+                encryptedValue: secret.encryptedValue,
+                userId: user.id,
+                branchId: secret.branchId,
+              },
+            });
+            secretsUpdateCount++;
+          }
         }
 
         if (secretsToUpdate && secretsToUpdate.length > 0) {
@@ -107,8 +117,26 @@ export const secrets = createRouter({
                 id: secret?.id || undefined,
               },
             });
+
+            const oldSecret = await prisma.secret.findUnique({
+              where: {
+                id: secret?.id || undefined,
+              },
+            });
+
+            await prisma.secretVersion.create({
+              data: {
+                encryptedKey: oldSecret?.encryptedKey as string,
+                encryptedValue: oldSecret?.encryptedValue as string,
+                secretId: oldSecret?.id as string,
+              },
+            });
+
+            secretsUpdateCount++;
           }
         }
+
+        return secretsUpdateCount;
       } catch (err) {
         throw new Error(err.message);
       }
