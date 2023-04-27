@@ -61,6 +61,8 @@ export const secrets = createRouter({
             encryptedKey: z.string().min(1),
             encryptedValue: z.string().min(1),
             branchId: z.string().min(1),
+            hasKeyChanged: z.boolean(),
+            hasValueChanged: z.boolean(),
           }),
         ),
       }),
@@ -88,6 +90,9 @@ export const secrets = createRouter({
           encryptedKey: secret.encryptedKey,
           encryptedValue: secret.encryptedValue,
           branchId: secret.branchId,
+
+          hasKeyChanged: secret.hasKeyChanged,
+          hasValueChanged: secret.hasValueChanged,
         }));
 
       try {
@@ -107,32 +112,47 @@ export const secrets = createRouter({
 
         if (secretsToUpdate && secretsToUpdate.length > 0) {
           for (let secret of secretsToUpdate) {
-            await prisma.secret.update({
-              data: {
-                encryptedKey: secret?.encryptedKey,
-                encryptedValue: secret?.encryptedValue,
+            if (secret.hasKeyChanged || secret.hasValueChanged) {
+              const data = {
                 branchId: secret?.branchId,
-              },
-              where: {
-                id: secret?.id || undefined,
-              },
-            });
+              } as {
+                id: string;
+                branchId: string;
+                encryptedKey: string;
+                encryptedValue: string;
+              };
 
-            const oldSecret = await prisma.secret.findUnique({
-              where: {
-                id: secret?.id || undefined,
-              },
-            });
+              if (secret.hasKeyChanged) {
+                data.encryptedKey = secret.encryptedKey;
+              }
 
-            await prisma.secretVersion.create({
-              data: {
-                encryptedKey: oldSecret?.encryptedKey as string,
-                encryptedValue: oldSecret?.encryptedValue as string,
-                secretId: oldSecret?.id as string,
-              },
-            });
+              if (secret.hasValueChanged) {
+                data.encryptedValue = secret.encryptedValue;
+              }
 
-            secretsUpdateCount++;
+              await prisma.secret.update({
+                data,
+                where: {
+                  id: secret?.id || undefined,
+                },
+              });
+
+              const oldSecret = await prisma.secret.findUnique({
+                where: {
+                  id: secret?.id || undefined,
+                },
+              });
+
+              await prisma.secretVersion.create({
+                data: {
+                  encryptedKey: oldSecret?.encryptedKey as string,
+                  encryptedValue: oldSecret?.encryptedValue as string,
+                  secretId: oldSecret?.id as string,
+                },
+              });
+
+              secretsUpdateCount++;
+            }
           }
         }
 

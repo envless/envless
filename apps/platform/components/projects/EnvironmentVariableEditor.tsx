@@ -15,7 +15,13 @@ import clsx from "clsx";
 import { repeat } from "lodash";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  useWatch,
+  useFormState,
+} from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
@@ -27,11 +33,19 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     branchId,
   });
 
-  const { control, setValue, handleSubmit } = useForm<any>();
+  const {
+    control,
+    setValue,
+    reset,
+    handleSubmit,
+    formState: { dirtyFields },
+  } = useForm<any>();
+
   const { fields, append, remove, update } = useFieldArray({
     name: "secrets",
     control,
   });
+
   const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation({
     onSuccess: (data) => {
       showToast({
@@ -44,9 +58,11 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   useEffect(() => {
     if (secrets) {
-      setValue("secrets", secrets);
+      reset({
+        secrets,
+      });
     }
-  }, [secrets, setValue]);
+  }, [secrets, reset]);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -117,14 +133,18 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const onSubmit = async (data: any) => {
     try {
-      const secretsToSave = data.secrets.map((secret: EnvSecret) => {
-        return {
-          id: secret?.id || null,
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          branchId,
-        };
-      });
+      const secretsToSave = data.secrets.map(
+        (secret: EnvSecret, index: number) => {
+          return {
+            id: secret?.id || null,
+            encryptedKey: secret.encryptedKey,
+            encryptedValue: secret.encryptedValue,
+            hasKeyChanged: dirtyFields.secrets[index].decryptedKey,
+            hasValueChanged: dirtyFields.secrets[index].decryptedValue,
+            branchId,
+          };
+        },
+      );
 
       await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
     } catch (err) {}
