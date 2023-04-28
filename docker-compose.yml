@@ -31,8 +31,6 @@ services:
     networks:
       - envless_network
     depends_on:
-      redis-rest:
-        condition: service_started
       postgres:
         condition: service_started
 
