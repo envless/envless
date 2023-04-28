@@ -206,9 +206,11 @@ model SecretVersion {
   encryptedValue String
   secretId       String
 
-  secret     Secret   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
+  secret         Secret   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@index([secretId])
 }
 
 // Necessary for Next auth
