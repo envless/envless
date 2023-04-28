@@ -11,6 +11,7 @@ import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
 import * as z from "zod";
 import prisma from "@/lib/prisma";
+import { ClientType } from "@/types/clientType";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -76,8 +77,7 @@ export const authOptions: NextAuthOptions = {
           // @ts-ignore
           token.user = {
             ...userInSession,
-            clientSideTwoFactorVerified:
-              userInSession.clientSideTwoFactorVerified ?? false,
+            twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
           };
         }
@@ -85,8 +85,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.user = {
           ...user,
-          clientSideTwoFactorVerified:
-            session?.user?.clientSideTwoFactorVerified ?? false,
+          twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
         };
 
@@ -114,7 +113,7 @@ export const authOptions: NextAuthOptions = {
         email: string;
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
-        clientSideTwoFactorVerified: boolean;
+        twoFactorVerified: boolean;
         privateKey: string | null;
       } = token.user as any;
 
@@ -129,7 +128,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
-            clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
+            twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
           } as any,
         };
@@ -182,7 +181,7 @@ const UserSchema = z.object({
   email: z.string().email(),
   image: z.string().optional(),
   twoFactorEnabled: z.boolean(),
-  clientSideTwoFactorVerified: z.boolean(),
+  twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
 });
