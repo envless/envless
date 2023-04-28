@@ -51,7 +51,7 @@ Then, copy `.env.example` to `.env`
 cp .env.example .env
 ```
 
-We use [postgres database](#postgres-database), once you have database setup, run following commands :-
+We use [postgres database](#postgres-setup), once you have database setup, run following commands :-
 
 ```bash
 yarn db:migrate
