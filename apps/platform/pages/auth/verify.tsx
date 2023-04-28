@@ -5,7 +5,7 @@ import { trpc } from "@/utils/trpc";
 import { Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Container, EmptyState, LoadingIcon } from "@/components/theme";
-import { getFingerprint } from "@/lib/fingerprint";
+import { getFingerprint } from "@/lib/client";
 import log from "@/lib/log";
 
 export default function VerifyAuth({ sessionId }: { sessionId: string }) {

@@ -1,16 +1,16 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import MagicLink from "@/emails/MagicLink";
-import { env } from "@/env/index.mjs";
-import SessionHistory from "@/models/SessionHistory";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { LockedUser } from "@prisma/client";
-import sendMail from "emails";
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import GithubProvider from "next-auth/providers/github";
-import GitlabProvider from "next-auth/providers/gitlab";
 import * as z from "zod";
+import sendMail from "emails";
 import prisma from "@/lib/prisma";
+import { env } from "@/env/index.mjs";
+import MagicLink from "@/emails/MagicLink";
+import { LockedUser } from "@prisma/client";
+import SessionHistory from "@/models/SessionHistory";
+import EmailProvider from "next-auth/providers/email";
+import { NextApiRequest, NextApiResponse } from "next";
+import GitlabProvider from "next-auth/providers/gitlab";
+import GithubProvider from "next-auth/providers/github";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -76,8 +76,7 @@ export const authOptions: NextAuthOptions = {
           // @ts-ignore
           token.user = {
             ...userInSession,
-            clientSideTwoFactorVerified:
-              userInSession.clientSideTwoFactorVerified ?? false,
+            twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
           };
         }
@@ -85,8 +84,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.user = {
           ...user,
-          clientSideTwoFactorVerified:
-            session?.user?.clientSideTwoFactorVerified ?? false,
+          twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
         };
 
@@ -114,7 +112,7 @@ export const authOptions: NextAuthOptions = {
         email: string;
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
-        clientSideTwoFactorVerified: boolean;
+        twoFactorVerified: boolean;
         privateKey: string | null;
       } = token.user as any;
 
@@ -129,7 +127,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
-            clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
+            twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
           } as any,
         };
@@ -182,7 +180,7 @@ const UserSchema = z.object({
   email: z.string().email(),
   image: z.string().optional(),
   twoFactorEnabled: z.boolean(),
-  clientSideTwoFactorVerified: z.boolean(),
+  twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
 });

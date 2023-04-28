@@ -2,14 +2,13 @@ import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
 import { createRouter, withAuth } from "@/trpc/router";
-import { RedisTwoFactor } from "@/types/twoFactorTypes";
 import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
 import log from "@/lib/log";
 import prisma from "@/lib/prisma";
-import redis from "@/lib/redis";
+import { getClientDetails } from "@/lib/client";
 
 export const auth = createRouter({
   verify: withAuth
@@ -21,6 +20,7 @@ export const auth = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { req } = ctx;
       const { user } = ctx.session;
       const { fingerprint, sessionId, name } = input;
 
@@ -31,15 +31,11 @@ export const auth = createRouter({
         });
       }
 
-      const sessionStore = (await redis.get(
-        `session:${sessionId}`,
-      )) as RedisTwoFactor;
-
+      const client = await getClientDetails(req);
       const sessionHistory = await SessionHistory.getOne(sessionId);
 
       if (sessionHistory && !sessionHistory?.fingerprint) {
-        const { ip, os, isBot, browser, device, engine, cpu, geo } =
-          sessionStore;
+        const { ip, os, isBot, browser, device, engine, cpu, geo } = client;
 
         await SessionHistory.update(sessionId, {
           ip,

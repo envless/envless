@@ -1,12 +1,10 @@
 import { Fragment } from "react";
-import InviteLink from "@/emails/InviteLink";
 import LockUserAccount from "@/emails/LockUserAccount";
 import { env } from "@/env/index.mjs";
 import { lockUserAccountAndSendEmail } from "@/models/user";
 import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import redis from "@/lib/redis";
 import { verifyTwoFactor } from "@/lib/twoFactorAuth";
 
 export const twoFactor = createRouter({
@@ -177,25 +175,6 @@ export const twoFactor = createRouter({
           failedAuthAttempts: 0,
         },
       });
-
-      const sessionStore = await redis.get(`session:${id}`);
-
-      if (!sessionStore) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Something went wrong, our engineers are aware of it and are working on a fix.",
-        });
-      }
-
-      await redis.set(
-        `session:${id}`,
-        {
-          ...sessionStore,
-          mfa: true,
-        },
-        { ex: 60 * 60 * 24 * 7 }, // 7 days
-      );
 
       return {
         valid: isValid,

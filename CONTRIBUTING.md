@@ -51,10 +51,16 @@ Then, copy `.env.example` to `.env`
 cp .env.example .env
 ```
 
-<h2 id="setup">Setting up databases</h2>
+We use [postgres database](#postgres-setup), once you have database setup, run following commands :-
+
+```bash
+yarn db:migrate
+yarn ab:seed
+```
+
+<h2 id="postgres-setup">Setting up databases</h2>
 
 - <a href="#postgres">Setup Postgres Database</a>
-- <a href="#redis">Setup Redis Database</a>
 
 <h3 id="postgres">Setup Postgres Database</h3>
 
@@ -71,32 +77,6 @@ DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
 ```
 
 > Note: please change username, password and port (default port is 5432) as according to your setup.
-
-<h3 id="redis">Setup Upstash Redis</h3>
-
-Go ahead and create a free [Upstash](https://upstash.com/) account and copy/paste these env variables to `.env` file.
-
-![upstash](./.github/images/upstash.png)
-
-### Or you can use local Redis with Upstash
-
-- Install `Golang` https://go.dev/doc/install
-- Install `Redis` https://redis.io/docs/getting-started/installation/
-
-Then install upstash redis server
-
-`go install github.com/mna/upstashdis/cmd/upstash-redis-rest-server@latest`
-
-Update your `.env` with
-
-```
-UPSTASH_REDIS_REST_URL="http://127.0.0.1:3010"
-UPSTASH_REDIS_REST_TOKEN="asd"
-```
-
-Start Local upstash redis server with
-
-`upstash-redis-rest-server --addr 127.0.0.1:3010 --redis-addr 127.0.0.1:6379 --api-token asd`
 
 ### Implement your changes
 
