@@ -3,8 +3,7 @@
 ## Table of contents
 
 - <a href="#start">Getting started</a>
-- <a href="#setup">Setting up databases</a>
-- <a href="#server">Running the server</a>
+- <a href="#setup">Setup development environment</a>
 - <a href="#changes">Implement your changes</a>
 - <a href="#pr">Open a pull request</a>
 
@@ -15,13 +14,46 @@ When contributing to `envless`, whether on GitHub or in other community spaces:
 - Before opening a new pull request, try searching through the [issue tracker](https://github.com/envless/envless/issues) for known issues or fixes.
 - If you want to make code changes based on your personal opinion(s), make sure you open an issue first describing the changes you want to make, and open a pull request only when your suggestions get approved by maintainers.
 
-### Prerequisites
-
 In order to not waste your time implementing a change that has already been declined, or is generally not needed, start by [opening an issue](https://github.com/envless/envless/issues/new) describing the problem you would like to solve.
 
-### Setup your environment
+---
+
+<h2 id="setup">Setup development environment</h2>
+
+- <a href="#with-docker">Development environment with Docker</a>
+- <a href="#without-docker">Development environment without docker</a>
+
+<h3 id="with-docker">Development environment with Docker</h3>
+
+* [Install Docker](https://docs.docker.com/get-docker/) on your machine.
+* [Install Docker Compose](https://docs.docker.com/compose/install/) on your machine.
+* [Fork the repository](https://github.com/envless/envless/fork)
+* Clone the repository
+  ```bash
+  git clone https://github.com/<your-github-name>/envless.git
+  ```
+* Copy `.env.example` to `.env`
+  ```bash
+  cp .env.example .env
+  ```
+* Run the following command to start the development environment
+  ```bash
+  docker-compose up -d
+  ```
+* Run the following command to migrate and seed the database
+  ```bash
+  docker-compose exec platform yarn db:migrate
+  docker-compose exec platform yarn db:seed
+  ```
+* Your server will be up and running on `http://localhost:3000`
+
+---
+
+<h3 id="without-docker">Development environment without Docker</h3>
+This has been well tested on Mac OS and works really well. So, if you are on Mac we highly recommend this setup.
 
 _We assume that you have latest version of node, and yarn installed, if latest version is creating any issue please [open and issue](https://github.com/envless/envless/issues/new)_
+
 
 In order to contribute to this project, you will need to fork the repository:
 
@@ -44,8 +76,6 @@ yarn install
 ```
 
 Then, copy `.env.example` to `.env`
-
-> Of-course this will change and we no longer will need .env files once we are ready to go live.
 
 ```bash
 cp .env.example .env
@@ -78,6 +108,8 @@ DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
 
 > Note: please change username, password and port (default port is 5432) as according to your setup.
 
+---
+
 ### Implement your changes
 
 When making commits, make sure to follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) guidelines, i.e. prepending the message with `feat:`, `fix:`, `chore:`, `docs:`, etc... You can use `git status` to double check which files have not yet been staged for commit:
@@ -103,14 +135,6 @@ Thanks for contributing. Much ❤️
 ## Tests
 
 For more information on how to help with tests (e2e, or unit tests), please see the [create an issue](https://github.com/envless/envless/issues/new).
-
-## Translations
-
-For more information on how to help with translation, please see the [create an issue](https://github.com/envless/envless/issues/new).
-
-## Credits
-
-This documentation was inspired by the contributing guidelines for [t3-oss/create-t3-app](https://github.com/t3-oss/create-t3-app/blob/next/CONTRIBUTING.md).
 
 <h2 id="contributors">Contributors</h2>
 
