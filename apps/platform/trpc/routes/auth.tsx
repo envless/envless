@@ -6,9 +6,9 @@ import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
+import { getClientDetails } from "@/lib/client";
 import log from "@/lib/log";
 import prisma from "@/lib/prisma";
-import { getClientDetails } from "@/lib/client";
 
 export const auth = createRouter({
   verify: withAuth

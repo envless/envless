@@ -1,8 +1,8 @@
-import log from "@/lib/log";
 import { userAgent } from "next/server";
 import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
+import log from "@/lib/log";
 
 export const config = {
   matcher: [

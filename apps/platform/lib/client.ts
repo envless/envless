@@ -1,7 +1,7 @@
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import isbot from "isbot";
 import requestIp from "request-ip";
 import UAParser from "ua-parser-js";
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export const getFingerprint = async () => {
   const sdk = await FingerprintJS.load();

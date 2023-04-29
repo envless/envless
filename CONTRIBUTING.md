@@ -21,92 +21,72 @@ In order to not waste your time implementing a change that has already been decl
 <h2 id="setup">Setup development environment</h2>
 
 - <a href="#with-docker">Development environment with Docker</a>
-- <a href="#without-docker">Development environment without docker</a>
+- <a href="#without-docker">Development environment without Docker</a>
 
 <h3 id="with-docker">Development environment with Docker</h3>
 
-* [Install Docker](https://docs.docker.com/get-docker/) on your machine.
-* [Install Docker Compose](https://docs.docker.com/compose/install/) on your machine.
-* [Fork the repository](https://github.com/envless/envless/fork)
-* Clone the repository
+- [Install Docker](https://docs.docker.com/get-docker/) on your machine.
+- [Install Docker Compose](https://docs.docker.com/compose/install/) on your machine.
+- [Fork the repository](https://github.com/envless/envless/fork)
+- Clone the repository
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
-* Copy `.env.example` to `.env`
+- Copy `.env.example` to `.env`
   ```bash
   cp .env.example .env
   ```
-* Run the following command to start the development environment
+- Run the following command to start the development environment
   ```bash
   docker-compose up -d
   ```
-* Run the following command to migrate and seed the database
+- Run the following command to migrate and seed the database
   ```bash
   docker-compose exec platform yarn db:migrate
   docker-compose exec platform yarn db:seed
   ```
-* Your server will be up and running on `http://localhost:3000`
+- Your server will be up and running on `http://localhost:3000`
 
 ---
 
 <h3 id="without-docker">Development environment without Docker</h3>
-This has been well tested on Mac OS and works really well. So, if you are on Mac we highly recommend this setup.
 
-_We assume that you have latest version of node, and yarn installed, if latest version is creating any issue please [open and issue](https://github.com/envless/envless/issues/new)_
+> This has been tested on Mac OS and works really well. So, if you are on Mac this setup performs way better than docker.
 
+- [Fork the repository](https://github.com/envless/envless/fork)
+- Clone the repository
+  ```bash
+  git clone https://github.com/<your-github-name>/envless.git
+  ```
+- Copy `.env.example` to `.env`
+  ```bash
+  cp .env.example .env
+  ```
+- Install latest version of node nad yarn
+- Install latest version of [postgres database](#postgres-setup)
+- Create database `envless` in postgres database
+- Update `.env` file's `DATABASE_URL` with database credentials
+- For a quick start, you can use [Supabase](https://supabase.com/) or [Neon](https://neon.tech/) as well.
+- Run the following command to install dependencies
 
-In order to contribute to this project, you will need to fork the repository:
+  ```bash
+  yarn install
+  ```
 
-Then, clone it to your local machine:
+- Run the following command to migrate and seed the database
 
-```bash
-git clone https://github.com/<your-github-name>/envless.git
-```
+  ```bash
+  yarn db:migrate
+  yarn db:seed
+  ```
 
-This project uses [yarn](https://yarnpkg.com/) as its package manager. Install it if you haven't already:
+- Run the following command to start the development server
 
-```bash
-npm install -g yarn
-```
+  ```bash
+  yarn dev
+  ```
 
-Then, install the project's dependencies:
-
-```bash
-yarn install
-```
-
-Then, copy `.env.example` to `.env`
-
-```bash
-cp .env.example .env
-```
-
-We use [postgres database](#postgres-setup), once you have database setup, run following commands :-
-
-```bash
-yarn db:migrate
-yarn ab:seed
-```
-
-<h2 id="postgres-setup">Setting up databases</h2>
-
-- <a href="#postgres">Setup Postgres Database</a>
-
-<h3 id="postgres">Setup Postgres Database</h3>
-
-- [How to setup Postgres on Mac](/setup/postgres-on-mac.md)
-- [How to setup Postgres on Linux](/setup/postgres-on-linux.md)
-- [How to setup Postgres on Windows / WSL](/setup/postgres-on-windows.md)
-
-For a quickstart, you can setup Postgres database on [Supabase](https://supabase.com/) or [Neon](https://neon.tech/) as well.
-
-Copy/paste these env variables to .env file.
-
-```
-DATABASE_URL="postgres://{username}:{password}@localhost:{port}/envless"
-```
-
-> Note: please change username, password and port (default port is 5432) as according to your setup.
+- Your server will be up and running on `http://localhost:3000`
 
 ---
 
@@ -130,16 +110,20 @@ yarn format
 
 Then, make a commit and push your code to your github fork and make a pull-request.
 
-Thanks for contributing. Much ❤️
+Thanks for your contributions. Much ❤️
 
-## Tests
+---
 
-For more information on how to help with tests (e2e, or unit tests), please see the [create an issue](https://github.com/envless/envless/issues/new).
+<h2 id="community">Community</h2>
+
+Please join us on our community channels to get help, discuss features, or just hang out.
+
+- [Join Envless on Slack](https://dub.sh/envless-slack)
+- [Join Envless on Discord](https://dub.sh/envless-discord)
+
+---
 
 <h2 id="contributors">Contributors</h2>
-
-We ❤️ contributors! Feel free to contribute to this project but **please read the [Contributing Guidelines](CONTRIBUTING.md) before opening an issue or PR** so you understand the branching strategy and local development environment. We also welcome you to join our [Slack](https://dub.sh/envless-slack) or [Discord](https://dub.sh/envless-discord) community for either support or contributing guidance.
-
 <a href="https://github.com/envless/envless/graphs/contributors">
   <p>
     <img src="https://contrib.rocks/image?repo=envless/envless" alt="A table of avatars from the project's contributors" />
