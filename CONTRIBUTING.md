@@ -6,6 +6,9 @@
 - <a href="#setup">Setup development environment</a>
 - <a href="#changes">Implement your changes</a>
 - <a href="#pr">Open a pull request</a>
+- <a href="#community">Join our community</a>
+
+---
 
 <h2 id="start">Getting started</h2>
 When contributing to `envless`, whether on GitHub or in other community spaces:
@@ -63,7 +66,7 @@ In order to not waste your time implementing a change that has already been decl
   cp .env.example .env
   ```
 - Install latest version of node nad yarn
-- Install latest version of [postgres database](#postgres-setup)
+- Install latest version of [postgres database](#postgres)
 - Create database `envless` in postgres database
 - Update `.env` file's `DATABASE_URL` with database credentials
 - For a quick start, you can use [Supabase](https://supabase.com/) or [Neon](https://neon.tech/) as well.
@@ -90,7 +93,15 @@ In order to not waste your time implementing a change that has already been decl
 
 ---
 
-### Implement your changes
+<h3 id="postgres">Setup Postgres Database</h3>
+
+- [How to setup Postgres on Mac](/setup/postgres-on-mac.md)
+- [How to setup Postgres on Linux](/setup/postgres-on-linux.md)
+- [How to setup Postgres on Windows / WSL](/setup/postgres-on-windows.md)
+
+---
+
+<h2 id="#changes">Implement your changes</h2>
 
 When making commits, make sure to follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) guidelines, i.e. prepending the message with `feat:`, `fix:`, `chore:`, `docs:`, etc... You can use `git status` to double check which files have not yet been staged for commit:
 
@@ -98,7 +109,9 @@ When making commits, make sure to follow the [conventional commit](https://www.c
 git add <file> && git commit -m "feat/fix/chore/docs: commit message"
 ```
 
-<h3 id="pr">Open a pull request</h3>
+---
+
+<h2 id="#pr">Open a pull request</h2>
 
 ### When you're done
 
