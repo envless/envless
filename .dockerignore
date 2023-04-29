@@ -6,3 +6,7 @@ node_modules
 .dockerignore
 .git
 .gitignore
+.turbo
+.vscode
+.next
+.mailing
