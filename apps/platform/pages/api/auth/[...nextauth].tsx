@@ -1,16 +1,16 @@
-import * as z from "zod";
-import sendMail from "emails";
-import prisma from "@/lib/prisma";
-import { env } from "@/env/index.mjs";
-import MagicLink from "@/emails/MagicLink";
-import { LockedUser } from "@prisma/client";
-import SessionHistory from "@/models/SessionHistory";
-import EmailProvider from "next-auth/providers/email";
 import { NextApiRequest, NextApiResponse } from "next";
-import GitlabProvider from "next-auth/providers/gitlab";
-import GithubProvider from "next-auth/providers/github";
+import MagicLink from "@/emails/MagicLink";
+import { env } from "@/env/index.mjs";
+import SessionHistory from "@/models/SessionHistory";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { LockedUser } from "@prisma/client";
+import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import EmailProvider from "next-auth/providers/email";
+import GithubProvider from "next-auth/providers/github";
+import GitlabProvider from "next-auth/providers/gitlab";
+import * as z from "zod";
+import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
