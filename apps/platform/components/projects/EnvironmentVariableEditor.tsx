@@ -15,13 +15,7 @@ import clsx from "clsx";
 import { repeat } from "lodash";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import {
-  Controller,
-  useFieldArray,
-  useForm,
-  useFormState,
-  useWatch,
-} from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
@@ -29,16 +23,17 @@ import { showToast } from "@/components/theme/showToast";
 export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const pastingInputIndex = useRef(0);
 
-  const { secrets, setSecrets, decryptedProjectKey } = useSecret({
+  const { secrets, decryptedProjectKey } = useSecret({
     branchId,
   });
 
   const {
     control,
     setValue,
+    getValues,
     reset,
     handleSubmit,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isSubmitSuccessful, isDirty },
   } = useForm<any>();
 
   const { fields, append, remove, update } = useFieldArray({
@@ -46,12 +41,26 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     control,
   });
 
+  const keysSuccessCountMessage = (data: {
+    secretsInsertCount: number;
+    secretsUpdateCount: number;
+  }) => {
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount > 0) {
+      return `${data.secretsInsertCount} new secrets created and ${data.secretsUpdateCount} secrets updated successfully`;
+    }
+
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount == 0) {
+      return `${data.secretsInsertCount} new secrets created successfully`;
+    }
+
+    return `${data.secretsUpdateCount} secrets updated successfully`;
+  };
   const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation({
     onSuccess: (data) => {
       showToast({
         type: "success",
         title: "Secrets successfully updated",
-        subtitle: `${data} secrets are updated successfully`,
+        subtitle: keysSuccessCountMessage(data),
       });
     },
   });
@@ -63,6 +72,19 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       });
     }
   }, [secrets, reset]);
+
+  useEffect(() => {
+    let secretValues = getValues("secrets");
+    if (isSubmitSuccessful)
+      reset(
+        {
+          secrets: secretValues,
+        },
+        {
+          keepDirtyValues: true,
+        },
+      );
+  }, [getValues, isSubmitSuccessful, reset]);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -80,7 +102,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
-      id: null,
+      uuid: window.crypto.randomUUID(),
       encryptedKey: "",
       encryptedValue: "",
       decryptedKey: "",
@@ -133,20 +155,22 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const onSubmit = async (data: any) => {
     try {
-      const secretsToSave = data.secrets.map(
-        (secret: EnvSecret, index: number) => {
-          return {
-            id: secret?.id || null,
-            encryptedKey: secret.encryptedKey,
-            encryptedValue: secret.encryptedValue,
-            hasKeyChanged: dirtyFields.secrets[index].decryptedKey,
-            hasValueChanged: dirtyFields.secrets[index].decryptedValue,
-            branchId,
-          };
-        },
-      );
+      if (isDirty) {
+        const secretsToSave = data.secrets.map(
+          (secret: EnvSecret, index: number) => {
+            return {
+              uuid: secret.uuid,
+              encryptedKey: secret.encryptedKey,
+              encryptedValue: secret.encryptedValue,
+              hasKeyChanged: dirtyFields.secrets[index].decryptedKey,
+              hasValueChanged: dirtyFields.secrets[index].decryptedValue,
+              branchId,
+            };
+          },
+        );
 
-      await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+        await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+      }
     } catch (err) {}
   };
 

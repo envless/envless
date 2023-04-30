@@ -186,10 +186,11 @@ model Secret {
   encryptedKey   String
   encryptedValue String
   createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  updatedAt     DateTime @updatedAt
 
   userId   String
   branchId String
+  uuid     String @unique
   branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -198,6 +199,7 @@ model Secret {
 
   @@index([userId])
   @@index([branchId])
+  @@index([uuid])
 }
 
 model SecretVersion {

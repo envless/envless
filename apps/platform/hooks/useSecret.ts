@@ -49,7 +49,7 @@ function useSecret({ branchId }: { branchId: string }) {
         );
 
         envSecrets.push({
-          id: secret.id,
+          uuid: secret.uuid,
           encryptedKey: secret.encryptedKey,
           encryptedValue: secret.encryptedValue,
           decryptedKey,
