@@ -36,6 +36,7 @@ export const getOne = async ({
       createdBy: true,
       currentBranchId: true,
       baseBranchId: true,
+      prId: true,
     },
   });
 };

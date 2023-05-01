@@ -1,21 +1,18 @@
 import { type GetServerSidePropsContext } from "next";
 import { Fragment, useEffect, useState } from "react";
-import { decryptString, generateKey } from "@47ng/cloak";
 import { useBranches } from "@/hooks/useBranches";
+import useSecret from "@/hooks/useSecret";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
-import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
   type Branch,
-  type EncryptedProjectKey,
   MembershipStatus,
   Project as ProjectType,
   PullRequest,
   Secret,
-  type UserPublicKey,
   UserRole,
 } from "@prisma/client";
 import { GitMerge, GitPullRequestClosed } from "lucide-react";
@@ -23,7 +20,7 @@ import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
-import OpenPGP from "@/lib/encryption/openpgp";
+import { showToast } from "@/components/theme/showToast";
 import prisma from "@/lib/prisma";
 
 /**
@@ -45,29 +42,6 @@ interface Props {
   currentBranch: Branch & { secrets: Secret[] };
   currentProject: ProjectType;
   currentRole: UserRole;
-  privateKey: string;
-  encryptedProjectKey: EncryptedProjectKey;
-}
-
-interface DecryptionResult {
-  success: boolean;
-  plaintext?: string;
-  error?: Error;
-}
-
-async function decryptEncryptedString(
-  encryptedString: string,
-  privateKey: string,
-): Promise<DecryptionResult> {
-  try {
-    const decryptedProjectkey = (await OpenPGP.decrypt(
-      encryptedString,
-      privateKey,
-    )) as string;
-    return { success: true, plaintext: decryptedProjectkey };
-  } catch (error) {
-    return { success: false, error };
-  }
 }
 
 export default function PullRequestDetailPage({
@@ -77,46 +51,74 @@ export default function PullRequestDetailPage({
   pullRequest,
   baseBranch,
   currentBranch,
-  privateKey,
-  encryptedProjectKey,
 }: Props) {
-  const { allBranches } = useBranches({ currentProject });
-
   const [oldCode, setOldCode] = useState("");
   const [newCode, setNewCode] = useState("");
+
+  useBranches({ currentProject });
+
+  const { secrets: baseBranchSecrets } = useSecret({ branchId: baseBranch.id });
+  const { secrets: currentBranchSecrets } = useSecret({
+    branchId: currentBranch.id,
+  });
+
+  const {
+    mutate: closePullRequestMutation,
+    isLoading: loadingClosePullRequest,
+  } = trpc.pullRequest.close.useMutation({
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Pull Request successfully closed",
+        subtitle: `Pull Request closed`,
+      });
+    },
+
+    onError: (error) => {
+      showToast({
+        type: "error",
+        title: "Something went wrong",
+        subtitle: "Failed to close this Pull Request",
+      });
+    },
+  });
+
+  const {
+    mutate: mergePullRequestMutation,
+    isLoading: loadingMergePullRequest,
+  } = trpc.pullRequest.merge.useMutation({
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Pull Request successfully merged",
+        subtitle: `Pull Request merged`,
+      });
+    },
+
+    onError: (error) => {
+      showToast({
+        type: "error",
+        title: "Something went wrong",
+        subtitle: "Failed to merge this Pull Request",
+      });
+    },
+  });
 
   useEffect(() => {
     const decryptSecrets = async () => {
       const decryptedOldCode: string[] = [];
       const decryptedNewCode: string[] = [];
 
-      for (const secret of baseBranch.secrets) {
-        const decryptedKey = await decryptEncryptedString(
-          secret.encryptedKey,
-          privateKey,
+      for (const oldSecret of baseBranchSecrets) {
+        decryptedOldCode.push(
+          `${oldSecret.decryptedKey}=${oldSecret.decryptedValue}`,
         );
-        const decryptedValue = await decryptEncryptedString(
-          secret.encryptedValue,
-          privateKey,
-        );
-        // console.log(privateKey);
-        if (decryptedKey.success && decryptedValue.success) {
-          decryptedOldCode.push(`${decryptedKey}=${decryptedValue}`);
-        }
       }
 
-      for (const secret of currentBranch.secrets) {
-        const decryptedKey = await decryptEncryptedString(
-          secret.encryptedKey,
-          privateKey,
+      for (const newSecret of currentBranchSecrets) {
+        decryptedNewCode.push(
+          `${newSecret.decryptedKey}=${newSecret.decryptedValue}`,
         );
-        const decryptedValue = await decryptEncryptedString(
-          secret.encryptedValue,
-          privateKey,
-        );
-        if (decryptedKey.success && decryptedValue.success) {
-          decryptedNewCode.push(`${decryptedKey}=${decryptedValue}`);
-        }
       }
 
       setOldCode(decryptedOldCode.join("\n"));
@@ -124,7 +126,7 @@ export default function PullRequestDetailPage({
     };
 
     decryptSecrets();
-  }, [baseBranch, currentBranch, privateKey]);
+  }, [baseBranch, baseBranchSecrets, currentBranch, currentBranchSecrets]);
 
   return (
     <ProjectLayout
@@ -151,6 +153,12 @@ export default function PullRequestDetailPage({
               </div>
               <div className="col-span-12 flex items-start gap-3 md:col-span-4">
                 <Button
+                  onClick={() => {
+                    closePullRequestMutation({
+                      prId: pullRequest.prId,
+                      projectId: currentProject.id,
+                    });
+                  }}
                   leftIcon={
                     <GitPullRequestClosed
                       className="mr-2 h-4 w-4"
@@ -159,15 +167,25 @@ export default function PullRequestDetailPage({
                   }
                   variant="danger-outline"
                   className="float-right"
+                  disabled={loadingClosePullRequest || loadingMergePullRequest}
                 >
                   Close pull request
                 </Button>
                 <Button
+                  onClick={() => {
+                    mergePullRequestMutation({
+                      baseBranchId: baseBranch.id,
+                      currentBranchId: currentBranch.id,
+                      prId: pullRequest.prId,
+                      projectId: currentProject.id,
+                    });
+                  }}
                   leftIcon={
                     <GitMerge className="mr-2 h-4 w-4" strokeWidth={2} />
                   }
                   variant="primary"
                   className="float-right"
+                  disabled={loadingMergePullRequest || loadingClosePullRequest}
                 >
                   Merge pull request
                 </Button>
@@ -196,8 +214,6 @@ export default function PullRequestDetailPage({
 const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   // @ts-ignore
   const { slug: projectSlug, prId } = context.params;
-  const session = await getServerSideSession(context);
-  const user = session?.user;
 
   const project = await Project.findBySlug(projectSlug);
   const projectId = project.id;
@@ -219,46 +235,11 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
     });
   }
 
-  const currentProject = await prisma.project.findFirst({
-    where: { slug: projectSlug as string },
-    select: {
-      id: true,
-      encryptedProjectKey: {
-        select: { id: true, encryptedKey: true },
-      },
-    },
-  });
-
-  const userPublicKey = await prisma.userPublicKey.findFirst({
-    where: { userId: user?.id },
-    select: { key: true },
-  });
-
-  const publicKey = userPublicKey?.key;
-  let encryptedProjectKey = currentProject?.encryptedProjectKey;
-
-  if (publicKey && !encryptedProjectKey) {
-    const decryptedProjectKey = await generateKey();
-
-    const encryptedKey = (await OpenPGP.encrypt(decryptedProjectKey, [
-      publicKey,
-    ])) as string;
-
-    encryptedProjectKey = await prisma.encryptedProjectKey.create({
-      data: {
-        encryptedKey,
-        projectId: currentProject?.id as string,
-      },
-    });
-  }
-
   return {
     props: {
       pullRequest: JSON.parse(JSON.stringify(pullRequest)),
       baseBranch: JSON.parse(JSON.stringify(baseBranch)),
       currentBranch: JSON.parse(JSON.stringify(currentBranch)),
-      privateKey: user?.privateKey,
-      encryptedProjectKey,
     },
   };
 };

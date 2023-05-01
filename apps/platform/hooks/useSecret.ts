@@ -11,8 +11,8 @@ function useSecret({ branchId }: { branchId: string }) {
   const { data: session } = useSession();
   const [secrets, setSecrets] = useState<EnvSecret[]>([]);
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
-  const sessionUser = session?.user as any;
-  const privateKey = sessionUser.privateKey as string;
+  const sessionUser = session?.user;
+  const privateKey = sessionUser?.privateKey;
   const utils = trpc.useContext();
 
   useEffect(() => {
