@@ -1,6 +1,7 @@
 import { encryptString } from "@47ng/cloak";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
+import { randomUUID } from "crypto";
 import fs from "fs";
 import OpenPGP from "../../lib/encryption/openpgp";
 import { SecretType } from "./types";
@@ -15,7 +16,6 @@ const seedSecrets = async (count: number = 10) => {
   if (!pgpPrivateKey) {
     throw new Error("No private key found");
   }
-
   const user = await prisma.user.findUnique({
     where: {
       email: "envless@example.com",
@@ -103,6 +103,7 @@ aB0cD1eF2gH3iJ4kL5mN7oP9qR0sT1uV3wX5yZ7A8bC9dE1fG2h3iJ5k6m8o
           encryptedKey,
           encryptedValue,
           userId: user.id,
+          uuid: randomUUID(),
         } as SecretType);
       });
     }

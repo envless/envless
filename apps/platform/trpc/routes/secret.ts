@@ -1,5 +1,4 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { Secret } from "@prisma/client";
 import { z } from "zod";
 
 export const secrets = createRouter({
@@ -42,6 +41,7 @@ export const secrets = createRouter({
         },
         select: {
           id: true,
+          uuid: true,
           encryptedKey: true,
           encryptedValue: true,
         },
@@ -57,7 +57,7 @@ export const secrets = createRouter({
       z.object({
         secrets: z.array(
           z.object({
-            id: z.string().nullable(),
+            uuid: z.string(),
             encryptedKey: z.string().min(1),
             encryptedValue: z.string().min(1),
             branchId: z.string().min(1),
@@ -73,50 +73,22 @@ export const secrets = createRouter({
       const { secrets } = input;
 
       let secretsUpdateCount = 0;
-
-      const secretsToInsert = secrets
-        .filter((secret) => !secret.id)
-        .map((secret) => ({
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          userId: user?.id,
-          branchId: secret.branchId,
-        }));
-
-      const secretsToUpdate = secrets
-        .filter((secret) => secret.id)
-        .map((secret) => ({
-          id: secret.id,
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          branchId: secret.branchId,
-
-          hasKeyChanged: secret.hasKeyChanged,
-          hasValueChanged: secret.hasValueChanged,
-        }));
+      let secretsInsertCount = 0;
 
       try {
-        if (secretsToInsert.length > 0) {
-          for (let secret of secretsToInsert) {
-            await prisma.secret.create({
-              data: {
-                encryptedKey: secret.encryptedKey,
-                encryptedValue: secret.encryptedValue,
-                userId: user.id,
-                branchId: secret.branchId,
-              },
-            });
-            secretsUpdateCount++;
-          }
-        }
+        for (let secret of secrets) {
+          const secretFromDb = await prisma.secret.findUnique({
+            where: {
+              uuid: secret.uuid,
+            },
+          });
 
-        if (secretsToUpdate && secretsToUpdate.length > 0) {
-          for (let secret of secretsToUpdate) {
+          if (secretFromDb) {
             if (secret.hasKeyChanged || secret.hasValueChanged) {
               const data = {
                 branchId: secret?.branchId,
               } as {
-                id: string;
+                uuid: string;
                 branchId: string;
                 encryptedKey: string;
                 encryptedValue: string;
@@ -133,32 +105,39 @@ export const secrets = createRouter({
               await prisma.secret.update({
                 data,
                 where: {
-                  id: secret?.id || undefined,
-                },
-              });
-
-              const oldSecret = await prisma.secret.findUnique({
-                where: {
-                  id: secret?.id || undefined,
+                  id: secretFromDb.id,
                 },
               });
 
               await prisma.secretVersion.create({
                 data: {
-                  encryptedKey: oldSecret?.encryptedKey as string,
-                  encryptedValue: oldSecret?.encryptedValue as string,
-                  secretId: oldSecret?.id as string,
+                  encryptedKey: secretFromDb?.encryptedKey as string,
+                  encryptedValue: secretFromDb?.encryptedValue as string,
+                  secretId: secretFromDb?.id as string,
                 },
               });
 
               secretsUpdateCount++;
             }
+          } else {
+            await prisma.secret.create({
+              data: {
+                uuid: secret.uuid,
+                encryptedKey: secret.encryptedKey,
+                encryptedValue: secret.encryptedValue,
+                userId: user.id,
+                branchId: secret.branchId,
+              },
+            });
+
+            secretsInsertCount++;
           }
         }
+      } catch (err) {}
 
-        return secretsUpdateCount;
-      } catch (err) {
-        throw new Error(err.message);
-      }
+      return {
+        secretsInsertCount,
+        secretsUpdateCount,
+      };
     }),
 });
