@@ -2360,10 +2360,10 @@
   resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-10.21.1.tgz#9e8717449f133b5a6944549f43d1f185c1955615"
   integrity sha512-sCLJW9v79sJhVj3L6Ck74mImvKBXrq2KOKtdguxaZZ5rgeqMyQuc8bGHRpf9yfeV08uMNl4Svz1QTee9PjdSqg==
 
-"@trpc/server@^10.10.0":
-  version "10.18.0"
-  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-10.18.0.tgz#3e3de21d4f66e86a20a5175a0d193d687d75a17c"
-  integrity sha512-nVMqdDIF9YLOeC3g6RdAvdCPqkHFjpshSqZGThZ+fyjiWSUXj2ZKCduhJFnY77TjtgODojeaaghmzcnjxb+Onw==
+"@trpc/server@^10.23.0":
+  version "10.23.0"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-10.23.0.tgz#b73c648f592a5bc88b9a2a64594ce8e952a10380"
+  integrity sha512-0CPfGZK3v3gfAL8ylV5vDJVBQtPp47EB4Vgx6WItSXmwYQlLC39ZC3gkZ4I5cGpQKl4l3QrNNeUvIcse4hlMxA==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
