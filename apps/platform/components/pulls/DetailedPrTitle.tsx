@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { PullRequestStatus } from "@prisma/client";
+import type { Branch, PullRequestStatus } from "@prisma/client";
 import { GitPullRequest } from "lucide-react";
 
 interface DetailedPrTitleProps {
@@ -7,8 +7,8 @@ interface DetailedPrTitleProps {
   title: string;
   prId: number;
   status: PullRequestStatus;
-  base?: string;
-  current?: string;
+  base?: Branch;
+  current?: Branch;
 }
 
 export default function DetailedPrTitle({
@@ -35,11 +35,11 @@ export default function DetailedPrTitle({
         <div className="text-light text-xs">
           {author} wants to merge 6 keys into{" "}
           <Link href="#" className="text-teal-400 hover:underline">
-            {base}
+            {base?.name}
           </Link>{" "}
           from{" "}
           <Link href="#" className="text-teal-400 hover:underline">
-            {current}
+            {current?.name}
           </Link>
         </div>
       </div>

@@ -32,8 +32,10 @@ export const getOne = async ({
         projectId,
       },
     },
-    include: {
+    select: {
       createdBy: true,
+      currentBranchId: true,
+      baseBranchId: true,
     },
   });
 };

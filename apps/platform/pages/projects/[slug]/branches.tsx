@@ -210,14 +210,7 @@ export const BranchesPage = ({
         ),
       },
     ],
-    [
-      branchDeleteMutation,
-      copiedValue,
-      copy,
-      fetching,
-      setCopiedValue,
-      setCurrentBranch,
-    ],
+    [branchDeleteMutation, copiedValue, copy, currentProject.id, fetching, setCopiedValue, setCurrentBranch],
   );
 
   const protectedBranchesColumns = [
@@ -302,7 +295,7 @@ export const BranchesPage = ({
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.id}`,
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.prId}`,
           );
         }}
         isOpen={isPrModalOpen}

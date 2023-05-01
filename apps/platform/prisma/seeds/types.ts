@@ -52,6 +52,8 @@ export type PullRequestType = {
   prId: number;
   title: string;
   status: PullRequestStatusType;
+  baseBranchId: string;
+  currentBranchId: string;
   createdById: string;
   projectId: string;
 };

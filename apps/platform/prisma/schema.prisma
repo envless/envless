@@ -153,8 +153,8 @@ model PullRequest {
   createdById     String
   mergedById      String?
   closedById      String?
-  baseBranchId    String?
-  currentBranchId String?
+  baseBranchId    String
+  currentBranchId String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   mergedAt        DateTime?

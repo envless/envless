@@ -20,9 +20,23 @@ const seedPullRequests = async () => {
     select: { id: true },
   });
 
+  const branches = await prisma.branch.findMany({ select: { id: true } });
+
   console.log(`Seeding Pull Requests for ${projects.length} projects`.blue);
 
   for (let j = 0; j < projects.length; j++) {
+    const baseBranchId = sample([
+      ...branches.map((branch) => branch.id),
+    ]) as string;
+
+    let currentBranchId = baseBranchId;
+
+    while (currentBranchId === baseBranchId) {
+      currentBranchId = sample([
+        ...branches.map((branch) => branch.id),
+      ]) as string;
+    }
+
     pullRequests.push({
       title: `${faker.lorem.sentence(10)}`,
       prId: await getNextPrId(projects[j].id),
@@ -31,6 +45,8 @@ const seedPullRequests = async () => {
         "closed",
         "merged",
       ]) as unknown as PullRequestStatusType,
+      baseBranchId,
+      currentBranchId,
       projectId: projects[j].id,
       createdById: sample([...users.map((user) => user.id)]) as string,
     });

@@ -22,6 +22,8 @@ export const pullRequest = createRouter({
         pullRequest: z.object({
           title: z.string(),
           projectSlug: z.string(),
+          baseBranchId: z.string(),
+          currentBranchId: z.string(),
         }),
       }),
     )
@@ -44,6 +46,8 @@ export const pullRequest = createRouter({
           status: "open",
           projectId: projectId,
           createdById: userId,
+          baseBranchId: pullRequest.baseBranchId,
+          currentBranchId: pullRequest.currentBranchId,
         },
         include: {
           project: true,

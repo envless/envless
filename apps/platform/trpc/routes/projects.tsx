@@ -21,11 +21,20 @@ export const projects = createRouter({
     // return ctx.prisma.projects.findMany();
     return [];
   }),
-  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
-    const { id } = input;
+  getEncryptedProjectKey: withAuth
+    .input(z.object({ projectId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { projectId } = input;
 
-    return { id };
-  }),
+      const encryptedProjectKey =
+        await ctx.prisma.encryptedProjectKey.findUnique({
+          where: {
+            projectId,
+          },
+        });
+
+      return encryptedProjectKey;
+    }),
   checkSlugOrNameAvailability: withAuth
     .input(
       z.object({
