@@ -122,20 +122,24 @@ const EncryptionSetup = ({ ...props }) => {
     }
   };
 
-  const onPrivateKeySetup = async () => {
+  const onPrivateKeySetup = async (value: string) => {
     try {
       const decryptedProjectKey = (await OpenPGP.decrypt(
         encryptedProjectKey,
-        privateKey,
+        value,
       )) as string;
 
       const updatedSession = {
         ...session,
         user: {
           ...session?.user,
-          privateKey,
+          privateKey: value,
         },
       };
+
+      if (privateKey !== value) {
+        await setPrivateKey(value);
+      }
 
       await update(updatedSession);
 
@@ -177,7 +181,8 @@ const EncryptionSetup = ({ ...props }) => {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await onPrivateKeySetup();
+            const value = e.target["privateKey"].value;
+            await onPrivateKeySetup(value);
           }}
         >
           <div className="flex flex-col items-center justify-center">

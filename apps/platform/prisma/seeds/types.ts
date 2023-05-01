@@ -69,4 +69,5 @@ export type SecretType = {
   projectId: string;
   userId: string;
   branchId: string;
+  uuid: string;
 };

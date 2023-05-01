@@ -5,7 +5,7 @@ import { trpc } from "@/utils/trpc";
 import { Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Container, EmptyState, LoadingIcon } from "@/components/theme";
-import { getFingerprint } from "@/lib/fingerprint";
+import { getFingerprint } from "@/lib/client";
 import log from "@/lib/log";
 
 export default function VerifyAuth({ sessionId }: { sessionId: string }) {
@@ -25,12 +25,17 @@ export default function VerifyAuth({ sessionId }: { sessionId: string }) {
       log("Error", error);
       signOut();
     },
+
+    onSettled: () => {
+      localStorage.removeItem("fullName");
+    },
   });
 
   useEffect(() => {
     (async () => {
       const fingerprint = await getFingerprint();
-      await verifyMutation.mutate({ fingerprint, sessionId });
+      const name = localStorage.getItem("fullName");
+      verifyMutation.mutate({ fingerprint, sessionId, name });
     })();
   }, []);
 
@@ -56,7 +61,7 @@ export async function getServerSideProps(context) {
   if (!session || !session.user) {
     return {
       redirect: {
-        destination: "/auth",
+        destination: "/login",
         permanent: false,
       },
     };

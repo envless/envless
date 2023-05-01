@@ -12,7 +12,7 @@ export interface UserType {
   image?: string;
   role: UserRole;
   twoFactorEnabled: boolean;
-  clientSideTwoFactorVerified: boolean;
+  twoFactorVerified: boolean;
   locked: LockedUser | null;
   privateKey: string | null;
 }

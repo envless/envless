@@ -37,7 +37,7 @@ model Project {
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   deletedAt           DateTime?
-  settings            Json                 @default("{}")
+  twoFactorRequired   Boolean              @default(false)
   branches            Branch[]
   access              Access[]
   audits              Audit[]
@@ -186,18 +186,33 @@ model Secret {
   encryptedKey   String
   encryptedValue String
   createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  version  Int     @default(1)
-  parentId String?
+  updatedAt     DateTime @updatedAt
 
   userId   String
   branchId String
+  uuid     String @unique
   branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+
+  secretVersions SecretVersion[]  @relation(name: "versions")
+
   @@index([userId])
   @@index([branchId])
+  @@index([uuid])
+}
+
+model SecretVersion {
+  id             String   @id @default(cuid())
+  encryptedKey   String
+  encryptedValue String
+  secretId       String
+
+  secret         Secret   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([secretId])
 }
 
 // Necessary for Next auth

@@ -54,13 +54,13 @@ export const SettingsPage = ({
     });
 
   const submitForm = (values) => {
-    const { name, enforce2FA } = values;
+    const { name, twoFactorRequired } = values;
 
     projectGeneralMutation({
       project: {
         ...currentProject,
         name,
-        enforce2FA,
+        twoFactorRequired,
       },
     });
   };
@@ -106,10 +106,8 @@ export const SettingsPage = ({
                 </label>
 
                 <Toggle
-                  // TODO: - create enforce2fa column instead of adding it to settings
-                  // checked={currentProject.settings?.enforce2FA || false}
-                  checked={false}
-                  name="enforce2FA"
+                  checked={currentProject.twoFactorRequired || false}
+                  name="twoFactorRequired"
                   register={register}
                 />
               </div>

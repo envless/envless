@@ -1,5 +1,4 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { Secret } from "@prisma/client";
 import { z } from "zod";
 
 export const secrets = createRouter({
@@ -42,6 +41,7 @@ export const secrets = createRouter({
         },
         select: {
           id: true,
+          uuid: true,
           encryptedKey: true,
           encryptedValue: true,
         },
@@ -57,10 +57,12 @@ export const secrets = createRouter({
       z.object({
         secrets: z.array(
           z.object({
-            id: z.string().nullable(),
+            uuid: z.string(),
             encryptedKey: z.string().min(1),
             encryptedValue: z.string().min(1),
             branchId: z.string().min(1),
+            hasKeyChanged: z.boolean(),
+            hasValueChanged: z.boolean(),
           }),
         ),
       }),
@@ -70,47 +72,72 @@ export const secrets = createRouter({
       const { user } = ctx.session;
       const { secrets } = input;
 
-      const secretsToInsert = secrets
-        .filter((secret) => !secret.id)
-        .map((secret) => ({
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          userId: user?.id,
-          branchId: secret.branchId,
-        }));
-
-      const secretsToUpdate = secrets
-        .filter((secret) => secret.id)
-        .map((secret) => ({
-          id: secret.id,
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          branchId: secret.branchId,
-        }));
+      let secretsUpdateCount = 0;
+      let secretsInsertCount = 0;
 
       try {
-        if (secretsToInsert.length > 0) {
-          await prisma.secret.createMany({
-            data: secretsToInsert as never,
+        for (let secret of secrets) {
+          const secretFromDb = await prisma.secret.findUnique({
+            where: {
+              uuid: secret.uuid,
+            },
           });
-        }
 
-        if (secretsToUpdate && secretsToUpdate.length > 0) {
-          for (let secret of secretsToUpdate) {
-            await prisma.secret.update({
-              data: {
-                encryptedKey: secret?.encryptedKey,
-                encryptedValue: secret?.encryptedValue,
+          if (secretFromDb) {
+            if (secret.hasKeyChanged || secret.hasValueChanged) {
+              const data = {
                 branchId: secret?.branchId,
-              },
-              where: {
-                id: secret?.id || undefined,
+              } as {
+                uuid: string;
+                branchId: string;
+                encryptedKey: string;
+                encryptedValue: string;
+              };
+
+              if (secret.hasKeyChanged) {
+                data.encryptedKey = secret.encryptedKey;
+              }
+
+              if (secret.hasValueChanged) {
+                data.encryptedValue = secret.encryptedValue;
+              }
+
+              await prisma.secret.update({
+                data,
+                where: {
+                  id: secretFromDb.id,
+                },
+              });
+
+              await prisma.secretVersion.create({
+                data: {
+                  encryptedKey: secretFromDb?.encryptedKey as string,
+                  encryptedValue: secretFromDb?.encryptedValue as string,
+                  secretId: secretFromDb?.id as string,
+                },
+              });
+
+              secretsUpdateCount++;
+            }
+          } else {
+            await prisma.secret.create({
+              data: {
+                uuid: secret.uuid,
+                encryptedKey: secret.encryptedKey,
+                encryptedValue: secret.encryptedValue,
+                userId: user.id,
+                branchId: secret.branchId,
               },
             });
+
+            secretsInsertCount++;
           }
         }
-      } catch (err) {
-        throw new Error(err.message);
-      }
+      } catch (err) {}
+
+      return {
+        secretsInsertCount,
+        secretsUpdateCount,
+      };
     }),
 });

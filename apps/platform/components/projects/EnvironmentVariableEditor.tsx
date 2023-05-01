@@ -9,11 +9,7 @@ import {
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
-import {
-  attemptToParseCopiedSecrets,
-  parseEnvContent,
-  parseEnvFile,
-} from "@/utils/envParser";
+import { attemptToParseCopiedSecrets, parseEnvFile } from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
 import { repeat } from "lodash";
@@ -22,26 +18,73 @@ import { useDropzone } from "react-dropzone";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
   const pastingInputIndex = useRef(0);
 
-  const { secrets, setSecrets, decryptedProjectKey } = useSecret({
+  const { secrets, decryptedProjectKey } = useSecret({
     branchId,
   });
 
-  const { control, setValue, handleSubmit } = useForm<any>();
+  const {
+    control,
+    setValue,
+    getValues,
+    reset,
+    handleSubmit,
+    formState: { dirtyFields, isSubmitSuccessful, isDirty },
+  } = useForm<any>();
+
   const { fields, append, remove, update } = useFieldArray({
     name: "secrets",
     control,
   });
-  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation();
+
+  const keysSuccessCountMessage = (data: {
+    secretsInsertCount: number;
+    secretsUpdateCount: number;
+  }) => {
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount > 0) {
+      return `${data.secretsInsertCount} new secrets created and ${data.secretsUpdateCount} secrets updated successfully`;
+    }
+
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount == 0) {
+      return `${data.secretsInsertCount} new secrets created successfully`;
+    }
+
+    return `${data.secretsUpdateCount} secrets updated successfully`;
+  };
+  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation({
+    onSuccess: (data) => {
+      showToast({
+        type: "success",
+        title: "Secrets successfully updated",
+        subtitle: keysSuccessCountMessage(data),
+      });
+    },
+  });
 
   useEffect(() => {
     if (secrets) {
-      setValue("secrets", secrets);
+      reset({
+        secrets,
+      });
     }
-  }, [secrets, setValue]);
+  }, [secrets, reset]);
+
+  useEffect(() => {
+    let secretValues = getValues("secrets");
+    if (isSubmitSuccessful)
+      reset(
+        {
+          secrets: secretValues,
+        },
+        {
+          keepDirtyValues: true,
+        },
+      );
+  }, [getValues, isSubmitSuccessful, reset]);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -59,7 +102,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
-      id: null,
+      uuid: window.crypto.randomUUID(),
       encryptedKey: "",
       encryptedValue: "",
       decryptedKey: "",
@@ -79,10 +122,18 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     );
 
     if (pastedSecrets && pastedSecrets.length === 0) {
+      const encryptedSecretKey = await encryptString(
+        content,
+        decryptedProjectKey,
+      );
+      setValue(
+        `secrets.${pastingInputIndex.current}.encryptedKey`,
+        encryptedSecretKey,
+      );
+      setValue(`secrets.${pastingInputIndex.current}.decryptedKey`, content);
       return;
     }
 
-    // check for the pastedLength of secrets
     const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
@@ -92,6 +143,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
       pastingInputIndex.current + 1,
     );
 
+    // this is creating workaround. We need to find the better solution. (state is being reset)
     remove();
 
     append([
@@ -103,16 +155,22 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const onSubmit = async (data: any) => {
     try {
-      const secretsToSave = data.secrets.map((secret: EnvSecret) => {
-        return {
-          id: secret?.id || null,
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          branchId,
-        };
-      });
+      if (isDirty) {
+        const secretsToSave = data.secrets.map(
+          (secret: EnvSecret, index: number) => {
+            return {
+              uuid: secret.uuid,
+              encryptedKey: secret.encryptedKey,
+              encryptedValue: secret.encryptedValue,
+              hasKeyChanged: dirtyFields.secrets[index].decryptedKey,
+              hasValueChanged: dirtyFields.secrets[index].decryptedValue,
+              branchId,
+            };
+          },
+        );
 
-      await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+        await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+      }
     } catch (err) {}
   };
 
@@ -187,7 +245,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               >
                 Add more
               </Button>
-              <Button>Save changes</Button>
+              <Button loading={saveSecretsMutation.isLoading}>
+                Save changes
+              </Button>
             </div>
           </div>
         </form>

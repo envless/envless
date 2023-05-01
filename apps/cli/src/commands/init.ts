@@ -63,7 +63,7 @@ export default class Init extends Command {
     if (!flags.token) {
       const token: any = await text({
         message: `Enter your CLI TOKEN: ${grey(
-          `Please follow this instruction to get your token: ${LINKS.docs}/cli/auth`,
+          `Please follow this instruction to get your token: ${LINKS.docs}/quickstart#install-and-setup-envless-cli`,
         )}`,
 
         validate: (input: string) => {

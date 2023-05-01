@@ -8,7 +8,7 @@ WORKDIR /app
 RUN yarn global add turbo
 COPY . .
 RUN rm -rf apps/cli apps/docs apps/www
-RUN turbo prune --scope=envless --docker
+RUN turbo prune --scope=platform --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:18-alpine AS installer
@@ -33,6 +33,8 @@ ENV SKIP_ENV_VALIDATION true
 ENV EMAIL_FROM envless@example.com
 RUN npx turbo run db:generate
 
-RUN yarn turbo run build --filter=platform...
+# RUN yarn turbo run build --filter=platform...
 
-CMD ["yarn","dev"]
+EXPOSE 3000 3883
+
+CMD ["yarn","dev", "--filter=platform"]

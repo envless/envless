@@ -53,6 +53,7 @@ export const parseEnvContent = async (
         );
 
         const secret = {
+          uuid: window.crypto.randomUUID(),
           encryptedKey,
           encryptedValue,
           decryptedKey: key as string,
@@ -87,7 +88,7 @@ export const parseEnvContent = async (
             );
 
             const envSecret = {
-              id: "",
+              uuid: window.crypto.randomUUID(),
               encryptedKey,
               encryptedValue,
               hiddenValue: repeat("*", String(pairs).length),
@@ -140,7 +141,7 @@ export const parseEnvContent = async (
           );
 
           const envSecret = {
-            id: "",
+            uuid: window.crypto.randomUUID(),
             encryptedKey,
             encryptedValue,
             hiddenValue: repeat("*", String(pairs).length),
@@ -190,6 +191,11 @@ export const attemptToParseCopiedSecrets = async (
         copiedContent,
         decryptedProjectKey,
       );
+
+      // this is the special case when pasting on secret key field only
+      if (parsedContent.length === 1 && !parsedContent[0].decryptedKey) {
+        parsedContent = [];
+      }
     } catch (error) {}
   }
 

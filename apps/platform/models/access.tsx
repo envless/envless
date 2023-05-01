@@ -22,6 +22,7 @@ export const accessesWithProject = async ({ userId }: { userId: string }) => {
           name: true,
           slug: true,
           updatedAt: true,
+          twoFactorRequired: true,
         },
       },
     },

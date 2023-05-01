@@ -17,6 +17,7 @@ function useSecret({ branchId }: { branchId: string }) {
 
   useEffect(() => {
     const envSecrets: EnvSecret[] = [];
+    if (!privateKey) return;
 
     (async () => {
       const { branch, secrets } =
@@ -48,7 +49,7 @@ function useSecret({ branchId }: { branchId: string }) {
         );
 
         envSecrets.push({
-          id: secret.id,
+          uuid: secret.uuid,
           encryptedKey: secret.encryptedKey,
           encryptedValue: secret.encryptedValue,
           decryptedKey,
