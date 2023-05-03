@@ -45,8 +45,8 @@ In order to not waste your time implementing a change that has already been decl
   ```
 - Run the following command to migrate and seed the database
   ```bash
-  docker-compose exec platform yarn db:migrate
-  docker-compose exec platform yarn db:seed
+  docker-compose exec console yarn db:migrate
+  docker-compose exec console yarn db:seed
   ```
 - Your server will be up and running on `http://localhost:3000`
 

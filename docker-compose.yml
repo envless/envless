@@ -17,8 +17,8 @@ services:
     ports:
       - "5432:5432"
 
-  platform:
-    container_name: platform
+  console:
+    container_name: console
     build:
       context: .
       dockerfile: Dockerfile
