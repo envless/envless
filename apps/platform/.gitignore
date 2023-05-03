@@ -5,3 +5,4 @@ node_modules
 test.json
 test.yml
 test.env
+.vercel
