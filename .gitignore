@@ -95,3 +95,4 @@ dump.rdb
 /playwright/.cache/
 .mailing
 .envless.key
+/apps/cli/bin/*
