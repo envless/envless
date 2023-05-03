@@ -99,12 +99,6 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
     },
   });
 
-  if (!selectedProject) {
-    return {
-      notFound: true,
-    };
-  }
-
   const auditLogs = await prisma?.audit.findMany({
     orderBy: {
       createdAt: "desc",
