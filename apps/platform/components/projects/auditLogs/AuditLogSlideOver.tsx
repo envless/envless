@@ -1,8 +1,8 @@
+import { formatDateTime } from "@/utils/helpers";
 import { CopyBlock, atomOneDark } from "react-code-blocks";
 import { SlideOver } from "@/components/theme";
 
 type Props = {
-  auditLogs: any;
   open: boolean;
   setOpen: (open: boolean) => void;
   auditLogDetail: any;
@@ -11,7 +11,6 @@ type Props = {
 export default function AuditLogSideOver({
   open,
   setOpen,
-  auditLogs,
   auditLogDetail,
 }: Props) {
   return (
@@ -41,13 +40,10 @@ export default function AuditLogSideOver({
             </dl>
 
             <dl className="grid grid-cols-2 py-2">
-              <dt className="text-sm leading-relaxed">Project</dt>
-              <dd className="text-sm">{auditLogDetail.project.name}</dd>
-            </dl>
-
-            <dl className="grid grid-cols-2 py-2">
               <dt className="text-sm leading-relaxed">Created At</dt>
-              <dd className="text-sm">29 July 2022, 9:32 PM</dd>
+              <dd className="text-sm">
+                {formatDateTime(auditLogDetail?.createdAt)}
+              </dd>
             </dl>
 
             <dl className="py-2">
