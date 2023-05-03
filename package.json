@@ -30,7 +30,8 @@
     "turbo": "^1.9.3"
   },
   "engines": {
-    "node": "18.x"
+    "yarn": ">=1.22.19",
+    "node": ">=18.15.0"
   },
   "dependencies": {
     "dotenv-cli": "^7.2.1"

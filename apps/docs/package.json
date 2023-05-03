@@ -48,5 +48,9 @@
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "tailwind-scrollbar": "^3.0.0"
+  },
+  "engines": {
+    "yarn": ">=1.22.19",
+    "node": ">=18.15.0"
   }
 }

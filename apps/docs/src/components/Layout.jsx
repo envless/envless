@@ -1,12 +1,11 @@
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-
 import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { Logo } from '@/components/Logo'
 import { Navigation } from '@/components/Navigation'
 import { Prose } from '@/components/Prose'
 import { SectionProvider } from '@/components/SectionProvider'
+import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export function Layout({ children, sections = [] }) {
   return (

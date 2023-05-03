@@ -1,3 +1,5 @@
+import ActiveLink from './ActiveLink'
+import GithubIcon from './icons/GithubIcon'
 import {
   Zap,
   Home,
@@ -7,9 +9,6 @@ import {
   HeartHandshake,
   GitPullRequest,
 } from 'lucide-react'
-
-import ActiveLink from './ActiveLink'
-import GithubIcon from './icons/GithubIcon'
 
 export function TopLevelCtaLinks(props) {
   return (

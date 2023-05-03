@@ -18,5 +18,9 @@
   },
   "resolutions": {
     "**/fsevents": "^2.3.2"
+  },
+  "engines": {
+    "yarn": ">=1.22.19",
+    "node": ">=18.15.0"
   }
 }

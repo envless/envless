@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { Button } from '@/components/Button'
 import { Heading } from '@/components/Heading'
 import logoGo from '@/images/logos/go.svg'
@@ -6,6 +5,7 @@ import logoNode from '@/images/logos/node.svg'
 import logoPhp from '@/images/logos/php.svg'
 import logoPython from '@/images/logos/python.svg'
 import logoRuby from '@/images/logos/ruby.svg'
+import Image from 'next/image'
 
 const libraries = [
   {
