@@ -74,7 +74,6 @@ export const AuditLogsPage = ({
           auditLogDetail={auditLogDetail}
           open={open}
           setOpen={setOpen}
-          auditLogs={auditLogs}
         />
       )}
       <AuditLogTable
@@ -91,16 +90,29 @@ export const AuditLogsPage = ({
 };
 
 const _getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const slug = String(context.params?.slug);
+
+  // this is just an extra round trip to the database (withAccessControl limitation)
+  const selectedProject = await prisma?.project.findFirst({
+    where: {
+      slug,
+    },
+  });
+
+  if (!selectedProject) {
+    return {
+      notFound: true,
+    };
+  }
+
   const auditLogs = await prisma?.audit.findMany({
     orderBy: {
       createdAt: "desc",
     },
+    where: {
+      projectId: selectedProject?.id,
+    },
     include: {
-      project: {
-        select: {
-          name: true,
-        },
-      },
       createdBy: {
         select: {
           name: true,
