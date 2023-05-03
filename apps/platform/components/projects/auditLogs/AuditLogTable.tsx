@@ -61,12 +61,7 @@ export default function AuditLogTable({
           </span>
         ),
       },
-      {
-        header: "Project",
-        id: "project",
-        accessorFn: (row) => row.project.name,
-        cell: (info) => info.getValue(),
-      },
+
       {
         header: "Created At",
         id: "createdAt",
@@ -129,7 +124,6 @@ export default function AuditLogTable({
                 const dataForCSV = auditLogs.map((auditLog: any) => {
                   return {
                     CreatedBy: auditLog.createdBy.name,
-                    Project: auditLog.project.name,
                     Action: auditLog.action,
                     Data: JSON.stringify(auditLog.data),
                     CreatedAt: formatDateTime(auditLog.createdAt),
