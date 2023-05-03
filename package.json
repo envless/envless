@@ -11,6 +11,7 @@
     "envless": "yarn --cwd ./apps/cli/ run cli",
     "dev": "dotenv -- turbo run dev",
     "build": "dotenv -- turbo run build",
+    "build:console": "npx turbo run db:generate && npx turbo build --scope=console --include-dependencies --no-deps",
     "lint": "dotenv -- turbo run lint",
     "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
     "build:ui": "dotenv -- turbo run build:ui",
