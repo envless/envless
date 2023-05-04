@@ -37,9 +37,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.env
 .envless
 
 .mailing
 .dccache
 dump.rdb
+config.bat
