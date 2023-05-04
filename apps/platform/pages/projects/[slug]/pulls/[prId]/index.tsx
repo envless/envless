@@ -10,7 +10,7 @@ import {
   PullRequest,
   UserRole,
 } from "@prisma/client";
-import { GitPullRequestClosed } from "lucide-react";
+import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
 import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
@@ -53,7 +53,7 @@ export default function PullRequestDetailPage({
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
-          <div className="col-span-10">
+          <div className="col-span-6">
             <DetailedPrTitle
               author={pullRequest.createdBy.name}
               title={pullRequest.title}
@@ -63,7 +63,16 @@ export default function PullRequestDetailPage({
               current={currentBranch?.name}
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-6 gap-2">
+            <Button
+              className="float-right ml-3"
+              leftIcon={
+                <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+              }
+            >
+              Merge pull request
+            </Button>
+
             <Button
               leftIcon={
                 <GitPullRequestClosed
