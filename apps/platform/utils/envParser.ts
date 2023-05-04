@@ -53,6 +53,7 @@ export const parseEnvContent = async (
         );
 
         const secret = {
+          id: undefined,
           uuid: window.crypto.randomUUID(),
           encryptedKey,
           encryptedValue,
@@ -88,6 +89,7 @@ export const parseEnvContent = async (
             );
 
             const envSecret = {
+              id: undefined,
               uuid: window.crypto.randomUUID(),
               encryptedKey,
               encryptedValue,
@@ -141,6 +143,7 @@ export const parseEnvContent = async (
           );
 
           const envSecret = {
+            id: undefined,
             uuid: window.crypto.randomUUID(),
             encryptedKey,
             encryptedValue,

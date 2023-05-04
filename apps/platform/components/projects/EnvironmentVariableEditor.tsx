@@ -65,6 +65,16 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     },
   });
 
+  const deleteSecretMutation = trpc.secrets.deleteSecret.useMutation({
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Secrets deleted",
+        subtitle: "Secrets successfully deleted",
+      });
+    },
+  });
+
   useEffect(() => {
     if (secrets) {
       reset({
@@ -102,6 +112,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
+      id: undefined,
       uuid: window.crypto.randomUUID(),
       encryptedKey: "",
       encryptedValue: "",
@@ -228,10 +239,32 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
                       }}
                     />
 
-                    <MinusCircle
-                      className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
-                      onClick={() => remove(index)}
-                    />
+                    <button>
+                      <MinusCircle
+                        className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
+                        onClick={async () => {
+                          const selectedSecretId = getValues(
+                            `secrets.${index}.id`,
+                          );
+
+                          if (selectedSecretId) {
+                            if (
+                              confirm(
+                                "Are you sure want to delete this secret ?",
+                              )
+                            ) {
+                              await deleteSecretMutation.mutateAsync({
+                                secret: {
+                                  id: selectedSecretId,
+                                },
+                              });
+                            }
+                          }
+
+                          remove(index);
+                        }}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>

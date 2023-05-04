@@ -1,5 +1,8 @@
 import { createRouter, withAuth } from "@/trpc/router";
+import { SECRET_DELETED } from "@/types/auditActions";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import Audit from "@/lib/audit";
 
 export const secrets = createRouter({
   getSecretesByBranchId: withAuth
@@ -139,5 +142,63 @@ export const secrets = createRouter({
         secretsInsertCount,
         secretsUpdateCount,
       };
+    }),
+
+  deleteSecret: withAuth
+    .input(
+      z.object({
+        secret: z.object({
+          id: z.string(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const secret = await ctx.prisma.secret.findUnique({
+        where: {
+          id: input.secret.id,
+        },
+        select: {
+          id: true,
+          branchId: true,
+          encryptedKey: true,
+          encryptedValue: true,
+        },
+      });
+
+      if (!secret) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Secret not found",
+        });
+      }
+
+      await ctx.prisma.secret.delete({
+        where: {
+          id: secret.id,
+        },
+      });
+
+      const projectBelongingToSecret = await ctx.prisma.branch.findUnique({
+        where: {
+          id: secret.branchId,
+        },
+        select: {
+          id: true,
+          projectId: true,
+        },
+      });
+
+      await Audit.create({
+        createdById: ctx.session.user.id,
+        projectId: projectBelongingToSecret?.projectId,
+        action: SECRET_DELETED,
+        data: {
+          secret: {
+            id: secret.id,
+            encryptedKey: secret.encryptedKey,
+            encryptedValue: secret.encryptedValue,
+          },
+        },
+      });
     }),
 });
