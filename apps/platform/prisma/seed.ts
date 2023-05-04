@@ -39,7 +39,7 @@ const seed = async () => {
     return prisma.$transaction(async () => {
       await seedUsers(10);
       await seedProjects(5);
-      await seedAccesses();
+      // await seedAccesses();
       await seedE2EESetup();
       await seedBranches();
       await seedInactiveUsers(5);
