@@ -22,6 +22,8 @@ export const pullRequest = createRouter({
         pullRequest: z.object({
           title: z.string(),
           projectSlug: z.string(),
+          currentBranchId: z.string(),
+          baseBranchId: z.string(),
         }),
       }),
     )
@@ -34,14 +36,17 @@ export const pullRequest = createRouter({
 
       const projectId = project.id;
       const userId = user.id as string;
+      const { title, currentBranchId, baseBranchId } = pullRequest;
 
       const prId = await getNextPrId(projectId);
 
       const pr = await prisma.pullRequest.create({
         data: {
-          title: pullRequest.title,
+          title,
           prId,
           status: "open",
+          currentBranchId,
+          baseBranchId,
           projectId: projectId,
           createdById: userId,
         },
