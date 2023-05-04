@@ -2,6 +2,7 @@ import { useState } from "react";
 import useSecret from "@/hooks/useSecret";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { Branch } from "@prisma/client";
+import { union } from "lodash";
 import { Loader } from "lucide-react";
 import ReactDiffViewer, { DiffMethod } from "react-diff-viewer";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
@@ -24,34 +25,33 @@ export default function EnvDiffViewer({
   currentBranch,
 }: EnvDiffViewerProps) {
   const [loading, setLoading] = useState(true);
-  const [baseEnv, setBaseEnv] = useState<string>();
-  const [currentEnv, setCurrentEnv] = useState<string>();
+  const [baseEnv, setBaseEnv] = useState<string[]>([]);
+  const [currentEnv, setCurrentEnv] = useState<string[]>([]);
   const { secrets: currentSecrets } = useSecret({ branchId: currentBranch.id });
   const { secrets: baseSecrets } = useSecret({ branchId: baseBranch.id });
 
   useUpdateEffect(() => {
+    let baseSecretArray = [] as string[];
+    let currentSecretArray = [] as string[];
+
     for (const [_key, secret] of Object.entries(currentSecrets)) {
       const { decryptedKey, decryptedValue } = secret;
 
-      setCurrentEnv((prev) => {
-        if (!prev) {
-          return `${decryptedKey}=${decryptedValue}`;
-        }
-        return `${prev}\n${decryptedKey}=${decryptedValue}`;
-      });
+      currentSecretArray = union(currentSecretArray, [
+        `${decryptedKey}=${decryptedValue}`,
+      ]);
     }
+
+    setCurrentEnv(currentSecretArray);
 
     for (const [_key, secret] of Object.entries(baseSecrets)) {
       const { decryptedKey, decryptedValue } = secret;
-
-      setBaseEnv((prev) => {
-        if (!prev) {
-          return `${decryptedKey}=${decryptedValue}`;
-        }
-
-        return `${prev}\n${decryptedKey}=${decryptedValue}`;
-      });
+      baseSecretArray = union(baseSecretArray, [
+        `${decryptedKey}=${decryptedValue}`,
+      ]);
     }
+
+    setBaseEnv(baseSecretArray);
 
     setLoading(false);
   }, [baseSecrets, currentSecrets]);
@@ -97,8 +97,8 @@ export default function EnvDiffViewer({
           hideLineNumbers
           linesOffset={2}
           compareMethod={DiffMethod.WORDS}
-          oldValue={baseEnv}
-          newValue={currentEnv}
+          oldValue={baseEnv.join("\n")}
+          newValue={currentEnv.join("\n")}
           splitView={true}
           useDarkTheme={true}
         />
