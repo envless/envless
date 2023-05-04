@@ -33,12 +33,11 @@ export default function DetailedPrTitle({
         </div>
 
         <div className="text-light text-xs">
-          {author} opened a pull request to merge wants to merge {" "}
+          {author} opened a pull request to merge{" "}
           <Link href="#" className="text-teal-400 hover:underline">
             {current}
-          </Link>
-
-          {" "}into{" "}
+          </Link>{" "}
+          into{" "}
           <Link href="#" className="text-teal-400 hover:underline">
             {base}
           </Link>

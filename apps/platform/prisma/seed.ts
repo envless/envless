@@ -44,7 +44,7 @@ const seed = async () => {
       await seedBranches();
       await seedInactiveUsers(5);
       await seedInvites(5);
-      await seedPullRequests();
+      // await seedPullRequests();
       await seedSecrets();
     });
   } else {
