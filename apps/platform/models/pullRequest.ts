@@ -34,6 +34,16 @@ export const getOne = async ({
     },
     include: {
       createdBy: true,
+      baseBranch: {
+        include: {
+          secrets: true,
+        },
+      },
+      currentBranch: {
+        include: {
+          secrets: true,
+        },
+      },
     },
   });
 };

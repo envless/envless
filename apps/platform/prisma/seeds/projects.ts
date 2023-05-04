@@ -10,7 +10,13 @@ colors.enable();
 
 const seedProjects = async (count: number = 10) => {
   const projects: ProjectType[] = [];
-  const names = ["Next JS API", "GraphQL API", "Blog", "Docs", "Monolithic Server"]
+  const names = [
+    "Next JS API",
+    "GraphQL API",
+    "Blog",
+    "Docs",
+    "Monolithic Server",
+  ];
 
   for (let i = 0; i < names.length; i++) {
     const name = names[i];
