@@ -1,10 +1,10 @@
-import { forwardRef, Fragment, useEffect, useId, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import { createAutocomplete } from '@algolia/autocomplete-core'
 import { getAlgoliaResults } from '@algolia/autocomplete-preset-algolia'
 import { Dialog, Transition } from '@headlessui/react'
 import algoliasearch from 'algoliasearch/lite'
 import clsx from 'clsx'
+import { useRouter } from 'next/router'
+import { forwardRef, Fragment, useEffect, useId, useRef, useState } from 'react'
 
 const searchClient = algoliasearch(
   process.env.NEXT_PUBLIC_DOCSEARCH_APP_ID,

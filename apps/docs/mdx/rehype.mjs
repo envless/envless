@@ -1,10 +1,10 @@
+import { slugifyWithCounter } from '@sindresorhus/slugify'
+import * as acorn from 'acorn'
+import { toString } from 'mdast-util-to-string'
 import { mdxAnnotations } from 'mdx-annotations'
-import { visit } from 'unist-util-visit'
 import rehypeMdxTitle from 'rehype-mdx-title'
 import shiki from 'shiki'
-import { toString } from 'mdast-util-to-string'
-import * as acorn from 'acorn'
-import { slugifyWithCounter } from '@sindresorhus/slugify'
+import { visit } from 'unist-util-visit'
 
 function rehypeParseCodeBlocks() {
   return (tree) => {

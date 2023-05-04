@@ -1,8 +1,3 @@
-import { forwardRef } from 'react'
-import Link from 'next/link'
-import clsx from 'clsx'
-import { motion, useScroll, useTransform } from 'framer-motion'
-
 import { Button } from '@/components/Button'
 import { Logo } from '@/components/Logo'
 import {
@@ -12,6 +7,10 @@ import {
 import { useMobileNavigationStore } from '@/components/MobileNavigation'
 import { ModeToggle } from '@/components/ModeToggle'
 import { MobileSearch, Search } from '@/components/Search'
+import clsx from 'clsx'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import Link from 'next/link'
+import { forwardRef } from 'react'
 
 export const Header = forwardRef(function Header({ className }, ref) {
   let { isOpen: mobileNavIsOpen } = useMobileNavigationStore()
@@ -50,7 +49,7 @@ export const Header = forwardRef(function Header({ className }, ref) {
 
       <div className="flex items-center gap-5 lg:hidden">
         <MobileNavigation />
-        <Link href="/" aria-label="Home">
+        <Link href="https://envless.dev" aria-label="Home">
           <Logo className="h-6" />
         </Link>
       </div>

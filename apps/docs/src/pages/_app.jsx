@@ -1,15 +1,14 @@
-import Head from 'next/head'
-import { Router, useRouter } from 'next/router'
-import { MDXProvider } from '@mdx-js/react'
 import { Layout } from '@/components/Layout'
-import * as mdxComponents from '@/components/mdx'
 import { useMobileNavigationStore } from '@/components/MobileNavigation'
+import * as mdxComponents from '@/components/mdx'
 import OgImage from '@/images/og.png'
-
 import '@/styles/tailwind.css'
-import 'focus-visible'
 // import 'ui/styles/zoom.css'
 import '@/styles/zoom.css'
+import { MDXProvider } from '@mdx-js/react'
+import 'focus-visible'
+import Head from 'next/head'
+import { Router, useRouter } from 'next/router'
 
 function onRouteChange() {
   useMobileNavigationStore.getState().close()

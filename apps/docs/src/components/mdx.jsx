@@ -1,7 +1,6 @@
-import Link from 'next/link'
-import clsx from 'clsx'
-
 import { Heading } from '@/components/Heading'
+import clsx from 'clsx'
+import Link from 'next/link'
 
 export const a = Link
 export { Button } from '@/components/Button'
