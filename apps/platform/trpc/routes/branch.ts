@@ -3,6 +3,7 @@ import { createRouter, withAuth } from "@/trpc/router";
 import { BRANCH_CREATED } from "@/types/auditActions";
 import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -40,6 +41,9 @@ export const branches = createRouter({
               "Name can only contain lowercase alphanumeric characters and dashes, cannot start or end with a dash, and must be at least two characters.",
             ),
           projectSlug: z.string(),
+          baseBranchId: z
+            .string()
+            .min(1, { message: "Base Branch is required" }),
         }),
       }),
     )
@@ -109,6 +113,40 @@ export const branches = createRouter({
             },
           },
         });
+      }
+
+      const baseBranch = await prisma.branch.findUnique({
+        where: {
+          id: branch.baseBranchId,
+        },
+        include: {
+          secrets: {
+            select: {
+              id: true,
+              encryptedKey: true,
+              encryptedValue: true,
+            },
+          },
+        },
+      });
+
+      // copy over all the secrets to newly created branch
+      if (baseBranch) {
+        const baseBranchSecrets = baseBranch.secrets;
+
+        if (baseBranchSecrets.length > 0) {
+          for (let baseBranchSecret of baseBranchSecrets) {
+            await prisma.secret.create({
+              data: {
+                encryptedKey: baseBranchSecret.encryptedKey,
+                encryptedValue: baseBranchSecret.encryptedValue,
+                branchId: newBranch.id,
+                userId: user.id,
+                uuid: randomUUID(),
+              },
+            });
+          }
+        }
       }
 
       return newBranch;

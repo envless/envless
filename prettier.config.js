@@ -11,6 +11,7 @@ module.exports = {
     "<THIRD_PARTY_MODULES>",
     "^@/components/(.*)$|^components/(.*)$",
     "^@/lib/(.*)$",
+    "@/styles/tailwind.css", // work around solution (https://github.com/trivago/prettier-plugin-sort-imports/issues/112)
     "^@/styles/(.*)$",
     "^[./]",
   ],
