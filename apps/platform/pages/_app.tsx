@@ -6,10 +6,10 @@ import { SessionProvider } from "next-auth/react";
 import NextNProgress from "nextjs-progressbar";
 import ErrorBoundary from "@/components/errorboundary";
 import Fallback from "@/components/errorboundary/Fallback";
+
+import "@/styles/tailwind.css";
 import "@/styles/balloon.css";
 import "@/styles/primary.css";
-// import "ui/styles/tailwind.css";
-import "@/styles/tailwind.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
