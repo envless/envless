@@ -97,8 +97,8 @@ export default function EnvDiffViewer({
           hideLineNumbers
           linesOffset={2}
           compareMethod={DiffMethod.WORDS}
-          oldValue={baseEnv.join("\n")}
-          newValue={currentEnv.join("\n")}
+          oldValue={baseEnv.sort().join("\n")}
+          newValue={currentEnv.sort().join("\n")}
           splitView={true}
           useDarkTheme={true}
         />
