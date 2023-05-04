@@ -8,11 +8,23 @@ export const pullRequest = createRouter({
     .input(z.object({ projectId: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.prisma.pullRequest.findMany({
-        include: {
-          createdBy: true,
-        },
         where: {
           projectId: input.projectId,
+        },
+        include: {
+          createdBy: true,
+          baseBranch: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          currentBranch: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
     }),

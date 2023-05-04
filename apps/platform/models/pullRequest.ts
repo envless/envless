@@ -35,13 +35,15 @@ export const getOne = async ({
     include: {
       createdBy: true,
       baseBranch: {
-        include: {
-          secrets: true,
+        select: {
+          id: true,
+          name: true,
         },
       },
       currentBranch: {
-        include: {
-          secrets: true,
+        select: {
+          id: true,
+          name: true,
         },
       },
     },

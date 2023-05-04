@@ -28,11 +28,9 @@ export default function EnvDiffViewer({
   const [currentEnv, setCurrentEnv] = useState<string>();
   const { secrets: currentSecrets } = useSecret({ branchId: currentBranch.id });
   const { secrets: baseSecrets } = useSecret({ branchId: baseBranch.id });
-  // setCurrentEnv(JSON.stringify(currentSecrets));
-  // setBaseEnv(JSON.stringify(baseSecrets));
 
   useUpdateEffect(() => {
-    for (const [key, secret] of Object.entries(currentSecrets)) {
+    for (const [_key, secret] of Object.entries(currentSecrets)) {
       const { decryptedKey, decryptedValue } = secret;
 
       setCurrentEnv((prev) => {
@@ -43,7 +41,7 @@ export default function EnvDiffViewer({
       });
     }
 
-    for (const [key, secret] of Object.entries(baseSecrets)) {
+    for (const [_key, secret] of Object.entries(baseSecrets)) {
       const { decryptedKey, decryptedValue } = secret;
 
       setBaseEnv((prev) => {
