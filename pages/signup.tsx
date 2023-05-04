@@ -7,8 +7,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Paragraph } from "@/components/theme";
 
 interface RequestAccessProps {
-  source: string;
-  button: React.ReactNode;
 }
 
 interface SignupProps {
@@ -18,7 +16,7 @@ interface SignupProps {
 }
 
 const Signup = (props: RequestAccessProps) => {
-  const { source, button } = props;
+  const source = "Signup page"
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [title, setTitle] = useState("Request access");
