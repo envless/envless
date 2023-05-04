@@ -4,7 +4,7 @@ import { intro, outro, spinner } from "@clack/prompts";
 import { Command, Flags, ux } from "@oclif/core";
 import axios from "axios";
 import { bold, cyan, green, grey, red } from "kleur/colors";
-import { exec } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import { readFromDotEnvless } from "../lib/dotEnvless";
 import OpenPGP from "../lib/encryption/openpgp";
 import { API_VERSION, LINKS, triggerCancel } from "../lib/helpers";
@@ -65,20 +65,53 @@ export default class Start extends Command {
       `${green(bold("✓"))} Decrypted ${decryptedSecrets.length} secrets...`,
     );
 
-    await this.injectSecrets(decryptedSecrets);
+    // await this.injectSecrets(decryptedSecrets);
+
+    const childProcess = spawn(command, {
+      env: {
+        ...process.env,
+        ...decryptedSecrets.reduce((acc, secret) => {
+          acc[secret.key] = secret.value;
+          return acc;
+        }, {} as any),
+      },
+
+      shell: true,
+      stdio: "inherit",
+    });
+
+    childProcess.stderr?.on("data", (data) => {
+      console.log(`${data}`);
+    });
+
+    childProcess.stdout?.on("data", (data) => {
+      console.log(`${data}`);
+    });
+
+    childProcess.on("close", (code) => {
+      console.log(`child process exited with code ${code}`);
+    });
+
+    childProcess.on("error", (error) => {
+      console.log(`child process exited with error ${error}`);
+    });
+
+    childProcess.on("exit", (code) => {
+      console.log(`child process exited with code ${code}`);
+    });
 
     // await execa.command(command);
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-      }
-      console.log(`${stdout}`);
-    });
+    // exec(command, (error, stdout, stderr) => {
+    //   if (error) {
+    //     console.log(`error: ${error.message}`);
+    //     return;
+    //   }
+    //   if (stderr) {
+    //     console.log(`stderr: ${stderr}`);
+    //     return;
+    //   }
+    //   console.log(`${stdout}`);
+    // });
 
     outro(`${green(bold("✓"))} Running command: $ ${bold(cyan(command))}`);
 
