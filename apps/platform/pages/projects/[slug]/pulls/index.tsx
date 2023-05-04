@@ -13,6 +13,7 @@ import {
   User,
   UserRole,
 } from "@prisma/client";
+import { Branch } from "@prisma/client";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -57,7 +58,9 @@ export const PullRequestPage = ({
     },
   );
 
-  const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
+  const pullRequestColumns: ColumnDef<
+    PullRequest & { createdBy: User; baseBranch: Branch; currentBranch: Branch }
+  >[] = [
     {
       id: "title",
       accessorFn: (row) => row.title,
@@ -88,6 +91,13 @@ export const PullRequestPage = ({
               projectName={currentProject.name}
               pullRequestStatus={info.row.original.status as string}
               pullRequestTitle={info.row.original.title}
+              createdAt={info.row.original.createdAt}
+              baseBranchName={info.row.original.baseBranch.name}
+              currentBranchName={info.row.original.currentBranch.name}
+              createdBy={
+                info.row.original.createdBy.name ||
+                info.row.original.createdBy.email
+              }
               triggerComponent={
                 <Link
                   href={`/projects/${projectSlug}/pulls/${info.row.original.prId}`}
