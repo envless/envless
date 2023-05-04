@@ -1,3 +1,4 @@
+import { remToPx } from '@/lib/remToPx'
 import {
   createContext,
   useContext,
@@ -6,8 +7,6 @@ import {
   useState,
 } from 'react'
 import { createStore, useStore } from 'zustand'
-
-import { remToPx } from '@/lib/remToPx'
 
 function createSectionStore(sections) {
   return createStore((set) => ({

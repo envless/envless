@@ -1,3 +1,6 @@
+import { Tag } from '@/components/Tag'
+import { Tab } from '@headlessui/react'
+import clsx from 'clsx'
 import {
   Children,
   createContext,
@@ -6,11 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Tab } from '@headlessui/react'
-import clsx from 'clsx'
 import { create } from 'zustand'
-
-import { Tag } from '@/components/Tag'
 
 const languageNames = {
   js: 'JavaScript',

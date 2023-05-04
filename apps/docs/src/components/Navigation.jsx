@@ -1,15 +1,14 @@
-import { useRef } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import clsx from 'clsx'
-import { AnimatePresence, motion, useIsPresent } from 'framer-motion'
-
 import { Button } from '@/components/Button'
-import { TopLevelCtaLinks } from '@/components/TopLevelCtaLinks'
 import { useIsInsideMobileNavigation } from '@/components/MobileNavigation'
 import { useSectionStore } from '@/components/SectionProvider'
 import { Tag } from '@/components/Tag'
+import { TopLevelCtaLinks } from '@/components/TopLevelCtaLinks'
 import { remToPx } from '@/lib/remToPx'
+import clsx from 'clsx'
+import { AnimatePresence, motion, useIsPresent } from 'framer-motion'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useRef } from 'react'
 
 function useInitialValue(value, condition = true) {
   let initialValue = useRef(value).current

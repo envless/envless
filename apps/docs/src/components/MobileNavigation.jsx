@@ -1,10 +1,9 @@
-import { createContext, Fragment, useContext } from 'react'
-import { Dialog, Transition } from '@headlessui/react'
-import { motion } from 'framer-motion'
-import { create } from 'zustand'
-
 import { Header } from '@/components/Header'
 import { Navigation } from '@/components/Navigation'
+import { Dialog, Transition } from '@headlessui/react'
+import { motion } from 'framer-motion'
+import { createContext, Fragment, useContext } from 'react'
+import { create } from 'zustand'
 
 function MenuIcon(props) {
   return (

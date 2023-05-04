@@ -1,10 +1,10 @@
+import { Button } from '@/components/Button'
+import { navigation } from '@/components/Navigation'
+import GithubIcon from '@/components/icons/GithubIcon'
+import { Transition } from '@headlessui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Button } from '@/components/Button'
-import { Transition } from '@headlessui/react'
-import { navigation } from '@/components/Navigation'
 import { forwardRef, Fragment, useState } from 'react'
-import GithubIcon from '@/components/icons/GithubIcon'
 
 function CheckIcon(props) {
   return (
