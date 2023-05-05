@@ -128,9 +128,11 @@ model Branch {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdBy User     @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  secrets   Secret[]
+  basePRs    PullRequest[] @relation(name: "baseBranch")
+  currentPRs PullRequest[] @relation(name: "currentBranch")
+  project    Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy  User          @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  secrets    Secret[]
 
   @@unique([name, projectId])
   @@index([createdById])
@@ -153,8 +155,8 @@ model PullRequest {
   createdById     String
   mergedById      String?
   closedById      String?
-  baseBranchId    String?
-  currentBranchId String?
+  baseBranchId    String
+  currentBranchId String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   mergedAt        DateTime?
@@ -166,10 +168,15 @@ model PullRequest {
   mergedBy  User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
   closedBy  User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
 
+  baseBranch    Branch @relation(name: "baseBranch", fields: [baseBranchId], references: [id], onDelete: Cascade)
+  currentBranch Branch @relation(name: "currentBranch", fields: [currentBranchId], references: [id], onDelete: Cascade)
+
   @@unique([prId, projectId])
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
+  @@index([baseBranchId])
+  @@index([currentBranchId])
   @@index([createdAt])
   @@index([projectId, status])
   @@index([projectId, prId])
@@ -186,7 +193,7 @@ model Secret {
   encryptedKey   String
   encryptedValue String
   createdAt      DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt      DateTime @updatedAt
 
   userId   String
   branchId String
@@ -194,8 +201,7 @@ model Secret {
   branch   Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-
-  secretVersions SecretVersion[]  @relation(name: "versions")
+  secretVersions SecretVersion[] @relation(name: "versions")
 
   @@index([userId])
   @@index([branchId])
@@ -203,14 +209,14 @@ model Secret {
 }
 
 model SecretVersion {
-  id             String   @id @default(cuid())
+  id             String @id @default(cuid())
   encryptedKey   String
   encryptedValue String
   secretId       String
 
-  secret         Secret   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  secret    Secret   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([secretId])
 }

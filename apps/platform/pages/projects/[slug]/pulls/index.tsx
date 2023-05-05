@@ -13,6 +13,7 @@ import {
   User,
   UserRole,
 } from "@prisma/client";
+import { Branch } from "@prisma/client";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -57,7 +58,13 @@ export const PullRequestPage = ({
     },
   );
 
-  const pullRequestColumns: ColumnDef<PullRequest & { createdBy: User }>[] = [
+  const pullRequestColumns: ColumnDef<
+    PullRequest & {
+      createdBy: User;
+      baseBranch: { id: string; name: string };
+      currentBranch: { id: string; name: string };
+    }
+  >[] = [
     {
       id: "title",
       accessorFn: (row) => row.title,
@@ -88,6 +95,13 @@ export const PullRequestPage = ({
               projectName={currentProject.name}
               pullRequestStatus={info.row.original.status as string}
               pullRequestTitle={info.row.original.title}
+              createdAt={info.row.original.createdAt}
+              baseBranchName={info.row.original.baseBranch.name}
+              currentBranchName={info.row.original.currentBranch.name}
+              createdBy={
+                info.row.original.createdBy.name ||
+                info.row.original.createdBy.email
+              }
               triggerComponent={
                 <Link
                   href={`/projects/${projectSlug}/pulls/${info.row.original.prId}`}
@@ -225,55 +239,3 @@ export const getServerSideProps = withAccessControl({
 });
 
 export default PullRequestPage;
-
-interface PullRequestHoverCardProps {
-  triggerComponent: ReactNode;
-}
-
-function PullRequestHoverCard({ triggerComponent }: PullRequestHoverCardProps) {
-  return (
-    <HoverCard.Root>
-      <HoverCard.Trigger asChild>{triggerComponent}</HoverCard.Trigger>
-
-      <HoverCard.Portal>
-        <HoverCard.Content
-          className="bg-darker w-[350px] rounded text-xs"
-          sideOffset={5}
-        >
-          <div className="flex w-full flex-col gap-[10px] px-3 py-4">
-            <div className="text-light">
-              <Link href={"#"} className="underline">
-                envless/envless
-              </Link>{" "}
-              on Feb 22
-            </div>
-
-            <div className="flex items-start gap-[10px]">
-              <div className="shrink-0">
-                <GitPullRequest className="h-4 w-4 text-emerald-200" />
-              </div>
-
-              <div className="flex flex-col">
-                <p className="text-md font-bold">
-                  feat: additional security - ask users to provide OTP for one
-                  last time before they disable two factor auth{" "}
-                </p>
-                <div className="mt-2 inline-flex items-center gap-2">
-                  <span className="bg-dark text-light rounded px-1 py-0.5">
-                    envless:main
-                  </span>
-                  <ArrowLeft className="text-lighter h-4 w-4 shrink-0" />
-                  <span className="bg-dark text-light rounded px-1 py-0.5">
-                    samyogdhital:proj...
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <HoverCard.Arrow className="text-dark" />
-        </HoverCard.Content>
-      </HoverCard.Portal>
-    </HoverCard.Root>
-  );
-}

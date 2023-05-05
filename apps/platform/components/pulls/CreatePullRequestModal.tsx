@@ -71,7 +71,14 @@ const CreatePullRequestModal = ({
 
     const projectSlug = router.query.slug as string;
 
-    pullRequestMutation.mutate({ pullRequest: { title, projectSlug } });
+    pullRequestMutation.mutate({
+      pullRequest: {
+        title,
+        projectSlug,
+        currentBranchId: currentBranch?.id,
+        baseBranchId: baseBranch?.id,
+      },
+    });
   };
 
   return (
