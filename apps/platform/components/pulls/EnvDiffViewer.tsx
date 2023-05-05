@@ -16,7 +16,7 @@ const LoadingComponent = () => (
   <BaseEmptyState
     icon={<Loader className="mx-auto mb-3 h-8 w-8 animate-spin" />}
     title="Loading diff..."
-    subtitle="Plesae wait while we decrypt and load the diff."
+    subtitle="Please wait while we decrypt and load the diff."
   />
 );
 
