@@ -2,12 +2,14 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
+import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
   Branch,
   MembershipStatus,
   Project as ProjectType,
   PullRequest,
+  PullRequestStatus,
   UserRole,
 } from "@prisma/client";
 import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
@@ -15,6 +17,7 @@ import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 /**
  * A functional component that represents a pull request detail.
@@ -44,6 +47,24 @@ export default function PullRequestDetailPage({
     currentBranch: Branch;
   };
 
+  const { mutateAsync: closePrMutateAsync, isLoading: isClosePrLoading } =
+    trpc.pullRequest.close.useMutation({
+      onSuccess: (data) => {
+        showToast({
+          type: "success",
+          title: "Pull Request Closed",
+          subtitle: `Pull Request #${data.prId} closed successfully`,
+        });
+      },
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Failed to close pull request",
+          subtitle: error.message,
+        });
+      },
+    });
+
   return (
     <ProjectLayout
       tab="pr"
@@ -63,29 +84,41 @@ export default function PullRequestDetailPage({
               current={currentBranch?.name}
             />
           </div>
-          <div className="col-span-6 gap-2">
-            <Button
-              className="float-right ml-3"
-              leftIcon={
-                <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
-              }
-            >
-              Merge pull request
-            </Button>
 
-            <Button
-              leftIcon={
-                <GitPullRequestClosed
-                  className="mr-2 h-4 w-4"
-                  strokeWidth={2}
-                />
-              }
-              variant="danger-outline"
-              className="float-right"
-            >
-              Close pull request
-            </Button>
-          </div>
+          {pullRequest.status !== PullRequestStatus.closed && (
+            <div className="col-span-6 gap-2">
+              <Button
+                className="float-right ml-3"
+                leftIcon={
+                  <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+                }
+              >
+                Merge pull request
+              </Button>
+
+              <Button
+                leftIcon={
+                  <GitPullRequestClosed
+                    className="mr-2 h-4 w-4"
+                    strokeWidth={2}
+                  />
+                }
+                variant="danger-outline"
+                className="float-right"
+                loading={isClosePrLoading}
+                onClick={async () => {
+                  const prToClose = {
+                    prId: pullRequest.prId,
+                    projectId: currentProject.id,
+                  };
+
+                  await closePrMutateAsync({ pullRequest: prToClose });
+                }}
+              >
+                Close pull request
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -104,7 +137,6 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   const projectId = project.id;
 
   const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
-
 
   return {
     props: {

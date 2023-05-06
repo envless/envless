@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { PullRequestStatus } from "@prisma/client";
 import * as HoverCard from "@radix-ui/react-hover-card";
-import { ArrowLeft, GitPullRequest } from "lucide-react";
+import { ArrowLeft, GitPullRequest, GitPullRequestClosed } from "lucide-react";
 
 interface PullRequestHoverCardProps {
   triggerComponent: ReactNode;
@@ -47,7 +48,13 @@ export default function PullRequestTitleHoverCard({
 
             <div className="flex items-start gap-[10px]">
               <div className="shrink-0">
-                <GitPullRequest className="h-4 w-4 text-emerald-200" />
+                {pullRequestStatus === PullRequestStatus.open && (
+                  <GitPullRequest className="h-4 w-4 text-emerald-700" />
+                )}
+
+                {pullRequestStatus === PullRequestStatus.closed && (
+                  <GitPullRequestClosed className="h-4 w-4 text-red-700" />
+                )}
               </div>
 
               <div className="flex flex-col">
