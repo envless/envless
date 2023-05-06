@@ -1,0 +1,50 @@
+import { HeroPattern } from '@/components/HeroPattern'
+import { Resources } from '@/components/Resources'
+import { Zap, Terminal, Link as LinkIcon } from 'lucide-react'
+
+export const description =
+  "Envless is the end-to-end encrypted, open source and frictionless way to share and manage app secrets (env variables) across teams, platforms, infrastructures, CI/CD. It's language and framework agonistic and fits right into your development and deployment workflows"
+
+<HeroPattern />
+
+# Introduction
+
+Envless is the end-to-end encrypted, open source and frictionless way to share and manage app secrets (**env variables**) across teams, platforms, infrastructures, CI/CD. It's language and framework agonistic and fits right into your development and deployment workflows. {{ className: 'lead' }}
+
+## Getting started {{ anchor: true }}
+
+To get started with Envless, you need to [create an account](https://envless.dev/signup) and create a project. {{ className: 'lead' }}
+
+<div className="not-prose my-6 flex gap-3">
+  <Button
+    href="https://envless.dev/signup"
+    arrow="right"
+    children="Signup to get started"
+  />
+</div>
+
+<Resources
+  resources={[
+    {
+      name: 'Quickstart',
+      description:
+        'Learn how to get started with Envless. It only take a few minutes to get up and running with your development and deployment workflows.',
+      icon: Zap,
+      href: '/quickstart',
+    },
+    {
+      name: 'Envless CLI',
+      description:
+        'Learn how to run Envless CLI on development and all other environments, including platforms, infrastructures and CI/CD.',
+      icon: Terminal,
+      href: '/cli',
+    },
+    {
+      name: 'Integrations',
+      description:
+        'Learn how to integrate Envless with different languages, frameworks, platforms, infrastructures and CI/CD pipelines.',
+      icon: LinkIcon,
+      href: '/integrations',
+    },
+  ]}
+/>

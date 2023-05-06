@@ -10,12 +10,14 @@ import { withAccessControl } from "@/utils/withAccessControl";
 import {
   Branch,
   EncryptedProjectKey,
+  MembershipStatus,
   Project,
   UserPublicKey,
   UserRole,
 } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { NextSeo } from "next-seo";
 import BranchDropdown from "@/components/branches/BranchDropdown";
 import CreateBranchModal from "@/components/branches/CreateBranchModal";
 import EncryptionSetup from "@/components/projects/EncryptionSetup";
@@ -82,17 +84,12 @@ export const ProjectPage = ({
   const router = useRouter();
   const { branch } = router.query;
 
-  const getSelectedBranch = () => {
+  const memoizedSelectedBranch = useMemo(() => {
     if (branch) {
       return branches.filter((b) => b.name === branch)[0];
     }
     return branches.filter((b) => b.name === "main")[0];
-  };
-
-  const memoizedSelectedBranch = useMemo(
-    () => getSelectedBranch(),
-    [getSelectedBranch],
-  );
+  }, [branch, branches]);
 
   useUpdateEffect(() => {
     const sessionUser = session?.user as any;
@@ -150,6 +147,8 @@ export const ProjectPage = ({
       currentProject={currentProject}
       currentRole={currentRole}
     >
+      <NextSeo title={`${currentProject.name} - Envless project setup`} />
+
       {encryptionKeys.personal.privateKey.length === 0 ? (
         <EncryptionSetup
           user={user}
@@ -161,7 +160,7 @@ export const ProjectPage = ({
         <>
           <div className="w-full">
             <div className="flex w-full items-center justify-between">
-              <div className="mt-4 flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <BranchDropdown
                   label="Current Branch"
                   dropdownLabel="Switch between branches"
@@ -184,11 +183,9 @@ export const ProjectPage = ({
 
               <Button
                 onClick={() => setIsOpen(true)}
-                className="border border-white focus:outline-none"
+                leftIcon={<GitBranchPlus className="mr-3 h-4 w-4" />}
               >
-                <GitBranchPlus className="mr-3 h-4 w-4" />
-                <span className="hidden sm:block">Create new branch</span>
-                <span className="block sm:hidden">Branch</span>
+                Create new branch
               </Button>
             </div>
           </div>
@@ -213,12 +210,14 @@ export const ProjectPage = ({
 export const getServerSideProps = withAccessControl({
   withEncryptedProjectKey: true,
   hasAccess: {
-    owner: true,
-    maintainer: true,
-    developer: true,
-    guest: true,
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
   },
-
   getServerSideProps: async (context) => {
     const session = await getServerSideSession(context);
     const user = session?.user;

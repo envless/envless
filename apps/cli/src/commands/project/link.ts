@@ -22,6 +22,12 @@ export default class LinkProject extends Command {
       description: "Envless Project ID",
     }),
 
+    branch: Flags.string({
+      char: "b",
+      description: "Envless project's branch name",
+      default: "development",
+    }),
+
     help: Flags.help({
       char: "h",
       description: "Show help for the link command",
@@ -32,6 +38,7 @@ export default class LinkProject extends Command {
     `
       $ envless project link
       $ envless project link --projectId xxxxxxxx
+      $ envless project link --projectId xxxxxxxx --branch development
     `,
   ];
 
@@ -39,6 +46,7 @@ export default class LinkProject extends Command {
     const version = this.config.version;
     const { flags } = await this.parse(LinkProject);
     flags.projectId ||= process.env.ENVLESS_PROJECT_ID as string;
+    flags.branch ||= process.env.ENVLESS_BRANCH as string;
 
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
@@ -93,6 +101,7 @@ export default class LinkProject extends Command {
       name: "envless",
       version,
       projectId: flags.projectId,
+      branch: flags.branch,
     };
 
     await writeToDotEnvless(config);

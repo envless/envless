@@ -4,7 +4,7 @@ import type {
   GetServerSidePropsResult,
 } from "next";
 import { accessesWithProject } from "@/models/access";
-import { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getServerSideSession } from "./session";
 
@@ -17,7 +17,10 @@ type AccessControlPageProps = PageProps & {
 };
 
 type AccessControlParams<P> = {
-  hasAccess?: Partial<Record<UserRole, boolean>>;
+  hasAccess?: Partial<{
+    roles: UserRole[];
+    statuses: MembershipStatus[];
+  }>;
   withEncryptedProjectKey?: boolean;
   getServerSideProps?: GetServerSideProps<P & PageProps>;
 };
@@ -25,7 +28,7 @@ type AccessControlParams<P> = {
 export function withAccessControl<P = Record<string, unknown>>({
   withEncryptedProjectKey = false,
   getServerSideProps,
-  hasAccess = {},
+  hasAccess = { roles: [], statuses: [] },
 }: AccessControlParams<P>): (
   context: GetServerSidePropsContext,
 ) => Promise<GetServerSidePropsResult<AccessControlPageProps>> {
@@ -38,7 +41,7 @@ export function withAccessControl<P = Record<string, unknown>>({
     if (!user) {
       return {
         redirect: {
-          destination: "/auth",
+          destination: "/login",
           permanent: false,
         },
       };
@@ -68,6 +71,7 @@ export function withAccessControl<P = Record<string, unknown>>({
       return {
         project: a.project,
         role: a.role,
+        status: a.status,
       };
     });
 
@@ -83,15 +87,26 @@ export function withAccessControl<P = Record<string, unknown>>({
       };
     }
 
-    let authorized = false;
+    let authorizedByRole = false;
+    let authorizedByStatus = false;
 
-    Object.entries(hasAccess).forEach(([role, canAccess]) => {
-      if (canAccess && currentProject.role === role) {
-        authorized = true;
+    if (
+      hasAccess.statuses &&
+      hasAccess.statuses.includes(currentProject.status)
+    ) {
+      authorizedByStatus = true;
+      if (hasAccess.roles && hasAccess.roles.includes(currentProject.role)) {
+        authorizedByRole = true;
       }
-    });
+    }
 
-    if (!authorized) {
+    if (!authorizedByStatus) {
+      return {
+        notFound: true,
+      };
+    }
+
+    if (!authorizedByRole) {
       return {
         redirect: {
           destination: "/projects",

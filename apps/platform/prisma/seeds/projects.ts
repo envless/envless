@@ -10,14 +10,16 @@ colors.enable();
 
 const seedProjects = async (count: number = 10) => {
   const projects: ProjectType[] = [];
+  const names = [
+    "Next JS API",
+    "GraphQL API",
+    "Blog",
+    "Docs",
+    "Monolithic Server",
+  ];
 
-  for (let i = 0; i < count; i++) {
-    const name = `${faker.random.words(2)} ${sample([
-      "Inc.",
-      "LLC",
-      "LTD.",
-      "Co.",
-    ])}`;
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i];
     let slug = `${kebabCase(name)}-${Date.now()}`;
 
     projects.push({
@@ -30,6 +32,25 @@ const seedProjects = async (count: number = 10) => {
 
   const records = await prisma.project.createMany({
     data: projects,
+  });
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: "envless@example.com",
+    },
+  });
+
+  const projectRecords = await prisma.project.findMany();
+
+  const accesses = projectRecords.map((project) => ({
+    userId: user?.id as string,
+    projectId: project.id as string,
+    role: "owner" as any,
+    status: "active" as any,
+  }));
+
+  await prisma.access.createMany({
+    data: accesses,
   });
 
   console.log(`🎉 Seeded ${records.count} projects`.green);

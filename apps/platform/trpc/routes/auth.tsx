@@ -2,25 +2,27 @@ import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
 import { createRouter, withAuth } from "@/trpc/router";
-import { RedisTwoFactor } from "@/types/twoFactorTypes";
 import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
+import { getClientDetails } from "@/lib/client";
 import log from "@/lib/log";
-import redis from "@/lib/redis";
+import prisma from "@/lib/prisma";
 
 export const auth = createRouter({
   verify: withAuth
     .input(
       z.object({
-        fingerprint: z.string(),
         sessionId: z.string(),
+        fingerprint: z.string(),
+        name: z.string().optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { req } = ctx;
       const { user } = ctx.session;
-      const { fingerprint, sessionId } = input;
+      const { fingerprint, sessionId, name } = input;
 
       if (sessionId !== ctx.session.id) {
         return new TRPCError({
@@ -29,15 +31,11 @@ export const auth = createRouter({
         });
       }
 
-      const sessionStore = (await redis.get(
-        `session:${sessionId}`,
-      )) as RedisTwoFactor;
-
+      const client = await getClientDetails(req);
       const sessionHistory = await SessionHistory.getOne(sessionId);
 
       if (sessionHistory && !sessionHistory?.fingerprint) {
-        const { ip, os, isBot, browser, device, engine, cpu, geo } =
-          sessionStore;
+        const { ip, os, isBot, browser, device, engine, cpu, geo } = client;
 
         await SessionHistory.update(sessionId, {
           ip,
@@ -88,6 +86,28 @@ export const auth = createRouter({
                 }
               />
             ),
+          });
+        }
+
+        const currentUser = await prisma.user.findUnique({
+          where: {
+            id: user.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        });
+
+        if (!currentUser?.name) {
+          await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              name,
+            },
           });
         }
       }

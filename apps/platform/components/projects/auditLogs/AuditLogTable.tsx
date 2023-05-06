@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
 import {
   ColumnDef,
@@ -8,16 +8,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Columns,
-  Download,
-  Filter,
-  Search,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Search } from "lucide-react";
 import * as csvParser from "papaparse";
-import { BaseInput, Button } from "@/components/theme";
+import { BaseInput } from "@/components/theme";
 
 type AuditLogTableProps = {
   auditLogs: any;
@@ -68,12 +61,7 @@ export default function AuditLogTable({
           </span>
         ),
       },
-      {
-        header: "Project",
-        id: "project",
-        accessorFn: (row) => row.project.name,
-        cell: (info) => info.getValue(),
-      },
+
       {
         header: "Created At",
         id: "createdAt",
@@ -114,37 +102,19 @@ export default function AuditLogTable({
   });
 
   return (
-    <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
+    <div className="border-dark w-full rounded-md border-2 shadow-sm">
       <div className="border-dark flex items-center justify-between border-b px-2 py-2 font-medium">
         <div className="flex w-full items-center justify-between px-4">
           <div className="group relative w-full">
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
               <Search className="h-4 w-4" />
             </div>
-
             <BaseInput
               placeholder="Search"
               className="w-full max-w-xs py-1.5 !pl-9"
               full={false}
             />
           </div>
-
-          <div className="flex shrink-0 items-center">
-            <button
-              aria-label="Apply Filters"
-              data-balloon-pos="up"
-              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-            >
-              <Filter className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="flex shrink-0 items-center">
-            <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
-              <Columns className="h-5 w-5" />
-            </button>
-          </div>
-
           <div className="flex shrink-0 items-center">
             <button
               aria-label="Download as CSV"
@@ -154,7 +124,6 @@ export default function AuditLogTable({
                 const dataForCSV = auditLogs.map((auditLog: any) => {
                   return {
                     CreatedBy: auditLog.createdBy.name,
-                    Project: auditLog.project.name,
                     Action: auditLog.action,
                     Data: JSON.stringify(auditLog.data),
                     CreatedAt: formatDateTime(auditLog.createdAt),

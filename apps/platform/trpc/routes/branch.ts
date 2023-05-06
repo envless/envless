@@ -1,7 +1,9 @@
 import Project from "@/models/projects";
 import { createRouter, withAuth } from "@/trpc/router";
 import { BRANCH_CREATED } from "@/types/auditActions";
+import { UserRole } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -17,17 +19,16 @@ export const branches = createRouter({
         where: {
           projectId: input.projectId,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
     }),
+  getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
+    const { id } = input;
 
-  getOne: withAuth
-    .input(z.object({ id: z.number() }))
-    .query(({ ctx, input }) => {
-      const { id } = input;
-
-      return { id };
-    }),
-
+    return { id };
+  }),
   create: withAuth
     .input(
       z.object({
@@ -40,6 +41,9 @@ export const branches = createRouter({
               "Name can only contain lowercase alphanumeric characters and dashes, cannot start or end with a dash, and must be at least two characters.",
             ),
           projectSlug: z.string(),
+          baseBranchId: z
+            .string()
+            .min(1, { message: "Base Branch is required" }),
         }),
       }),
     )
@@ -111,6 +115,40 @@ export const branches = createRouter({
         });
       }
 
+      const baseBranch = await prisma.branch.findUnique({
+        where: {
+          id: branch.baseBranchId,
+        },
+        include: {
+          secrets: {
+            select: {
+              id: true,
+              encryptedKey: true,
+              encryptedValue: true,
+            },
+          },
+        },
+      });
+
+      // copy over all the secrets to newly created branch
+      if (baseBranch) {
+        const baseBranchSecrets = baseBranch.secrets;
+
+        if (baseBranchSecrets.length > 0) {
+          for (let baseBranchSecret of baseBranchSecrets) {
+            await prisma.secret.create({
+              data: {
+                encryptedKey: baseBranchSecret.encryptedKey,
+                encryptedValue: baseBranchSecret.encryptedValue,
+                branchId: newBranch.id,
+                userId: user.id,
+                uuid: randomUUID(),
+              },
+            });
+          }
+        }
+      }
+
       return newBranch;
     }),
   update: withAuth
@@ -157,5 +195,74 @@ export const branches = createRouter({
       });
 
       return updatedBranch;
+    }),
+  delete: withAuth
+    .input(z.object({ branchId: z.string(), projectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { branchId, projectId } = input;
+
+      const branch = await ctx.prisma.branch.findUnique({
+        where: { id: branchId },
+        select: { protected: true },
+      });
+
+      const access = await ctx.prisma.access.findUnique({
+        where: {
+          userId_projectId: {
+            projectId,
+            userId: ctx.session.user.id,
+          },
+        },
+        select: {
+          role: true,
+        },
+      });
+
+      if (!access) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You do not have access to delete this branch",
+        });
+      }
+
+      const allowedRoles: UserRole[] = [UserRole.owner, UserRole.maintainer];
+
+      const isAllowed = allowedRoles.includes(access.role);
+
+      if (!isAllowed) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to delete this branch",
+        });
+      }
+
+      if (!branch) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Branch does not exist",
+        });
+      }
+
+      if (branch.protected) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You cannot delete protected branches",
+        });
+      }
+
+      try {
+        const deletedBranch = await ctx.prisma.branch.delete({
+          where: {
+            id: branchId,
+          },
+        });
+
+        return deletedBranch;
+      } catch (error) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Branch does not exist",
+        });
+      }
     }),
 });

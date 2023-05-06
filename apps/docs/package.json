@@ -1,34 +1,52 @@
 {
   "name": "docs",
-  "version": "0.0.1",
-  "description": "Envless - OpenSource, frictionless and secure way to share and manage app secrets across teams.",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/envless/docs.git"
-  },
-  "author": "Puru Dahal <puru@envless.dev>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/envless/docs/issues"
-  },
-  "homepage": "https://github.com/envless/docs#readme",
+  "browserslist": "defaults, not ie <= 11",
   "dependencies": {
-    "@next/font": "^13.1.6",
-    "@vercel/analytics": "^0.1.10",
-    "next": "^13.1.6",
-    "nextra": "2.2.15",
-    "nextra-theme-docs": "2.4.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@algolia/autocomplete-core": "^1.7.3",
+    "@algolia/autocomplete-preset-algolia": "^1.7.3",
+    "@headlessui/react": "^1.7.8",
+    "@mdx-js/loader": "^2.1.5",
+    "@mdx-js/react": "^2.1.5",
+    "@next/font": "^13.3.0",
+    "@next/mdx": "^13.0.3",
+    "@sindresorhus/slugify": "^2.1.1",
+    "@tailwindcss/typography": "^0.5.8",
+    "acorn": "^8.8.1",
+    "algoliasearch": "^4.14.2",
+    "autoprefixer": "^10.4.7",
+    "clsx": "^1.2.0",
+    "focus-visible": "^5.2.0",
+    "framer-motion": "7.8.1",
+    "lucide-react": "^0.171.0",
+    "mdast-util-to-string": "^3.1.0",
+    "mdx-annotations": "^0.1.1",
+    "next": "13.0.2",
+    "postcss-focus-visible": "^6.0.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-medium-image-zoom": "^5.1.5",
+    "react-player": "^2.12.0",
+    "recma-nextjs-static-props": "^1.0.0",
+    "rehype-mdx-title": "^2.0.0",
+    "remark-gfm": "^3.0.1",
+    "shiki": "^0.14.2",
+    "tailwindcss": "^3.2.4",
+    "unist-util-visit": "^4.1.1",
+    "zustand": "^4.3.2"
   },
   "devDependencies": {
-    "@types/node": "18.15.11",
-    "prettier": "^2.8.7",
-    "typescript": "^5.0.3"
+    "eslint": "8.26.0",
+    "eslint-config-next": "13.0.2",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.2.8",
+    "tailwind-scrollbar": "^3.0.0"
   }
 }

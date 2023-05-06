@@ -1,5 +1,6 @@
 export interface EnvSecret {
   id?: string;
+  uuid: string;
   encryptedKey: string;
   encryptedValue: string;
   hiddenValue: string;

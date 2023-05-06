@@ -1,0 +1,135 @@
+export const title = 'Install and setup Envless CLI'
+export const description =
+  'This guide will get you all set up and ready to use the Envless CLI in no time.'
+
+## Install
+
+You can install Envless CLI using following command:
+
+<CodeGroup title="Install Envless CLI">
+```bash {{ title: 'Node', language: 'bash' }}
+# NPM
+npm install -g envless
+# Yarn
+yarn global add envless
+# PNPM
+pnpm add -g envless
+```
+
+```bash {{ title: 'MacOS', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Windows', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Alpine', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Ubuntu', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'CentOS', language: 'bash' }}
+brew install envless
+```
+
+```bash {{ title: 'Shell', language: 'bash' }}
+brew install envless
+```
+
+</CodeGroup>
+
+## Update
+
+<CodeGroup title="Update Envless CLI">
+```bash {{ title: 'Node', language: 'bash' }}
+# NPM
+npm update -g envless
+# Yarn
+yarn global upgrade envless
+# PNPM
+pnpm update -g envless
+```
+
+```bash {{ title: 'MacOS', language: 'bash' }}
+brew upgrade envless
+```
+
+```bash {{ title: 'Windows', language: 'bash' }}
+brew upgrade envless
+```
+
+```bash {{ title: 'Alpine', language: 'bash' }}
+brew upgrade envless
+```
+
+```bash {{ title: 'Ubuntu', language: 'bash' }}
+brew upgrade envless
+```
+
+```bash {{ title: 'CentOS', language: 'bash' }}
+brew upgrade envless
+```
+
+```bash {{ title: 'Shell', language: 'bash' }}
+brew upgrade envless
+```
+
+</CodeGroup>
+
+## Initialize
+
+You can initialize Envless CLI using following command. This command is used to setup CLI id and token for your project on your development environment. For a complete development setup, please follow our [quickstart](/quickstart) guide.
+
+<CodeGroup title="Initialize Envless CLI">
+```bash {{ title: 'Command', language: 'bash' }}
+envless init --id xxxxxxxx --token xxxxxxxx
+```
+
+```bash {{ title: 'Help', language: 'bash' }}
+$ envless init --help
+
+Initialize Envless CLI
+
+USAGE
+  $ envless init [-i <value>] [-t <value>] [-h]
+
+FLAGS
+  -h, --help           Show help for the init command
+  -i, --id=<value>     Cli ID
+  -t, --token=<value>  Cli Token
+
+DESCRIPTION
+  Initialize Envless CLI
+  ⚡ Please make sure you have created a project and setup CLI id and token on the
+  dashboard. If you do not have a project, create one at
+  https://go.envless.dev/projects
+
+EXAMPLES
+  $ envless init
+  $ envless init --id xxxxxxxx --token xxxxxxxx
+```
+
+</CodeGroup>
+
+For IaaS providers with Docker, K8S and others, PaaS (Vercel, Supabase, Netlify and others) and CI/CD pipelines (Github actions, Gitlab CI/CD, Circle CI and others), you can use ENV variables to initialize Envless CLI.
+
+```bash {{ title: 'Envless ENV variables', language: 'bash' }}
+export ENVLESS_CLI_ID=xxxxxxxx
+export ENVLESS_CLI_TOKEN=xxxxxxxx
+export ENVLESS_PROJECT_ID=xxxxxxxx
+export ENVLESS_BRANCH_NAME=xxxxxxxx
+export ENVLESS_PRIVATE_KEY="
+  -----BEGIN PGP PRIVATE KEY BLOCK-----
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+"
+```
+
+<Note>
+  Please make sure you have created a project and setup CLI id and token on the
+  dashboard. If you do not have a project, create one at
+  [https://go.envless.dev/projects](https://go.envless.dev/projects)
+</Note>

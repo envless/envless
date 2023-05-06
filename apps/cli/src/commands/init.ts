@@ -15,11 +15,11 @@ export default class Init extends Command {
   static flags = {
     id: Flags.string({
       char: "i",
-      description: "Cli ID",
+      description: "Unique identifier for CLI",
     }),
     token: Flags.string({
       char: "t",
-      description: "Cli Token",
+      description: "Unique CLI token for authentication",
     }),
     help: Flags.help({
       char: "h",
@@ -57,13 +57,13 @@ export default class Init extends Command {
       });
 
       flags.id = id;
-      isCancel(id) && triggerCancel();
+      isCancel(id) && triggerCancel("Operation cancelled");
     }
 
     if (!flags.token) {
       const token: any = await text({
         message: `Enter your CLI TOKEN: ${grey(
-          `Please follow this instruction to get your token: ${LINKS.docs}/cli/auth`,
+          `Please follow this instruction to get your token: ${LINKS.docs}/quickstart#install-and-setup-envless-cli`,
         )}`,
 
         validate: (input: string) => {
@@ -74,7 +74,7 @@ export default class Init extends Command {
       });
 
       flags.token = token;
-      isCancel(token) && triggerCancel();
+      isCancel(token) && triggerCancel("Operation cancelled");
     }
 
     const cli = {

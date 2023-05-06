@@ -3,12 +3,10 @@ const yaml = require("js-yaml");
 
 export const readFromDotEnvless = async () => {
   try {
-    const dotEnvlessFile = await yaml.load(
-      fs.readFileSync("./.envless.yml", "utf8"),
-    );
-    return dotEnvlessFile;
-  } catch (e: any) {
-    return e;
+    const envless = await yaml.load(fs.readFileSync("./.envless.yml", "utf8"));
+    return envless;
+  } catch (e) {
+    return {};
   }
 };
 

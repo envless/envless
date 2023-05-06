@@ -9,6 +9,10 @@ interface PullRequestHoverCardProps {
   projectName: string;
   pullRequestTitle: string;
   pullRequestStatus: string;
+  baseBranchName;
+  currentBranchName;
+  createdAt: Date;
+  createdBy: string;
 }
 
 export default function PullRequestTitleHoverCard({
@@ -17,7 +21,13 @@ export default function PullRequestTitleHoverCard({
   projectSlug,
   pullRequestTitle,
   pullRequestStatus,
+  baseBranchName,
+  currentBranchName,
+  createdAt,
+  createdBy,
 }: PullRequestHoverCardProps) {
+  const createdTime = new Date(createdAt).toDateString();
+
   return (
     <HoverCard.Root openDelay={200} closeDelay={200}>
       <HoverCard.Trigger asChild>{triggerComponent}</HoverCard.Trigger>
@@ -32,7 +42,7 @@ export default function PullRequestTitleHoverCard({
               <Link href={`/projects/${projectSlug}`} className="underline">
                 {projectName}
               </Link>{" "}
-              on Feb 22
+              on {createdTime}
             </div>
 
             <div className="flex items-start gap-[10px]">
@@ -44,11 +54,11 @@ export default function PullRequestTitleHoverCard({
                 <p className="text-md font-bold">{pullRequestTitle} </p>
                 <div className="mt-2 inline-flex items-center gap-2">
                   <span className="bg-dark text-light max-w-[6rem] truncate rounded px-1 py-0.5">
-                    envless:main
+                    {baseBranchName}
                   </span>
                   <ArrowLeft className="text-lighter h-4 w-4 shrink-0" />
                   <span className="bg-dark text-light max-w-[6rem] truncate rounded px-1 py-0.5">
-                    some-feature-name
+                    {currentBranchName}
                   </span>
                 </div>
               </div>
@@ -57,7 +67,7 @@ export default function PullRequestTitleHoverCard({
 
           <div className="flex items-center gap-2 px-4 py-3">
             <div className="h-5 w-5 rounded-full bg-teal-400"></div>
-            <p className="text-light text-xs">You opened</p>
+            <p className="text-light text-xs">{createdBy} opened</p>
           </div>
           <HoverCard.Arrow className="text-dark" />
         </HoverCard.Content>

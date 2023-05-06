@@ -91,10 +91,12 @@ const AddMemberModal = ({
   return (
     <Modal
       button={
-        <Button type="button" className="float-right">
-          <UserPlus className="mr-2 h-4 w-4 " strokeWidth={2} />
-          <span className="hidden sm:block">Invite team member</span>
-          <span className="block sm:hidden">Invite member</span>
+        <Button
+          leftIcon={<UserPlus className="mr-2 h-4 w-4" strokeWidth={2} />}
+          type="button"
+          className="float-right"
+        >
+          Invite team member
         </Button>
       }
       title="Invite team member"

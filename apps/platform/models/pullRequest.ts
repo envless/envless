@@ -34,6 +34,18 @@ export const getOne = async ({
     },
     include: {
       createdBy: true,
+      baseBranch: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      currentBranch: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 };

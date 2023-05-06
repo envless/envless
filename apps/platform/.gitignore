@@ -1,3 +1,8 @@
 .mailing
 node_modules
 .env
+
+test.json
+test.yml
+test.env
+.vercel

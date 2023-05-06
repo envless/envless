@@ -1,74 +1,216 @@
-import { EnvVariable } from "@/components/projects/EnvironmentVariableEditor";
+import { encryptString } from "@47ng/cloak";
+import { EnvSecret } from "@/types/index";
+import { parseDotEnvContents } from "@/utils/helpers";
+import yaml from "js-yaml";
+import { repeat } from "lodash";
+import { showToast } from "@/components/theme/showToast";
 
-export const parseEnvFile = async (file: File, setEnvKeys) => {
-  const reader = new FileReader();
+export const parseEnvFile = async (file: File, decryptedProjectKey: string) => {
+  const fileContents = await readFileContents(file);
 
-  const readFile = new Promise((resolve, reject) => {
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-  });
+  const fileExtension = file.name.split(".").pop()?.toLowerCase() || "";
 
-  reader.readAsText(file, "UTF-8");
-  const contents = (await readFile) as string;
-  const pairs = await parseEnvContent(contents);
-  setEnvKeys([...pairs]);
+  const pairs = await parseEnvContent(
+    fileExtension,
+    fileContents,
+    decryptedProjectKey,
+  );
+  return pairs;
 };
 
-export const parseEnvContent = async (contents: string) => {
-  const pairs = parse(contents);
-  const keyValues: EnvVariable[] = [];
-
-  Object.keys(pairs).forEach((key) => {
-    const value = pairs[key];
-    const keyValue = {
-      envKey: key,
-      envValue: value,
-      hidden: true,
+async function readFileContents(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = (event: ProgressEvent<FileReader>) => {
+      resolve(event.target?.result as string);
     };
-
-    keyValues.push(keyValue);
+    reader.onerror = (error: ProgressEvent<FileReader>) => {
+      reject(error);
+    };
+    reader.readAsText(file);
   });
+}
 
-  return keyValues;
-};
+export const parseEnvContent = async (
+  fileExtension: string,
+  contents: string,
+  decryptedProjectkey: string,
+) => {
+  let secrets: EnvSecret[] = [];
 
-// Borrowed from https://github.com/motdotla/dotenv/blob/master/lib/main.js
-const LINE =
-  /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/gm;
-const parse = (src: string) => {
-  const obj = {};
+  switch (fileExtension) {
+    case "env":
+      const pairs = parseDotEnvContents(contents);
+      const keyPairEntries = Object.entries(pairs);
 
-  // Convert buffer to string
-  let lines = src.toString();
+      for (let i = 0; i < keyPairEntries.length; i++) {
+        const [key, value] = keyPairEntries[i];
 
-  // Convert line breaks to same format
-  lines = lines.replace(/\r\n?/gm, "\n");
+        const encryptedKey = await encryptString(key, decryptedProjectkey);
+        const encryptedValue = await encryptString(
+          value as string,
+          decryptedProjectkey,
+        );
 
-  let match;
-  while ((match = LINE.exec(lines)) != null) {
-    const key = match[1];
+        const secret = {
+          id: undefined,
+          uuid: window.crypto.randomUUID(),
+          encryptedKey,
+          encryptedValue,
+          decryptedKey: key as string,
+          decryptedValue: value as string,
+          hiddenValue: repeat("*", (value as string).length),
+          hidden: true,
+        };
 
-    // Default undefined or null to empty string
-    let value = match[2] || "";
+        secrets.push(secret);
+      }
+      break;
 
-    // Remove whitespace
-    value = value.trim();
+    case "yml":
+      try {
+        const yamlPairs = yaml.load(contents);
 
-    // Check if double quoted
-    const maybeQuote = value[0];
+        const traverseAndConvertYml = async (
+          pairs,
+          result: EnvSecret[] = [],
+          parentKey = "",
+        ) => {
+          if (typeof pairs !== "object" || Array.isArray(pairs)) {
+            result[parentKey] = pairs;
 
-    // Remove surrounding quotes
-    value = value.replace(/^(['"`])([\s\S]*)\1$/gm, "$2");
+            const encryptedKey = await encryptString(
+              parentKey,
+              decryptedProjectkey,
+            );
+            const encryptedValue = await encryptString(
+              pairs as string,
+              decryptedProjectkey,
+            );
 
-    // Expand newlines if double quoted
-    if (maybeQuote === '"') {
-      value = value.replace(/\\n/g, "\n");
-      value = value.replace(/\\r/g, "\r");
-    }
+            const envSecret = {
+              id: undefined,
+              uuid: window.crypto.randomUUID(),
+              encryptedKey,
+              encryptedValue,
+              hiddenValue: repeat("*", String(pairs).length),
+              decryptedKey: parentKey,
+              decryptedValue: pairs,
+              hidden: true,
+            };
+            result.push(envSecret);
+          } else {
+            for (const [key, value] of Object.entries(pairs)) {
+              const newParentKey = parentKey ? `${parentKey}_${key}` : key;
+              await traverseAndConvertYml(value, result, newParentKey);
+            }
+          }
 
-    // Add to object
-    obj[key] = value;
+          return result;
+        };
+
+        secrets = await traverseAndConvertYml(yamlPairs);
+      } catch (err) {
+        if (err.reason === "duplicated mapping key") {
+          showToast({
+            title: "Duplicate Key",
+            subtitle: "Your uploaded YAML file contains duplicate keys",
+            type: "error",
+            duration: 2000,
+          });
+        }
+      }
+      break;
+
+    case "json":
+      const jsonPairs = JSON.parse(contents);
+
+      const traverseAndConvertJson = async (
+        pairs,
+        result: EnvSecret[] = [],
+        parentKey = "",
+      ) => {
+        if (typeof pairs !== "object" || Array.isArray(pairs)) {
+          result[parentKey] = pairs;
+
+          const encryptedKey = await encryptString(
+            parentKey,
+            decryptedProjectkey,
+          );
+          const encryptedValue = await encryptString(
+            pairs as string,
+            decryptedProjectkey,
+          );
+
+          const envSecret = {
+            id: undefined,
+            uuid: window.crypto.randomUUID(),
+            encryptedKey,
+            encryptedValue,
+            hiddenValue: repeat("*", String(pairs).length),
+            decryptedKey: parentKey,
+            decryptedValue: pairs,
+            hidden: true,
+          };
+          result.push(envSecret);
+        } else {
+          for (const [key, value] of Object.entries(pairs)) {
+            const newParentKey = parentKey ? `${parentKey}_${key}` : key;
+            await traverseAndConvertJson(value, result, newParentKey);
+          }
+        }
+
+        return result;
+      };
+
+      secrets = await traverseAndConvertJson(jsonPairs);
+
+      break;
   }
 
-  return obj;
+  return secrets;
+};
+
+export const attemptToParseCopiedSecrets = async (
+  copiedContent: string,
+  decryptedProjectKey: string,
+) => {
+  let parsedContent: EnvSecret[] = [];
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "json",
+        copiedContent,
+        decryptedProjectKey,
+      );
+    } catch (error) {}
+  }
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "yml",
+        copiedContent,
+        decryptedProjectKey,
+      );
+
+      // this is the special case when pasting on secret key field only
+      if (parsedContent.length === 1 && !parsedContent[0].decryptedKey) {
+        parsedContent = [];
+      }
+    } catch (error) {}
+  }
+
+  if (parsedContent.length === 0) {
+    try {
+      parsedContent = await parseEnvContent(
+        "env",
+        copiedContent,
+        decryptedProjectKey,
+      );
+    } catch (error) {}
+  }
+
+  return parsedContent;
 };

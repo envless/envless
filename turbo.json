@@ -8,7 +8,7 @@
       "outputs": []
     },
     "dev": {
-      "cache": false
+      "cache": true
     },
     "build:ui": {
       "cache": false

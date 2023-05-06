@@ -1,16 +1,14 @@
 /* eslint-env node */
 // https://envless.dev/api/og?page=<page>&title=<title>
 import { ImageResponse } from "@vercel/og";
-import { truncate } from "lodash";
 
 export const config = {
-  // runtime: "edge"
+  // runtime: "edge",
 };
 
 const font = fetch(new URL("./Inter-SemiBold.otf", import.meta.url)).then(
   (res) => res.arrayBuffer(),
 );
-
 export default async function (req) {
   const inter = await font;
   const { searchParams } = new URL(req.url);
@@ -83,7 +81,7 @@ export default async function (req) {
             color: "transparent",
           }}
         >
-          {truncate(title as string, { length: 65 })}
+          {title?.substring(0, 65)}
         </h1>
       </div>
     ),

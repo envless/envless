@@ -6,7 +6,7 @@ import type { MemberType, UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
 import AddMemberModal from "@/components/members/AddMemberModal";
 import MembersTableContainer from "@/components/members/MembersTableContainer";
@@ -106,7 +106,7 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   if (!user) {
     return {
       redirect: {
-        destination: "/auth",
+        destination: "/login",
         permanent: false,
       },
     };
@@ -167,7 +167,10 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
 
 export const getServerSideProps = withAccessControl({
   getServerSideProps: getPageServerSideProps,
-  hasAccess: { owner: true, maintainer: true },
+  hasAccess: {
+    roles: [UserRole.maintainer, UserRole.owner],
+    statuses: [MembershipStatus.active],
+  },
 });
 
 export default MembersPage;

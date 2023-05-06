@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { MemberType, UserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
-import { Columns, Download, Filter, Search, UserX } from "lucide-react";
+import { Download, Search, UserX } from "lucide-react";
 import * as csvParser from "papaparse";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
 import { BaseInput } from "../theme";
@@ -197,48 +196,30 @@ const MembersTableContainer = ({
               full={false}
             />
           </div>
-          <div className="flex items-center">
-            <div className="flex shrink-0 items-center">
-              <button
-                aria-label="Apply Filters"
-                data-balloon-pos="up"
-                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-              >
-                <Filter className="h-5 w-5" />
-              </button>
-            </div>
+          <div className="flex shrink-0 items-center">
+            <button
+              aria-label="Download as CSV"
+              data-balloon-pos="up"
+              className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
+              onClick={() => {
+                const dataForCSV = team.map((team) => {
+                  return {
+                    name: team.name,
+                    email: team.email,
+                    role: team.role,
+                  };
+                });
 
-            <div className="flex shrink-0 items-center">
-              <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25">
-                <Columns className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="flex shrink-0 items-center">
-              <button
-                aria-label="Download as CSV"
-                data-balloon-pos="up"
-                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
-                onClick={() => {
-                  const dataForCSV = team.map((team) => {
-                    return {
-                      name: team.name,
-                      email: team.email,
-                      role: team.role,
-                    };
-                  });
-
-                  const csv = csvParser.unparse(dataForCSV);
-                  downloadAsTextFile("members-data.csv", csv);
-                }}
-              >
-                <Download className="h-5 w-5" />
-              </button>
-            </div>
+                const csv = csvParser.unparse(dataForCSV);
+                downloadAsTextFile("members-data.csv", csv);
+              }}
+            >
+              <Download className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </div>
-      <div className="w-full min-w-full overflow-x-auto">
+      <div className="w-full min-w-full">
         {team.length === 0 ? (
           <BaseEmptyState
             icon={<UserX className="mx-auto mb-3 h-10 w-10" />}

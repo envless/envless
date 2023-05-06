@@ -185,9 +185,17 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
                   />
 
                   <div className="float-right">
-                    <Button type="submit" disabled={enableMutation.isLoading}>
+                    <Button
+                      rightIcon={
+                        <ArrowRight
+                          className="ml-2 h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      }
+                      type="submit"
+                      loading={enableMutation.isLoading}
+                    >
                       Verify and continue
-                      <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                     </Button>
                   </div>
                 </form>

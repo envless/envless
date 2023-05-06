@@ -122,20 +122,24 @@ const EncryptionSetup = ({ ...props }) => {
     }
   };
 
-  const onPrivateKeySetup = async () => {
+  const onPrivateKeySetup = async (value: string) => {
     try {
       const decryptedProjectKey = (await OpenPGP.decrypt(
         encryptedProjectKey,
-        privateKey,
+        value,
       )) as string;
 
       const updatedSession = {
         ...session,
         user: {
           ...session?.user,
-          privateKey,
+          privateKey: value,
         },
       };
+
+      if (privateKey !== value) {
+        await setPrivateKey(value);
+      }
 
       await update(updatedSession);
 
@@ -177,7 +181,8 @@ const EncryptionSetup = ({ ...props }) => {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            await onPrivateKeySetup();
+            const value = e.target["privateKey"].value;
+            await onPrivateKeySetup(value);
           }}
         >
           <div className="flex flex-col items-center justify-center">
@@ -212,22 +217,22 @@ const EncryptionSetup = ({ ...props }) => {
                   type="submit"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
+                  rightIcon={<ArrowRight className="ml-2 h-5 w-5" />}
                 >
                   Confirm and continue
-                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               ) : (
                 <Button
                   type="button"
                   variant="primary"
                   size="md"
-                  disabled={loading}
+                  loading={loading}
+                  leftIcon={<Download className="mr-2 h-5 w-5" />}
                   onClick={async () => {
                     await generateEncryptionKeys();
                   }}
                 >
-                  <Download className="mr-2 h-5 w-5" />
                   {loading ? "Generating keys..." : "Download private key"}
                 </Button>
               )}
@@ -258,11 +263,13 @@ const EncryptionSetup = ({ ...props }) => {
           <div className="flex flex-shrink-0 justify-start px-4 py-4">
             <Button
               className="ml-4"
+              leftIcon={
+                <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
+              }
               onClick={async () => {
                 await activateCli({ active: true });
               }}
             >
-              <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
               Confirm and continue
             </Button>
           </div>

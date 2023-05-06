@@ -1,26 +1,6 @@
 version: "3"
 
 services:
-  redis:
-    image: "redis:7-alpine"
-    hostname: "envless-redis"
-    init: true
-    networks:
-      - envless_network
-    ports:
-      - "6379:6379"
-
-  redis-rest:
-    image: "nicolas/webdis:0.1.21"
-    platform: linux/amd64
-    hostname: "envless-redis-rest"
-    depends_on:
-      - "redis"
-    ports:
-      - "7379:7379"
-    networks:
-      - envless_network
-
   postgres:
     image: "postgres:13-alpine"
     hostname: "envless-postgres"
@@ -51,8 +31,6 @@ services:
     networks:
       - envless_network
     depends_on:
-      redis-rest:
-        condition: service_started
       postgres:
         condition: service_started
 

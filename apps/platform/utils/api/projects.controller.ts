@@ -144,12 +144,30 @@ const createEnvlessProject = async (
           },
         },
         branches: {
-          create: {
-            name: "main",
-            protected: true,
-            description: "Main branch is protected by default",
-            protectedAt: new Date(),
-            createdById: user.id,
+          createMany: {
+            data: [
+              {
+                name: "main",
+                protected: true,
+                description: "Main branch is protected by default",
+                protectedAt: new Date(),
+                createdById: user.id,
+              },
+              {
+                name: "staging",
+                protected: true,
+                description: "Staging branch is protected by default",
+                protectedAt: new Date(),
+                createdById: user.id,
+              },
+              {
+                name: "development",
+                protected: true,
+                description: "Development branch is protected by default",
+                protectedAt: new Date(),
+                createdById: user.id,
+              },
+            ],
           },
         },
       },

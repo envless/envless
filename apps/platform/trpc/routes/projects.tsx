@@ -78,12 +78,30 @@ export const projects = createRouter({
             },
           },
           branches: {
-            create: {
-              name: "main",
-              protected: true,
-              description: "Main branch is protected by default",
-              protectedAt: new Date(),
-              createdById: user.id,
+            createMany: {
+              data: [
+                {
+                  name: "main",
+                  protected: true,
+                  description: "Main branch is protected by default",
+                  protectedAt: new Date(),
+                  createdById: user.id,
+                },
+                {
+                  name: "staging",
+                  protected: true,
+                  description: "Staging branch is protected by default",
+                  protectedAt: new Date(),
+                  createdById: user.id,
+                },
+                {
+                  name: "development",
+                  protected: true,
+                  description: "Development branch is protected by default",
+                  protectedAt: new Date(),
+                  createdById: user.id,
+                },
+              ],
             },
           },
         },
@@ -146,25 +164,21 @@ export const projects = createRouter({
         project: z.object({
           name: z.string(),
           id: z.string(),
-          enforce2FA: z.boolean(),
+          twoFactorRequired: z.boolean(),
         }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { project } = input;
-      const enforce2FA = project.enforce2FA || false;
+      const { name } = project;
+      const twoFactorRequired = project.twoFactorRequired || false;
 
       const updatedProject = await prisma.project.update({
         where: {
           id: project.id,
         },
-        data: {
-          name: project.name,
-          settings: {
-            enforce2FA: project.enforce2FA,
-          },
-        },
+        data: { name, twoFactorRequired },
       });
 
       return updatedProject;
@@ -228,7 +242,7 @@ export const projects = createRouter({
               }
               greeting="Hi there,"
               buttonText="Login"
-              buttonLink={`${env.BASE_URL}/auth`}
+              buttonLink={`${env.BASE_URL}/login`}
             />
           </>
         ),
@@ -294,7 +308,7 @@ export const projects = createRouter({
               }
               greeting="Hi there,"
               buttonText="Login"
-              buttonLink={`${env.BASE_URL}/auth`}
+              buttonLink={`${env.BASE_URL}/login`}
             />
           </>
         ),

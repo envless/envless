@@ -5,51 +5,105 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { encryptString } from "@47ng/cloak";
 import useSecret from "@/hooks/useSecret";
 import { EnvSecret } from "@/types/index";
-import { parseEnvContent, parseEnvFile } from "@/utils/envParser";
+import { attemptToParseCopiedSecrets, parseEnvFile } from "@/utils/envParser";
 import { trpc } from "@/utils/trpc";
 import clsx from "clsx";
+import { repeat } from "lodash";
 import { Eye, EyeOff, MinusCircle } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import { DragDropIcon } from "@/components/icons";
 import { Button, Container, TextareaGroup } from "@/components/theme";
-
-export interface EnvVariable {
-  envKey: string;
-  envValue: string;
-  hidden: boolean;
-}
+import { showToast } from "@/components/theme/showToast";
 
 export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
-  const [envKeys, setEnvKeys] = useState<EnvVariable[]>([]);
   const pastingInputIndex = useRef(0);
 
-  const { secrets, setSecrets, decryptedProjectKey } = useSecret({
+  const { secrets, decryptedProjectKey } = useSecret({
     branchId,
   });
 
-  const { control, setValue, handleSubmit } = useForm<any>();
+  const {
+    control,
+    setValue,
+    getValues,
+    reset,
+    handleSubmit,
+    formState: { dirtyFields, isSubmitSuccessful, isDirty },
+  } = useForm<any>();
+
   const { fields, append, remove, update } = useFieldArray({
     name: "secrets",
     control,
   });
-  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation();
+
+  const keysSuccessCountMessage = (data: {
+    secretsInsertCount: number;
+    secretsUpdateCount: number;
+  }) => {
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount > 0) {
+      return `${data.secretsInsertCount} new secrets created and ${data.secretsUpdateCount} secrets updated successfully`;
+    }
+
+    if (data.secretsInsertCount > 0 && data.secretsUpdateCount == 0) {
+      return `${data.secretsInsertCount} new secrets created successfully`;
+    }
+
+    return `${data.secretsUpdateCount} secrets updated successfully`;
+  };
+  const saveSecretsMutation = trpc.secrets.saveSecrets.useMutation({
+    onSuccess: (data) => {
+      showToast({
+        type: "success",
+        title: "Secrets successfully updated",
+        subtitle: keysSuccessCountMessage(data),
+      });
+    },
+  });
+
+  const deleteSecretMutation = trpc.secrets.deleteSecret.useMutation({
+    onSuccess: () => {
+      showToast({
+        type: "success",
+        title: "Secrets deleted",
+        subtitle: "Secrets successfully deleted",
+      });
+    },
+  });
 
   useEffect(() => {
     if (secrets) {
-      setValue("secrets", secrets);
+      reset({
+        secrets,
+      });
     }
-  }, [secrets, setValue]);
+  }, [secrets, reset]);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    await parseEnvFile(file, setEnvKeys);
-  }, []);
+  useEffect(() => {
+    let secretValues = getValues("secrets");
+    if (isSubmitSuccessful)
+      reset(
+        {
+          secrets: secretValues,
+        },
+        {
+          keepDirtyValues: true,
+        },
+      );
+  }, [getValues, isSubmitSuccessful, reset]);
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      const pairs = await parseEnvFile(file, decryptedProjectKey);
+      setValue("secrets", pairs);
+    },
+    [setValue, decryptedProjectKey],
+  );
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
@@ -58,7 +112,8 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
   const handleAddMoreEnvClick = () => {
     append({
-      id: null,
+      id: undefined,
+      uuid: window.crypto.randomUUID(),
       encryptedKey: "",
       encryptedValue: "",
       decryptedKey: "",
@@ -68,88 +123,71 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     });
   };
 
-  const handleToggleHiddenEnvPairClick = (index: number) => {
-    const newEnvKeys = secrets.map((envVariable, i) => {
-      const isHidden = () => {
-        if (i === index) {
-          return !envVariable.hidden;
-        }
-
-        return envVariable.hidden;
-      };
-
-      return {
-        ...envVariable,
-        hidden: isHidden(),
-      } as EnvSecret;
-    });
-
-    setSecrets(newEnvKeys);
-  };
-
-  const handleEnvValueChange = (index: number) => (e) => {
-    setEnvKeys(
-      envKeys.map((envVariable, i) => {
-        if (i === index) {
-          return {
-            ...envVariable,
-            envValue: i === index ? e.target.value : envVariable.envValue,
-          } as EnvVariable;
-        }
-
-        return envVariable;
-      }),
-    );
-  };
-
   const handlePaste = async (event: any) => {
+    event.preventDefault();
     const content = event.clipboardData.getData("text/plain") as string;
-    const pastedEnvKeyValuePairs = await parseEnvContent(content);
 
-    if (
-      !(
-        pastedEnvKeyValuePairs[0]?.envKey && pastedEnvKeyValuePairs[0]?.envValue
-      )
-    ) {
+    const pastedSecrets = await attemptToParseCopiedSecrets(
+      content,
+      decryptedProjectKey,
+    );
+
+    if (pastedSecrets && pastedSecrets.length === 0) {
+      const encryptedSecretKey = await encryptString(
+        content,
+        decryptedProjectKey,
+      );
+      setValue(
+        `secrets.${pastingInputIndex.current}.encryptedKey`,
+        encryptedSecretKey,
+      );
+      setValue(`secrets.${pastingInputIndex.current}.decryptedKey`, content);
       return;
     }
 
-    event.preventDefault();
-    const envKeysBeforePastingInput = envKeys.slice(
+    const envKeysBeforePastingInput = fields.slice(
       0,
       pastingInputIndex.current,
     );
 
-    const envKeysAfterPastingInput = envKeys.slice(
+    const envKeysAfterPastingInput = fields.slice(
       pastingInputIndex.current + 1,
     );
-    setEnvKeys([
+
+    // this is creating workaround. We need to find the better solution. (state is being reset)
+    remove();
+
+    append([
       ...envKeysBeforePastingInput,
-      ...pastedEnvKeyValuePairs,
+      ...pastedSecrets,
       ...envKeysAfterPastingInput,
     ]);
   };
 
   const onSubmit = async (data: any) => {
     try {
-      console.log("data", data);
+      if (isDirty) {
+        const secretsToSave = data.secrets.map(
+          (secret: EnvSecret, index: number) => {
+            return {
+              uuid: secret.uuid,
+              encryptedKey: secret.encryptedKey,
+              encryptedValue: secret.encryptedValue,
+              hasKeyChanged: dirtyFields.secrets[index].decryptedKey,
+              hasValueChanged: dirtyFields.secrets[index].decryptedValue,
+              branchId,
+            };
+          },
+        );
 
-      const secretsToSave = data.secrets.map((secret: EnvSecret) => {
-        return {
-          id: secret?.id || null,
-          encryptedKey: secret.encryptedKey,
-          encryptedValue: secret.encryptedValue,
-          branchId,
-        };
-      });
-
-      await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+        await saveSecretsMutation.mutateAsync({ secrets: secretsToSave });
+      }
     } catch (err) {}
   };
 
   return (
     <>
-      {secrets.length > 0 ? (
+      {fields.length > 0 ? (
         <form onSubmit={handleSubmit(onSubmit)} className="w-full">
           <div className="w-full py-8">
             {fields.map((field, index) => (
@@ -189,45 +227,44 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
 
                 <div className="col-span-9">
                   <div className="flex items-center gap-3">
-                    <Controller
-                      control={control}
-                      name={`secrets.${index}.decryptedValue` as const}
-                      render={({ field: { onChange, value, name } }) => (
-                        <TextareaGroup
-                          full
-                          icon={<Eye className="text-lighter h-4 w-4" />}
-                          autoComplete="off"
-                          className={clsx(
-                            // envPair.hidden ? "obscure" : "",
-                            "inline-block font-mono",
-                          )}
-                          disabled={false}
-                          iconActionClick={() =>
-                            handleToggleHiddenEnvPairClick(index)
+                    <ConditionalInput
+                      key={field.id}
+                      {...{
+                        control,
+                        index,
+                        field,
+                        update,
+                        decryptedProjectKey,
+                        setValue,
+                      }}
+                    />
+
+                    <button>
+                      <MinusCircle
+                        className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
+                        onClick={async () => {
+                          const selectedSecretId = getValues(
+                            `secrets.${index}.id`,
+                          );
+
+                          if (selectedSecretId) {
+                            if (
+                              confirm(
+                                "Are you sure want to delete this secret ?",
+                              )
+                            ) {
+                              await deleteSecretMutation.mutateAsync({
+                                secret: {
+                                  id: selectedSecretId,
+                                },
+                              });
+                            }
                           }
-                          name={name}
-                          value={value}
-                          onChange={async (e) => {
-                            onChange(e.target.value);
 
-                            const encryptedSecretValue = await encryptString(
-                              e.target.value,
-                              decryptedProjectKey,
-                            );
-
-                            setValue(
-                              `secrets.${index}.encryptedValue`,
-                              encryptedSecretValue,
-                            );
-                          }}
-                        />
-                      )}
-                    />
-
-                    <MinusCircle
-                      className="text-light hover:text-lighter h-5 w-5 shrink-0 cursor-pointer"
-                      onClick={() => remove(index)}
-                    />
+                          remove(index);
+                        }}
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -241,7 +278,9 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               >
                 Add more
               </Button>
-              <Button>Save changes</Button>
+              <Button loading={saveSecretsMutation.isLoading}>
+                Save changes
+              </Button>
             </div>
           </div>
         </form>
@@ -254,12 +293,14 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
         >
           <div {...getRootProps()} className="py-32 text-center">
             <DragDropIcon className="mx-auto h-12 w-12" />
-            <h3 className="mt-2 text-xl">Drag and drop .env files</h3>
+            <h3 className="mt-2 text-xl">
+              Drag and drop .env, .yml or .json files
+            </h3>
             <input
               {...getInputProps()}
               type="file"
               className="hidden"
-              accept="env"
+              accept=".env,.yaml,.yml,.json"
             />
             <p className="text-lighter mx-auto mt-1 max-w-md text-sm">
               You can also{" "}
@@ -269,12 +310,12 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
               >
                 click here
               </span>{" "}
-              to import, copy/paste contents in .env file, or create{" "}
+              to import, copy/paste contents in .env, .yml or .json file, or add{" "}
               <span
                 onClick={handleAddMoreEnvClick}
                 className="text-teal-300 transition duration-300 hover:cursor-pointer hover:underline"
               >
-                one at a time.
+                one secret at a time.
               </span>
             </p>
           </div>
@@ -288,6 +329,75 @@ interface CustomInputProps extends ComponentProps<"input"> {
   reveal?: boolean;
 }
 
+const ConditionalInput = ({
+  control,
+  index,
+  field,
+  update,
+  decryptedProjectKey,
+  setValue,
+}) => {
+  const watchedValue = useWatch({
+    name: "secrets",
+    control,
+  });
+
+  const handleToggleHiddenEnvPairClick = (index: number) => {
+    let { hidden, ...others } = watchedValue[index];
+
+    update(index, {
+      hidden: hidden ? false : true,
+      ...others,
+    });
+  };
+
+  return (
+    <Controller
+      control={control}
+      name={`secrets.${index}.decryptedValue` as const}
+      render={({ field: { onChange, ...rest } }) => (
+        <TextareaGroup
+          full
+          icon={
+            watchedValue[index]?.hidden ? (
+              <Eye className="text-lighter h-4 w-4" />
+            ) : (
+              <EyeOff className="text-lighter h-4 w-4" />
+            )
+          }
+          autoComplete="off"
+          className={clsx(
+            // envPair.hidden ? "obscure" : "",
+            "inline-block font-mono",
+          )}
+          {...{
+            ...rest,
+            value: watchedValue[index]?.hidden
+              ? watchedValue[index]?.hiddenValue || ""
+              : rest.value,
+          }}
+          onChange={async (e) => {
+            const plainTextValue = e.target.value;
+            onChange(plainTextValue);
+
+            const encryptedSecretValue = await encryptString(
+              plainTextValue,
+              decryptedProjectKey,
+            );
+            setValue(`secrets.${index}.encryptedValue`, encryptedSecretValue);
+            setValue(
+              `secrets.${index}.hiddenValue`,
+              repeat("*", plainTextValue.length),
+            );
+          }}
+          disabled={false}
+          iconActionClick={() => handleToggleHiddenEnvPairClick(index)}
+        />
+      )}
+    />
+  );
+};
+
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   function CustomInput({ className, disabled, ...props }, ref) {
     return (
@@ -300,6 +410,10 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           className,
           disabled ? "cursor-not-allowed" : "",
         )}
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect="off"
+        spellCheck={false}
       />
     );
   },

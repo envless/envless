@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
           ),
         });
       },
+
+      normalizeIdentifier: (identifier) => identifier.toLowerCase().trim(),
     }),
 
     GithubProvider({
@@ -54,8 +56,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/auth",
-    signOut: "/auth",
+    signIn: "/login",
+    signOut: "/login",
   },
 
   adapter: PrismaAdapter(prisma),
@@ -74,8 +76,7 @@ export const authOptions: NextAuthOptions = {
           // @ts-ignore
           token.user = {
             ...userInSession,
-            clientSideTwoFactorVerified:
-              userInSession.clientSideTwoFactorVerified ?? false,
+            twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
           };
         }
@@ -83,8 +84,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.user = {
           ...user,
-          clientSideTwoFactorVerified:
-            session?.user?.clientSideTwoFactorVerified ?? false,
+          twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
         };
 
@@ -112,7 +112,7 @@ export const authOptions: NextAuthOptions = {
         email: string;
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
-        clientSideTwoFactorVerified: boolean;
+        twoFactorVerified: boolean;
         privateKey: string | null;
       } = token.user as any;
 
@@ -127,7 +127,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
-            clientSideTwoFactorVerified: user.clientSideTwoFactorVerified,
+            twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
           } as any,
         };
@@ -144,6 +144,10 @@ export const authOptions: NextAuthOptions = {
 
       if (signInUser && signInUser.locked) {
         return "/error/locked";
+      }
+
+      if (!signInUser && process.env.NEXT_PUBLIC_SIGNUP_DISABLED === "true") {
+        return "/error/forbidden";
       }
 
       return true;
@@ -172,11 +176,11 @@ const LockedUserSchema = z.object({
 
 const UserSchema = z.object({
   id: z.string(),
-  name: z.string().optional(),
+  name: z.string().nullable(),
   email: z.string().email(),
   image: z.string().optional(),
   twoFactorEnabled: z.boolean(),
-  clientSideTwoFactorVerified: z.boolean(),
+  twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
 });

@@ -20,7 +20,7 @@ export default function Tabs({ active, projectSlug, currentRole }: Props) {
   const tabs = getNavigationTabs(currentRole, projectUrl);
 
   return (
-    <div className="mb-5">
+    <div className="mb-12">
       <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">
           Select a tab

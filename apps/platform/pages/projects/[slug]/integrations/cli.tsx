@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useEffect } from "react";
 import { withAccessControl } from "@/utils/withAccessControl";
-import { Project, UserRole } from "@prisma/client";
+import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import { ArrowRight } from "lucide-react";
 import CliSetup from "@/components/integrations/CliSetup";
 import { Button, SlideOver } from "@/components/theme";
@@ -60,7 +60,15 @@ export const CliIntegration = ({
 };
 
 export const getServerSideProps = withAccessControl({
-  hasAccess: { maintainer: true, owner: true, developer: true, guest: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
+  },
   withEncryptedProjectKey: false,
 });
 

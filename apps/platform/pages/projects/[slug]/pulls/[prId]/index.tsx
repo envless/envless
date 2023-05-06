@@ -3,12 +3,14 @@ import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
 import { withAccessControl } from "@/utils/withAccessControl";
-import type {
+import {
+  Branch,
+  MembershipStatus,
   Project as ProjectType,
   PullRequest,
   UserRole,
 } from "@prisma/client";
-import { GitPullRequestClosed } from "lucide-react";
+import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
 import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
@@ -37,16 +39,10 @@ export default function PullRequestDetailPage({
   currentRole,
   pullRequest,
 }: Props) {
-  const oldCode = `
-  # SMTP
-  EMAIL_SERVER=smtp://username:password@smtp.example.com:587
-  EMAIL_FROM=email@example.com
-`;
-  const newCode = `
-# SMTP
-EMAIL_SERVER=smtp://hari:password@smtp.example.com:587
-EMAIL_FROM=email@example.com
-`;
+  const { baseBranch, currentBranch } = pullRequest as any & {
+    baseBranch: Branch;
+    currentBranch: Branch;
+  };
 
   return (
     <ProjectLayout
@@ -57,39 +53,44 @@ EMAIL_FROM=email@example.com
     >
       <div className="w-full">
         <div className="grid grid-cols-12 gap-2">
-          <div className="col-span-10">
+          <div className="col-span-6">
             <DetailedPrTitle
               author={pullRequest.createdBy.name}
               title={pullRequest.title}
               prId={pullRequest.prId}
               status={pullRequest.status}
-              base="main"
-              current="feat/something"
+              base={baseBranch?.name}
+              current={currentBranch?.name}
             />
           </div>
-          <div className="col-span-2">
-            <Button variant="danger-outline" className="float-right">
-              <GitPullRequestClosed
-                className="mr-2 h-4 w-4 text-red-400"
-                strokeWidth={2}
-              />
-              <span className="text-red-400">Close pull request</span>
+          <div className="col-span-6 gap-2">
+            <Button
+              className="float-right ml-3"
+              leftIcon={
+                <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+              }
+            >
+              Merge pull request
+            </Button>
+
+            <Button
+              leftIcon={
+                <GitPullRequestClosed
+                  className="mr-2 h-4 w-4"
+                  strokeWidth={2}
+                />
+              }
+              variant="danger-outline"
+              className="float-right"
+            >
+              Close pull request
             </Button>
           </div>
         </div>
       </div>
 
       <div className="mt-8 w-full">
-        <div className="grid grid-cols-12 gap-2">
-          <div className="col-span-12">
-            <EnvDiffViewer
-              oldCode={oldCode}
-              newCode={newCode}
-              leftTitle="main"
-              rightTitle="feat/additional-security"
-            />
-          </div>
-        </div>
+        <EnvDiffViewer baseBranch={baseBranch} currentBranch={currentBranch} />
       </div>
     </ProjectLayout>
   );
@@ -104,6 +105,7 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
 
   const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
 
+
   return {
     props: {
       pullRequest: JSON.parse(JSON.stringify(pullRequest)),
@@ -113,5 +115,13 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
 
 export const getServerSideProps = withAccessControl({
   getServerSideProps: getPageServerSideProps,
-  hasAccess: { owner: true, maintainer: true, developer: true, guest: true },
+  hasAccess: {
+    roles: [
+      UserRole.maintainer,
+      UserRole.developer,
+      UserRole.guest,
+      UserRole.owner,
+    ],
+    statuses: [MembershipStatus.active],
+  },
 });
