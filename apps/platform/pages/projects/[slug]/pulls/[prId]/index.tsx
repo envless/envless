@@ -2,6 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
+import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
   Branch,
@@ -15,6 +16,7 @@ import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 /**
  * A functional component that represents a pull request detail.
@@ -44,6 +46,24 @@ export default function PullRequestDetailPage({
     currentBranch: Branch;
   };
 
+  const { mutateAsync: mergePrMutationAync, isLoading: isMergePrLoading } =
+    trpc.pullRequest.merge.useMutation({
+      onSuccess: (data) => {
+        showToast({
+          type: "success",
+          title: "Pull Request Merged",
+          subtitle: `Pull Request #${data.prId} merged successfully`,
+        });
+      },
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Failed to merge pull request",
+          subtitle: error.message,
+        });
+      },
+    });
+
   return (
     <ProjectLayout
       tab="pr"
@@ -65,6 +85,12 @@ export default function PullRequestDetailPage({
           </div>
           <div className="col-span-6 gap-2">
             <Button
+              loading={isMergePrLoading}
+              onClick={async () => {
+                await mergePrMutationAync({
+                  pullRequest,
+                });
+              }}
               className="float-right ml-3"
               leftIcon={
                 <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
@@ -104,7 +130,6 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
   const projectId = project.id;
 
   const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
-
 
   return {
     props: {
