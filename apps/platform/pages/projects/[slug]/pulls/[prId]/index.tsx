@@ -47,6 +47,24 @@ export default function PullRequestDetailPage({
     currentBranch: Branch;
   };
 
+  const { mutateAsync: mergePrMutationAync, isLoading: isMergePrLoading } =
+    trpc.pullRequest.merge.useMutation({
+      onSuccess: (data) => {
+        showToast({
+          type: "success",
+          title: "Pull Request Merged",
+          subtitle: `Pull Request #${data.prId} merged successfully`,
+        });
+      },
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Failed to merge pull request",
+          subtitle: error.message,
+        });
+      },
+    });
+
   const { mutateAsync: closePrMutateAsync, isLoading: isClosePrLoading } =
     trpc.pullRequest.close.useMutation({
       onSuccess: (data) => {
@@ -88,6 +106,12 @@ export default function PullRequestDetailPage({
           {pullRequest.status !== PullRequestStatus.closed && (
             <div className="col-span-6 gap-2">
               <Button
+                loading={isMergePrLoading}
+                onClick={async () => {
+                  await mergePrMutationAync({
+                    pullRequest,
+                  });
+                }}
                 className="float-right ml-3"
                 leftIcon={
                   <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
