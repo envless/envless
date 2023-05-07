@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // import { env } from "@/env/index.mjs";
 import { generateGradient } from "@/utils/generateGradient";
-import { renderToPipeableStream, renderToString } from "react-dom/server";
+import { renderToPipeableStream, renderToStaticMarkup } from "react-dom/server";
 import svg2img from "svg2img";
 
 // This code is part of the Vercel Avatar service, which is built on Next.js.
@@ -17,7 +17,7 @@ export default async function handler(
   const [username, type] = (name as string)?.split(".") || [];
   const fileType = type?.includes("svg") ? "svg" : "png";
 
-  // Check if the request comes from the expected BaseURL
+  // Check if the request comes from our server
   /*   const origin = req.headers.origin;
   const expectedOrigin = env.BASE_URL; // And gravatar host :(
 
@@ -77,7 +77,7 @@ export default async function handler(
   } else {
     const pngBuffer = await new Promise<Buffer>((resolve, reject) => {
       svg2img(
-        renderToString(avatar),
+        renderToStaticMarkup(avatar),
         {
           resvg: {
             fitTo: { mode: "width", value: sizeNum },
@@ -93,7 +93,6 @@ export default async function handler(
       );
     });
     res.setHeader("Content-Type", "image/png");
-    res.setHeader("ngrok-skip-browser-warning", "yes");
     res.setHeader("Cache-Control", "public, max-age=604800, immutable");
     res.send(pngBuffer);
   }
