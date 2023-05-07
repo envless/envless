@@ -105,7 +105,6 @@ const getPageServerSideProps = async (context: GetServerSidePropsContext) => {
 
   const pullRequest = await getSinglePr({ projectId, prId: Number(prId) });
 
-
   return {
     props: {
       pullRequest: JSON.parse(JSON.stringify(pullRequest)),

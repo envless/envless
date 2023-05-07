@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { useMemo } from "react";
+import { getAvatar } from "@/utils/getAvatar";
 import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
 import {
   ColumnDef,
@@ -39,10 +41,17 @@ export default function AuditLogTable({
         accessorFn: (row) => row.createdBy.name,
         cell: (info) => (
           <div className="flex items-center gap-x-3">
-            <img
-              src={info.row.original.avatar}
+            <Image
               className="h-10 w-10 rounded-full"
+              src={getAvatar(info.row.original.createdBy)}
+              alt={`${
+                info.row.original.createdBy.name ||
+                info.row.original.createdBy.email
+              } picture`}
+              width={40}
+              height={40}
             />
+
             <div>
               <span className="block text-xs">
                 {info.row.original.createdBy.name}
