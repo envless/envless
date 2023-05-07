@@ -33,7 +33,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
     fetchCliSetup().catch(console.error);
   }, []);
 
-  const { mutate: createCliTokenMutation, isLoading: loadingCreate } =
+  const { mutateAsync: createCliTokenMutationAsync, isLoading: loadingCreate } =
     trpc.cli.create.useMutation({
       onSuccess: (response) => {
         const { cli: record } = response;
@@ -45,7 +45,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
       },
     });
 
-  const { mutate: updateCliTokenMutation, isLoading: loadingUpdate } =
+  const { mutateAsync: updateCliTokenMutationAync, isLoading: loadingUpdate } =
     trpc.cli.update.useMutation({
       onSuccess: (_response) => {
         console.log("Update successful");
@@ -71,11 +71,11 @@ const CliSetup = ({ currentProject }: CliProps) => {
       );
       if (confirm) {
         setCli({ ...cli, token });
-        await updateCliTokenMutation({ hashedToken });
+        await updateCliTokenMutationAync({ hashedToken });
       }
     } else {
       setCli({ ...cli, token });
-      await createCliTokenMutation({ hashedToken });
+      await createCliTokenMutationAsync({ hashedToken });
     }
   };
 

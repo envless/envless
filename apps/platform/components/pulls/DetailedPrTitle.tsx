@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { PullRequestStatus } from "@prisma/client";
-import { GitPullRequest } from "lucide-react";
+import PullRequestStatusBadge from "./PullRequestStatusBadge";
 
 interface DetailedPrTitleProps {
   author: string;
@@ -27,11 +27,7 @@ export default function DetailedPrTitle({
       </h1>
 
       <div className="mt-2 flex items-center gap-2">
-        <div className="inline-flex items-center gap-1 rounded-full bg-emerald-200 px-4 py-2 text-xs font-semibold text-emerald-700">
-          <GitPullRequest className="h-4 w-4" strokeWidth={2} />
-          <span>{status}</span>
-        </div>
-
+        <PullRequestStatusBadge status={status} />
         <div className="text-light text-xs">
           {author} opened a pull request to merge{" "}
           <Link href="#" className="text-teal-400 hover:underline">
