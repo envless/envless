@@ -11,7 +11,7 @@ import { LoaderIcon } from "../icons";
 
 const buttonStyles = cva(
   [
-    "transition-colors focus:secondary-none flex justify-center rounded-md border px-4 font-medium shadow focus:outline-none disabled:cursor-not-allowed disabled:opacity-75",
+    "transition-colors focus:secondary-none flex justify-center items-center rounded-md border px-4 font-medium shadow focus:outline-none disabled:cursor-not-allowed disabled:opacity-75",
   ],
   {
     variants: {
@@ -114,7 +114,7 @@ const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
 
           {loading && <LoaderIcon className="absolute h-5 w-5 animate-spin" />}
 
-          <span className={clsx(loading && "invisible")}>
+          <span className={clsx(loading && "invisible", "ml-3")}>
             {rightIcon && rightIcon}
           </span>
 

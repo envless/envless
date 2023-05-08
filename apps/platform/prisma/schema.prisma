@@ -134,6 +134,10 @@ model Branch {
   createdBy  User          @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
   secrets    Secret[]
 
+
+  baseBranchPrHistories PullRequestHistory[] @relation(name: "baseBranchPrHistory")
+  currentBranchPrHistories PullRequestHistory[] @relation(name: "currentBranchPrHistory")
+
   @@unique([name, projectId])
   @@index([createdById])
   @@index([projectId])
@@ -171,6 +175,8 @@ model PullRequest {
   baseBranch    Branch @relation(name: "baseBranch", fields: [baseBranchId], references: [id], onDelete: Cascade)
   currentBranch Branch @relation(name: "currentBranch", fields: [currentBranchId], references: [id], onDelete: Cascade)
 
+  pullRequestHistories  PullRequestHistory[] @relation(name: "pullRequestHistories")
+
   @@unique([prId, projectId])
   @@index([createdById])
   @@index([mergedById])
@@ -186,6 +192,22 @@ enum PullRequestStatus {
   open
   merged
   closed
+}
+
+model PullRequestHistory {
+  id              String            @id @default(cuid())
+  encryptedKey    String
+  encryptedValue  String
+  baseBranchId    String
+  currentBranchId String
+  pullRequestId   String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  baseBranch    Branch @relation(name: "baseBranchPrHistory", fields: [baseBranchId], references: [id], onDelete: Cascade)
+  currentBranch Branch @relation(name: "currentBranchPrHistory", fields: [currentBranchId], references: [id], onDelete: Cascade)
+
+  pullRequest    PullRequest   @relation(name: "pullRequestHistories", fields: [pullRequestId], references: [id], onDelete: Cascade)
 }
 
 model Secret {

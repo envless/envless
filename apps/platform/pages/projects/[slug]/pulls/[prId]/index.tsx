@@ -12,11 +12,10 @@ import {
   PullRequestStatus,
   UserRole,
 } from "@prisma/client";
-import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
 import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
-import { Button } from "@/components/theme";
+import PullRequestActionDropDown from "@/components/pulls/PullRequestActionDropdown";
 import { showToast } from "@/components/theme/showToast";
 
 /**
@@ -104,43 +103,30 @@ export default function PullRequestDetailPage({
           </div>
 
           {pullRequest.status !== PullRequestStatus.closed && (
-            <div className="col-span-6 gap-2">
-              <Button
-                loading={isMergePrLoading}
-                onClick={async () => {
-                  await mergePrMutationAync({
-                    pullRequest,
-                  });
-                }}
-                className="float-right ml-3"
-                leftIcon={
-                  <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
-                }
-              >
-                Merge pull request
-              </Button>
+            <div className="col-span-6 gap-2 place-self-end">
+              <PullRequestActionDropDown
+                items={[
+                  {
+                    label: "Merge pull request",
+                    onClick: async () => {
+                      await mergePrMutationAync({
+                        pullRequest,
+                      });
+                    },
+                  },
+                  {
+                    label: "Close pull request",
+                    onClick: async () => {
+                      const prToClose = {
+                        prId: pullRequest.prId,
+                        projectId: currentProject.id,
+                      };
 
-              <Button
-                leftIcon={
-                  <GitPullRequestClosed
-                    className="mr-2 h-4 w-4"
-                    strokeWidth={2}
-                  />
-                }
-                variant="danger-outline"
-                className="float-right"
-                loading={isClosePrLoading}
-                onClick={async () => {
-                  const prToClose = {
-                    prId: pullRequest.prId,
-                    projectId: currentProject.id,
-                  };
-
-                  await closePrMutateAsync({ pullRequest: prToClose });
-                }}
-              >
-                Close pull request
-              </Button>
+                      await closePrMutateAsync({ pullRequest: prToClose });
+                    },
+                  },
+                ]}
+              />
             </div>
           )}
         </div>
