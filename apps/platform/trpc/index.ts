@@ -10,6 +10,7 @@ import { projects } from "@/trpc/routes/projects";
 import { pullRequest } from "@/trpc/routes/pullRequest";
 import { twoFactor } from "@/trpc/routes/twoFactor";
 import { auditLogs } from "./routes/auditLog";
+import { pullRequestHistory } from "./routes/pullRequestHistory";
 import { secrets } from "./routes/secret";
 
 export const appRouter = createRouter({
@@ -24,6 +25,7 @@ export const appRouter = createRouter({
   pullRequest,
   auditLogs,
   secrets,
+  pullRequestHistory,
 });
 
 // export type definition of API

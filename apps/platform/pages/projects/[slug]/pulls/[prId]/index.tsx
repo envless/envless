@@ -139,7 +139,11 @@ export default function PullRequestDetailPage({
       </div>
 
       <div className="mt-8 w-full">
-        <EnvDiffViewer baseBranch={baseBranch} currentBranch={currentBranch} />
+        <EnvDiffViewer
+          pullRequestId={pullRequest.id}
+          baseBranch={baseBranch}
+          currentBranch={currentBranch}
+        />
       </div>
     </ProjectLayout>
   );
