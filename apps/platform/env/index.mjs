@@ -41,6 +41,7 @@ const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_DEV_LOG: z.boolean().default(false),
   NEXT_PUBLIC_MAX_AUTH_ATTEMPTS: z.number().default(5),
+  NEXT_PUBLIC_BASE_URL: z.string().url(),
 });
 
 /**
@@ -66,6 +67,7 @@ const processEnv = {
   SMTP_PORT: process.env.SMTP_PORT,
   SMTP_USERNAME: process.env.SMTP_USERNAME,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
