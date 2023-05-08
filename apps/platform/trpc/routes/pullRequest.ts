@@ -8,7 +8,6 @@ import {
 } from "@/types/auditActions";
 import { PullRequestStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { randomUUID } from "crypto";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -157,40 +156,39 @@ export const pullRequest = createRouter({
         }
       }
 
-      // delete all the secrets from the base branch
-      await prisma?.secret.deleteMany({
-        where: {
-          id: {
-            in: baseBranchSecrets.map(
-              (baseBranchSecret) => baseBranchSecret.id,
-            ),
+      // store all the base branch secrets to pullRequestHistory
+      for (let baseBranchSecret of baseBranchSecrets) {
+        await ctx.prisma.pullRequestHistory.create({
+          data: {
+            encryptedKey: baseBranchSecret.encryptedKey,
+            encryptedValue: baseBranchSecret.encryptedValue,
+            pullRequestId: pullRequest.id,
+            baseBranchId: pullRequest.baseBranchId,
+            currentBranchId: pullRequest.currentBranchId,
           },
-        },
-      });
+        });
+      }
 
-      // replace the secrets of base branch with current branch
       const currentBranchSecrets = await ctx.prisma.secret.findMany({
         where: {
           branchId: pullRequest.currentBranchId,
         },
       });
 
-      const secretsToReplace = currentBranchSecrets.map(
-        (currentBranchSecret) => {
-          const uuid = randomUUID();
-          return {
-            encryptedKey: currentBranchSecret.encryptedKey as string,
-            encryptedValue: currentBranchSecret.encryptedValue as string,
-            branchId: baseBranchSecrets[0].branchId, // branchId will be same for all the secrets
-            userId: user.id,
-            uuid,
-          };
-        },
-      );
-
-      await prisma?.secret.createMany({
-        data: secretsToReplace,
-      });
+      // store all the current branch secrets to pullRequestHistory
+      if (currentBranchSecrets.length > 0) {
+        for (let currentBranchSecret of currentBranchSecrets) {
+          await ctx.prisma.pullRequestHistory.create({
+            data: {
+              encryptedKey: currentBranchSecret.encryptedKey,
+              encryptedValue: currentBranchSecret.encryptedValue,
+              pullRequestId: pullRequest.id,
+              baseBranchId: pullRequest.baseBranchId,
+              currentBranchId: pullRequest.currentBranchId,
+            },
+          });
+        }
+      }
 
       // finally update the pull request
       const updatedPr = await ctx.prisma.pullRequest.update({

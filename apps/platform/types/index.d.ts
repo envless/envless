@@ -8,3 +8,12 @@ export interface EnvSecret {
   decryptedValue: string;
   hidden: boolean;
 }
+
+export interface PrHistory {
+  id?: string;
+  prId?: string;
+  encryptedKey: string;
+  encryptedValue: string;
+  decryptedKey: string;
+  decryptedValue: string;
+}
