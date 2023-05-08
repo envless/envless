@@ -2,7 +2,12 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { PullRequestStatus } from "@prisma/client";
 import * as HoverCard from "@radix-ui/react-hover-card";
-import { ArrowLeft, GitPullRequest, GitPullRequestClosed } from "lucide-react";
+import {
+  ArrowLeft,
+  GitMerge,
+  GitPullRequest,
+  GitPullRequestClosed,
+} from "lucide-react";
 
 interface PullRequestHoverCardProps {
   triggerComponent: ReactNode;
@@ -54,6 +59,10 @@ export default function PullRequestTitleHoverCard({
 
                 {pullRequestStatus === PullRequestStatus.closed && (
                   <GitPullRequestClosed className="h-4 w-4 text-red-700" />
+                )}
+
+                {pullRequestStatus === PullRequestStatus.merged && (
+                  <GitMerge className="h-4 w-4 text-indigo-700" />
                 )}
               </div>
 
