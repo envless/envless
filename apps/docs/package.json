@@ -15,7 +15,7 @@
     "@headlessui/react": "^1.7.8",
     "@mdx-js/loader": "^2.1.5",
     "@mdx-js/react": "^2.1.5",
-    "@next/font": "^13.3.0",
+    "@next/font": "^13.4.1",
     "@next/mdx": "^13.0.3",
     "@sindresorhus/slugify": "^2.1.1",
     "@tailwindcss/typography": "^0.5.8",
