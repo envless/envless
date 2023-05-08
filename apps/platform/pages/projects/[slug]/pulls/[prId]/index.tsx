@@ -1,4 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
@@ -41,6 +42,7 @@ export default function PullRequestDetailPage({
   currentRole,
   pullRequest,
 }: Props) {
+  const router = useRouter();
   const { baseBranch, currentBranch } = pullRequest as any & {
     baseBranch: Branch;
     currentBranch: Branch;
@@ -112,6 +114,8 @@ export default function PullRequestDetailPage({
                       await mergePrMutationAync({
                         pullRequest,
                       });
+
+                      router.replace(router.asPath);
                     },
                   },
                   {
@@ -123,6 +127,8 @@ export default function PullRequestDetailPage({
                       };
 
                       await closePrMutateAsync({ pullRequest: prToClose });
+
+                      router.replace(router.asPath);
                     },
                   },
                 ]}
