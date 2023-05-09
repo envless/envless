@@ -46,9 +46,12 @@ export const CliIntegration = ({
         }}
         footer={
           <div className="flex flex-shrink-0 justify-end px-4 py-4">
-            <Button className="ml-4" onClick={async () => {}}>
+            <Button
+              rightIcon={
+                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+              }
+            >
               Save and continue
-              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
             </Button>
           </div>
         }
