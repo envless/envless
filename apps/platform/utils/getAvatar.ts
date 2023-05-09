@@ -1,7 +1,7 @@
+import { env } from "@/env/index.mjs";
 import { MemberType } from "@/types/resources";
 import md5 from "md5";
 import { getInitials } from "./helpers";
-import { env } from "@/env/index.mjs";
 
 export const getAvatar = (member: MemberType) => {
   if (member.image) return member.image;
