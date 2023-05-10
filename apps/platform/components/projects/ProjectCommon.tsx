@@ -4,7 +4,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
 import { useBranchesStore } from "@/store/Branches";
 import { Branch, EncryptedProjectKey, UserPublicKey } from "@prisma/client";
-import { GitBranch, GitBranchPlus, Link } from "lucide-react";
+import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
 import OpenPGP from "@/lib/encryption/openpgp";
@@ -13,6 +13,7 @@ import CreateBranchModal from "../branches/CreateBranchModal";
 import { Button } from "../theme";
 import EncryptionSetup from "./EncryptionSetup";
 import { EnvironmentVariableEditor } from "./EnvironmentVariableEditor";
+import Link from "next/link";
 
 interface PersonalKey {
   publicKey: UserPublicKey["key"];
@@ -150,7 +151,6 @@ export const ProjectCommon = ({
                   selectedBranch={currentBranch}
                   currentProjectSlug={currentProject.slug}
                 />
-
                 <Link
                   className="group flex items-center text-sm transition-colors"
                   href={`/projects/${currentProject.slug}/branches`}
