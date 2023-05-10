@@ -2,13 +2,18 @@ import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   GetServerSidePropsResult,
+  Redirect,
 } from "next";
 import { accessesWithProject } from "@/models/access";
 import { MembershipStatus, Project, UserRole } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getServerSideSession } from "./session";
 
-type PageProps = {};
+type PageProps = {
+  props?: {
+    redirect?: Redirect;
+  };
+};
 
 type AccessControlPageProps = PageProps & {
   currentProject: Project;
@@ -51,6 +56,15 @@ export function withAccessControl<P = Record<string, unknown>>({
 
     if (getServerSideProps) {
       serverPropsFromParent = await getServerSideProps(context);
+    }
+
+    // Check if there are any reason to redirect from parent getServerSideProps
+    if (serverPropsFromParent.props.redirect) {
+      return {
+        redirect: {
+          ...serverPropsFromParent.props.redirect,
+        },
+      };
     }
 
     // @ts-ignore
