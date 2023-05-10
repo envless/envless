@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
  * @swagger
  * /api/cli/v1/projects/{id}/secrets:
  *  get:
- *    description: Get all secrets for a project
+ *    description: Get all secrets for a project in a branch
  *    responses:
  *      200:
  *        description: Success

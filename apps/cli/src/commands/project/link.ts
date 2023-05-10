@@ -4,7 +4,7 @@ import axios from "axios";
 import { bold, cyan, grey } from "kleur/colors";
 import { writeToDotEnvless } from "../../lib/dotEnvless";
 import { triggerCancel } from "../../lib/helpers";
-import { LINKS } from "../../lib/helpers";
+import { API_VERSION, LINKS } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
 
 const loader = spinner();
@@ -53,14 +53,14 @@ export default class LinkProject extends Command {
     intro(`${bold(cyan(`Linking your project to Envless`))}`);
 
     if (!flags.projectId) {
-      await loader.start(`Fetching projects...`);
+      loader.start(`Fetching projects...`);
       const config = await getCliConfigFromKeyStore();
 
       const cliId = process.env.ENVLESS_CLI_ID || config?.id;
       const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
 
       if (!cliId || !cliToken) {
-        await loader.stop(
+        loader.stop(
           `Please initialize the Envless CLI first by running ${bold(
             cyan(`envless init`),
           )}`,
@@ -70,7 +70,7 @@ export default class LinkProject extends Command {
 
       try {
         const { data: projects } = await axios.get(
-          `${LINKS.api}/cli/v0/projects`,
+          `${LINKS.api}/cli/${API_VERSION}/projects`,
           {
             auth: {
               username: cliId as string,
@@ -79,7 +79,7 @@ export default class LinkProject extends Command {
           },
         );
 
-        await loader.stop(`Successfully fetched projects`);
+        loader.stop(`Successfully fetched projects`);
 
         const response: any = await select({
           message: "Select a project",
@@ -92,7 +92,7 @@ export default class LinkProject extends Command {
         isCancel(response) && triggerCancel();
         flags.projectId = response;
       } catch (error) {
-        await loader.stop(`Unauthorized error while fetching the projects`);
+        loader.stop(`Unauthorized error while fetching the projects`);
         triggerCancel();
       }
     }
