@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode, forwardRef } from "react";
+import { ComponentProps, Fragment, ReactNode, forwardRef } from "react";
 import clsx from "clsx";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 
@@ -30,11 +30,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaTypes>(
     },
     ref,
   ) {
+    const customRef = ref ? { ref } : {};
+
     return (
-      <>
+      <Fragment>
         <div className={clsx("relative flex items-center", full && "w-full")}>
           <textarea
-            ref={ref}
             {...props}
             rows={rows || 1}
             disabled={disabled}
@@ -43,6 +44,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaTypes>(
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck="false"
+            {...(register ? register(name) : {})}
+            {...customRef}
           />
 
           {icon && (
@@ -58,7 +61,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaTypes>(
         {errors && errors[name] && (
           <p className="mt-2 text-xs text-red-400/75">{errors[name].message}</p>
         )}
-      </>
+      </Fragment>
     );
   },
 );

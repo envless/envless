@@ -165,7 +165,6 @@ export const branches = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { user } = ctx.session;
       const { branch } = input;
 
       const currentBranch = await prisma.branch.findUnique({
@@ -178,6 +177,13 @@ export const branches = createRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Branch does not exist",
+        });
+      }
+
+      if (!branch.protected && branch.name === "main") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can not remove protection from the main branch",
         });
       }
 
@@ -203,7 +209,7 @@ export const branches = createRouter({
 
       const branch = await ctx.prisma.branch.findUnique({
         where: { id: branchId },
-        select: { protected: true },
+        select: { protected: true, name: true },
       });
 
       const access = await ctx.prisma.access.findUnique({
@@ -247,6 +253,13 @@ export const branches = createRouter({
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You cannot delete protected branches",
+        });
+      }
+
+      if (branch.name === "main") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You cannot delete the main branch",
         });
       }
 

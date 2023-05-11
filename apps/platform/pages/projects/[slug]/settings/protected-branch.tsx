@@ -141,6 +141,7 @@ export const ProtectedBranch = ({
     handleSubmit,
     formState: { errors, isSubmitted },
     reset,
+    setValue,
   } = useForm();
 
   const { mutate, isLoading } = trpc.branches.update.useMutation({
@@ -190,7 +191,10 @@ export const ProtectedBranch = ({
             dropdownLabel="Choose any branch"
             branches={unprotectedBranches}
             selectedBranch={selectedBranch}
-            onClick={(branch) => setSelectedBranch(branch)}
+            onClick={(branch) => {
+              setSelectedBranch(branch);
+              setValue("description", branch.description)
+            }}
             currentProjectSlug={currentProject.slug}
             full
           />

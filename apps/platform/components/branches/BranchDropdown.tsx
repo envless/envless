@@ -121,13 +121,17 @@ export default function BranchDropdown({
 
           <ul className="flex max-h-52 w-full flex-col overflow-y-auto text-xs [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
             {searchData.map((branch) => (
-              <Menu.Item
-                as="button"
-                key={branch.id}
-                onClick={() => onClick && onClick(branch)}
-              >
+              <Menu.Item as="button" key={branch.id}>
                 {({ active }) => (
-                  <Link href={branchLink(branch.name)}>
+                  <Link
+                    href={branchLink(branch.name)}
+                    onClick={(e) => {
+                      if (onClick) {
+                        e.preventDefault();
+                        onClick(branch);
+                      }
+                    }}
+                  >
                     <li
                       className={clsx(
                         "inline-flex w-full items-center justify-between px-3 py-2",
