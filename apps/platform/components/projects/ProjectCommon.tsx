@@ -3,7 +3,7 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
 import { useBranchesStore } from "@/store/Branches";
-import { Branch, EncryptedProjectKey, UserPublicKey } from "@prisma/client";
+import type { Branch, EncryptedProjectKey, Project, User, UserPublicKey, UserRole } from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
@@ -31,10 +31,10 @@ interface ProjectKey {
 }
 
 interface Props {
-  user: any;
-  projects: any;
-  currentProject: any;
-  currentRole: any;
+  user: User;
+  projects: Project[];
+  currentProject: Project;
+  currentRole: UserRole;
   publicKey: string;
   encryptedProjectKey: { encryptedKey: string } | null;
   branches: Branch[];

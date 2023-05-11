@@ -9,6 +9,7 @@ import {
   type Project,
   type UserPublicKey,
   UserRole,
+  User,
 } from "@prisma/client";
 import { ProjectCommon } from "@/components/projects/ProjectCommon";
 import OpenPGP from "@/lib/encryption/openpgp";
@@ -22,13 +23,13 @@ import prisma from "@/lib/prisma";
  * @param {currentRole} props.currentRole - The user role in current project.
  */
 interface Props {
-  user: object;
+  user: User;
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
   publicKey: UserPublicKey["key"];
   encryptedProjectKey: EncryptedProjectKey;
-  branches: any;
+  branches: Branch[];
   privateKey: string;
   currentBranch: Branch;
 }
