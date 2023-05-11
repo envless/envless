@@ -3,11 +3,12 @@ import { generateKey } from "@47ng/cloak";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
-  Branch,
-  EncryptedProjectKey,
+  type Branch,
+  type EncryptedProjectKey,
   MembershipStatus,
-  Project,
-  UserPublicKey,
+  type Project,
+  type User,
+  type UserPublicKey,
   UserRole,
 } from "@prisma/client";
 import { ProjectCommon } from "@/components/projects/ProjectCommon";
@@ -22,7 +23,7 @@ import prisma from "@/lib/prisma";
  * @param {currentRole} props.currentRole - The user role in current project.
  */
 interface Props {
-  user: object;
+  user: User;
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
