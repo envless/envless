@@ -50,7 +50,7 @@ export default function BranchDropdown({
   };
 
   const branchLink = (branchName: string) => {
-    return `/projects/${currentProjectSlug}?branch=${branchName}`;
+    return `/projects/${currentProjectSlug}/tree/${branchName}`;
   };
 
   return (

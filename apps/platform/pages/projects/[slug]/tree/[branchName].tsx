@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import type { Redirect } from "next";
 import { generateKey } from "@47ng/cloak";
 import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
@@ -7,9 +7,9 @@ import {
   type EncryptedProjectKey,
   MembershipStatus,
   type Project,
-  type User,
   type UserPublicKey,
   UserRole,
+  User,
 } from "@prisma/client";
 import { ProjectCommon } from "@/components/projects/ProjectCommon";
 import OpenPGP from "@/lib/encryption/openpgp";
@@ -31,9 +31,10 @@ interface Props {
   encryptedProjectKey: EncryptedProjectKey;
   branches: Branch[];
   privateKey: string;
+  currentBranch: Branch;
 }
 
-export const ProjectPage = ({
+export const ProjectBranchPage = ({
   user,
   projects,
   currentProject,
@@ -42,12 +43,8 @@ export const ProjectPage = ({
   encryptedProjectKey,
   branches,
   privateKey,
+  currentBranch,
 }: Props) => {
-  const mainBranch = useMemo(
-    () => branches.find((branch) => (branch.name = "main")),
-    [branches],
-  )!;
-
   return (
     <ProjectCommon
       user={user}
@@ -58,7 +55,7 @@ export const ProjectPage = ({
       encryptedProjectKey={encryptedProjectKey}
       branches={branches}
       privateKey={privateKey}
-      currentBranch={mainBranch}
+      currentBranch={currentBranch}
     />
   );
 };
@@ -75,10 +72,12 @@ export const getServerSideProps = withAccessControl({
     statuses: [MembershipStatus.active],
   },
   getServerSideProps: async (context) => {
+    let redirect: null | Redirect = null; // Force redirect when the getServerSideProps that next sees get called.
+
     const session = await getServerSideSession(context);
     const user = session?.user;
     // @ts-ignore
-    const { slug } = context.params;
+    const { slug, branchName } = context.params;
 
     const currentProject = await prisma.project.findFirst({
       where: { slug: slug as string },
@@ -97,14 +96,25 @@ export const getServerSideProps = withAccessControl({
       },
     });
 
+    let encryptedProjectKey = currentProject?.encryptedProjectKey;
+    const branches = currentProject?.branches;
+    const currentBranch = branches?.find(
+      (branch) => branch.name === branchName,
+    );
+
+    if (!currentBranch) {
+      redirect = {
+        destination: `/projects/${slug}`,
+        permanent: false,
+      };
+    }
+
     const userPublicKey = await prisma.userPublicKey.findFirst({
       where: { userId: user?.id },
       select: { key: true },
     });
 
     const publicKey = userPublicKey?.key;
-    let encryptedProjectKey = currentProject?.encryptedProjectKey;
-    const branches = currentProject?.branches;
 
     if (publicKey && !encryptedProjectKey) {
       const decryptedProjectKey = await generateKey();
@@ -126,9 +136,11 @@ export const getServerSideProps = withAccessControl({
         privateKey: user?.privateKey,
         encryptedProjectKey,
         branches,
+        currentBranch,
+        redirect,
       },
     };
   },
 });
 
-export default ProjectPage;
+export default ProjectBranchPage;
