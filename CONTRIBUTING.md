@@ -65,7 +65,7 @@ In order to not waste your time implementing a change that has already been decl
   ```bash
   cp .env.example .env
   ```
-- Install latest version of node nad yarn
+- Install latest version of node and yarn
 - Install latest version of [postgres database](#postgres)
 - Create database `envless` in postgres database
 - Update `.env` file's `DATABASE_URL` with database credentials

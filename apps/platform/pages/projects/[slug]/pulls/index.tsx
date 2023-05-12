@@ -112,7 +112,7 @@ export const PullRequestPage = ({
               }
             />
             <div className="text-light">
-              #{info.row.original.prId} opened by{" "}
+              #{info.row.original.prId} {info.row.original.status} by{" "}
               {info.row.original.createdBy.name}{" "}
               <DateTimeAgo date={info.row.original.createdAt} />
             </div>

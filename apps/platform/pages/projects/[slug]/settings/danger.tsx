@@ -64,13 +64,10 @@ export const DangerZone = ({
   return (
     <ProjectLayout tab="settings" {...props}>
       <ProjectSettings active="danger" {...props}>
-        <h3 className="mb-7 text-lg text-red-400">Danger</h3>
+        <h3 className="mb-7 text-lg text-red-400">Danger zone</h3>
         <div className="flex w-full flex-row items-center justify-between  lg:w-[65%]">
           <div className="flex-1">
-            <Paragraph size="sm" className="font-semibold">
-              Delete this project
-            </Paragraph>
-            <Paragraph size="sm" className="mt-4 text-sm font-light">
+            <Paragraph size="sm" className="mt-2 text-sm font-light">
               Once you delete a project, there is no going back. Please be
               certain.
             </Paragraph>

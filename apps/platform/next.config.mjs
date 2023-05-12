@@ -16,6 +16,7 @@ const nextConfig = {
       "avatars.githubusercontent.com",
       "user-images.githubusercontent.com",
       "www.gravatar.com",
+      "localhost",
     ],
   },
 

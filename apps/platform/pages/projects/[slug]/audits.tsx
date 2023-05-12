@@ -110,6 +110,8 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
       createdBy: {
         select: {
           name: true,
+          email: true,
+          image: true,
         },
       },
     },

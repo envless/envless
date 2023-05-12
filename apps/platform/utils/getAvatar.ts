@@ -1,3 +1,4 @@
+import { env } from "@/env/index.mjs";
 import { MemberType } from "@/types/resources";
 import md5 from "md5";
 import { getInitials } from "./helpers";
@@ -7,8 +8,8 @@ export const getAvatar = (member: MemberType) => {
 
   const hash = md5(member.email);
   const initials = getInitials(member.name || member.email);
-  const defaultAvatar = `https://avatar.vercel.sh/${initials}.svg?text=${initials}`;
+  const defaultAvatar = `${env.NEXT_PUBLIC_BASE_URL}/api/avatar/${initials}.svg?text=${initials}`;
   const avatar = `https://www.gravatar.com/avatar/${hash}?d=${defaultAvatar}`;
 
-  return avatar;
+  return process.env.NODE_ENV === "development" ? defaultAvatar : avatar;
 };
