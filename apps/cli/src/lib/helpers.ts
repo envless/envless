@@ -1,4 +1,5 @@
 import { cancel } from "@clack/prompts";
+import { getCliConfigFromKeyStore } from "./keyStore";
 
 export const triggerCancel = (message: string = "") => {
   cancel(message);
@@ -10,6 +11,18 @@ export const isValidEmail = (email: string) => {
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   return regex.test(String(email).toLowerCase());
+};
+
+export const getCliConfig = async () => {
+  const config = await getCliConfigFromKeyStore();
+
+  const cliId = process.env.ENVLESS_CLI_ID || config?.id;
+  const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
+
+  return {
+    cliId,
+    cliToken,
+  };
 };
 
 export const ENVLESS_PLATFORM_URL =

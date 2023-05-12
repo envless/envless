@@ -92,6 +92,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   );
 
   if (parsed.success === false) {
+    console.log(parsed, "--parsed");
     console.error(
       "❌ Invalid environment variables:",
       parsed.error.flatten().fieldErrors,

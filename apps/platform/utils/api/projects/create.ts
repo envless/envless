@@ -7,56 +7,8 @@ import {
 import { kebabCase } from "lodash";
 import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
-import { NextCliApiRequest } from "../withCliAuth";
-
-type ErrorMessage = {
-  message?: string;
-};
-
-type NewProjectResponse = {
-  name: string;
-  slug: string;
-  createdAt: Date;
-};
-
-type Data = {
-  id?: string;
-  name?: string;
-  message?: string;
-};
-
-export const getProjects = async (
-  req: NextCliApiRequest,
-  res: NextApiResponse<Data>,
-) => {
-  const user = req.user;
-  const access = await prisma.access.findMany({
-    where: {
-      userId: user.id,
-    },
-    select: {
-      projectId: true,
-    },
-  });
-
-  const projectIds = access.map((a) => a.projectId);
-
-  const projects = await prisma.project.findMany({
-    where: {
-      id: {
-        in: projectIds,
-      },
-      deletedAt: null,
-    },
-
-    select: {
-      id: true,
-      name: true,
-    },
-  });
-
-  return res.status(200).json(projects as Data);
-};
+import { NextCliApiRequest } from "../../withCliAuth";
+import { ErrorMessage, NewProjectResponse } from "../types";
 
 export const createProject = async (
   req: NextCliApiRequest,
