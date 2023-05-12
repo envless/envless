@@ -1,7 +1,7 @@
-import { outro, spinner } from "@clack/prompts";
+import { spinner } from "@clack/prompts";
 import { Command, Flags, ux } from "@oclif/core";
-import axios, { AxiosError } from "axios";
-import { bold, cyan, grey } from "kleur/colors";
+import axios from "axios";
+import { bold, cyan, grey, red } from "kleur/colors";
 import { readFromDotEnvless } from "../../lib/dotEnvless";
 import {
   decryptProjectKey,
@@ -56,7 +56,6 @@ export default class Secrets extends Command {
   };
 
   private async getSecrets(branch: string) {
-    loader.start(`Fetching secrets...`);
     const config = await getCliConfigFromKeyStore();
 
     const cliId = process.env.ENVLESS_CLI_ID || config?.id;
@@ -65,6 +64,8 @@ export default class Secrets extends Command {
     const { projectId, branch: branchFromKeyStore } = envless;
 
     const selectedBranch = branch || branchFromKeyStore;
+
+    loader.start(`Fetching secrets for branch: ${selectedBranch}`);
 
     if (!cliId || !cliToken) {
       loader.stop(
@@ -88,7 +89,9 @@ export default class Secrets extends Command {
 
       const data = response.data as SecretResponse;
 
-      loader.stop(`Fetched ${data.encryptedSecrets.length} secrets.`);
+      loader.stop(
+        `Fetched ${data.encryptedSecrets.length} secrets for branch: ${selectedBranch}`,
+      );
 
       if (data.encryptedSecrets.length > 0) {
         const decryptedProjectKey = await decryptProjectKey(
@@ -102,7 +105,9 @@ export default class Secrets extends Command {
           decryptedProjectKey,
         );
 
-        loader.stop(`🎉 Decrypted ${data.encryptedSecrets.length} secrets`);
+        loader.stop(
+          `Decrypted ${data.encryptedSecrets.length} secrets for branch: ${selectedBranch}`,
+        );
 
         ux.table(decryptedSecrets as never, {
           key: {
@@ -113,8 +118,10 @@ export default class Secrets extends Command {
           },
         });
       }
-    } catch (err: any) {
-      loader.stop();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        loader.stop(`${red(err.response?.data?.message)}`);
+      }
       triggerCancel();
     }
   }
@@ -124,7 +131,7 @@ export default class Secrets extends Command {
     const { flags } = await this.parse(Secrets);
     this.log(`Envless CLI ${grey(`${version}`)}`);
 
-    this.getSecrets(flags.branch || "");
+    await this.getSecrets(flags.branch || "");
     triggerCancel();
   }
 }

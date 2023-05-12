@@ -166,8 +166,10 @@ export default class Start extends Command {
 
       loader.stop(`${green(bold("✓"))} Fetching secrets...`);
       return response;
-    } catch (error: any) {
-      loader.stop(`${red(error.message)}`);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        loader.stop(`${red(error.response?.data?.message)}`);
+      }
       triggerCancel();
     }
   }
