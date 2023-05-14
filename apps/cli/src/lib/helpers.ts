@@ -77,7 +77,12 @@ export async function decryptSecrets(
       try {
         const key = await decryptString(encryptedKey, decryptedProjectKey);
         const value = await decryptString(encryptedValue, decryptedProjectKey);
-        return { id, key, value } as DecryptedSecretType;
+        return {
+          id,
+          key,
+          value,
+          uuid: encryptedSecret.uuid,
+        } as DecryptedSecretType;
       } catch (error) {
         triggerCancel();
       }
