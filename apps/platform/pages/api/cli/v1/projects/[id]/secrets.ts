@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
  * @swagger
  * /api/cli/v1/projects/{id}/secrets:
  *  get:
- *    description: Get all secrets for a project
+ *    description: Get all secrets for a project in a branch
  *    responses:
  *      200:
  *        description: Success
@@ -39,9 +39,12 @@ const secrets = async (req: NextCliApiRequest, res: NextApiResponse) => {
       },
     });
 
-    // TODO: Uncomment this line after https://github.com/envless/envless/issues/395 is closed.
-    // if (!projectAccess || projectAccess.status !== "active") {
     if (!projectAccess) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // TODO: Uncomment this line after https://github.com/envless/envless/issues/395 is closed.
+    if (projectAccess.status !== "active") {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -73,13 +76,23 @@ const secrets = async (req: NextCliApiRequest, res: NextApiResponse) => {
       },
     });
 
+    if (!branchRecord) {
+      return res
+        .status(400)
+        .json({ message: "Branch does not exists in this project" });
+    }
+
+    if (!branchRecord.secrets) {
+      return res
+        .status(404)
+        .json({ message: `No secrets found in branch: ${branch}` });
+    }
+
     return res.status(200).json({
       encryptedSecrets: branchRecord?.secrets,
       encryptedProjectKey: encryptedProjectKey?.encryptedKey,
     });
   }
-
-  return res.status(404).json({ message: "Not found" });
 };
 
 export default withCliAuth(secrets);
