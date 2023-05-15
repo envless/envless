@@ -193,7 +193,7 @@ export const ProtectedBranch = ({
             selectedBranch={selectedBranch}
             onClick={(branch) => {
               setSelectedBranch(branch);
-              setValue("description", branch.description)
+              setValue("description", branch.description);
             }}
             currentProjectSlug={currentProject.slug}
             full
