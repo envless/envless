@@ -59,7 +59,7 @@ export default class ProjectUpdate extends Command {
         await loader.start(`Fetching projects...`);
 
         if (!config.cliId || !config.cliToken) {
-          await loader.stop(
+          loader.stop(
             `Please initialize the Envless CLI first by running ${bold(
               cyan(`envless init`),
             )}`,
@@ -81,7 +81,7 @@ export default class ProjectUpdate extends Command {
           if (Array.isArray(projects)) {
             allProjects = projects;
           }
-          await loader.stop(`Successfully fetched projects`);
+          loader.stop(`Successfully fetched projects`);
 
           const response: any = await select({
             message: "Select a project",
@@ -94,7 +94,7 @@ export default class ProjectUpdate extends Command {
           isCancel(response) && triggerCancel();
           flags.projectId = response;
         } catch (error) {
-          await loader.stop(`Unauthorized error while fetching the projects`);
+          loader.stop(`Unauthorized error while fetching the projects`);
           triggerCancel();
           return;
         }
