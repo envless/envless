@@ -1,5 +1,6 @@
 import type { NextApiResponse } from "next";
-import { createProject, getProjects } from "@/utils/api/projects/create";
+import { getProjects } from "@/utils/api/projects";
+import { createProject } from "@/utils/api/projects/create";
 import withCliAuth, { type NextCliApiRequest } from "@/utils/withCliAuth";
 
 const projects = async (req: NextCliApiRequest, res: NextApiResponse) => {
