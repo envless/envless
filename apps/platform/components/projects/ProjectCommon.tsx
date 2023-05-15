@@ -1,9 +1,17 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import ProjectLayout from "@/layouts/Project";
 import { useBranchesStore } from "@/store/Branches";
-import type { Branch, EncryptedProjectKey, Project, User, UserPublicKey, UserRole } from "@prisma/client";
+import type {
+  Branch,
+  EncryptedProjectKey,
+  Project,
+  User,
+  UserPublicKey,
+  UserRole,
+} from "@prisma/client";
 import { GitBranch, GitBranchPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { NextSeo } from "next-seo";
@@ -13,7 +21,6 @@ import CreateBranchModal from "../branches/CreateBranchModal";
 import { Button } from "../theme";
 import EncryptionSetup from "./EncryptionSetup";
 import { EnvironmentVariableEditor } from "./EnvironmentVariableEditor";
-import Link from "next/link";
 
 interface PersonalKey {
   publicKey: UserPublicKey["key"];
