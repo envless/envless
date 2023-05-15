@@ -69,6 +69,7 @@ const secrets = async (req: NextCliApiRequest, res: NextApiResponse) => {
         secrets: {
           select: {
             id: true,
+            uuid: true,
             encryptedKey: true,
             encryptedValue: true,
           },
