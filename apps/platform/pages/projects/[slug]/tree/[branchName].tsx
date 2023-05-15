@@ -7,9 +7,9 @@ import {
   type EncryptedProjectKey,
   MembershipStatus,
   type Project,
+  User,
   type UserPublicKey,
   UserRole,
-  User,
 } from "@prisma/client";
 import { ProjectCommon } from "@/components/projects/ProjectCommon";
 import OpenPGP from "@/lib/encryption/openpgp";

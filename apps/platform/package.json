@@ -22,7 +22,7 @@
   "dependencies": {
     "@47ng/cloak": "^1.1.0",
     "@fingerprintjs/fingerprintjs": "^3.4.0",
-    "@headlessui/react": "^1.7.12",
+    "@headlessui/react": "^1.7.14",
     "@hookform/resolvers": "^2.9.11",
     "@next-auth/prisma-adapter": "^1.0.6",
     "@next/font": "^13.4.1",
