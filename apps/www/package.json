@@ -15,7 +15,7 @@
     "test:e2e:watch": "playwright-watch test"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.12",
+    "@headlessui/react": "^1.7.14",
     "@next/font": "^13.4.1",
     "@types/node": "18.15.11",
     "@types/react": "18.0.28",
