@@ -1,14 +1,18 @@
-import { isCancel, select, spinner, text } from "@clack/prompts";
+import { isCancel, outro, select, spinner, text } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import axios from "axios";
-import { bold, cyan, red } from "kleur/colors";
+import { blue, bold, cyan, red } from "kleur/colors";
 import {
   API_VERSION,
   LINKS,
   getCliConfig,
   triggerCancel,
 } from "../../lib/helpers";
-import { getCliConfigFromKeyStore } from "../../lib/keyStore";
+
+interface ProjectDataType {
+  id: string;
+  name: string;
+}
 
 const loader = spinner();
 export default class ProjectUpdate extends Command {
@@ -17,8 +21,10 @@ export default class ProjectUpdate extends Command {
   static examples = [
     `
     envless project update
-    envless project update -n="XXX" -s="xxx"
-    envless project update --name="XXX" --slug="xxx"
+    envless project update -n="XXX" -i="xxx" -t
+    envless project update -n="XXX" -i="xxx"
+    envless project update --name="XXX" --projectId="xxx"
+    envless project update --name="XXX" --projectId="xxx" --twoFactorRequired
       `,
   ];
 
@@ -44,16 +50,15 @@ export default class ProjectUpdate extends Command {
   public async run(): Promise<void> {
     const { flags } = await this.parse(ProjectUpdate);
 
+    let allProjects: ProjectDataType[] = [];
+
+    const config = await getCliConfig();
     // These are the
     if (!flags.name || !flags.projectId) {
       if (!flags.projectId && !flags.name) {
         await loader.start(`Fetching projects...`);
-        const config = await getCliConfigFromKeyStore();
 
-        const cliId = process.env.ENVLESS_CLI_ID || config?.id;
-        const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
-
-        if (!cliId || !cliToken) {
+        if (!config.cliId || !config.cliToken) {
           await loader.stop(
             `Please initialize the Envless CLI first by running ${bold(
               cyan(`envless init`),
@@ -64,15 +69,18 @@ export default class ProjectUpdate extends Command {
 
         try {
           const { data: projects } = await axios.get(
-            `${LINKS.api}/cli/v0/projects`,
+            `${LINKS.api}/cli/${API_VERSION}/projects`,
             {
               auth: {
-                username: cliId as string,
-                password: cliToken as string,
+                username: config.cliId as string,
+                password: config.cliToken as string,
               },
             },
           );
 
+          if (Array.isArray(projects)) {
+            allProjects = projects;
+          }
           await loader.stop(`Successfully fetched projects`);
 
           const response: any = await select({
@@ -92,41 +100,59 @@ export default class ProjectUpdate extends Command {
         }
       }
 
-      const newProjectName: any =
-        flags.name ||
-        (await text({
-          message: `Enter new project name:`,
-          validate: (input: string) => {
-            if (!input || input.trim() === "" || input.trim().length < 3) {
-              return `Please enter a valid Project name`;
-            }
-          },
-        }));
+      const newProjectName: any = await text({
+        message: `Enter new project name:`,
+        validate: (input: string) => {
+          if (!input || input.trim() === "" || input.trim().length < 3) {
+            return `Please enter a valid Project name`;
+          }
+        },
+      });
 
       if (!newProjectName) {
         loader.stop(red(`Enter a new project name to proceed`));
         triggerCancel();
       }
 
-      const requestData = {
-        name: flags.name,
-        projectId: flags.projectId,
-        twoFactorRequired: flags.twoFactorRequired,
-      };
-      const cliInfo = await getCliConfig();
+      if (!allProjects.length) {
+        loader.stop(red(`This project does not exist in your envless account`));
+        triggerCancel();
+      }
 
-      //     try{
-      //       const response = await axios.post(`${LINKS.api}/cli/${API_VERSION}/projects/update`,{...requestData}, {
-      //       auth:{
-      //         username: cliInfo.cliId as string,
-      //           password: cliInfo.cliToken as string,
-      //       }
-      //     })
+      const projectToUpdate = allProjects.find(
+        (item) => item?.name === flags.name || item?.id === flags.projectId,
+      );
 
-      //     const data = response.data as;
-      // }catch(e){
+      if (projectToUpdate) {
+        const requestData = {
+          ...projectToUpdate,
+          twoFactorRequired: flags.twoFactorRequired || false,
+          newName: newProjectName,
+        };
 
-      // }
+        try {
+          const response = await axios.post(
+            `${LINKS.api}/cli/${API_VERSION}/projects/update`,
+            requestData,
+            {
+              auth: {
+                username: config.cliId as string,
+                password: config.cliToken as string,
+              },
+            },
+          );
+
+          const data = response.data;
+          await loader.stop(`🎉 Project updated successfully`);
+          outro(blue(`${requestData.name} changed to ${newProjectName}`));
+        } catch (err: any) {
+          if (!!err) {
+            if (err?.response?.data) loader.stop(err?.response?.data);
+          }
+          outro(red(`Project could not be updated`));
+          triggerCancel();
+        }
+      }
     }
   }
 }
