@@ -102,6 +102,7 @@ const AccountSettings: React.FC<DefaultProps> = ({ user }) => {
             register={register}
             errors={errors}
             className="w-full"
+            disabled={true}
             validationSchema={{
               required: "Email address is required",
             }}
