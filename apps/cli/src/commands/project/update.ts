@@ -53,7 +53,7 @@ export default class ProjectUpdate extends Command {
     let allProjects: ProjectDataType[] = [];
 
     const config = await getCliConfig();
-    // These are the
+
     if (!flags.name || !flags.projectId) {
       if (!flags.projectId && !flags.name) {
         await loader.start(`Fetching projects...`);
