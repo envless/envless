@@ -1,24 +1,55 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
+import fs from "fs";
+import path from "path";
 
-export const readFromDotEnvless = async () => {
+export type ProjectContent = {
+  name: string;
+  version: string;
+  projectId: string;
+  branch: string;
+};
+
+export const readFromDotEnvless = () => {
   try {
-    const envless = await yaml.load(fs.readFileSync("./.envless.yml", "utf8"));
-    return envless;
+    const dotEnvlessDirectoryPath = path.join(__dirname, ".envless");
+    const projectJsonFilePath = path.join(
+      dotEnvlessDirectoryPath,
+      "project.json",
+    );
+    if (fs.existsSync(projectJsonFilePath)) {
+      const projectJsonContent = fs.readFileSync(projectJsonFilePath, "utf8");
+      const projectContent: ProjectContent = JSON.parse(projectJsonContent);
+
+      return projectContent;
+    }
+
+    return {} as ProjectContent;
   } catch (e) {
-    return {};
+    return {} as ProjectContent;
   }
 };
 
-export const writeToDotEnvless = async (data: object) => {
-  let config;
+export const writeToDotEnvless = (data: ProjectContent) => {
+  const projectJsonContent = JSON.stringify(data, null, 2);
 
-  try {
-    const doc = await yaml.load(fs.readFileSync("./.envless.yml", "utf8"));
-    config = { ...doc, ...data };
-  } catch (e) {
-    config = data;
+  const gitignorePath = path.join(__dirname, ".gitignore");
+  const gitignoreContent = `.envless\n`;
+
+  const dotEnvlessDirectoryPath = path.join(__dirname, ".envless");
+
+  console.log("here .envless directory not found", dotEnvlessDirectoryPath);
+  const projectJsonFilePath = path.join(
+    dotEnvlessDirectoryPath,
+    "project.json",
+  );
+
+  if (!fs.existsSync(dotEnvlessDirectoryPath)) {
+    console.log("here .envless directory not found");
+    fs.mkdirSync(dotEnvlessDirectoryPath);
   }
 
-  await fs.writeFileSync("./.envless.yml", yaml.dump(config));
+  fs.writeFileSync(projectJsonFilePath, projectJsonContent);
+
+  if (fs.existsSync(gitignorePath)) {
+    fs.appendFileSync(gitignorePath, gitignoreContent);
+  }
 };
