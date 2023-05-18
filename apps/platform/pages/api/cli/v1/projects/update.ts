@@ -8,7 +8,6 @@ type updateRequestData = Partial<{
 
 const update = async (req: NextCliApiRequest, res: NextApiResponse) => {
   if (req.method != "POST") {
-    // Any order request aside the POST request
     res.status(405).json({
       message: "Method not allowed",
     });
