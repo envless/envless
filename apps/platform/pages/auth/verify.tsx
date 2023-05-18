@@ -11,7 +11,7 @@ import log from "@/lib/log";
 export default function VerifyAuth({ sessionId }: { sessionId: string }) {
   const router = useRouter();
 
-  const verifyMutation = trpc.auth.verify.useMutation({
+  const verifyMutation = trpc.auth.verifyBrowser.useMutation({
     onSuccess: async (res: any) => {
       if (res.name === "TRPCError") {
         signOut();

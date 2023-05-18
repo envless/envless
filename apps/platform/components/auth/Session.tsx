@@ -29,8 +29,7 @@ const Session = (props: Props) => {
   const onSubmit = async (data) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
-    localStorage.setItem("fullName", data.name);
-    signIn("email", data);
+    signIn("credentials", data);
   };
 
   return (
@@ -112,6 +111,25 @@ const Session = (props: Props) => {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",
                   },
+                }}
+              />
+
+              <Input
+                name="password"
+                type="password"
+                label="Master password"
+                placeholder="********"
+                required={true}
+                full={true}
+                register={register}
+                errors={errors}
+                defaultValue={
+                  process.env.NODE_ENV === "development"
+                    ? "P{3}ssw0rd!"
+                    : ""
+                }
+                validationSchema={{
+                  required: "Password is required",
                 }}
               />
 

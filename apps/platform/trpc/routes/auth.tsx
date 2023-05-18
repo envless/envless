@@ -1,7 +1,7 @@
 import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
-import { createRouter, withAuth } from "@/trpc/router";
+import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
@@ -11,7 +11,41 @@ import log from "@/lib/log";
 import prisma from "@/lib/prisma";
 
 export const auth = createRouter({
-  verify: withAuth
+  signup: withoutAuth
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        hashedPassword: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let user;
+      const { name, email, hashedPassword } = input;
+
+      try {
+        user = await prisma.user.create({
+          data: {
+            name,
+            email,
+            hashedPassword,
+          },
+        });
+      } catch (error) {
+        if (error.code === "P2002") {
+          return new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email already exists.",
+          });
+        }
+
+        throw error;
+      }
+
+      return user;
+    }),
+
+  verifyBrowser: withAuth
     .input(
       z.object({
         sessionId: z.string(),

@@ -285,6 +285,7 @@ model User {
   name              String?
   email             String           @unique
   emailVerified     DateTime?
+  hashedPassword    String?
   image             String?
   cliId             String?          @unique
   accounts          Account[]
