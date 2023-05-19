@@ -5,6 +5,7 @@ import {
   PULL_REQUEST_CLOSED,
   PULL_REQUEST_CREATED,
   PULL_REQUEST_MERGED,
+  PULL_REQUEST_REOPENED,
 } from "@/types/auditActions";
 import { PullRequestStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -282,6 +283,71 @@ export const pullRequest = createRouter({
             id: updatedPr.id,
             title: updatedPr.title,
             closedAt: updatedPr.closedAt,
+            status: updatedPr.status,
+          },
+        },
+      });
+
+      return updatedPr;
+    }),
+  reOpen: withAuth
+    .input(
+      z.object({
+        pullRequest: z.object({
+          prId: z.number(),
+          projectId: z.string(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { pullRequest: prInput } = input;
+      const { user } = ctx.session;
+
+      const pullRequest = await ctx.prisma.pullRequest.findUnique({
+        where: {
+          prId_projectId: {
+            prId: prInput.prId,
+            projectId: prInput.projectId,
+          },
+        },
+      });
+
+      if (!pullRequest) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Pull Request you are requesting to re-open does not exists.",
+        });
+      }
+
+      if (pullRequest?.status !== PullRequestStatus.closed) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Pull Request you are requesting to re-open must be closed.",
+        });
+      }
+
+      const updatedPr = await ctx.prisma.pullRequest.update({
+        data: {
+          reOpenedById: user.id,
+          reOpenedAt: new Date(),
+          status: PullRequestStatus.open,
+        },
+        where: {
+          id: pullRequest?.id,
+        },
+      });
+
+      await Audit.create({
+        createdById: user.id,
+        projectId: updatedPr.projectId,
+        action: PULL_REQUEST_REOPENED,
+        data: {
+          pullRequest: {
+            id: updatedPr.id,
+            title: updatedPr.title,
+            reOpenedAt: updatedPr.reOpenedAt,
+            reOpenedById: updatedPr.reOpenedById,
             status: updatedPr.status,
           },
         },
