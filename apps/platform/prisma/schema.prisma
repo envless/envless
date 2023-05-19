@@ -45,7 +45,7 @@ model Project {
   pullRequests        PullRequest[]
   encryptedProjectKey EncryptedProjectKey?
 
-  @@unique([name, slug])
+  @@unique([slug])
 }
 
 model EncryptedProjectKey {
