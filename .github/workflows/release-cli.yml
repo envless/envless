@@ -30,3 +30,19 @@ jobs:
  
         - name: Build CLI
           run: yarn build:cli
+
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: yarn install --ignore-scripts
+      - name: Release
+        run: yarn run semantic-release
+        env:
+          GITHUB_TOKEN: $${{ secrets.GITHUB_TOKEN }}
