@@ -68,5 +68,8 @@
   "keywords": [
     "envless, security, e2ee, .env, dotenv"
   ],
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "release": {
+    "branches": ["main", "feat/release-cli"]
+  }
 }
