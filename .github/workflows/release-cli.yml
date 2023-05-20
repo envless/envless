@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --ignore-engines --ignore-scripts
       - name: Release
-        run: yarn run semantic-release
+        run: yarn run semantic:release
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
