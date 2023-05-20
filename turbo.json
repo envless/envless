@@ -36,6 +36,9 @@
     },
     "test:e2e": {
       "cache": false
+    },
+    "semantic:release": {
+      "cache": false
     }
   }
 }
