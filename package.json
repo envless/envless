@@ -14,6 +14,7 @@
     "lint": "dotenv -- turbo run lint",
     "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
     "build:ui": "dotenv -- turbo run build:ui",
+    "build:cli": "dotenv -- turbo run build --filter=./apps/cli",
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",
     "db:generate": "dotenv -- turbo run db:generate",
