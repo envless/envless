@@ -22,6 +22,7 @@ export const auth = createRouter({
     .mutation(async ({ ctx, input }) => {
       let user;
       const { name, email, hashedPassword } = input;
+      console.log("signup", input);
 
       try {
         user = await prisma.user.create({
@@ -31,18 +32,21 @@ export const auth = createRouter({
             hashedPassword,
           },
         });
+
+        return user;
       } catch (error) {
         if (error.code === "P2002") {
-          return new TRPCError({
+          throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Email already exists.",
+            message: "You may already have an account, please try logging in.",
+          });
+        } else {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Something went wrong, please refresh and try again.",
           });
         }
-
-        throw error;
       }
-
-      return user;
     }),
 
   verifyBrowser: withAuth

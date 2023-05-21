@@ -2,11 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { trpc } from "@/utils/trpc";
+import * as argon2 from "argon2-browser";
+import { randomBytes } from "crypto";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { GithubFullIcon, GitlabFullIcon } from "@/components/icons";
 import { Button, Input } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 type Props = {
   page: string;
@@ -26,10 +30,71 @@ const Session = (props: Props) => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  type SessionParams = {
+    email: string;
+    password?: string;
+    name?: string;
+    callbackUrl?: string;
+    hashedPassword?: string;
+  };
+
+  const onSubmit = async (data: SessionParams) => {
+    if (page === "login") {
+      LoginUser(data);
+    } else {
+      SignupUser(data);
+    }
+  };
+
+  const LoginUser = async (data: SessionParams) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
     signIn("credentials", data);
+  };
+
+  const { mutate: signupMutation, isLoading: loadingSignup } =
+    trpc.auth.signup.useMutation({
+      onSuccess: (response) => {
+        debugger;
+        // const { user } = response;
+        // const { email, name } = user;
+        // const data = { email, name };
+      },
+
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Signup failed!",
+          subtitle: error.message,
+        });
+      },
+    });
+
+  const SignupUser = async (data: SessionParams) => {
+    const salt = randomBytes(32).toString("hex");
+
+    const { encoded: hashedPassword } = (await argon2.hash({
+      pass: data.password,
+      salt,
+      type: argon2.ArgonType.Argon2id,
+    })) as { encoded: string };
+
+    setLoading(true);
+
+    data = {
+      email: data.email,
+      name: data.name,
+      hashedPassword,
+      callbackUrl: "/projects",
+    };
+
+    signupMutation(
+      data as {
+        email: string;
+        name: string;
+        hashedPassword: string;
+      },
+    );
   };
 
   return (
@@ -124,9 +189,7 @@ const Session = (props: Props) => {
                 register={register}
                 errors={errors}
                 defaultValue={
-                  process.env.NODE_ENV === "development"
-                    ? "P{3}ssw0rd!"
-                    : ""
+                  process.env.NODE_ENV === "development" ? "P{3}ssw0rd!" : ""
                 }
                 validationSchema={{
                   required: "Password is required",

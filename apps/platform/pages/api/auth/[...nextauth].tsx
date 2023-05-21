@@ -6,29 +6,29 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { LockedUser } from "@prisma/client";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
-import CredentialsProvider from "next-auth/providers/credentials"
 import * as z from "zod";
 import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'credentials',
+      name: "credentials",
       credentials: {
         name: { type: "text" },
         email: { type: "text" },
         publicKey: { type: "text" },
         encryptedPrivateKey: { type: "text" },
-        password: { type: "password" }
+        password: { type: "password" },
       },
 
       async authorize(credentials, req) {
-        console.log({ credentials, req })
+        console.log({ credentials, req });
         return null;
-      }
+      },
     }),
 
     EmailProvider({
