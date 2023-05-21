@@ -59,6 +59,8 @@ const Session = (props: Props) => {
         // const { user } = response;
         // const { email, name } = user;
         // const data = { email, name };
+
+        // same method of generating a token as next-auth
       },
 
       onError: (error) => {

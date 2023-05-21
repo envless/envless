@@ -1,14 +1,22 @@
+import MagicLink from "@/emails/MagicLink";
 import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
+import { createHash, randomBytes } from "crypto";
 import sendMail from "emails";
 import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
 import log from "@/lib/log";
 import prisma from "@/lib/prisma";
+
+const hashToken = (token: string) => {
+  return createHash("sha256")
+    .update(`${token}${process.env.NEXTAUTH_SECRET}`)
+    .digest("hex");
+};
 
 export const auth = createRouter({
   signup: withoutAuth
@@ -31,6 +39,49 @@ export const auth = createRouter({
             email,
             hashedPassword,
           },
+        });
+
+        const firstName = name.split(" ")[0];
+        const token = randomBytes(32).toString("hex");
+        const TWENTY_FOUR_HOURS_IN_SECONDS = 60 * 60 * 24;
+        const expires = new Date(
+          Date.now() + TWENTY_FOUR_HOURS_IN_SECONDS * 1000,
+        );
+
+        await prisma.verificationToken.create({
+          data: {
+            identifier: email,
+            token: hashToken(token),
+            expires,
+          },
+        });
+
+        const params = new URLSearchParams({
+          callbackUrl: `${process.env.NEXTAUTH_URL}/projects`,
+          email,
+          token,
+        });
+
+        const url = `${process.env.NEXTAUTH_URL}/api/auth/callback/email?${params}`;
+
+        sendMail({
+          subject: "Complete your Envless signup",
+          to: email,
+          component: (
+            <MagicLink
+              headline="Complete your Envless signup"
+              greeting={`Hi ${firstName || "there"},`}
+              body={
+                <>
+                  Welcome to Envless! Please click the button below to complete
+                  the signup process.
+                </>
+              }
+              subText="If you did not signup for Envless, your account is not compromised and its safe to ignore it."
+              buttonText={"Verify your email address"}
+              buttonLink={url}
+            />
+          ),
         });
 
         return user;
