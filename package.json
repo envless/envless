@@ -21,7 +21,7 @@
     "db:seed": "dotenv -- turbo run db:seed",
     "db:reset": "dotenv -- turbo run db:reset",
     "db:studio": "dotenv -- turbo run db:studio",
-    "release": "dotenv -- turbo run build --filter=./apps/cli && yarn changeset publish"
+    "release": "turbo run build --filter=./apps/cli && yarn changeset publish"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
