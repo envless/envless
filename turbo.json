@@ -16,6 +16,9 @@
     "test": {
       "cache": false
     },
+    "release": {
+      "cache": false
+    },
     "db:generate": {
       "cache": false
     },
