@@ -55,12 +55,12 @@ const Session = (props: Props) => {
   const { mutate: signupMutation, isLoading: loadingSignup } =
     trpc.auth.signup.useMutation({
       onSuccess: (response) => {
-        debugger;
-        // const { user } = response;
-        // const { email, name } = user;
-        // const data = { email, name };
-
-        // same method of generating a token as next-auth
+        showToast({
+          duration: 3000,
+          type: "success",
+          title: "One more step!",
+          subtitle: response.message,
+        });
       },
 
       onError: (error) => {
