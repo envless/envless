@@ -35,7 +35,7 @@ const nextConfig = {
     webpack5: true,
   },
 
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { nextRuntime, buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.module.rules.push({
       test: /\.wasm$/,
       loader: "base64-loader",
@@ -52,7 +52,7 @@ const nextConfig = {
       });
     });
 
-    if (!isServer) {
+    if (typeof nextRuntime === "undefined") {
       config.node = {
         ...config.node,
         fs: "empty",
