@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     name: Release
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -27,4 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn release
+        with:
+          commit: 'ci: release'
+          title: 'ci: release'
+          publish: yarn release
