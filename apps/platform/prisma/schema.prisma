@@ -48,6 +48,22 @@ model Project {
   @@unique([slug])
 }
 
+model Keychain {
+  id                    String  @id @default(cuid())
+
+  publicKey             String
+  encryptedPrivateKey   Json
+  revocationCertificate String
+
+  temp                  Boolean @default(false) // this field is used during member invite to indicate that the key is temporary and should be revoked after user accepts invite and re-generates their own key
+  userId                String? @unique
+  user                  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  revokedAt DateTime?
+}
+
 model EncryptedProjectKey {
   id           String @id @default(cuid())
   encryptedKey String
@@ -303,6 +319,7 @@ model User {
 
   locked            LockedUser?
   publicKey         UserPublicKey?
+  keychain          Keychain?
 
   // Two factor authentication
   encryptedTwoFactorSecret Json?
