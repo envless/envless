@@ -31,6 +31,10 @@ const nextConfig = {
     ];
   },
 
+  future: {
+    webpack5: true,
+  },
+
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.module.rules.push({
       test: /\.wasm$/,
@@ -49,7 +53,11 @@ const nextConfig = {
     });
 
     if (!isServer) {
-      config.resolve.fallback.fs = false;
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+      };
     }
 
     // Perform customizations to webpack config
