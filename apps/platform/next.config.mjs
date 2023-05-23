@@ -53,6 +53,12 @@ const nextConfig = {
     });
 
     if (!isServer) {
+      config.node = {
+        ...config.node,
+        fs: "empty",
+        path: "empty",
+      };
+
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
