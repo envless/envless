@@ -4,13 +4,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import * as argon2 from "argon2-browser";
-import { randomBytes } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { GithubFullIcon, GitlabFullIcon } from "@/components/icons";
 import { Button, Input } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
+import AES from "@/lib/encryption/aes";
+import OpenPGP from "@/lib/encryption/openpgp";
 
 type Props = {
   page: string;
@@ -35,7 +37,6 @@ const Session = (props: Props) => {
     password?: string;
     name?: string;
     callbackUrl?: string;
-    hashedPassword?: string;
   };
 
   const onSubmit = async (data: SessionParams) => {
@@ -73,7 +74,18 @@ const Session = (props: Props) => {
     });
 
   const SignupUser = async (data: SessionParams) => {
+    setLoading(true);
     const salt = randomBytes(32).toString("hex");
+    const key = createHash("sha256")
+      .update(String(data.password))
+      .digest("base64")
+      .substr(0, 32);
+
+    const pgp = await OpenPGP.generageKeyPair(data.name as string, data.email);
+    const encryptedPrivateKey = await AES.encrypt({
+      plaintext: pgp.privateKey,
+      key: key,
+    });
 
     const { encoded: hashedPassword } = (await argon2.hash({
       pass: data.password,
@@ -81,22 +93,29 @@ const Session = (props: Props) => {
       type: argon2.ArgonType.Argon2id,
     })) as { encoded: string };
 
-    setLoading(true);
-
-    data = {
+    const params = {
       email: data.email,
       name: data.name,
-      hashedPassword,
+      hashedPassword: hashedPassword,
+      publicKey: pgp.publicKey as string,
+      encryptedPrivateKey: encryptedPrivateKey,
+      revocationCertificate: pgp.revocationCertificate,
       callbackUrl: "/projects",
+    } as {
+      email: string;
+      name: string;
+      hashedPassword: string;
+      publicKey: string;
+      encryptedPrivateKey: {
+        ciphertext: string;
+        iv: string;
+        tag: string;
+      };
+      revocationCertificate: string;
+      callbackUrl: string;
     };
 
-    signupMutation(
-      data as {
-        email: string;
-        name: string;
-        hashedPassword: string;
-      },
-    );
+    signupMutation(params);
   };
 
   return (

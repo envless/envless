@@ -18,10 +18,24 @@ export const auth = createRouter({
         name: z.string(),
         email: z.string().email(),
         hashedPassword: z.string(),
+        publicKey: z.string(),
+        encryptedPrivateKey: z.object({
+          iv: z.string(),
+          tag: z.string(),
+          ciphertext: z.string(),
+        }),
+        revocationCertificate: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { name, email, hashedPassword } = input;
+      const {
+        name,
+        email,
+        hashedPassword,
+        publicKey,
+        encryptedPrivateKey,
+        revocationCertificate,
+      } = input;
 
       const existingUser = await prisma.user.findUnique({
         where: {
