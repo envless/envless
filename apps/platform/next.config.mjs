@@ -8,7 +8,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
   transpilePackages: ["ui"],
-  experimental: { runtime: 'edge' },
+  experimental: { runtime: 'experimental-edge' },
   images: {
     formats: ["image/webp"],
     dangerouslyAllowSVG: true,
