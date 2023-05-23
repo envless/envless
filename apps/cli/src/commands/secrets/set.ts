@@ -82,7 +82,7 @@ export default class SetSecrets extends Command {
     await super.init();
 
     const config = await getCliConfigFromKeyStore();
-    const envless = await readFromDotEnvless();
+    const envless = readFromDotEnvless();
 
     const { projectId, branch: branchFromKeyStore } = envless;
 

@@ -155,18 +155,21 @@ model PullRequest {
   createdById     String
   mergedById      String?
   closedById      String?
+  reOpenedById    String?
   baseBranchId    String
   currentBranchId String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   mergedAt        DateTime?
   closedAt        DateTime?
+  reOpenedAt      DateTime?
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   createdBy User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
   mergedBy  User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
   closedBy  User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+  reOpenedBy  User? @relation(name: "reOpenedBy", fields: [reOpenedById], references: [id], onDelete: Cascade)
 
   baseBranch    Branch @relation(name: "baseBranch", fields: [baseBranchId], references: [id], onDelete: Cascade)
   currentBranch Branch @relation(name: "currentBranch", fields: [currentBranchId], references: [id], onDelete: Cascade)
@@ -175,6 +178,8 @@ model PullRequest {
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
+  @@index([reOpenedById])
+
   @@index([baseBranchId])
   @@index([currentBranchId])
   @@index([createdAt])
@@ -186,6 +191,7 @@ enum PullRequestStatus {
   open
   merged
   closed
+  reOpened
 }
 
 model Secret {
@@ -292,6 +298,8 @@ model User {
   createdPRs        PullRequest[]    @relation(name: "createdBy")
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
+  reOpenedPRs      PullRequest[]     @relation(name: "reOpenedBy")
+
   locked            LockedUser?
   publicKey         UserPublicKey?
 
