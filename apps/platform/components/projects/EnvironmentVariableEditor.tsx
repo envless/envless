@@ -100,7 +100,7 @@ export function EnvironmentVariableEditor({ branchId }: { branchId: string }) {
     async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       const pairs = await parseEnvFile(file, decryptedProjectKey);
-      setValue("secrets", pairs);
+      setValue("secrets", pairs, { shouldDirty: true });
     },
     [setValue, decryptedProjectKey],
   );
