@@ -52,8 +52,16 @@ export default withAuth(
       return NextResponse.redirect(authUrl);
     }
 
-    const { twoFactorEnabled, twoFactorVerified } = user;
+    const { twoFactorEnabled, twoFactorVerified, keychain, hasMasterPassword } =
+      user;
     console.log("Loading user: ", user);
+
+    if (!keychain || !hasMasterPassword) {
+      log(
+        "If keychain or master password is not present, redirect to verify auth page",
+      );
+      return NextResponse.redirect(verifyAuthUrl);
+    }
 
     if (twoFactorEnabled && twoFactorVerified) {
       log("If two factor is enabled and verified, skip");

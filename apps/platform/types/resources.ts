@@ -10,12 +10,18 @@ export interface UserType {
   name?: string;
   email: string;
   image?: string;
-  role: UserRole;
+  role?: UserRole;
   twoFactorEnabled: boolean;
   twoFactorVerified: boolean;
   locked: LockedUser | null;
-  privateKey: string | null;
+  keychain: {
+    temp: boolean;
+    publicKey: string;
+    encryptedPrivateKey: string;
+  };
+  hasMasterPassword: boolean;
 }
+
 export interface MemberType {
   id: string;
   projectInviteId: string | null;

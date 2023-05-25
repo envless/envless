@@ -1,15 +1,32 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
-import { Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { Container, EmptyState, LoadingIcon } from "@/components/theme";
+import { getCsrfToken } from "next-auth/react";
+import KeychainSetup from "@/components/auth/KeychainSetup";
+import MasterPassword from "@/components/auth/MasterPassword";
+import VerifyBrowser from "@/components/auth/VerifyBrowser";
+import { Container } from "@/components/theme";
 import { getFingerprint } from "@/lib/client";
 import log from "@/lib/log";
 
-export default function VerifyAuth({ sessionId }: { sessionId: string }) {
+type PageProps = {
+  sessionId: string;
+  user: UserType;
+  pageState: string;
+  csrfToken: string;
+};
+
+export default function VerifyAuth({
+  sessionId,
+  user,
+  pageState,
+  csrfToken,
+}: PageProps) {
   const router = useRouter();
+  const [page, setPage] = useState(pageState);
 
   const verifyMutation = trpc.auth.verifyBrowser.useMutation({
     onSuccess: async (res: any) => {
@@ -18,37 +35,33 @@ export default function VerifyAuth({ sessionId }: { sessionId: string }) {
         return;
       }
 
-      // router.push("/projects");
+      router.push("/projects");
     },
 
     onError: (error) => {
       log("Error", error);
       signOut();
     },
-
-    onSettled: () => {
-      localStorage.removeItem("fullName");
-    },
   });
-
-  useEffect(() => {
-    (async () => {
-      const fingerprint = await getFingerprint();
-      const name = localStorage.getItem("fullName");
-      verifyMutation.mutate({ fingerprint, sessionId, name });
-    })();
-  }, []);
 
   return (
     <Container>
       <div className="mt-16">
-        <EmptyState
-          icon={<Shield className="m-3 mx-auto h-12 w-12" />}
-          title={`Please wait...`}
-          subtitle="While we verify your identity and your browser integrity."
-        >
-          <LoadingIcon className="h-6 w-6" />
-        </EmptyState>
+        {page === "verifyIdentify" && <VerifyBrowser />}
+        {page === "resetPassword" && (
+          <MasterPassword
+            csrfToken={csrfToken}
+            reset={true}
+            user={user}
+            setPage={setPage}
+          />
+        )}
+        {page === "setupPassword" && (
+          <MasterPassword csrfToken={csrfToken} user={user} setPage={setPage} />
+        )}
+        {page === "setupKeychain" && (
+          <KeychainSetup csrfToken={csrfToken} user={user} setPage={setPage} />
+        )}
       </div>
     </Container>
   );
@@ -57,6 +70,8 @@ export default function VerifyAuth({ sessionId }: { sessionId: string }) {
 export async function getServerSideProps(context) {
   const session = await getServerSideSession(context);
   const sessionId = session?.id as string;
+  const user = session?.user as UserType;
+  const csrfToken = await getCsrfToken(context);
 
   if (!session || !session.user) {
     return {
@@ -67,9 +82,24 @@ export async function getServerSideProps(context) {
     };
   }
 
+  let pageState;
+
+  if (!user.hasMasterPassword) {
+    pageState = "setupPassword";
+  } else if (!user.keychain?.temp) {
+    pageState = "resetPassword";
+  } else if (!user.keychain) {
+    pageState = "setupKeychain";
+  } else {
+    pageState = "verifyIdentify";
+  }
+
   return {
     props: {
+      user,
+      pageState,
       sessionId,
+      csrfToken,
     },
   };
 }

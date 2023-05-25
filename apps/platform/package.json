@@ -96,7 +96,8 @@
     "tinycolor2": "^1.6.0",
     "ua-parser-js": "^1.0.35",
     "zod": "^3.20.6",
-    "zustand": "^4.3.8"
+    "zustand": "^4.3.8",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
