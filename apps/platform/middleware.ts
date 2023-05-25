@@ -53,6 +53,7 @@ export default withAuth(
     }
 
     const { twoFactorEnabled, twoFactorVerified } = user;
+    console.log("Loading user: ", user);
 
     if (twoFactorEnabled && twoFactorVerified) {
       log("If two factor is enabled and verified, skip");

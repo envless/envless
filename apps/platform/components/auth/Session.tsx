@@ -50,14 +50,14 @@ const Session = (props: Props) => {
   const LoginUser = async (data: SessionParams) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
-    signIn("credentials", data);
+    signIn("email", data);
   };
 
   const { mutate: signupMutation, isLoading: loadingSignup } =
     trpc.auth.signup.useMutation({
       onSuccess: (response) => {
         showToast({
-          duration: 3000,
+          duration: 10000,
           type: "success",
           title: "One more step!",
           subtitle: response.message,
@@ -66,6 +66,7 @@ const Session = (props: Props) => {
 
       onError: (error) => {
         showToast({
+          duration: 10000,
           type: "error",
           title: "Signup failed!",
           subtitle: error.message,
@@ -120,7 +121,7 @@ const Session = (props: Props) => {
 
   return (
     <>
-      <div className="flex h-screen flex-col justify-center px-12">
+      <div className="flex h-screen flex-col px-12 py-48">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto h-12 w-auto"

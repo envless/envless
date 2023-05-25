@@ -18,10 +18,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        name: { type: "text" },
         email: { type: "text" },
-        publicKey: { type: "text" },
-        encryptedPrivateKey: { type: "text" },
         password: { type: "password" },
       },
 
@@ -94,7 +91,7 @@ export const authOptions: NextAuthOptions = {
           token.user = {
             ...userInSession,
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
-            privateKey: userInSession.privateKey ?? null,
+            keychain: userInSession.keychain ?? null,
           };
         }
       } else if (user) {
@@ -102,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         token.user = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
-          privateKey: session?.user?.privateKey ?? null,
+          keychain: session?.user?.keychain ?? null,
         };
 
         // Add the locked information to the token
@@ -130,11 +127,20 @@ export const authOptions: NextAuthOptions = {
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
         twoFactorVerified: boolean;
-        privateKey: string | null;
+        keychain: {
+          temp: boolean;
+          publicKey: string;
+          encryptedPrivateKey: string;
+        };
       } = token.user as any;
 
       if (user) {
         const sessionId = token.sessionId as string;
+        const keychain = await prisma.keychain.findFirst({
+          where: { userId: user.id },
+          select: { temp: true, publicKey: true, encryptedPrivateKey: true },
+        });
+
         session = {
           ...session,
           id: sessionId,
@@ -145,7 +151,7 @@ export const authOptions: NextAuthOptions = {
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
             twoFactorVerified: user.twoFactorVerified,
-            privateKey: user.privateKey,
+            keychain: keychain,
           } as any,
         };
       }
@@ -199,7 +205,13 @@ const UserSchema = z.object({
   twoFactorEnabled: z.boolean(),
   twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
-  privateKey: z.string().nullable(),
+  keychain: z
+    .object({
+      temp: z.boolean(),
+      publicKey: z.string(),
+      encryptedPrivateKey: z.string(),
+    })
+    .nullable(),
 });
 
 const SessionSchema = z.object({

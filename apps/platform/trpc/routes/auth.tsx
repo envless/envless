@@ -37,6 +37,8 @@ export const auth = createRouter({
         revocationCertificate,
       } = input;
 
+      console.log("input", input);
+
       const existingUser = await prisma.user.findUnique({
         where: {
           email,

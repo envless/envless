@@ -18,7 +18,7 @@ export default function VerifyAuth({ sessionId }: { sessionId: string }) {
         return;
       }
 
-      router.push("/projects");
+      // router.push("/projects");
     },
 
     onError: (error) => {
