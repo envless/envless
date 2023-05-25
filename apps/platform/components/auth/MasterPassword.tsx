@@ -32,6 +32,15 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
     timeToHack: "",
   });
 
+  const checkPasswordStrength = (password: string) => {
+    const result = zxcvbn(password);
+    setStrength({
+      score: password === "" ? null : result.score,
+      timeToHack:
+        result.crack_times_display.offline_slow_hashing_1e4_per_second,
+    });
+  };
+
   const onSubmit = async (data: SessionParams) => {
     debugger;
   };
@@ -42,7 +51,7 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
     } else {
       return (
         <span className="mt-1 flex">
-          <Lightbulb className="mr-2 inline h-4 w-4" />
+          <Lightbulb className="mr-2 inline h-4 w-4 text-yellow-400" />
           <span className="">
             Time to hack:{" "}
             <span className="font-semibold">{strength.timeToHack}</span>
@@ -89,7 +98,7 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
               name="password"
               type="password"
               label="Master password"
-              placeholder="********"
+              placeholder="****************"
               required={true}
               full={true}
               register={register}
@@ -97,13 +106,7 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
               help={<PasswordStrength />}
               onKeyUp={(e) => {
                 const value = e.currentTarget.value;
-                const result = zxcvbn(value);
-                setStrength({
-                  score: value === "" ? null : result.score,
-                  timeToHack:
-                    result.crack_times_display
-                      .offline_fast_hashing_1e10_per_second,
-                });
+                checkPasswordStrength(value);
               }}
               validationSchema={{
                 required: "Password is required",
@@ -111,14 +114,21 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
                   value: 12,
                   message: "Password must be at least 12 characters",
                 },
+                validate: (value: string) => {
+                  checkPasswordStrength(value);
+                  return true;
+                },
               }}
+              defaultValue={
+                process.env.NODE_ENV === "development" ? "P{3}ssw[0]rd!" : ""
+              }
             />
 
             <Input
               name="repeatPassword"
               type="password"
               label="Confirm master password"
-              placeholder="********"
+              placeholder="****************"
               required={true}
               full={true}
               register={register}
@@ -128,6 +138,9 @@ const MasterPassword = ({ reset, user, setPage, csrfToken }: PageProps) => {
                 validate: (value: string) =>
                   value === watch("password") || "Passwords do not match",
               }}
+              defaultValue={
+                process.env.NODE_ENV === "development" ? "P{3}ssw[0]rd!" : ""
+              }
             />
 
             <Button
