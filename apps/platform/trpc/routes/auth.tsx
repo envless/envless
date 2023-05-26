@@ -17,25 +17,10 @@ export const auth = createRouter({
       z.object({
         name: z.string(),
         email: z.string().email(),
-        hashedPassword: z.string(),
-        publicKey: z.string(),
-        encryptedPrivateKey: z.object({
-          iv: z.string(),
-          tag: z.string(),
-          ciphertext: z.string(),
-        }),
-        revocationCertificate: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const {
-        name,
-        email,
-        hashedPassword,
-        publicKey,
-        encryptedPrivateKey,
-        revocationCertificate,
-      } = input;
+      const { name, email } = input;
 
       console.log("input", input);
 
@@ -58,7 +43,7 @@ export const auth = createRouter({
 
       try {
         const user = await prisma.user.create({
-          data: { name, email, hashedPassword },
+          data: { name, email },
         });
 
         return await sendVerificationEmail(user);
@@ -77,7 +62,32 @@ export const auth = createRouter({
       }
     }),
 
-  verifyBrowser: withAuth
+  password: withAuth
+    .input(
+      z.object({
+        publicKey: z.string(),
+        hashedPassword: z.string(),
+        encryptedPrivateKey: z.object({
+          iv: z.string(),
+          tag: z.string(),
+          ciphertext: z.string(),
+        }),
+        revocationCertificate: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const {
+        publicKey,
+        hashedPassword,
+        encryptedPrivateKey,
+        revocationCertificate,
+      } = input;
+
+      // TODO: Check if user has already set a password
+    }),
+
+  verify: withAuth
     .input(
       z.object({
         sessionId: z.string(),
