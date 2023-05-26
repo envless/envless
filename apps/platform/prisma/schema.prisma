@@ -62,6 +62,8 @@ model Keychain {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   revokedAt DateTime?
+
+  @@index([userId])
 }
 
 model EncryptedProjectKey {

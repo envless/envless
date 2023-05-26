@@ -5,7 +5,6 @@ import { getServerSideSession } from "@/utils/session";
 import { trpc } from "@/utils/trpc";
 import { signOut } from "next-auth/react";
 import { getCsrfToken } from "next-auth/react";
-import KeychainSetup from "@/components/auth/KeychainSetup";
 import MasterPassword from "@/components/auth/MasterPassword";
 import VerifyBrowser from "@/components/auth/VerifyBrowser";
 import { Container } from "@/components/theme";
@@ -47,20 +46,16 @@ export default function VerifyAuth({
   return (
     <Container>
       <div className="mt-16">
-        {page === "verifyIdentify" && <VerifyBrowser />}
-        {page === "resetPassword" && (
+        {page === "verifyBrowser" ? (
+          <VerifyBrowser />
+        ) : (
           <MasterPassword
             csrfToken={csrfToken}
-            reset={true}
+            reset={page === "resetPassword"}
             user={user}
+            page={page}
             setPage={setPage}
           />
-        )}
-        {page === "setupPassword" && (
-          <MasterPassword csrfToken={csrfToken} user={user} setPage={setPage} />
-        )}
-        {page === "setupKeychain" && (
-          <KeychainSetup csrfToken={csrfToken} user={user} setPage={setPage} />
         )}
       </div>
     </Container>
@@ -86,10 +81,10 @@ export async function getServerSideProps(context) {
 
   if (!user.hasMasterPassword) {
     pageState = "setupPassword";
-  } else if (!user.keychain?.temp) {
-    pageState = "resetPassword";
   } else if (!user.keychain) {
     pageState = "setupKeychain";
+  } else if (user.keychain?.temp) {
+    pageState = "resetPassword";
   } else {
     pageState = "verifyIdentify";
   }
