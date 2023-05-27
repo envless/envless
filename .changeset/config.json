@@ -8,7 +8,7 @@
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "experiment/release-using-changeset",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
