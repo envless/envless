@@ -5,6 +5,7 @@ on:
     branches:
       - experiment/release-using-changeset
 
+permissions: write-all
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
