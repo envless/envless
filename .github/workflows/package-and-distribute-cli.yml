@@ -2,6 +2,9 @@ name: Package and Distribute CLI
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'feat/package-and-distribute-cli'
 
 jobs:
   pack_tarballs:
