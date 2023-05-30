@@ -1,9 +1,11 @@
 import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
+import { accessesWithProject } from "@/models/access";
 import { sendVerificationEmail } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
@@ -21,8 +23,6 @@ export const auth = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { name, email } = input;
-
-      console.log("input", input);
 
       const existingUser = await prisma.user.findUnique({
         where: {
@@ -76,7 +76,6 @@ export const auth = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { user } = ctx.session;
       const {
         publicKey,
         hashedPassword,
@@ -84,7 +83,63 @@ export const auth = createRouter({
         revocationCertificate,
       } = input;
 
-      // TODO: Check if user has already set a password
+      const { user } = ctx.session;
+
+      const updatePassword = async () => {
+        await prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: { hashedPassword },
+        });
+
+        return true;
+      };
+
+      const updateKeychain = async () => {
+        const keychain = await prisma.keychain.upsert({
+          where: {
+            userId: user.id,
+          },
+
+          update: {
+            publicKey,
+            encryptedPrivateKey,
+            revocationCertificate,
+            temp: false,
+          },
+
+          create: {
+            userId: user.id,
+            publicKey,
+            encryptedPrivateKey,
+            revocationCertificate,
+            temp: false,
+          },
+
+          select: {
+            temp: true,
+            encryptedPrivateKey: true,
+          },
+        });
+
+        return keychain;
+      };
+
+      const encryptProjectKeys = async (userId: string) => {
+        const accesses = await accessesWithProject({ userId });
+
+        accesses.map((access) => {
+          const { project } = access;
+          // Encrypt project keys
+        });
+      };
+
+      const hasMasterPassword = await updatePassword();
+      const keychain = await updateKeychain();
+      await encryptProjectKeys(user.id);
+
+      return { hasMasterPassword, keychain };
     }),
 
   verify: withAuth

@@ -1,15 +1,11 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
-import { trpc } from "@/utils/trpc";
-import { signOut } from "next-auth/react";
 import { getCsrfToken } from "next-auth/react";
 import MasterPassword from "@/components/auth/MasterPassword";
 import VerifyBrowser from "@/components/auth/VerifyBrowser";
 import { Container } from "@/components/theme";
-import { getFingerprint } from "@/lib/client";
-import log from "@/lib/log";
+import prisma from "@/lib/prisma";
 
 type PageProps = {
   sessionId: string;
@@ -24,37 +20,19 @@ export default function VerifyAuth({
   pageState,
   csrfToken,
 }: PageProps) {
-  const router = useRouter();
   const [page, setPage] = useState(pageState);
-
-  const verifyMutation = trpc.auth.verifyBrowser.useMutation({
-    onSuccess: async (res: any) => {
-      if (res.name === "TRPCError") {
-        signOut();
-        return;
-      }
-
-      router.push("/projects");
-    },
-
-    onError: (error) => {
-      log("Error", error);
-      signOut();
-    },
-  });
 
   return (
     <Container>
       <div className="mt-16">
         {page === "verifyBrowser" ? (
-          <VerifyBrowser />
+          <VerifyBrowser sessionId={sessionId} user={user} />
         ) : (
           <MasterPassword
-            csrfToken={csrfToken}
-            reset={page === "resetPassword"}
             user={user}
             page={page}
             setPage={setPage}
+            csrfToken={csrfToken}
           />
         )}
       </div>
@@ -77,14 +55,34 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    include: { keychain: true },
+  });
+
+  if (!currentUser) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // @ts-ignore
+  const hasPrivateKey = user.keychain?.privateKey;
+  const hasTempKeychain = currentUser.keychain?.temp ?? false;
+  const hasMasterPassword = currentUser.hashedPassword !== null;
+  const hasKeychain = currentUser.keychain !== null && user.keychain;
+
   let pageState;
 
-  if (!user.hasMasterPassword) {
+  if (!hasMasterPassword) {
     pageState = "setupPassword";
-  } else if (!user.keychain) {
+  } else if (hasMasterPassword && hasTempKeychain) {
+    pageState = "setupPasswordForInvitedUser";
+  } else if (!hasKeychain || !hasPrivateKey) {
     pageState = "setupKeychain";
-  } else if (user.keychain?.temp) {
-    pageState = "resetPassword";
   } else {
     pageState = "verifyIdentify";
   }

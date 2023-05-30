@@ -121,6 +121,7 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
+
     async session({ session, token }) {
       const user: {
         id: string;
@@ -132,7 +133,6 @@ export const authOptions: NextAuthOptions = {
         hasMasterPassword: boolean;
         keychain: {
           temp: boolean;
-          publicKey: string;
           privateKey: string;
           encryptedPrivateKey: string;
         };
@@ -142,7 +142,7 @@ export const authOptions: NextAuthOptions = {
         const sessionId = token.sessionId as string;
         const keychain = await prisma.keychain.findFirst({
           where: { userId: user.id },
-          select: { temp: true, publicKey: true, encryptedPrivateKey: true },
+          select: { temp: true, encryptedPrivateKey: true },
         });
 
         session = {
@@ -214,7 +214,6 @@ const UserSchema = z.object({
   keychain: z
     .object({
       temp: z.boolean(),
-      publicKey: z.string(),
       privateKey: z.string(),
       encryptedPrivateKey: z.string(),
     })

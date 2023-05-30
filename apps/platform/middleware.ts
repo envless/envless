@@ -54,7 +54,7 @@ export default withAuth(
 
     const { twoFactorEnabled, twoFactorVerified, keychain, hasMasterPassword } =
       user;
-    console.log("Loading user: ", user);
+    log("Loading user: ", user);
 
     if (!keychain || !hasMasterPassword) {
       log(

@@ -1,21 +1,20 @@
 import Image from "next/image";
 import { useState } from "react";
 import { UserType } from "@/types/resources";
+import { trpc } from "@/utils/trpc";
 import * as argon2 from "argon2-browser";
-import clsx from "clsx";
 // Cryptography
 import { createHash, randomBytes } from "crypto";
 import { Lightbulb } from "lucide-react";
 import { useForm } from "react-hook-form";
 import zxcvbn from "zxcvbn";
 import { Encryption as EncryptionIcon } from "@/components/icons";
-import { Button, Input } from "@/components/theme";
+import { Button, Hr, Input } from "@/components/theme";
 import AES from "@/lib/encryption/aes";
 import OpenPGP from "@/lib/encryption/openpgp";
 
 type PageProps = {
   setPage: any;
-  reset?: boolean;
   user: UserType;
   page: string;
   csrfToken: string;
@@ -26,13 +25,7 @@ type SessionParams = {
   password?: string;
 };
 
-const MasterPassword = ({
-  reset,
-  user,
-  setPage,
-  csrfToken,
-  page,
-}: PageProps) => {
+const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   const { keychain } = user;
 
   const {
@@ -66,24 +59,34 @@ const MasterPassword = ({
       case "setupKeychain":
         await setupKeychain(data);
         break;
-      case "resetPassword":
-        await resetPassword(data);
+      case "setupPasswordForInvitedUser":
+        await setupPasswordForInvitedUser(data);
         break;
       default:
         break;
     }
   };
 
+  const { mutateAsync: passwordMutation } = trpc.auth.password.useMutation({
+    onSuccess: (response) => {
+      debugger;
+    },
+
+    onError: (error) => {
+      debugger;
+    },
+  });
+
   const setupPassword = async (data: SessionParams) => {
     const params = await encryptionParams(data);
-    debugger;
+    await passwordMutation(params);
   };
 
   const setupKeychain = async (data: SessionParams) => {
     debugger;
   };
 
-  const resetPassword = async (data: SessionParams) => {
+  const setupPasswordForInvitedUser = async (data: SessionParams) => {
     const params = await encryptionParams(data);
     debugger;
   };
@@ -155,6 +158,7 @@ const MasterPassword = ({
 
         <div className="">
           <div className="px-2 py-8 sm:px-8">
+            <Hr />
             <form
               className="space-y-6"
               onSubmit={(e) => {
@@ -239,10 +243,6 @@ const MasterPassword = ({
       </div>
     </div>
   );
-};
-
-MasterPassword.defaultProps = {
-  reset: false,
 };
 
 export default MasterPassword;
