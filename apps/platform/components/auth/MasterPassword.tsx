@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState } from "react";
 import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
@@ -7,9 +6,11 @@ import * as argon2 from "argon2-browser";
 import { createHash, randomBytes } from "crypto";
 import { Lightbulb } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Toaster } from "react-hot-toast";
 import zxcvbn from "zxcvbn";
 import { Encryption as EncryptionIcon } from "@/components/icons";
 import { Button, Hr, Input } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 import AES from "@/lib/encryption/aes";
 import OpenPGP from "@/lib/encryption/openpgp";
 
@@ -35,6 +36,7 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
     formState: { errors },
   } = useForm();
 
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState({
     score: null,
@@ -77,13 +79,55 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
     },
   });
 
+  const { mutateAsync: verifyPasswordMutation } =
+    trpc.auth.verifyPassword.useMutation({
+      onSuccess: async (response) => {
+        const key = createHash("sha256")
+          .update(String(password))
+          .digest("base64")
+          .substr(0, 32);
+
+        const { encryptedPrivateKey } = user.keychain as unknown as {
+          encryptedPrivateKey: {
+            temp: boolean;
+            ciphertext: string;
+            iv: string;
+            tag: string;
+          };
+        };
+
+        const privateKey = await AES.decrypt({
+          ciphertext: encryptedPrivateKey.ciphertext,
+          iv: encryptedPrivateKey.iv,
+          tag: encryptedPrivateKey.tag,
+          key: key,
+        });
+
+        debugger;
+      },
+
+      onError: (error) => {
+        debugger;
+      },
+    });
+
   const setupPassword = async (data: SessionParams) => {
     const params = await encryptionParams(data);
     await passwordMutation(params);
   };
 
   const setupKeychain = async (data: SessionParams) => {
-    debugger;
+    try {
+      setPassword(data.password as string);
+      await verifyPasswordMutation({ password: data.password as string });
+    } catch (error) {
+      showToast({
+        duration: 10000,
+        type: "error",
+        title: "Oops! there is an error.",
+        subtitle: "Please check your password and try again.",
+      });
+    }
   };
 
   const setupPasswordForInvitedUser = async (data: SessionParams) => {
@@ -144,82 +188,64 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   };
 
   return (
-    <div className="flex flex-col px-5 py-32">
-      <div className="bg-darker rounded-md px-5 py-12 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="">
-          <EncryptionIcon className="mx-auto mb-3 h-16 w-16 text-teal-400" />
-          <h2 className="mt-6 text-center text-2xl">
-            {page == "setupKeychain" ? "Enter" : "Setup"} master password
-          </h2>
-          <p className="text-light mt-2 text-center text-sm">
-            Master password is required for additional security.
-          </p>
-        </div>
+    <>
+      <div className="flex flex-col px-5 py-32">
+        <div className="bg-darker rounded-md px-5 py-12 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="">
+            <EncryptionIcon className="mx-auto mb-3 h-16 w-16 text-teal-400" />
+            <h2 className="mt-6 text-center text-2xl">
+              {page == "setupKeychain" ? "Enter" : "Setup"} master password
+            </h2>
+            <p className="text-light mt-2 text-center text-sm">
+              Master password is required for additional security.
+            </p>
+          </div>
 
-        <div className="">
-          <div className="px-2 py-8 sm:px-8">
-            <Hr />
-            <form
-              className="space-y-6"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit(onSubmit)();
-              }}
-            >
-              <Input
-                name="csrfToken"
-                type="hidden"
-                register={register}
-                defaultValue={csrfToken}
-                full={true}
-              />
-
-              <Input
-                name="password"
-                type="password"
-                label="Master password"
-                placeholder="****************"
-                required={true}
-                full={true}
-                register={register}
-                errors={errors}
-                help={<PasswordStrength />}
-                onKeyUp={(e) => {
-                  if (page === "setupKeychain") return true;
-                  const value = e.currentTarget.value;
-                  checkPasswordStrength(value);
+          <div className="">
+            <div className="px-2 py-8 sm:px-8">
+              <Hr />
+              <form
+                className="space-y-6"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSubmit(onSubmit)();
                 }}
-                validationSchema={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 12,
-                    message: "Password must be at least 12 characters",
-                  },
-                  validate: (value: string) => {
-                    if (page === "setupKeychain") return true;
-                    checkPasswordStrength(value);
-                    return true;
-                  },
-                }}
-                defaultValue={
-                  process.env.NODE_ENV === "development" ? "P{3}ssw[0]rd!" : ""
-                }
-              />
-
-              {page != "setupKeychain" && (
+              >
                 <Input
-                  name="repeatPassword"
+                  name="csrfToken"
+                  type="hidden"
+                  register={register}
+                  defaultValue={csrfToken}
+                  full={true}
+                />
+
+                <Input
+                  name="password"
                   type="password"
-                  label="Confirm master password"
+                  label="Master password"
                   placeholder="****************"
                   required={true}
                   full={true}
                   register={register}
                   errors={errors}
+                  help={<PasswordStrength />}
+                  onKeyUp={(e) => {
+                    setLoading(false);
+                    if (page === "setupKeychain") return true;
+                    const value = e.currentTarget.value;
+                    checkPasswordStrength(value);
+                  }}
                   validationSchema={{
-                    required: "Password confirmation is required",
-                    validate: (value: string) =>
-                      value === watch("password") || "Passwords do not match",
+                    required: "Password is required",
+                    minLength: {
+                      value: 12,
+                      message: "Password must be at least 12 characters",
+                    },
+                    validate: (value: string) => {
+                      if (page === "setupKeychain") return true;
+                      checkPasswordStrength(value);
+                      return true;
+                    },
                   }}
                   defaultValue={
                     process.env.NODE_ENV === "development"
@@ -227,21 +253,45 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
                       : ""
                   }
                 />
-              )}
 
-              <Button
-                sr={"Master password button"}
-                type="submit"
-                width="full"
-                disabled={loading}
-              >
-                Continue with master password
-              </Button>
-            </form>
+                {page != "setupKeychain" && (
+                  <Input
+                    name="repeatPassword"
+                    type="password"
+                    label="Confirm master password"
+                    placeholder="****************"
+                    required={true}
+                    full={true}
+                    register={register}
+                    errors={errors}
+                    validationSchema={{
+                      required: "Password confirmation is required",
+                      validate: (value: string) =>
+                        value === watch("password") || "Passwords do not match",
+                    }}
+                    defaultValue={
+                      process.env.NODE_ENV === "development"
+                        ? "P{3}ssw[0]rd!"
+                        : ""
+                    }
+                  />
+                )}
+
+                <Button
+                  sr={"Master password button"}
+                  type="submit"
+                  width="full"
+                  disabled={loading}
+                >
+                  Continue with master password
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <Toaster position="top-right" />
+    </>
   );
 };
 

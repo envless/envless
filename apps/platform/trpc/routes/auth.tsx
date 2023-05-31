@@ -7,6 +7,7 @@ import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import argon2 from "argon2";
 import sendMail from "emails";
 import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
@@ -140,6 +141,69 @@ export const auth = createRouter({
       await encryptProjectKeys(user.id);
 
       return { hasMasterPassword, keychain };
+    }),
+
+  getHashedPassword: withAuth.query(async ({ ctx }) => {
+    const { user } = ctx.session;
+
+    return prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        hashedPassword: true,
+      },
+    });
+  }),
+
+  verifyPassword: withAuth
+    .input(
+      z.object({
+        password: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { password } = input;
+      const { user } = ctx.session;
+
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          id: user.id,
+        },
+
+        select: {
+          hashedPassword: true,
+        },
+      });
+
+      if (!existingUser) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong, please refresh and try again.",
+        });
+      }
+
+      const { hashedPassword } = existingUser;
+
+      if (!hashedPassword) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong, please refresh and try again.",
+        });
+      }
+
+      const valid = await argon2.verify(hashedPassword, password);
+
+      console.log(`Password is valid: ${valid}`);
+
+      if (!valid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Please check your password and try again.",
+        });
+      }
+
+      return true;
     }),
 
   verify: withAuth
