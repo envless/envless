@@ -5,6 +5,7 @@ import * as argon2 from "argon2-browser";
 // Cryptography
 import { createHash, randomBytes } from "crypto";
 import { Lightbulb } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import zxcvbn from "zxcvbn";
@@ -28,6 +29,7 @@ type SessionParams = {
 
 const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   const { keychain } = user;
+  const { data: session, update: updateSessionWith } = useSession();
 
   const {
     watch,
@@ -103,7 +105,19 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
           key: key,
         });
 
-        debugger;
+        const newSession = {
+          ...session,
+          user: {
+            ...session?.user,
+            hasMasterPassword: true,
+            keychain: {
+              ...session?.user?.keychain,
+              privateKey: privateKey,
+            },
+          },
+        };
+
+        await updateSessionWith(newSession);
       },
 
       onError: (error) => {
