@@ -52,7 +52,7 @@ async function main() {
 
   const replacedTemplate = template
     .replace("__DOWNLOAD_URL__", "https://envless.com")
-    .replace("__SHA256__", "some_sha256_here");
+    .replace("__SHA256__", "some__sha256__here");
 
   fs.writeFileSync(formulaPath, replacedTemplate);
 
