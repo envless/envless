@@ -134,7 +134,11 @@ export const authOptions: NextAuthOptions = {
         keychain: {
           temp: boolean;
           privateKey: string;
-          encryptedPrivateKey: string;
+          encryptedPrivateKey: {
+            iv: string;
+            tag: string;
+            ciphertext: string;
+          };
         };
       } = token.user as any;
 
@@ -215,7 +219,11 @@ const UserSchema = z.object({
     .object({
       temp: z.boolean(),
       privateKey: z.string(),
-      encryptedPrivateKey: z.string(),
+      encryptedPrivateKey: z.object({
+        iv: z.string(),
+        tag: z.string(),
+        ciphertext: z.string(),
+      }),
     })
     .nullable(),
 });

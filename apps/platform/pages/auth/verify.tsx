@@ -2,6 +2,7 @@ import { useState } from "react";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import { getCsrfToken } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import MasterPassword from "@/components/auth/MasterPassword";
 import VerifyBrowser from "@/components/auth/VerifyBrowser";
 import { Container } from "@/components/theme";
@@ -12,6 +13,7 @@ type PageProps = {
   user: UserType;
   pageState: string;
   csrfToken: string;
+  triggerSignout: boolean;
 };
 
 export default function VerifyAuth({
@@ -19,8 +21,13 @@ export default function VerifyAuth({
   user,
   pageState,
   csrfToken,
+  triggerSignout,
 }: PageProps) {
   const [page, setPage] = useState(pageState);
+
+  if (triggerSignout) {
+    signOut();
+  }
 
   return (
     <Container>
@@ -60,20 +67,10 @@ export async function getServerSideProps(context) {
     include: { keychain: true },
   });
 
-  if (!currentUser) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  // @ts-ignore
   const hasPrivateKey = user.keychain?.privateKey;
-  const hasTempKeychain = currentUser.keychain?.temp ?? false;
-  const hasMasterPassword = currentUser.hashedPassword !== null;
-  const hasKeychain = currentUser.keychain !== null && user.keychain;
+  const hasTempKeychain = currentUser?.keychain?.temp ?? false;
+  const hasMasterPassword = currentUser?.hashedPassword !== null;
+  const hasKeychain = currentUser?.keychain !== null && user.keychain;
 
   let pageState;
 
@@ -93,6 +90,7 @@ export async function getServerSideProps(context) {
       pageState,
       sessionId,
       csrfToken,
+      triggerSignout: !currentUser,
     },
   };
 }

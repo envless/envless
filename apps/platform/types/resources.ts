@@ -16,7 +16,7 @@ export interface UserType {
   locked: LockedUser | null;
   keychain: {
     temp: boolean;
-    publicKey: string;
+    privateKey: string;
     encryptedPrivateKey: string;
   };
   hasMasterPassword: boolean;

@@ -89,9 +89,9 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
           .digest("base64")
           .substr(0, 32);
 
-        const { encryptedPrivateKey } = user.keychain as unknown as {
+        const { encryptedPrivateKey, temp } = user.keychain as unknown as {
+          temp: boolean;
           encryptedPrivateKey: {
-            temp: boolean;
             ciphertext: string;
             iv: string;
             tag: string;
@@ -105,17 +105,31 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
           key: key,
         });
 
+        debugger;
+
         const newSession = {
           ...session,
           user: {
             ...session?.user,
             hasMasterPassword: true,
             keychain: {
-              ...session?.user?.keychain,
-              privateKey: privateKey,
+              temp: true,
+              privateKey,
+              encryptedPrivateKey,
             },
           },
         };
+        // const newSession = {
+        //   ...session,
+        //   user: {
+        //     ...session?.user,
+        //     hasMasterPassword: true,
+        //     keychain: {
+        //       ...session?.user?.keychain,
+        //       privateKey: privateKey,
+        //     },
+        //   },
+        // };
 
         await updateSessionWith(newSession);
       },
