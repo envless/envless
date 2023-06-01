@@ -127,34 +127,21 @@ export const auth = createRouter({
         return keychain;
       };
 
-      const encryptProjectKeys = async (userId: string) => {
-        const accesses = await accessesWithProject({ userId });
+      // const encryptProjectKeys = async (userId: string) => {
+      //   const accesses = await accessesWithProject({ userId });
 
-        accesses.map((access) => {
-          const { project } = access;
-          // Encrypt project keys
-        });
-      };
+      //   accesses.map((access) => {
+      //     const { project } = access;
+      //     // Encrypt project keys
+      //   });
+      // };
 
       const hasMasterPassword = await updatePassword();
       const keychain = await updateKeychain();
-      await encryptProjectKeys(user.id);
+      // await encryptProjectKeys(user.id);
 
       return { hasMasterPassword, keychain };
     }),
-
-  getHashedPassword: withAuth.query(async ({ ctx }) => {
-    const { user } = ctx.session;
-
-    return prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-      select: {
-        hashedPassword: true,
-      },
-    });
-  }),
 
   verifyPassword: withAuth
     .input(

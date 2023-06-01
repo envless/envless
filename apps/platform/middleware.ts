@@ -56,9 +56,9 @@ export default withAuth(
       user;
     log("Loading user: ", user);
 
-    if (!keychain || !hasMasterPassword) {
+    if (!hasMasterPassword || !keychain || !keychain.privateKey) {
       log(
-        "If keychain or master password is not present, redirect to verify auth page",
+        "If keychain, privateKey or master password is not present, redirect to verify auth page",
       );
       return NextResponse.redirect(verifyAuthUrl);
     }

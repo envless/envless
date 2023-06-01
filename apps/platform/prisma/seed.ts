@@ -38,14 +38,14 @@ const seed = async () => {
     console.log("Seeding database".underline.cyan);
     return prisma.$transaction(async () => {
       await seedUsers(10);
-      await seedProjects(5);
+      // await seedProjects(5);
       // await seedAccesses();
-      await seedE2EESetup();
-      await seedBranches();
-      await seedInactiveUsers(5);
-      await seedInvites(5);
+      // await seedE2EESetup();
+      // await seedBranches();
+      // await seedInactiveUsers(5);
+      // await seedInvites(5);
       // await seedPullRequests();
-      await seedSecrets();
+      // await seedSecrets();
     });
   } else {
     throw new Error("Seeding aborted");

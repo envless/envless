@@ -1,9 +1,20 @@
+import { Key } from "react";
 import type {
   LockedUser,
   MembershipStatus,
   ProjectInvite,
   UserRole,
 } from "@prisma/client";
+
+export interface KeychainType {
+  temp: boolean;
+  privateKey: string;
+  encryptedPrivateKey: {
+    iv: string;
+    tag: string;
+    ciphertext: string;
+  };
+}
 
 export interface UserType {
   id: string;
@@ -14,11 +25,7 @@ export interface UserType {
   twoFactorEnabled: boolean;
   twoFactorVerified: boolean;
   locked: LockedUser | null;
-  keychain: {
-    temp: boolean;
-    privateKey: string;
-    encryptedPrivateKey: string;
-  };
+  keychain: KeychainType;
   hasMasterPassword: boolean;
 }
 

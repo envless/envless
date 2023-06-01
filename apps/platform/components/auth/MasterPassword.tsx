@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserType } from "@/types/resources";
+import { KeychainType, UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import * as argon2 from "argon2-browser";
 // Cryptography
@@ -54,8 +54,41 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
     });
   };
 
+  const decryptAndUpdateSession = async (keychain: KeychainType) => {
+    const key = createHash("sha256")
+      .update(String(password))
+      .digest("base64")
+      .substr(0, 32);
+
+    const { encryptedPrivateKey, temp } = keychain;
+
+    const privateKey = await AES.decrypt({
+      ciphertext: encryptedPrivateKey.ciphertext,
+      iv: encryptedPrivateKey.iv,
+      tag: encryptedPrivateKey.tag,
+      key: key,
+    });
+
+    const newSession = {
+      ...session,
+      user: {
+        ...session?.user,
+        hasMasterPassword: true,
+        keychain: {
+          temp: true,
+          privateKey,
+          encryptedPrivateKey,
+        },
+      },
+    };
+
+    await updateSessionWith(newSession);
+  };
+
   const onSubmit = async (data: SessionParams) => {
     setLoading(true);
+    setPassword(data.password as string);
+
     switch (page) {
       case "setupPassword":
         await setupPassword(data);
@@ -72,8 +105,9 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   };
 
   const { mutateAsync: passwordMutation } = trpc.auth.password.useMutation({
-    onSuccess: (response) => {
-      debugger;
+    onSuccess: async (response) => {
+      const { keychain } = response;
+      await decryptAndUpdateSession(keychain as KeychainType);
     },
 
     onError: (error) => {
@@ -84,54 +118,9 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   const { mutateAsync: verifyPasswordMutation } =
     trpc.auth.verifyPassword.useMutation({
       onSuccess: async (response) => {
-        const key = createHash("sha256")
-          .update(String(password))
-          .digest("base64")
-          .substr(0, 32);
-
-        const { encryptedPrivateKey, temp } = user.keychain as unknown as {
-          temp: boolean;
-          encryptedPrivateKey: {
-            ciphertext: string;
-            iv: string;
-            tag: string;
-          };
-        };
-
-        const privateKey = await AES.decrypt({
-          ciphertext: encryptedPrivateKey.ciphertext,
-          iv: encryptedPrivateKey.iv,
-          tag: encryptedPrivateKey.tag,
-          key: key,
-        });
-
-        debugger;
-
-        const newSession = {
-          ...session,
-          user: {
-            ...session?.user,
-            hasMasterPassword: true,
-            keychain: {
-              temp: true,
-              privateKey,
-              encryptedPrivateKey,
-            },
-          },
-        };
-        // const newSession = {
-        //   ...session,
-        //   user: {
-        //     ...session?.user,
-        //     hasMasterPassword: true,
-        //     keychain: {
-        //       ...session?.user?.keychain,
-        //       privateKey: privateKey,
-        //     },
-        //   },
-        // };
-
-        await updateSessionWith(newSession);
+        debugger
+        const { keychain } = user;
+        await decryptAndUpdateSession(keychain);
       },
 
       onError: (error) => {
