@@ -160,7 +160,12 @@ export const auth = createRouter({
 
         select: {
           hashedPassword: true,
-          keychain: true,
+          keychain: {
+            select: {
+              temp: true,
+              encryptedPrivateKey: true,
+            },
+          },
         },
       });
 
@@ -171,9 +176,9 @@ export const auth = createRouter({
         });
       }
 
-      const { hashedPassword } = currentUser;
+      const { hashedPassword, keychain } = currentUser;
 
-      if (!hashedPassword) {
+      if (!keychain || !hashedPassword) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Something went wrong, please refresh and try again.",
@@ -181,8 +186,6 @@ export const auth = createRouter({
       }
 
       const valid = await argon2.verify(hashedPassword, password);
-
-      console.log(`Password is valid: ${valid}`);
 
       if (!valid) {
         throw new TRPCError({
@@ -192,8 +195,8 @@ export const auth = createRouter({
       }
 
       return {
+        keychain,
         hasMasterPassword: true,
-        keychain: currentUser.keychain,
       };
     }),
 

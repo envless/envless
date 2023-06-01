@@ -147,7 +147,7 @@ const Session = (props: Props) => {
               <Input
                 name="email"
                 type="email"
-                label="Email address"
+                label="Work email"
                 placeholder="your@email.com"
                 required={true}
                 full={true}

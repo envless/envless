@@ -1,5 +1,5 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { AesGcmEncryptionType } from "@/types/encryption";
 import { KeychainType, UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import type { Keychain } from "@prisma/client";
@@ -36,8 +36,7 @@ const MasterPassword = ({
   page,
   keychain,
 }: PageProps) => {
-  const encryptedPrivateKey =
-    keychain.encryptedPrivateKey as any as AesGcmEncryptionType;
+  const router = useRouter();
   const { data: session, update: updateSessionWith } = useSession();
 
   const {
@@ -63,11 +62,13 @@ const MasterPassword = ({
     });
   };
 
-  const decryptAndUpdateSession = async (keychain: KeychainType) => {
+  const decryptAndUpdateSession = async (keychain: Keychain) => {
     const key = createHash("sha256")
       .update(String(password))
       .digest("base64")
       .substr(0, 32);
+
+    const { encryptedPrivateKey } = keychain as any as KeychainType;
 
     const privateKey = await AES.decrypt({
       ciphertext: encryptedPrivateKey?.ciphertext,
@@ -86,11 +87,14 @@ const MasterPassword = ({
     };
 
     await updateSessionWith(newSession);
+    await setPage("verifyIdentify");
   };
 
   const onSubmit = async (data: SessionParams) => {
     setLoading(true);
     setPassword(data.password as string);
+
+    debugger;
 
     switch (page) {
       case "setupPassword":
@@ -111,7 +115,7 @@ const MasterPassword = ({
     trpc.auth.createPassword.useMutation({
       onSuccess: async (response) => {
         const { keychain } = response;
-        await decryptAndUpdateSession(keychain as KeychainType);
+        await decryptAndUpdateSession(keychain as Keychain);
       },
 
       onError: (error) => {
@@ -123,8 +127,7 @@ const MasterPassword = ({
     trpc.auth.verifyPassword.useMutation({
       onSuccess: async (response) => {
         const { keychain } = response;
-        debugger;
-        await decryptAndUpdateSession(keychain as any as KeychainType);
+        await decryptAndUpdateSession(keychain as Keychain);
       },
 
       onError: (error) => {
@@ -134,13 +137,13 @@ const MasterPassword = ({
 
   const setupPassword = async (data: SessionParams) => {
     const params = await encryptionParams(data);
-    await createPasswordMutation(params);
+    return await createPasswordMutation(params);
   };
 
   const setupKeychain = async (data: SessionParams) => {
     try {
-      setPassword(data.password as string);
-      await verifyPasswordMutation({ password: data.password as string });
+      const _password = data.password as string;
+      return await verifyPasswordMutation({ password: _password });
     } catch (error) {
       showToast({
         duration: 10000,
@@ -198,7 +201,10 @@ const MasterPassword = ({
     } else {
       return (
         <span className="mt-1 flex">
-          <Lightbulb className="mr-2 inline h-4 w-4 text-yellow-400" />
+          <Lightbulb
+            strokeWidth={2.5}
+            className="mr-2 inline h-4 w-4 text-yellow-300"
+          />
           <span className="">
             Time to hack:{" "}
             <span className="font-semibold">{strength.timeToHack}</span>

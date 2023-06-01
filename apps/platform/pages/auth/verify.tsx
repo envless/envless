@@ -35,7 +35,7 @@ export default function VerifyAuth({
   return (
     <Container>
       <div className="mt-16">
-        {page === "verifyBrowser" ? (
+        {page === "verifyIdentify" ? (
           <VerifyBrowser sessionId={sessionId} user={user} />
         ) : (
           <MasterPassword
@@ -68,7 +68,14 @@ export async function getServerSideProps(context) {
 
   const currentUser = await prisma.user.findUnique({
     where: { id: user.id },
-    include: { keychain: true },
+    include: {
+      keychain: {
+        select: {
+          temp: true,
+          encryptedPrivateKey: true,
+        },
+      },
+    },
   });
 
   const hasPrivateKey = user.privateKey !== null;
@@ -80,8 +87,12 @@ export async function getServerSideProps(context) {
   if (!hasMasterPassword) {
     pageState = "setupPassword";
   } else if (!hasPrivateKey) {
-    pageState = "verifyPassword";
+    pageState = "setupKeychain";
   } else {
+    pageState = "verifyIdentify";
+  }
+
+  if (hasMasterPassword && hasPrivateKey) {
     pageState = "verifyIdentify";
   }
 
