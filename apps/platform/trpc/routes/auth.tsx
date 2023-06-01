@@ -25,15 +25,15 @@ export const auth = createRouter({
     .mutation(async ({ ctx, input }) => {
       const { name, email } = input;
 
-      const existingUser = await prisma.user.findUnique({
+      const currentUser = await prisma.user.findUnique({
         where: {
           email,
         },
       });
 
-      if (existingUser) {
-        if (!existingUser.emailVerified) {
-          return await sendVerificationEmail(existingUser);
+      if (currentUser) {
+        if (!currentUser.emailVerified) {
+          return await sendVerificationEmail(currentUser);
         } else {
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -63,7 +63,7 @@ export const auth = createRouter({
       }
     }),
 
-  password: withAuth
+  createPassword: withAuth
     .input(
       z.object({
         publicKey: z.string(),
@@ -153,24 +153,25 @@ export const auth = createRouter({
       const { password } = input;
       const { user } = ctx.session;
 
-      const existingUser = await prisma.user.findUnique({
+      const currentUser = await prisma.user.findUnique({
         where: {
           id: user.id,
         },
 
         select: {
           hashedPassword: true,
+          keychain: true,
         },
       });
 
-      if (!existingUser) {
+      if (!currentUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Something went wrong, please refresh and try again.",
         });
       }
 
-      const { hashedPassword } = existingUser;
+      const { hashedPassword } = currentUser;
 
       if (!hashedPassword) {
         throw new TRPCError({
@@ -190,7 +191,10 @@ export const auth = createRouter({
         });
       }
 
-      return true;
+      return {
+        hasMasterPassword: true,
+        keychain: currentUser.keychain,
+      };
     }),
 
   verify: withAuth

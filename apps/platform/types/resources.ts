@@ -22,10 +22,10 @@ export interface UserType {
   email: string;
   image?: string;
   role?: UserRole;
+  privateKey: string;
   twoFactorEnabled: boolean;
   twoFactorVerified: boolean;
   locked: LockedUser | null;
-  keychain: KeychainType;
   hasMasterPassword: boolean;
 }
 

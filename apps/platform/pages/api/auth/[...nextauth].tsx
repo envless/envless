@@ -91,7 +91,7 @@ export const authOptions: NextAuthOptions = {
           token.user = {
             ...userInSession,
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
-            keychain: userInSession.keychain ?? null,
+            privateKey: userInSession.privateKey ?? null,
             hasMasterPassword: userInSession.hasMasterPassword ?? false,
           };
         }
@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
         token.user = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
-          keychain: session?.user?.keychain ?? null,
+          privateKey: session?.user?.privateKey ?? null,
           hasMasterPassword: session?.user?.hasMasterPassword ?? false,
         };
 
@@ -131,23 +131,11 @@ export const authOptions: NextAuthOptions = {
         locked: LockedUser | null;
         twoFactorVerified: boolean;
         hasMasterPassword: boolean;
-        keychain: {
-          temp: boolean;
-          privateKey: string;
-          encryptedPrivateKey: {
-            iv: string;
-            tag: string;
-            ciphertext: string;
-          };
-        };
+        privateKey: string | null;
       } = token.user as any;
 
       if (user) {
         const sessionId = token.sessionId as string;
-        const keychain = await prisma.keychain.findFirst({
-          where: { userId: user.id },
-          select: { temp: true, encryptedPrivateKey: true },
-        });
 
         session = {
           ...session,
@@ -160,7 +148,7 @@ export const authOptions: NextAuthOptions = {
             locked: user.locked,
             twoFactorVerified: user.twoFactorVerified,
             hasMasterPassword: user.hasMasterPassword,
-            keychain: keychain,
+            privateKey: user.privateKey,
           } as any,
         };
       }
@@ -215,17 +203,7 @@ const UserSchema = z.object({
   twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   hasMasterPassword: z.boolean(),
-  keychain: z
-    .object({
-      temp: z.boolean(),
-      privateKey: z.string(),
-      encryptedPrivateKey: z.object({
-        iv: z.string(),
-        tag: z.string(),
-        ciphertext: z.string(),
-      }),
-    })
-    .nullable(),
+  privateKey: z.string().nullable(),
 });
 
 const SessionSchema = z.object({

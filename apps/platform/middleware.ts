@@ -52,13 +52,17 @@ export default withAuth(
       return NextResponse.redirect(authUrl);
     }
 
-    const { twoFactorEnabled, twoFactorVerified, keychain, hasMasterPassword } =
-      user;
+    const {
+      twoFactorEnabled,
+      twoFactorVerified,
+      privateKey,
+      hasMasterPassword,
+    } = user;
     log("Loading user: ", user);
 
-    if (!hasMasterPassword || !keychain || !keychain.privateKey) {
+    if (!hasMasterPassword || !privateKey) {
       log(
-        "If keychain, privateKey or master password is not present, redirect to verify auth page",
+        "If master password or privateKey is not present, redirect to verify auth page",
       );
       return NextResponse.redirect(verifyAuthUrl);
     }

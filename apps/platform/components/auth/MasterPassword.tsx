@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { AesGcmEncryptionType } from "@/types/encryption";
 import { KeychainType, UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
+import type { Keychain } from "@prisma/client";
 import * as argon2 from "argon2-browser";
-// Cryptography
 import { createHash, randomBytes } from "crypto";
 import { Lightbulb } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
@@ -19,6 +20,7 @@ type PageProps = {
   setPage: any;
   user: UserType;
   page: string;
+  keychain: Keychain;
   csrfToken: string;
 };
 
@@ -27,8 +29,15 @@ type SessionParams = {
   password?: string;
 };
 
-const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
-  const { keychain } = user;
+const MasterPassword = ({
+  user,
+  setPage,
+  csrfToken,
+  page,
+  keychain,
+}: PageProps) => {
+  const encryptedPrivateKey =
+    keychain.encryptedPrivateKey as any as AesGcmEncryptionType;
   const { data: session, update: updateSessionWith } = useSession();
 
   const {
@@ -41,16 +50,16 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [strength, setStrength] = useState({
-    score: null,
+    score: 0,
     timeToHack: "",
   });
 
   const checkPasswordStrength = (password: string) => {
     const result = zxcvbn(password);
     setStrength({
-      score: password === "" ? null : result.score,
-      timeToHack:
-        result.crack_times_display.offline_slow_hashing_1e4_per_second,
+      score: password === "" ? 0 : result.score,
+      timeToHack: result.crack_times_display
+        .offline_slow_hashing_1e4_per_second as string,
     });
   };
 
@@ -60,12 +69,10 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
       .digest("base64")
       .substr(0, 32);
 
-    const { encryptedPrivateKey, temp } = keychain;
-
     const privateKey = await AES.decrypt({
-      ciphertext: encryptedPrivateKey.ciphertext,
-      iv: encryptedPrivateKey.iv,
-      tag: encryptedPrivateKey.tag,
+      ciphertext: encryptedPrivateKey?.ciphertext,
+      iv: encryptedPrivateKey?.iv,
+      tag: encryptedPrivateKey?.tag,
       key: key,
     });
 
@@ -74,11 +81,7 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
       user: {
         ...session?.user,
         hasMasterPassword: true,
-        keychain: {
-          temp: true,
-          privateKey,
-          encryptedPrivateKey,
-        },
+        privateKey: privateKey,
       },
     };
 
@@ -104,23 +107,24 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
     }
   };
 
-  const { mutateAsync: passwordMutation } = trpc.auth.password.useMutation({
-    onSuccess: async (response) => {
-      const { keychain } = response;
-      await decryptAndUpdateSession(keychain as KeychainType);
-    },
+  const { mutateAsync: createPasswordMutation } =
+    trpc.auth.createPassword.useMutation({
+      onSuccess: async (response) => {
+        const { keychain } = response;
+        await decryptAndUpdateSession(keychain as KeychainType);
+      },
 
-    onError: (error) => {
-      debugger;
-    },
-  });
+      onError: (error) => {
+        debugger;
+      },
+    });
 
   const { mutateAsync: verifyPasswordMutation } =
     trpc.auth.verifyPassword.useMutation({
       onSuccess: async (response) => {
-        debugger
-        const { keychain } = user;
-        await decryptAndUpdateSession(keychain);
+        const { keychain } = response;
+        debugger;
+        await decryptAndUpdateSession(keychain as any as KeychainType);
       },
 
       onError: (error) => {
@@ -130,7 +134,7 @@ const MasterPassword = ({ user, setPage, csrfToken, page }: PageProps) => {
 
   const setupPassword = async (data: SessionParams) => {
     const params = await encryptionParams(data);
-    await passwordMutation(params);
+    await createPasswordMutation(params);
   };
 
   const setupKeychain = async (data: SessionParams) => {

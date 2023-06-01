@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
+import type { Keychain } from "@prisma/client";
 import { getCsrfToken } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import MasterPassword from "@/components/auth/MasterPassword";
@@ -14,11 +15,13 @@ type PageProps = {
   pageState: string;
   csrfToken: string;
   triggerSignout: boolean;
+  keychain: Keychain;
 };
 
 export default function VerifyAuth({
   sessionId,
   user,
+  keychain,
   pageState,
   csrfToken,
   triggerSignout,
@@ -38,6 +41,7 @@ export default function VerifyAuth({
           <MasterPassword
             user={user}
             page={page}
+            keychain={keychain}
             setPage={setPage}
             csrfToken={csrfToken}
           />
@@ -67,19 +71,16 @@ export async function getServerSideProps(context) {
     include: { keychain: true },
   });
 
-  const hasPrivateKey = user.keychain?.privateKey;
-  const hasTempKeychain = currentUser?.keychain?.temp ?? false;
+  const hasPrivateKey = user.privateKey !== null;
   const hasMasterPassword = currentUser?.hashedPassword !== null;
-  const hasKeychain = currentUser?.keychain !== null && user.keychain;
+  const keychain = currentUser?.keychain;
 
-  let pageState;
+  let pageState = "";
 
   if (!hasMasterPassword) {
     pageState = "setupPassword";
-  } else if (hasMasterPassword && hasTempKeychain) {
-    pageState = "setupPasswordForInvitedUser";
-  } else if (!hasKeychain || !hasPrivateKey) {
-    pageState = "setupKeychain";
+  } else if (!hasPrivateKey) {
+    pageState = "verifyPassword";
   } else {
     pageState = "verifyIdentify";
   }
@@ -90,6 +91,7 @@ export async function getServerSideProps(context) {
       pageState,
       sessionId,
       csrfToken,
+      keychain,
       triggerSignout: !currentUser,
     },
   };
