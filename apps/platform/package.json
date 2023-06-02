@@ -114,7 +114,6 @@
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "10.4.5",
     "colors": "^1.4.0",
-    "enquirer": "^2.3.6",
     "eslint": "8.41.0",
     "eslint-config-next": "13.3.0",
     "eslint-config-prettier": "^8.8.0",

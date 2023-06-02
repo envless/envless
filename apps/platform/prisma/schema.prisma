@@ -76,15 +76,6 @@ model EncryptedProjectKey {
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
-model UserPublicKey {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  key       String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique
-}
-
 enum UserRole {
   maintainer
   owner
@@ -320,7 +311,6 @@ model User {
   reOpenedPRs      PullRequest[]     @relation(name: "reOpenedBy")
 
   locked            LockedUser?
-  publicKey         UserPublicKey?
   keychain          Keychain?
 
   // Two factor authentication
