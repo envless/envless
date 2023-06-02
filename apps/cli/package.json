@@ -51,7 +51,7 @@
     "topics": {},
     "update": {
       "s3": {
-        "bucket": "clitesting.envless.dev"
+        "bucket": "testingcli.envless.dev"
       }
     }
   },
