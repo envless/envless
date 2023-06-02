@@ -29,7 +29,7 @@ type SessionParams = {
   password?: string;
 };
 
-const MasterPassword = ({
+const EncryptionSetup = ({
   user,
   setPage,
   csrfToken,
@@ -322,4 +322,4 @@ const MasterPassword = ({
   );
 };
 
-export default MasterPassword;
+export default EncryptionSetup;

@@ -4,7 +4,7 @@ import { getServerSideSession } from "@/utils/session";
 import type { Keychain } from "@prisma/client";
 import { getCsrfToken } from "next-auth/react";
 import { signOut } from "next-auth/react";
-import MasterPassword from "@/components/auth/MasterPassword";
+import EncryptionSetup from "@/components/auth/EncryptionSetup";
 import VerifyBrowser from "@/components/auth/VerifyBrowser";
 import { Container } from "@/components/theme";
 import prisma from "@/lib/prisma";
@@ -18,7 +18,7 @@ type PageProps = {
   keychain: Keychain;
 };
 
-export default function VerifyAuth({
+export default function EncryptionPage({
   sessionId,
   user,
   keychain,
@@ -38,7 +38,7 @@ export default function VerifyAuth({
         {page === "verifyIdentify" ? (
           <VerifyBrowser sessionId={sessionId} user={user} />
         ) : (
-          <MasterPassword
+          <EncryptionSetup
             user={user}
             page={page}
             keychain={keychain}
@@ -79,12 +79,12 @@ export async function getServerSideProps(context) {
   });
 
   const hasPrivateKey = user.privateKey !== null;
-  const hasMasterPassword = currentUser?.hashedPassword !== null;
-  const keychain = currentUser?.keychain;
+  const hasEncryptionSetup = currentUser?.hashedPassword !== null;
+  const keychain = currentUser?.keychain || null;
 
   let pageState = "";
 
-  if (!hasMasterPassword) {
+  if (!hasEncryptionSetup) {
     pageState = "setupPassword";
   } else if (!hasPrivateKey) {
     pageState = "setupKeychain";
@@ -92,7 +92,7 @@ export async function getServerSideProps(context) {
     pageState = "verifyIdentify";
   }
 
-  if (hasMasterPassword && hasPrivateKey) {
+  if (hasEncryptionSetup && hasPrivateKey) {
     pageState = "verifyIdentify";
   }
 
