@@ -226,7 +226,7 @@ const EncryptionSetup = ({
             </h2>
             <p className="text-light mt-2 text-center text-sm">
               Generate and download your encryption keys. Encryption keys are
-              generated on the client side and never saved on the database,
+              generated on the client side and never saved on our database,
               encrypted or otherwise. We recommend you further encrypt and store
               this private key to your most trusted password manager (eg.
               BitWarden) or on a safe place. Secrets cannot be decrypted without
