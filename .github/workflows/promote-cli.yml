@@ -29,7 +29,7 @@ on:
         type: string
         required: false
 
-  jobs:
+jobs:
   promote:
     name: Promote ${{ inputs.version }} to ${{ fromJSON(inputs.isStableRelease) && 'stable' || 'beta' }}
     runs-on: ubuntu-latest
