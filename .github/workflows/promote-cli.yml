@@ -51,5 +51,7 @@ jobs:
           sudo apt-get install -y awscli jq
       - name: promote
         run: |
-          yarn oclif promote --deb --xz --root="./packages/cli" --indexes --version=${{ inputs.s3VersionSha }} --sha="$SHA" --channel=${{ fromJSON(inputs.isStableRelease) && 'stable' || 'beta' }}
+          yarn oclif promote --deb --xz --root="./packages/cli" --indexes --version=${{ inputs.version }} --sha="${{ inputs.s3VersionSha }}" --channel=${{ fromJSON(inputs.isStableRelease) && 'stable' || 'beta' }}
         shell: bash
+      - name: promote Linux install scripts
+        run: node ./scripts/postrelease/install_scripts.js
