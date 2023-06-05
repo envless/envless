@@ -71,8 +71,8 @@ export async function getServerSideProps(context) {
     include: {
       keychain: {
         select: {
-          temp: true,
-          encryptedPrivateKey: true,
+          publicKey: true,
+          verificationString: true,
         },
       },
     },
@@ -83,10 +83,12 @@ export async function getServerSideProps(context) {
 
   let pageState = "";
 
-  if (!hasPrivateKey) {
-    pageState = "setupKeychain";
-  } else {
+  if (keychain && !hasPrivateKey) {
+    pageState = "verifyKeychain";
+  } else if (keychain && hasPrivateKey) {
     pageState = "verifyIdentify";
+  } else {
+    pageState = "createKeychain";
   }
 
   return {

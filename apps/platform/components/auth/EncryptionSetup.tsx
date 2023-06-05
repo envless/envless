@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { KeychainType, UserType } from "@/types/resources";
+import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import type { Keychain } from "@prisma/client";
-import * as argon2 from "argon2-browser";
-import { createHash, randomBytes } from "crypto";
+import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import NextNProgress from "nextjs-progressbar";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { Encryption as EncryptionIcon } from "@/components/icons";
 import { Button, Hr, Input } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import AES from "@/lib/encryption/aes";
 import OpenPGP from "@/lib/encryption/openpgp";
 
 type PageProps = {
@@ -23,9 +22,8 @@ type PageProps = {
   csrfToken: string;
 };
 
-type SessionParams = {
-  email: string;
-  password?: string;
+type KeychainParams = {
+  privateKey?: string;
 };
 
 const EncryptionSetup = ({
@@ -46,10 +44,57 @@ const EncryptionSetup = ({
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const [privateKey, setPrivateKey] = useState("");
+
+  const { mutateAsync: createKeychainMutation, isLoading } =
+    trpc.auth.keychain.useMutation({
+      onSuccess: async (response) => {
+        const newSession = {
+          ...session,
+          user: {
+            ...session?.user,
+            privateKey,
+          },
+        };
+
+        // await updateSessionWith(newSession);
+      },
+
+      onError: (error) => {
+        debugger;
+      },
+    });
+
+  const onSubmit = async (data: KeychainParams) => {
+    setLoading(true);
+
+    if (page === "createKeychain") {
+      const keypair = await OpenPGP.generageKeyPair(
+        user.name as string,
+        user.email,
+      );
+
+      const verificationString = (await OpenPGP.encrypt(user.id, [
+        keypair.publicKey,
+      ])) as string;
+
+      setPrivateKey(keypair.privateKey);
+      await createKeychainMutation({
+        publicKey: keypair.publicKey,
+        verificationString: verificationString,
+        revocationCertificate: keypair.privateKey,
+      });
+    } else {
+      // verifyKeychain
+      debugger;
+    }
+  };
 
   return (
     <>
       <div className="flex flex-col px-5 py-32">
+        <NextNProgress options={{ easing: "ease", speed: 500 }} />
+
         <div className="bg-darker rounded-md px-10 py-12 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="">
             <EncryptionIcon className="mx-auto mb-3 h-16 w-16 text-teal-400" />
@@ -72,6 +117,18 @@ const EncryptionSetup = ({
               type="submit"
               width="full"
               disabled={loading}
+              onClick={async () => {
+                await onSubmit({ privateKey });
+              }}
+              leftIcon={
+                <>
+                  {loading ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    <></>
+                  )}
+                </>
+              }
             >
               Generate and download encryption keys
             </Button>

@@ -92,7 +92,6 @@ export const authOptions: NextAuthOptions = {
             ...userInSession,
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
-            hasMasterPassword: userInSession.hasMasterPassword ?? false,
           };
         }
       } else if (user) {
@@ -101,7 +100,6 @@ export const authOptions: NextAuthOptions = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
-          hasMasterPassword: session?.user?.hasMasterPassword ?? false,
         };
 
         // Add the locked information to the token
@@ -130,7 +128,6 @@ export const authOptions: NextAuthOptions = {
         twoFactorEnabled: boolean;
         locked: LockedUser | null;
         twoFactorVerified: boolean;
-        hasMasterPassword: boolean;
         privateKey: string | null;
       } = token.user as any;
 
@@ -147,7 +144,6 @@ export const authOptions: NextAuthOptions = {
             twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
             twoFactorVerified: user.twoFactorVerified,
-            hasMasterPassword: user.hasMasterPassword,
             privateKey: user.privateKey,
           } as any,
         };
@@ -202,7 +198,6 @@ const UserSchema = z.object({
   twoFactorEnabled: z.boolean(),
   twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
-  hasMasterPassword: z.boolean(),
   privateKey: z.string().nullable(),
 });
 

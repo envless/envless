@@ -49,15 +49,13 @@ model Project {
 }
 
 model Keychain {
-  id                    String  @id @default(cuid())
-
+  id                    String @id @default(cuid())
   publicKey             String
-  encryptedPrivateKey   Json
   revocationCertificate String
+  verificationString    String
 
-  temp                  Boolean @default(false) // this field is used during member invite to indicate that the key is temporary and should be revoked after user accepts invite and re-generates their own key
-  userId                String? @unique
-  user                  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -175,10 +173,10 @@ model PullRequest {
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  createdBy User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  mergedBy  User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
-  closedBy  User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
-  reOpenedBy  User? @relation(name: "reOpenedBy", fields: [reOpenedById], references: [id], onDelete: Cascade)
+  createdBy  User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  mergedBy   User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
+  closedBy   User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+  reOpenedBy User? @relation(name: "reOpenedBy", fields: [reOpenedById], references: [id], onDelete: Cascade)
 
   baseBranch    Branch @relation(name: "baseBranch", fields: [baseBranchId], references: [id], onDelete: Cascade)
   currentBranch Branch @relation(name: "currentBranch", fields: [currentBranchId], references: [id], onDelete: Cascade)
@@ -188,7 +186,6 @@ model PullRequest {
   @@index([mergedById])
   @@index([closedById])
   @@index([reOpenedById])
-
   @@index([baseBranchId])
   @@index([currentBranchId])
   @@index([createdAt])
@@ -308,10 +305,10 @@ model User {
   createdPRs        PullRequest[]    @relation(name: "createdBy")
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
-  reOpenedPRs      PullRequest[]     @relation(name: "reOpenedBy")
+  reOpenedPRs       PullRequest[]    @relation(name: "reOpenedBy")
 
-  locked            LockedUser?
-  keychain          Keychain?
+  locked   LockedUser?
+  keychain Keychain?
 
   // Two factor authentication
   encryptedTwoFactorSecret Json?

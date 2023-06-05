@@ -1,13 +1,10 @@
 import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
-import { accessesWithProject } from "@/models/access";
 import { sendVerificationEmail } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import argon2 from "argon2";
 import sendMail from "emails";
 import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
@@ -63,141 +60,32 @@ export const auth = createRouter({
       }
     }),
 
-  createPassword: withAuth
+  keychain: withAuth
     .input(
       z.object({
         publicKey: z.string(),
-        hashedPassword: z.string(),
-        encryptedPrivateKey: z.object({
-          iv: z.string(),
-          tag: z.string(),
-          ciphertext: z.string(),
-        }),
+        verificationString: z.string(),
         revocationCertificate: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const {
-        publicKey,
-        hashedPassword,
-        encryptedPrivateKey,
-        revocationCertificate,
-      } = input;
-
       const { user } = ctx.session;
+      const { publicKey, verificationString, revocationCertificate } = input;
 
-      const updatePassword = async () => {
-        await prisma.user.update({
-          where: {
-            id: user.id,
-          },
-          data: { hashedPassword },
-        });
-
-        return true;
-      };
-
-      const updateKeychain = async () => {
-        const keychain = await prisma.keychain.upsert({
-          where: {
-            userId: user.id,
-          },
-
-          update: {
-            publicKey,
-            encryptedPrivateKey,
-            revocationCertificate,
-            temp: false,
-          },
-
-          create: {
-            userId: user.id,
-            publicKey,
-            encryptedPrivateKey,
-            revocationCertificate,
-            temp: false,
-          },
-
-          select: {
-            temp: true,
-            encryptedPrivateKey: true,
-          },
-        });
-
-        return keychain;
-      };
-
-      // const encryptProjectKeys = async (userId: string) => {
-      //   const accesses = await accessesWithProject({ userId });
-
-      //   accesses.map((access) => {
-      //     const { project } = access;
-      //     // Encrypt project keys
-      //   });
-      // };
-
-      const hasMasterPassword = await updatePassword();
-      const keychain = await updateKeychain();
-      // await encryptProjectKeys(user.id);
-
-      return { hasMasterPassword, keychain };
-    }),
-
-  verifyPassword: withAuth
-    .input(
-      z.object({
-        password: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { password } = input;
-      const { user } = ctx.session;
-
-      const currentUser = await prisma.user.findUnique({
-        where: {
-          id: user.id,
-        },
-
-        select: {
-          hashedPassword: true,
-          keychain: {
-            select: {
-              temp: true,
-              encryptedPrivateKey: true,
+      const keychain = await prisma.keychain.create({
+        data: {
+          publicKey,
+          verificationString,
+          revocationCertificate,
+          user: {
+            connect: {
+              id: user.id,
             },
           },
         },
       });
 
-      if (!currentUser) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Something went wrong, please refresh and try again.",
-        });
-      }
-
-      const { hashedPassword, keychain } = currentUser;
-
-      if (!keychain || !hashedPassword) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Something went wrong, please refresh and try again.",
-        });
-      }
-
-      const valid = await argon2.verify(hashedPassword, password);
-
-      if (!valid) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Please check your password and try again.",
-        });
-      }
-
-      return {
-        keychain,
-        hasMasterPassword: true,
-      };
+      return keychain;
     }),
 
   verify: withAuth
