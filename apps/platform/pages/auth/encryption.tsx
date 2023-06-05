@@ -79,20 +79,13 @@ export async function getServerSideProps(context) {
   });
 
   const hasPrivateKey = user.privateKey !== null;
-  const hasEncryptionSetup = currentUser?.hashedPassword !== null;
   const keychain = currentUser?.keychain || null;
 
   let pageState = "";
 
-  if (!hasEncryptionSetup) {
-    pageState = "setupPassword";
-  } else if (!hasPrivateKey) {
+  if (!hasPrivateKey) {
     pageState = "setupKeychain";
   } else {
-    pageState = "verifyIdentify";
-  }
-
-  if (hasEncryptionSetup && hasPrivateKey) {
     pageState = "verifyIdentify";
   }
 

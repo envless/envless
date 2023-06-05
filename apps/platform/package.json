@@ -98,8 +98,7 @@
     "tinycolor2": "^1.6.0",
     "ua-parser-js": "^1.0.35",
     "zod": "^3.20.6",
-    "zustand": "^4.3.8",
-    "zxcvbn": "^4.4.2"
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
@@ -112,7 +111,6 @@
     "@types/react-query": "^1.2.9",
     "@types/react-syntax-highlighter": "^15.5.6",
     "@types/testing-library__jest-dom": "^5.14.5",
-    "@types/zxcvbn": "^4.4.1",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "10.4.5",
     "colors": "^1.4.0",
