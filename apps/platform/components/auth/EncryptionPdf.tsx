@@ -14,10 +14,6 @@ import { createTw } from "react-pdf-tailwind";
 
 const tw = createTw({
   theme: {
-    fontFamily: {
-      sans: ["Comic Sans"],
-      monospace: ["Monospace"],
-    },
     extend: {
       colors: {
         custom: "#bada55",
@@ -26,10 +22,46 @@ const tw = createTw({
   },
 });
 
+Font.register({
+  family: "Inter",
+  fonts: [
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyeMZhrib2Bg-4.ttf",
+      fontWeight: 100,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfMZhrib2Bg-4.ttf",
+      fontWeight: 200,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuOKfMZhrib2Bg-4.ttf",
+      fontWeight: 300,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf",
+      fontWeight: 400,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fMZhrib2Bg-4.ttf",
+      fontWeight: 500,
+    },
+    {
+      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYMZhrib2Bg-4.ttf",
+      fontWeight: 600,
+    },
+  ],
+});
+
+const styles = StyleSheet.create({
+  page: {
+    fontFamily: "Inter",
+  },
+});
+
 export default function EncryptionPdf() {
   return (
     <PDFViewer style={tw("h-screen bg-white")} width={"100%"} height={"100%"}>
-      <Document>
+      <Document style={styles.page}>
         <Page size="A4" style={tw("flex ")}>
           <View style={tw("w-full bg-[#000] px-10 py-24")}>
             <Logo />
@@ -61,11 +93,9 @@ export default function EncryptionPdf() {
               <View
                 style={tw("text-sm border rounded border-teal-400 p-5 mt-3")}
               >
-                <Text style={tw("font-mono")}>
-                  -----BEGIN PGP PRIVATE KEY BLOCK-----
-                </Text>
+                <Text>-----BEGIN PGP PRIVATE KEY BLOCK-----</Text>
 
-                <Text style={tw("font-mono")}>
+                <Text>
                   xVgEZHgOZBYJKwYBBAHaRw8BAQdAY6O3cPcXwUSdiQVtJpl2NXir5btTPR7U
                   eTug3y3Y3ywAAP0Qs550sJMXGmwEPdnLKGvvI9fEyaWkOXMDutibMLCThBC8
                   zSJEYXJyZWwgWXVuZHQgPGVudmxlc3NAZXhhbXBsZS5jb20+wowEEBYKAD4F
@@ -76,12 +106,9 @@ export default function EncryptionPdf() {
                   xPrGLP7FWwMBCAcAAP9cAMENk8EJaw+HQfXDAYNzug4M1kUj9P/OiTsLTY7W
                   QA8KwngEGBYIACoFgmR4DmQJkFZV9kJL0iSMApsMFiEEU3B5kVAR8XHkG8Oe
                   VlX2QkvSJIwAAEyGAP9sYfc6VlYrrzDu7p8mHkhd89Ku87guD+Vsj82T5hrA
-                  XgD/QW4vZLuMziTpb3tfhqbNtItwNteucHIZL4hyl4YHRQI= =88Id
+                  XgD/QW4vZLuMziTpb3tfhqbNtItwNteucHIZL4hyl4YHRQI=
                 </Text>
-                <Text style={tw("font-mono")}>
-                  -----END PGP PRIVATE KEY BLOCK-----
-                </Text>
-                <textarea cols={5}>test</textarea>
+                <Text>-----END PGP PRIVATE KEY BLOCK-----</Text>
               </View>
             </View>
           </View>
