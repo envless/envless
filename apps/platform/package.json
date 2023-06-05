@@ -116,7 +116,7 @@
     "eslint-config-next": "13.3.0",
     "eslint-config-prettier": "^8.8.0",
     "jsdom": "latest",
-    "mailing": "^0.9.14",
+    "mailing": "^1.0.1",
     "playwright-watch": "^1.3.23",
     "postcss": "^8.4.21",
     "prisma": "^4.12.0",
