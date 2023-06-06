@@ -1,0 +1,22 @@
+FROM node:18.16-alpine3.18
+
+RUN apk update \
+        && apk add libc6-compat \
+        && npm install -g dotenv-cli \
+        && yarn global add turbo \
+        && rm -rf /var/cache/apt/*
+
+WORKDIR /docs
+
+COPY . .
+
+RUN turbo prune --scope=docs --docker \
+          && cp -r /docs/out/json/ . \
+          && cp -r /docs/out/yarn.lock ./yarn.lock \
+          && cp -r /docs/out/full/ . \
+          && yarn install
+
+EXPOSE 3001
+
+ENTRYPOINT ["yarn"]
+CMD ["dev", "--filter=docs"]

@@ -35,20 +35,21 @@ In order to not waste your time implementing a change that has already been decl
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
-- Copy `.env.example` to `.env`
+- Run the following command to start the development environment on particular service
   ```bash
-  cp .env.example .env
+  docker-compose up ${service} -d
   ```
-- Run the following command to start the development environment
-  ```bash
-  docker-compose up -d
-  ```
-- Run the following command to migrate and seed the database
-  ```bash
-  docker-compose exec platform yarn db:migrate
-  docker-compose exec platform yarn db:seed
-  ```
-- Your server will be up and running on `http://localhost:3000`
+  make sure to replace $service with www, docs, platform.
+
+  > **Note**
+  > When running platform it will need postgres up, also it will automatically populate seeds and migrations on every run
+
+- Running `docker compose up -d` will bring all services up.
+
+- Your server will be up and running on:
+  - platform: `http://localhost:3000`
+  - docs: `http://localhost:3001`
+  - www: `http://localhost:3002`
 
 ---
 

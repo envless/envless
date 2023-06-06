@@ -1,42 +1,65 @@
-version: "3"
-
+version: "3.9"
+x-template: &template
+  restart: "always"
+  networks:
+    - envless_network
 services:
   postgres:
+    <<: *template
     image: "postgres:13-alpine"
     hostname: "envless-postgres"
     container_name: "postgres"
-    restart: "always"
     environment:
       POSTGRES_USER: "envless"
       POSTGRES_DB: "envless"
       POSTGRES_PASSWORD: "envless"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - envless_network
+      - pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
   platform:
-    container_name: platform
+    <<: *template
+    hostname: "envless-platform"
+    container_name: "platform"
     build:
       context: .
-      dockerfile: Dockerfile
-    restart: always
-    command: "yarn dev"
+      dockerfile: ./apps/platform/Dockerfile.dev
     env_file: .env.example
     ports:
-      - 3000:3000
-      - 3883:3883
-    networks:
-      - envless_network
+      - "3000:3000"
+      - "3883:3883"
+    volumes:
+      - ./:/platform/
+      - platform_node_modules:/platform/node_modules
     depends_on:
       postgres:
         condition: service_started
-
+  www:
+    <<: *template
+    hostname: "envless-www"
+    container_name: "www"
+    build:
+      context: .
+      dockerfile: ./apps/www/Dockerfile.dev
+    ports:
+      - "3002:3002"
+    volumes:
+      - www_node_modules:/www/node_modules
+  docs:
+    <<: *template
+    hostname: "envless-docs"
+    container_name: "docs"
+    build:
+      context: .
+      dockerfile: ./apps/docs/Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - docs_node_modules:/docs/node_modules
+volumes:
+  docs_node_modules:
+  pg_data:
+  platform_node_modules:
+  www_node_modules:
 networks:
   envless_network:
-
-volumes:
-  postgres_data:
-  pgadmin-data:

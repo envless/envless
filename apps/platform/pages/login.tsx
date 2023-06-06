@@ -13,7 +13,7 @@ const Login = ({ csrfToken }) => {
         <>
           Don{"'"}t have an account?{" "}
           <Link href="/signup" className="text-teal-400">
-            Signup
+            Signup!
           </Link>
         </>
       ) : (
@@ -25,7 +25,7 @@ const Login = ({ csrfToken }) => {
   return (
     <>
       <Head>
-        <title>Get started with Envless</title>
+        <title>Get started with Envless!</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
 
