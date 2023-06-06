@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
+import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -15,7 +16,6 @@ import {
   UserRole,
 } from "@prisma/client";
 import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
-import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";

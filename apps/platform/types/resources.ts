@@ -16,6 +16,7 @@ export interface UserType {
   twoFactorEnabled: boolean;
   twoFactorVerified: boolean;
   locked: LockedUser | null;
+  isPrivateKeyValid: boolean;
 }
 
 export interface MemberType {

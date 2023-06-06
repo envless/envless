@@ -92,6 +92,7 @@ export const authOptions: NextAuthOptions = {
             ...userInSession,
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
+            isPrivateKeyValid: userInSession.isPrivateKeyValid ?? false,
           };
         }
       } else if (user) {
@@ -100,6 +101,7 @@ export const authOptions: NextAuthOptions = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
+          isPrivateKeyValid: session?.user?.isPrivateKeyValid ?? false,
         };
 
         // Add the locked information to the token
@@ -129,6 +131,7 @@ export const authOptions: NextAuthOptions = {
         locked: LockedUser | null;
         twoFactorVerified: boolean;
         privateKey: string | null;
+        isPrivateKeyValid: boolean;
       } = token.user as any;
 
       if (user) {
@@ -145,6 +148,7 @@ export const authOptions: NextAuthOptions = {
             locked: user.locked,
             twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
+            isPrivateKeyValid: user.isPrivateKeyValid ?? false,
           } as any,
         };
       }
@@ -199,6 +203,7 @@ const UserSchema = z.object({
   twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
+  isPrivateKeyValid: z.boolean().nullable(),
 });
 
 const SessionSchema = z.object({
