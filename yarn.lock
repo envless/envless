@@ -1736,10 +1736,10 @@
     supports-color "^8.1.1"
     tslib "^2"
 
-"@oclif/core@^2", "@oclif/core@^2.6.2", "@oclif/core@^2.6.4", "@oclif/core@^2.8.0", "@oclif/core@^2.8.2":
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.2.tgz#86fc31f20419dbb3cd25f89f4f1d83760c60f7c0"
-  integrity sha512-g50NrCdEcFlBfuwZb9RxLmxPNQ9wIaBPOiwbxlGYRkHMnsC6LNHcvVtyDnmndU8qoXrmCOZ6ocSZenOMlG+G1w==
+"@oclif/core@^2", "@oclif/core@^2.6.2", "@oclif/core@^2.6.4", "@oclif/core@^2.8.2", "@oclif/core@^2.8.4":
+  version "2.8.5"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.5.tgz#7964057bbee5e91dae8b35e030e767f38e50a19e"
+  integrity sha512-316DLfrHQDYmWDriI4Woxk9y1wVUrPN1sZdbQLHdOdlTA9v/twe7TdHpWOriEypfl6C85NWEJKc1870yuLtjrQ==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -11173,11 +11173,11 @@ oblivious-set@1.0.0:
   integrity sha512-z+pI07qxo4c2CulUHCDf9lcqDlMSo72N/4rLUpRXf6fu+q8vjt8y0xS+Tlf8NTJDdTXHbdeO1n3MlbctwEoXZw==
 
 oclif@^3:
-  version "3.7.3"
-  resolved "https://registry.yarnpkg.com/oclif/-/oclif-3.7.3.tgz#822bb37626e65bf49d6644f07477dc3523fe0f4f"
-  integrity sha512-yQ85UkSJAsDIRx0DXrp287GyvsBc2piyk3a8wup8/T+wxmsdEvWW+SaDWIQfpHNzMHYHrGus0hGW2ZwNvcNgjg==
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/oclif/-/oclif-3.9.0.tgz#d52beb9300a60a660f897fe9ae810fffd48a1571"
+  integrity sha512-fsFyHVQYJdE50EcKrBjwzl2WT5sZUtTiRY1vqMwykgLFUDYrQS0lj7yqy2IgcPSmAWaLQryODdfBujCWOU98Ww==
   dependencies:
-    "@oclif/core" "^2.8.0"
+    "@oclif/core" "^2.8.4"
     "@oclif/plugin-help" "^5.1.19"
     "@oclif/plugin-not-found" "^2.3.7"
     "@oclif/plugin-warn-if-update-available" "^2.0.14"
@@ -11193,8 +11193,8 @@ oclif@^3:
     semver "^7.3.8"
     shelljs "^0.8.5"
     tslib "^2.3.1"
-    yeoman-environment "^3.11.1"
-    yeoman-generator "^5.6.1"
+    yeoman-environment "^3.15.1"
+    yeoman-generator "^5.8.0"
     yosay "^2.0.2"
 
 octokit@^2.0.14:
@@ -11437,6 +11437,30 @@ pacote@^15.0.0, pacote@^15.0.8, pacote@^15.1.3:
   version "15.1.3"
   resolved "https://registry.yarnpkg.com/pacote/-/pacote-15.1.3.tgz#4c0e7fb5e7ab3b27fb3f86514b451ad4c4f64e9d"
   integrity sha512-aRts8cZqxiJVDitmAh+3z+FxuO3tLNWEmwDRPEpDDiZJaRz06clP4XX112ynMT5uF0QNoMPajBBHnaStUEPJXA==
+  dependencies:
+    "@npmcli/git" "^4.0.0"
+    "@npmcli/installed-package-contents" "^2.0.1"
+    "@npmcli/promise-spawn" "^6.0.1"
+    "@npmcli/run-script" "^6.0.0"
+    cacache "^17.0.0"
+    fs-minipass "^3.0.0"
+    minipass "^5.0.0"
+    npm-package-arg "^10.0.0"
+    npm-packlist "^7.0.0"
+    npm-pick-manifest "^8.0.0"
+    npm-registry-fetch "^14.0.0"
+    proc-log "^3.0.0"
+    promise-retry "^2.0.1"
+    read-package-json "^6.0.0"
+    read-package-json-fast "^3.0.0"
+    sigstore "^1.3.0"
+    ssri "^10.0.0"
+    tar "^6.1.11"
+
+pacote@^15.2.0:
+  version "15.2.0"
+  resolved "https://registry.yarnpkg.com/pacote/-/pacote-15.2.0.tgz#0f0dfcc3e60c7b39121b2ac612bf8596e95344d3"
+  integrity sha512-rJVZeIwHTUta23sIZgEIM62WYwbmGbThdbnkt81ravBplQv+HjyroqnLRNH2+sLJHcGZmLRmhPwACqhfTcOmnA==
   dependencies:
     "@npmcli/git" "^4.0.0"
     "@npmcli/installed-package-contents" "^2.0.1"
@@ -12565,7 +12589,7 @@ readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
-readable-stream@^4.1.0:
+readable-stream@^4.1.0, readable-stream@^4.3.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-4.4.0.tgz#55ce132d60a988c460d75c631e9ccf6a7229b468"
   integrity sha512-kDMOq0qLtxV9f/SQv522h8cxZBqNZXuXNyjyezmfAAuribMyVXziljpQ/uQhfE1XLg2/TLTW2DsnoE4VAi/krg==
@@ -15150,10 +15174,10 @@ yarn@^1.22.18, yarn@^1.22.19:
   resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.19.tgz#4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
   integrity sha512-/0V5q0WbslqnwP91tirOvldvYISzaqhClxzyUKXYxs07yUILIs5jx/k6CFe8bvKSkds5w+eiOqta39Wk3WxdcQ==
 
-yeoman-environment@^3.11.1:
-  version "3.15.1"
-  resolved "https://registry.yarnpkg.com/yeoman-environment/-/yeoman-environment-3.15.1.tgz#b094b858bfbd24db8061d255d0e7871224190474"
-  integrity sha512-P4DTQxqCxNTBD7gph+P+dIckBdx0xyHmvOYgO3vsc9/Sl67KJ6QInz5Qv6tlXET3CFFJ/YxPIdl9rKb0XwTRLg==
+yeoman-environment@^3.15.1:
+  version "3.19.3"
+  resolved "https://registry.yarnpkg.com/yeoman-environment/-/yeoman-environment-3.19.3.tgz#49c2339805fdf695fac42c88334a1daa94ee8b6c"
+  integrity sha512-/+ODrTUHtlDPRH9qIC0JREH8+7nsRcjDl3Bxn2Xo/rvAaVvixH5275jHwg0C85g4QsF4P6M2ojfScPPAl+pLAg==
   dependencies:
     "@npmcli/arborist" "^4.0.4"
     are-we-there-yet "^2.0.0"
@@ -15185,6 +15209,7 @@ yeoman-environment@^3.11.1:
     pacote "^12.0.2"
     preferred-pm "^3.0.3"
     pretty-bytes "^5.3.0"
+    readable-stream "^4.3.0"
     semver "^7.1.3"
     slash "^3.0.0"
     strip-ansi "^6.0.0"
@@ -15192,10 +15217,10 @@ yeoman-environment@^3.11.1:
     textextensions "^5.12.0"
     untildify "^4.0.0"
 
-yeoman-generator@^5.6.1:
-  version "5.8.0"
-  resolved "https://registry.yarnpkg.com/yeoman-generator/-/yeoman-generator-5.8.0.tgz#a1951ce0d95555f94adc5975a517d4741b5ce24d"
-  integrity sha512-dsrwFn9/c2/MOe80sa2nKfbZd/GaPTgmmehdgkFifs1VN/I7qPsW2xcBfvSkHNGK+PZly7uHyH8kaVYSFNUDhQ==
+yeoman-generator@^5.8.0:
+  version "5.9.0"
+  resolved "https://registry.yarnpkg.com/yeoman-generator/-/yeoman-generator-5.9.0.tgz#a83c9e391b0b3442536da677bc204cfa3f81f2c7"
+  integrity sha512-sN1e01Db4fdd8P/n/yYvizfy77HdbwzvXmPxps9Gwz2D24slegrkSn+qyj+0nmZhtFwGX2i/cH29QDrvAFT9Aw==
   dependencies:
     chalk "^4.1.0"
     dargs "^7.0.0"
@@ -15205,6 +15230,7 @@ yeoman-generator@^5.6.1:
     lodash "^4.17.11"
     mem-fs-editor "^9.0.0"
     minimist "^1.2.5"
+    pacote "^15.2.0"
     read-pkg-up "^7.0.1"
     run-async "^2.0.0"
     semver "^7.2.1"
