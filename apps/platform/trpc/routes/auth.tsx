@@ -1,7 +1,8 @@
 import SecurityAlert from "@/emails/SecurityAlert";
 import BulletedList from "@/emails/components/BulletedList";
 import SessionHistory from "@/models/SessionHistory";
-import { createRouter, withAuth } from "@/trpc/router";
+import { sendVerificationEmail } from "@/models/user";
+import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { formatDateTime } from "@/utils/helpers";
 import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
@@ -11,6 +12,82 @@ import log from "@/lib/log";
 import prisma from "@/lib/prisma";
 
 export const auth = createRouter({
+  signup: withoutAuth
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { name, email } = input;
+
+      const currentUser = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (currentUser) {
+        if (!currentUser.emailVerified) {
+          return await sendVerificationEmail(currentUser);
+        } else {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You may already have an account, please try logging in.",
+          });
+        }
+      }
+
+      try {
+        const user = await prisma.user.create({
+          data: { name, email },
+        });
+
+        return await sendVerificationEmail(user);
+      } catch (error) {
+        if (error.code === "P2002") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "You may already have an account, please try logging in.",
+          });
+        } else {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Something went wrong, please refresh and try again.",
+          });
+        }
+      }
+    }),
+
+  keychain: withAuth
+    .input(
+      z.object({
+        publicKey: z.string(),
+        verificationString: z.string(),
+        revocationCertificate: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session;
+      const { publicKey, verificationString, revocationCertificate } = input;
+
+      const keychain = await prisma.keychain.create({
+        data: {
+          publicKey,
+          verificationString,
+          revocationCertificate,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+
+      return keychain;
+    }),
+
   verify: withAuth
     .input(
       z.object({

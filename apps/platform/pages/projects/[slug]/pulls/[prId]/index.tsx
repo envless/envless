@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
+import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -15,7 +16,6 @@ import {
   UserRole,
 } from "@prisma/client";
 import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
-import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
@@ -117,7 +117,7 @@ export default function PullRequestDetailPage({
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
             <DetailedPrTitle
-              author={pullRequest.createdBy.name}
+              author={pullRequest.createdBy?.name as string}
               title={pullRequest.title}
               prId={pullRequest.prId}
               status={pullRequest.status}

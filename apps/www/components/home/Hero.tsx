@@ -6,6 +6,30 @@ type HeroProps = {
   header: string;
 };
 
+const AnimatedText: React.FC<{ text: string }> = ({ text }) => {
+  const [index, setIndex] = useState(0);
+
+  const animate = () => {
+    setIndex((index) => (index + 1) % text.length);
+  };
+
+  return (
+    <span className="inline-block">
+      {text.split("").map((char, i) => (
+        <span
+          key={i}
+          className={`inline-block ${
+            i === index ? "animate-bounce" : "animate-none"
+          }`}
+          onAnimationEnd={animate}
+        >
+          {char}
+        </span>
+      ))}
+    </span>
+  );
+};
+
 const Hero: React.FC<HeroProps> = ({ header }) => {
   const [copied, setCopied] = useState(false);
 
@@ -31,7 +55,7 @@ const Hero: React.FC<HeroProps> = ({ header }) => {
             </Link>
           </div>
           <h1 className="font-display inline bg-gradient-to-r from-teal-100 via-teal-300 to-cyan-500 bg-clip-text text-5xl tracking-tight text-transparent md:text-8xl">
-            {header}
+            <AnimatedText text={header} />
           </h1>
 
           <h2 className="text-lighter mt-3 text-lg md:text-2xl">

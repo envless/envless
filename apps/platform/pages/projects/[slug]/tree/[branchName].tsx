@@ -4,11 +4,9 @@ import { getServerSideSession } from "@/utils/session";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
   type Branch,
-  type EncryptedProjectKey,
   MembershipStatus,
   type Project,
   User,
-  type UserPublicKey,
   UserRole,
 } from "@prisma/client";
 import { ProjectCommon } from "@/components/projects/ProjectCommon";
@@ -27,10 +25,7 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
-  publicKey: UserPublicKey["key"];
-  encryptedProjectKey: EncryptedProjectKey;
   branches: Branch[];
-  privateKey: string;
   currentBranch: Branch;
 }
 
@@ -39,10 +34,7 @@ export const ProjectBranchPage = ({
   projects,
   currentProject,
   currentRole,
-  publicKey,
-  encryptedProjectKey,
   branches,
-  privateKey,
   currentBranch,
 }: Props) => {
   return (
@@ -51,10 +43,7 @@ export const ProjectBranchPage = ({
       projects={projects}
       currentProject={currentProject}
       currentRole={currentRole}
-      publicKey={publicKey}
-      encryptedProjectKey={encryptedProjectKey}
       branches={branches}
-      privateKey={privateKey}
       currentBranch={currentBranch}
     />
   );
@@ -96,7 +85,13 @@ export const getServerSideProps = withAccessControl({
       },
     });
 
-    let encryptedProjectKey = currentProject?.encryptedProjectKey;
+    const keychain = await prisma.keychain.findFirst({
+      where: { userId: user?.id },
+      select: { publicKey: true },
+    });
+
+    const { publicKey } = keychain as { publicKey: string };
+    const encryptedProjectKey = currentProject?.encryptedProjectKey;
     const branches = currentProject?.branches;
     const currentBranch = branches?.find(
       (branch) => branch.name === branchName,
@@ -109,21 +104,14 @@ export const getServerSideProps = withAccessControl({
       };
     }
 
-    const userPublicKey = await prisma.userPublicKey.findFirst({
-      where: { userId: user?.id },
-      select: { key: true },
-    });
-
-    const publicKey = userPublicKey?.key;
-
     if (publicKey && !encryptedProjectKey) {
-      const decryptedProjectKey = await generateKey();
+      const decryptedProjectKey = generateKey();
 
       const encryptedKey = (await OpenPGP.encrypt(decryptedProjectKey, [
         publicKey,
       ])) as string;
 
-      encryptedProjectKey = await prisma.encryptedProjectKey.create({
+      await prisma.encryptedProjectKey.create({
         data: {
           encryptedKey,
           projectId: currentProject?.id as string,
@@ -133,8 +121,6 @@ export const getServerSideProps = withAccessControl({
 
     return {
       props: {
-        privateKey: user?.privateKey,
-        encryptedProjectKey,
         branches,
         currentBranch,
         redirect,
