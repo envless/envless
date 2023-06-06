@@ -117,7 +117,7 @@ export default function PullRequestDetailPage({
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
             <DetailedPrTitle
-              author={pullRequest.createdBy.name}
+              author={pullRequest.createdBy?.name as string}
               title={pullRequest.title}
               prId={pullRequest.prId}
               status={pullRequest.status}
