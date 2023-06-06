@@ -52,11 +52,18 @@ export default withAuth(
       return NextResponse.redirect(authUrl);
     }
 
-    const { twoFactorEnabled, twoFactorVerified, privateKey } = user;
+    const {
+      twoFactorEnabled,
+      twoFactorVerified,
+      privateKey,
+      isPrivateKeyValid,
+    } = user;
     log("Loading user: ", user);
 
-    if (!privateKey) {
-      log("If privateKey is not present, redirect to verify auth page");
+    if (!privateKey || !isPrivateKeyValid) {
+      log(
+        "If privateKey is not present, or invalid, redirect to verify auth page",
+      );
       return NextResponse.redirect(encryptionUrl);
     }
 

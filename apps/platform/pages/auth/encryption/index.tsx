@@ -79,16 +79,17 @@ export async function getServerSideProps(context) {
   });
 
   const hasPrivateKey = user.privateKey !== null;
+  const isPrivateKeyValid = user.isPrivateKeyValid;
   const keychain = currentUser?.keychain || null;
 
   let pageState = "";
 
-  if (keychain && !hasPrivateKey) {
-    pageState = "verifyKeychain";
-  } else if (keychain && hasPrivateKey) {
+  if (!keychain) {
+    pageState = "createKeychain";
+  } else if (keychain && hasPrivateKey && isPrivateKeyValid) {
     pageState = "verifyIdentify";
   } else {
-    pageState = "createKeychain";
+    pageState = "verifyKeychain";
   }
 
   return {
