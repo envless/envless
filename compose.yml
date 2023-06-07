@@ -1,9 +1,8 @@
 version: "3.9"
 x-template: &template
-  restart: "always"
-  networks:
-    - envless_network
-
+    restart: "always"
+    networks:
+      - dev_net
 services:
   postgres:
     <<: *template
@@ -18,7 +17,6 @@ services:
       - pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
   platform:
     <<: *template
     hostname: "envless-platform"
@@ -26,7 +24,13 @@ services:
     build:
       context: .
       dockerfile: ./apps/platform/Dockerfile.dev
+      args:
+        SKIP_ENV_VALIDATION: ${SKIP_ENV_VALIDATION:-true}
+        EMAIL_FROM: ${EMAIL_FROM:-envless@example.com}
+        NODE_ENV: ${NODE_ENV:-dev}
     env_file: .env
+    # use command: platform if no migrations are needed
+    command: init
     ports:
       - "3000:3000"
       - "3883:3883"
@@ -36,7 +40,6 @@ services:
     depends_on:
       postgres:
         condition: service_started
-
   www:
     <<: *template
     hostname: "envless-www"
@@ -44,11 +47,11 @@ services:
     build:
       context: .
       dockerfile: ./apps/www/Dockerfile.dev
+    command: www 
     ports:
       - "3002:3002"
     volumes:
       - www_node_modules:/www/node_modules
-
   docs:
     <<: *template
     hostname: "envless-docs"
@@ -56,6 +59,7 @@ services:
     build:
       context: .
       dockerfile: ./apps/docs/Dockerfile.dev
+    command: docs 
     ports:
       - "3001:3001"
     volumes:
@@ -66,5 +70,6 @@ volumes:
   pg_data:
   platform_node_modules:
   www_node_modules:
+
 networks:
-  envless_network:
+  dev_net:

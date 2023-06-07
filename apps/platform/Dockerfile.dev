@@ -1,28 +1,31 @@
 FROM node:18.16-alpine3.18
 
-ENV SKIP_ENV_VALIDATION true
-ENV EMAIL_FROM envless@example.com
-
-RUN apk update \
-  && apk add libc6-compat \
-  && yarn global add dotenv-cli \
-  && yarn global add turbo \
-  && rm -rf /var/cache/apt/*
+RUN set -ex; \
+    \
+    apk update; \
+    apk add --no-cache libc6-compat; \
+    apk add --no-cache --virtual .gyp \
+        python3 \
+        build-base \
+    ; \
+    yarn global add dotenv-cli; \
+    yarn global add turbo; \
+    export PATH="$(yarn global bin):$PATH"; \
+    rm -rf /var/cache/apt/*
 
 WORKDIR /platform
 
-COPY . .
+COPY [".env", "./", "./"]
 
-RUN turbo prune --scope=platform --docker \
-  && cp -r /platform/out/json/ . \
-  && cp -r /platform/out/yarn.lock ./yarn.lock \
-  && cp -r /platform/out/full/ . \
-  && yarn install \
-  && yarn db:generate \
-  && yarn db:migrate \
-  && yarn db:seed
- 
+RUN set -ex; \
+    \
+    turbo prune --scope=platform --docker; \
+    cp -r out/json/ out/full/ out/yarn.lock ./; \
+    yarn install --immutable --immutable-cache --check-cache; \
+    yarn cache clean --all; \
+    apk del .gyp; \
+    rm -rf /var/cache/apt/*
+
 EXPOSE 3000 3883
 
-ENTRYPOINT ["yarn"]
-CMD ["dev", "--filter=platform"]
+ENTRYPOINT ["deploy/entrypoint.sh"]

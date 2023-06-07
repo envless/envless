@@ -17,7 +17,7 @@
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",
     "db:generate": "dotenv -- turbo run db:generate",
-    "db:migrate": "dotenv -- yarn --cwd ./apps/platform/ prisma migrate dev",
+    "db:migrate": "dotenv -- yarn --cwd /platform/ prisma migrate dev",
     "db:seed": "dotenv -- turbo run db:seed",
     "db:reset": "dotenv -- turbo run db:reset",
     "db:studio": "dotenv -- turbo run db:studio"
