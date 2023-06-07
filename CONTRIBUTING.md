@@ -31,22 +31,30 @@ In order to not waste your time implementing a change that has already been decl
 - [Install Docker](https://docs.docker.com/get-docker/) on your machine.
 - [Install Docker Compose](https://docs.docker.com/compose/install/) on your machine.
 - [Fork the repository](https://github.com/envless/envless/fork)
+
 - Clone the repository
+
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
-- Run the following command to start the development environment on particular service
+
+- Copy `.env.example` to `.env`
+
   ```bash
-  docker-compose up ${service} -d
+  cp .env.example .env`
   ```
-  make sure to replace $service with www, docs, platform.
+
+- Run the following command to start the development environment on particular service
+
+  ```bash
+  # Replace ${service} with www, docs or platform
+  docker compose up ${service}
+  ```
 
   > **Note**
-  > When running platform it will need postgres up, also it will automatically populate seeds and migrations on every run
+  > Database migration and seeds are run automatilly when running docker.
 
-- Running `docker compose up -d` will bring all services up.
-
-- Your server will be up and running on:
+- Running `docker compose up` will start all the services on their respective ports.
   - platform: `http://localhost:3000`
   - docs: `http://localhost:3001`
   - www: `http://localhost:3002`
@@ -58,14 +66,19 @@ In order to not waste your time implementing a change that has already been decl
 > This has been tested on Mac OS and works really well. So, if you are on Mac this setup performs way better than docker.
 
 - [Fork the repository](https://github.com/envless/envless/fork)
+
 - Clone the repository
+
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
+
 - Copy `.env.example` to `.env`
+
   ```bash
   cp .env.example .env
   ```
+
 - Install latest version of node and yarn
 - Install latest version of [postgres database](#postgres)
 - Create database `envless` in postgres database
@@ -84,13 +97,17 @@ In order to not waste your time implementing a change that has already been decl
   yarn db:seed
   ```
 
-- Run the following command to start the development server
+- Run the following command to start the development environment on particular service
 
   ```bash
-  yarn dev
+  # Replace ${service} with www, docs or platform
+  yarn dev --filter=${service}
   ```
 
-- Your server will be up and running on `http://localhost:3000`
+- Running `yarn dev` will start all the services on their respective ports.
+  - platform: `http://localhost:3000`
+  - docs: `http://localhost:3001`
+  - www: `http://localhost:3002`
 
 ---
 

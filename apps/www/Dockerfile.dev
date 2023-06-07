@@ -1,20 +1,20 @@
 FROM node:18.16-alpine3.18
 
 RUN apk update \
-        && apk add libc6-compat \
-        && npm install -g dotenv-cli \
-        && yarn global add turbo \
-        && rm -rf /var/cache/apt/*
+  && apk add libc6-compat \
+  && yarn global add dotenv-cli \
+  && yarn global add turbo \
+  && rm -rf /var/cache/apt/*
 
 WORKDIR /www
 
 COPY . .
 
 RUN turbo prune --scope=www --docker \
-          && cp -r /www/out/json/ . \
-          && cp -r /www/out/yarn.lock ./yarn.lock \
-          && cp -r /www/out/full/ . \
-          && yarn install
+  && cp -r /www/out/json/ . \
+  && cp -r /www/out/yarn.lock ./yarn.lock \
+  && cp -r /www/out/full/ . \
+  && yarn install
 
 EXPOSE 3002
 

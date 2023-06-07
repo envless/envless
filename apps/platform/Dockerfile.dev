@@ -4,22 +4,23 @@ ENV SKIP_ENV_VALIDATION true
 ENV EMAIL_FROM envless@example.com
 
 RUN apk update \
-        && apk add libc6-compat \
-        && npm install -g dotenv-cli \
-        && yarn global add turbo \
-        && rm -rf /var/cache/apt/*
+  && apk add libc6-compat \
+  && yarn global add dotenv-cli \
+  && yarn global add turbo \
+  && rm -rf /var/cache/apt/*
 
 WORKDIR /platform
 
 COPY . .
 
 RUN turbo prune --scope=platform --docker \
-          && cp -r /platform/out/json/ . \
-          && cp -r /platform/out/yarn.lock ./yarn.lock \
-          && cp -r /platform/out/full/ . \
-          && yarn install \
-          && yarn db:generate \
-          && yarn db:seed
+  && cp -r /platform/out/json/ . \
+  && cp -r /platform/out/yarn.lock ./yarn.lock \
+  && cp -r /platform/out/full/ . \
+  && yarn install \
+  && yarn db:generate \
+  && yarn db:migrate \
+  && yarn db:seed
  
 EXPOSE 3000 3883
 
