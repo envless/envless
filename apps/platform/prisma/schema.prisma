@@ -45,7 +45,23 @@ model Project {
   pullRequests        PullRequest[]
   encryptedProjectKey EncryptedProjectKey?
 
-  @@unique([name, slug])
+  @@unique([slug])
+}
+
+model Keychain {
+  id                    String @id @default(cuid())
+  publicKey             String
+  revocationCertificate String
+  verificationString    String
+
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  revokedAt DateTime?
+
+  @@index([userId])
 }
 
 model EncryptedProjectKey {
@@ -56,15 +72,6 @@ model EncryptedProjectKey {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model UserPublicKey {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  key       String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique
 }
 
 enum UserRole {
@@ -155,18 +162,21 @@ model PullRequest {
   createdById     String
   mergedById      String?
   closedById      String?
+  reOpenedById    String?
   baseBranchId    String
   currentBranchId String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   mergedAt        DateTime?
   closedAt        DateTime?
+  reOpenedAt      DateTime?
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  createdBy User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
-  mergedBy  User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
-  closedBy  User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+  createdBy  User  @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+  mergedBy   User? @relation(name: "mergedBy", fields: [mergedById], references: [id], onDelete: Cascade)
+  closedBy   User? @relation(name: "closedBy", fields: [closedById], references: [id], onDelete: Cascade)
+  reOpenedBy User? @relation(name: "reOpenedBy", fields: [reOpenedById], references: [id], onDelete: Cascade)
 
   baseBranch    Branch @relation(name: "baseBranch", fields: [baseBranchId], references: [id], onDelete: Cascade)
   currentBranch Branch @relation(name: "currentBranch", fields: [currentBranchId], references: [id], onDelete: Cascade)
@@ -175,6 +185,7 @@ model PullRequest {
   @@index([createdById])
   @@index([mergedById])
   @@index([closedById])
+  @@index([reOpenedById])
   @@index([baseBranchId])
   @@index([currentBranchId])
   @@index([createdAt])
@@ -186,6 +197,7 @@ enum PullRequestStatus {
   open
   merged
   closed
+  reOpened
 }
 
 model Secret {
@@ -279,6 +291,7 @@ model User {
   name              String?
   email             String           @unique
   emailVerified     DateTime?
+  hashedPassword    String?
   image             String?
   cliId             String?          @unique
   accounts          Account[]
@@ -292,8 +305,10 @@ model User {
   createdPRs        PullRequest[]    @relation(name: "createdBy")
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
-  locked            LockedUser?
-  publicKey         UserPublicKey?
+  reOpenedPRs       PullRequest[]    @relation(name: "reOpenedBy")
+
+  locked   LockedUser?
+  keychain Keychain?
 
   // Two factor authentication
   encryptedTwoFactorSecret Json?

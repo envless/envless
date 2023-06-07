@@ -1,7 +1,10 @@
 import { type GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
+import { Fragment } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
+import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -13,7 +16,6 @@ import {
   UserRole,
 } from "@prisma/client";
 import { GitPullRequest, GitPullRequestClosed } from "lucide-react";
-import { UserType } from "prisma/seeds/types";
 import DetailedPrTitle from "@/components/pulls/DetailedPrTitle";
 import EnvDiffViewer from "@/components/pulls/EnvDiffViewer";
 import { Button } from "@/components/theme";
@@ -42,6 +44,7 @@ export default function PullRequestDetailPage({
   currentRole,
   pullRequest,
 }: Props) {
+  const router = useRouter();
   const { baseBranch, currentBranch } = pullRequest as any & {
     baseBranch: Branch;
     currentBranch: Branch;
@@ -83,6 +86,26 @@ export default function PullRequestDetailPage({
       },
     });
 
+  const { mutateAsync: reOpenPrMutateAsync, isLoading: isReOpenPrLoading } =
+    trpc.pullRequest.reOpen.useMutation({
+      onSuccess: (data) => {
+        showToast({
+          type: "success",
+          title: "Pull Request Re-Opened",
+          subtitle: `Pull Request #${data.prId} re-opened successfully`,
+        });
+
+        router.replace(router.asPath);
+      },
+      onError: (error) => {
+        showToast({
+          type: "error",
+          title: "Failed to re-open pull request",
+          subtitle: error.message,
+        });
+      },
+    });
+
   return (
     <ProjectLayout
       tab="pr"
@@ -94,7 +117,7 @@ export default function PullRequestDetailPage({
         <div className="grid grid-cols-12 gap-2">
           <div className="col-span-6">
             <DetailedPrTitle
-              author={pullRequest.createdBy.name}
+              author={pullRequest.createdBy?.name as string}
               title={pullRequest.title}
               prId={pullRequest.prId}
               status={pullRequest.status}
@@ -103,46 +126,62 @@ export default function PullRequestDetailPage({
             />
           </div>
 
-          {pullRequest.status !== PullRequestStatus.closed && (
-            <div className="col-span-6 gap-2">
+          <div className="col-span-6 gap-2">
+            {pullRequest.status === PullRequestStatus.open && (
+              <Fragment>
+                <Button
+                  loading={isMergePrLoading}
+                  onClick={async () => {
+                    await mergePrMutationAync({
+                      pullRequest,
+                    });
+                  }}
+                  className="float-right ml-3"
+                  leftIcon={
+                    <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
+                  }
+                >
+                  Merge pull request
+                </Button>
+
+                <Button
+                  leftIcon={
+                    <GitPullRequestClosed
+                      className="mr-2 h-4 w-4"
+                      strokeWidth={2}
+                    />
+                  }
+                  variant="danger-outline"
+                  className="float-right"
+                  loading={isClosePrLoading}
+                  onClick={async () => {
+                    const prToClose = {
+                      prId: pullRequest.prId,
+                      projectId: currentProject.id,
+                    };
+
+                    await closePrMutateAsync({ pullRequest: prToClose });
+                  }}
+                >
+                  Close pull request
+                </Button>
+              </Fragment>
+            )}
+
+            {pullRequest.status === PullRequestStatus.closed && (
               <Button
-                loading={isMergePrLoading}
+                loading={isReOpenPrLoading}
                 onClick={async () => {
-                  await mergePrMutationAync({
+                  await reOpenPrMutateAsync({
                     pullRequest,
                   });
                 }}
-                className="float-right ml-3"
-                leftIcon={
-                  <GitPullRequest className="mr-2 h-4 w-4" strokeWidth={2} />
-                }
-              >
-                Merge pull request
-              </Button>
-
-              <Button
-                leftIcon={
-                  <GitPullRequestClosed
-                    className="mr-2 h-4 w-4"
-                    strokeWidth={2}
-                  />
-                }
-                variant="danger-outline"
                 className="float-right"
-                loading={isClosePrLoading}
-                onClick={async () => {
-                  const prToClose = {
-                    prId: pullRequest.prId,
-                    projectId: currentProject.id,
-                  };
-
-                  await closePrMutateAsync({ pullRequest: prToClose });
-                }}
               >
-                Close pull request
+                Re-open pull request
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 

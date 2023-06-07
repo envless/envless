@@ -2,7 +2,7 @@ import { intro, isCancel, outro, select, spinner } from "@clack/prompts";
 import { Command, Flags } from "@oclif/core";
 import axios from "axios";
 import { bold, cyan, grey } from "kleur/colors";
-import { writeToDotEnvless } from "../../lib/dotEnvless";
+import { ProjectContent, writeToDotEnvless } from "../../lib/dotEnvless";
 import { triggerCancel } from "../../lib/helpers";
 import { API_VERSION, LINKS } from "../../lib/helpers";
 import { getCliConfigFromKeyStore } from "../../lib/keyStore";
@@ -97,14 +97,14 @@ export default class LinkProject extends Command {
       }
     }
 
-    const config = {
+    const config: ProjectContent = {
       name: "envless",
       version,
-      projectId: flags.projectId,
+      projectId: flags.projectId ?? "",
       branch: flags.branch,
     };
 
-    await writeToDotEnvless(config);
+    writeToDotEnvless(config);
     outro(`🎉 ${bold(cyan(`Successfully linked project with config:`))}`);
     console.log(config);
   }

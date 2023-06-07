@@ -126,4 +126,40 @@ This command will prompt you for the necessary information to create the project
 
 ## Update
 
-TODO: Add update command
+To update an existing project, run the following command in your terminal:
+
+<CodeGroup title="Update a project">
+```bash {{ title: 'Command', language: 'bash' }}
+envless project update
+```
+
+```bash {{ title: 'Help', language: 'bash' }}
+$ envless project update --help
+
+Update an existing Envless project.
+
+USAGE
+  $ envless project update
+
+FLAGS
+  -n, --name=<value>  This is the project\'s name
+  -i, --projectId=<value> This is the project\'s id
+  -t, --twoFactorRequired enables two-factor authentication for other members to access this project
+
+DESCRIPTION
+  updates an existing Envless project.
+  ⚡ Please make sure you are running this command from your project root directory
+  and make sure you have completed your CLI setup. If not, please do so at envless
+  platform.
+
+EXAMPLES
+  $ envless project update
+  $ envless project update -n="XXX" -i="xxx"
+  $ envless project update -n="XXX" -i="xxx" -t
+  $ envless project update --name="XXXXXX" --projectId="xxx"
+  $ envless project update --name="XXX" --projectId="xxx" --twoFactorRequired
+```
+
+</CodeGroup>
+
+This command will prompt you for the necessary information to update an exisiting project.

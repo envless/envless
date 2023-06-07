@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { trpc } from "@/utils/trpc";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { GithubFullIcon, GitlabFullIcon } from "@/components/icons";
 import { Button, Input } from "@/components/theme";
+import { showToast } from "@/components/theme/showToast";
 
 type Props = {
   page: string;
@@ -26,16 +28,66 @@ const Session = (props: Props) => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  type SessionParams = {
+    email: string;
+    name?: string;
+    callbackUrl?: string;
+  };
+
+  const onSubmit = async (data: SessionParams) => {
+    if (page === "login") {
+      LoginUser(data);
+    } else {
+      SignupUser(data);
+    }
+  };
+
+  const LoginUser = async (data: SessionParams) => {
     setLoading(true);
     data = { ...data, callbackUrl: "/projects" };
-    localStorage.setItem("fullName", data.name);
     signIn("email", data);
+  };
+
+  const { mutate: signupMutation, isLoading: loadingSignup } =
+    trpc.auth.signup.useMutation({
+      onSuccess: (response) => {
+        showToast({
+          duration: 10000,
+          type: "success",
+          title: "Thanks for signing up!",
+          subtitle: response.message,
+        });
+      },
+
+      onError: (error) => {
+        showToast({
+          duration: 10000,
+          type: "error",
+          title: "Signup failed!",
+          subtitle: error.message,
+        });
+      },
+    });
+
+  const SignupUser = async (data: SessionParams) => {
+    setLoading(true);
+
+    const params = {
+      email: data.email,
+      name: data.name,
+      callbackUrl: "/projects",
+    } as {
+      email: string;
+      name: string;
+      callbackUrl: string;
+    };
+
+    signupMutation(params);
   };
 
   return (
     <>
-      <div className="flex h-screen flex-col justify-center px-12">
+      <div className="flex h-screen flex-col px-12 py-48">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto h-12 w-auto"
@@ -95,7 +147,7 @@ const Session = (props: Props) => {
               <Input
                 name="email"
                 type="email"
-                label="Email address"
+                label="Work email"
                 placeholder="your@email.com"
                 required={true}
                 full={true}
@@ -116,12 +168,14 @@ const Session = (props: Props) => {
               />
 
               <Button
-                sr={page === "signup" ? "Create an account" : "Send magic link"}
+                sr={
+                  page === "signup" ? "Create an account" : "Login with email"
+                }
                 type="submit"
                 width="full"
                 disabled={loading}
               >
-                {page === "signup" ? "Create an account" : "Send magic link"}
+                {page === "signup" ? "Create an account" : "Login with email"}
               </Button>
             </form>
 
