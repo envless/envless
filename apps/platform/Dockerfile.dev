@@ -1,0 +1,31 @@
+FROM node:18.16-alpine3.18
+
+RUN set -ex; \
+    \
+    apk update; \
+    apk add --no-cache libc6-compat; \
+    apk add --no-cache --virtual .gyp \
+        python3 \
+        build-base \
+    ; \
+    yarn global add dotenv-cli; \
+    yarn global add turbo; \
+    export PATH="$(yarn global bin):$PATH"; \
+    rm -rf /var/cache/apt/*
+
+WORKDIR /platform
+
+COPY [".env", "./", "./"]
+
+RUN set -ex; \
+    \
+    turbo prune --scope=platform --docker; \
+    cp -r out/json/ out/full/ out/yarn.lock ./; \
+    yarn install --immutable --immutable-cache --check-cache; \
+    yarn cache clean --all; \
+    apk del .gyp; \
+    rm -rf /var/cache/apt/*
+
+EXPOSE 3000 3883
+
+ENTRYPOINT ["deploy/entrypoint.sh"]

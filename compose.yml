@@ -1,0 +1,78 @@
+version: "3.9"
+x-template: &template
+  restart: "always"
+  networks:
+    - dev_net
+services:
+  postgres:
+    <<: *template
+    image: "postgres:13-alpine"
+    hostname: "envless-postgres"
+    container_name: "postgres"
+    environment:
+      POSTGRES_USER: "envless"
+      POSTGRES_DB: "envless"
+      POSTGRES_PASSWORD: "envless"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  platform:
+    <<: *template
+    hostname: "envless-platform"
+    container_name: "platform"
+    build:
+      context: .
+      dockerfile: ./apps/platform/Dockerfile.dev
+      args:
+        SKIP_ENV_VALIDATION: ${SKIP_ENV_VALIDATION:-true}
+        EMAIL_FROM: ${EMAIL_FROM:-envless@example.com}
+        NODE_ENV: ${NODE_ENV:-dev}
+    env_file: .env
+    # use command: platform if no migrations are needed
+    command: init
+    ports:
+      - "3000:3000"
+      - "3883:3883"
+    volumes:
+      - ./:/platform/
+      - platform_node_modules:/platform/node_modules
+    depends_on:
+      postgres:
+        condition: service_started
+
+  www:
+    <<: *template
+    hostname: "envless-www"
+    container_name: "www"
+    build:
+      context: .
+      dockerfile: ./apps/www/Dockerfile.dev
+    command: www
+    ports:
+      - "3002:3002"
+    volumes:
+      - www_node_modules:/www/node_modules
+
+  docs:
+    <<: *template
+    hostname: "envless-docs"
+    container_name: "docs"
+    build:
+      context: .
+      dockerfile: ./apps/docs/Dockerfile.dev
+    command: docs
+    ports:
+      - "3001:3001"
+    volumes:
+      - docs_node_modules:/docs/node_modules
+
+volumes:
+  docs_node_modules:
+  pg_data:
+  platform_node_modules:
+  www_node_modules:
+
+networks:
+  dev_net:

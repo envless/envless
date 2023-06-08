@@ -72,7 +72,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
+.env*
 
 # vercel
 .vercel
@@ -80,8 +80,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-.env
-.envless
 
 .mailing
 .dccache
@@ -94,4 +92,3 @@ dump.rdb
 /playwright-report/
 /playwright/.cache/
 .mailing
-.envless.key
