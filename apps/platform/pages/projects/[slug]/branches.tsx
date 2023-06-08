@@ -302,7 +302,7 @@ export const BranchesPage = ({
       <CreatePullRequestModal
         onSuccessCreation={(pullRequest) => {
           router.push(
-            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.id}`,
+            `/projects/${pullRequest.project.slug}/pulls/${pullRequest.prId}`,
           );
         }}
         isOpen={isPrModalOpen}
