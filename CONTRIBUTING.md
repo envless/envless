@@ -48,6 +48,9 @@ In order to not waste your time implementing a change that has already been decl
 
   ```bash
   # Replace ${service} with www, docs or platform
+  docker compose up ${service} --build
+
+  # Or simply run the following command if you have already built the images
   docker compose up ${service}
   ```
 
@@ -60,7 +63,7 @@ command: platform
 
 > so that `entrypoint.sh` will not run generate, migrate and seed commands everytime you start the server.
 
-- Running `docker compose up` will start all the services on their respective ports.
+- Running `docker compose up --build` will start all the services on their respective ports.
   - platform: `http://localhost:3000`
   - docs: `http://localhost:3001`
   - www: `http://localhost:3002`
