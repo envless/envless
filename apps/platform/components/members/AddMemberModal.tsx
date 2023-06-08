@@ -146,9 +146,15 @@ const AddMemberModal = ({
                 errors={errors}
               />
             </div>
-            <Button className="float-right" type="submit" disabled={loading}>
+            <Button
+              className="float-right"
+              type="submit"
+              disabled={loading}
+              rightIcon={
+                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+              }
+            >
               Send an invite
-              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
             </Button>
           </form>
         </Fragment>

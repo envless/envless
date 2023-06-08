@@ -13,6 +13,9 @@ import sendMail from "emails";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
+import { generageKeyPair } from "@/lib/encryption/openpgp";
+
+const openpgp = require("openpgp");
 
 interface CheckAccessAndPermissionArgs {
   ctx: any;
@@ -221,7 +224,96 @@ export const members = createRouter({
       });
       return updatedMember;
     }),
-  invite: withAuth
+
+  inviteExistingUser: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        email: z.string().email(),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let isNewMember = false;
+      const currentUser = ctx.session.user;
+      const { projectId, email, role } = input;
+
+      let member = await ctx.prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (!member) {
+        member = await ctx.prisma.user.create({
+          data: {
+            email,
+          },
+        });
+
+        isNewMember = true;
+      }
+
+      let access = await ctx.prisma.access.findFirst({
+        where: {
+          projectId,
+          userId: member.id,
+        },
+      });
+
+      if (access) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User is already a member of this project",
+        });
+      }
+
+      access = await ctx.prisma.access.create({
+        data: {
+          projectId,
+          userId: member.id,
+          role,
+          status: MembershipStatus.pending,
+        },
+      });
+
+      // Create project invite record
+
+      // Send email to user
+      // Respond with success so that client cal re-encrypt project keys
+      return access;
+    }),
+
+  inviteNewUser: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        email: z.string().email(),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
+        hashedPassword: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user;
+      const { projectId, email, role, hashedPassword } = input;
+
+      // Create user record
+      const newUser = await ctx.prisma.user.create({
+        data: { email },
+      });
+
+      // Create access record
+      const access = await ctx.prisma.access.create({
+        data: {
+          projectId,
+          userId: newUser.id,
+          role,
+          status: MembershipStatus.pending,
+        },
+      });
+    }),
+
+  _invite: withAuth
     .input(
       z.object({
         projectId: z.string(),
@@ -653,7 +745,6 @@ export const members = createRouter({
         },
         include: {
           user: true,
-          projectInvite: true,
         },
         take: QUERY_ITEMS_PER_PAGE,
         skip: (input.page - 1) * QUERY_ITEMS_PER_PAGE,
@@ -662,8 +753,6 @@ export const members = createRouter({
       return accesses.map((access) => {
         return {
           id: access.user.id,
-          projectInviteId: access.projectInviteId,
-          projectInvite: access.projectInvite,
           name: access.user.name,
           email: access.user.email,
           image: access.user.image,

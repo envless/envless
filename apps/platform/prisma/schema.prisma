@@ -41,7 +41,7 @@ model Project {
   branches            Branch[]
   access              Access[]
   audits              Audit[]
-  invites             ProjectInvite[]
+  invites             Invite[]
   pullRequests        PullRequest[]
   encryptedProjectKey EncryptedProjectKey?
 
@@ -53,6 +53,9 @@ model Keychain {
   publicKey             String
   revocationCertificate String
   verificationString    String
+
+  // This is a temporary flag to indicate that the keychain is for invited user
+  temporary             Boolean @default(false)
 
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -81,21 +84,29 @@ enum UserRole {
   guest
 }
 
-model ProjectInvite {
-  id                       String   @id @default(cuid())
-  project                  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId                String
-  createdAt                DateTime @default(now())
-  invitationToken          String
-  invitationTokenExpiresAt DateTime @default(now())
-  hashedPassword           String
-  retryCount               Int      @default(0)
-  invitedById              String?
-  access                   Access[]
+model Invite {
+  id                  String   @id @default(cuid())
+  userId              String
+  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId           String
+  createdAt           DateTime @default(now())
 
-  @@unique([invitationToken])
+  // Following two columns are encrypted and temporarily saved on the table; they are deleted after the invite is accepted
+  encryptedPrivateKey String
+  hashedPassword      String
+
+  // Someone who is inviting
+  invitor   User   @relation(name: "invitor", fields: [invitorId], references: [id], onDelete: Cascade)
+  invitorId String
+
+  // Someone who is being invited
+  invitee   User   @relation(name: "invitee", fields: [inviteeId], references: [id], onDelete: Cascade)
+  inviteeId String
+
+  @@unique([userId, projectId])
+  @@index([invitorId])
+  @@index([inviteeId])
   @@index([projectId])
-  @@index([invitationToken])
 }
 
 enum MembershipStatus {
@@ -105,22 +116,19 @@ enum MembershipStatus {
 }
 
 model Access {
-  id              String           @id @default(cuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  userId          String
-  projectId       String
-  role            UserRole         @default(guest)
-  status          MembershipStatus @default(pending)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectInviteId String?          @unique
-  projectInvite   ProjectInvite?   @relation(fields: [projectInviteId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  userId    String
+  projectId String
+  role      UserRole         @default(guest)
+  status    MembershipStatus @default(pending)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
   @@index([userId])
   @@index([projectId])
-  @@index([projectInviteId])
 }
 
 model Branch {
@@ -306,6 +314,9 @@ model User {
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
   reOpenedPRs       PullRequest[]    @relation(name: "reOpenedBy")
+
+  sentInvites     Invite[] @relation(name: "invitor")
+  receivedInvites Invite[] @relation(name: "invitee")
 
   locked   LockedUser?
   keychain Keychain?
