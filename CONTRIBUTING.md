@@ -52,12 +52,13 @@ In order to not waste your time implementing a change that has already been decl
   ```
 
   > **Note**
-  > Database migration and seeds are run automatilly when running docker by default, to change that behaviour and speedup docker startup, you could change `command:` directive in `compose.yml:33` making it look like:
+  > Database migration and seeds are run automatilly when running docker by default, to change that behaviour and speedup docker, you could change `command:` directive in `compose.yml:33` making it look like:
 
 ```yaml
-    command: platform
+command: platform
 ```
-> this way `entrypoint.sh` will not run generate, migrate and seed commands on every run.
+
+> so that `entrypoint.sh` will not run generate, migrate and seed commands everytime you start the server.
 
 - Running `docker compose up` will start all the services on their respective ports.
   - platform: `http://localhost:3000`

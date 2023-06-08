@@ -6,7 +6,7 @@ if [[ -z "$1" ]]
     yarn dev --filter=platform
   elif [[ $1 = "init" ]]; then
     yarn db:generate;
-    yarn db:migrate;
+    yarn docker:db:migrate;
     yarn db:seed;
     yarn dev --filter=platform;
   elif [[ $1 = "platform" ]]; then

@@ -1,8 +1,8 @@
 version: "3.9"
 x-template: &template
-    restart: "always"
-    networks:
-      - dev_net
+  restart: "always"
+  networks:
+    - dev_net
 services:
   postgres:
     <<: *template
@@ -17,6 +17,7 @@ services:
       - pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
   platform:
     <<: *template
     hostname: "envless-platform"
@@ -40,6 +41,7 @@ services:
     depends_on:
       postgres:
         condition: service_started
+
   www:
     <<: *template
     hostname: "envless-www"
@@ -47,11 +49,12 @@ services:
     build:
       context: .
       dockerfile: ./apps/www/Dockerfile.dev
-    command: www 
+    command: www
     ports:
       - "3002:3002"
     volumes:
       - www_node_modules:/www/node_modules
+
   docs:
     <<: *template
     hostname: "envless-docs"
@@ -59,7 +62,7 @@ services:
     build:
       context: .
       dockerfile: ./apps/docs/Dockerfile.dev
-    command: docs 
+    command: docs
     ports:
       - "3001:3001"
     volumes:
