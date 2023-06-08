@@ -56,6 +56,9 @@ export default function AuditLogTable({
               <span className="block text-xs">
                 {info.row.original.createdBy.name}
               </span>
+              <span className="text-xs text-gray-400">
+                {info.row.original.createdBy.email}
+              </span>
             </div>
           </div>
         ),
