@@ -17,7 +17,6 @@ const getMany = async (projectId: string): Promise<MemberType[]> => {
     },
     include: {
       user: true,
-      projectInvite: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -28,8 +27,6 @@ const getMany = async (projectId: string): Promise<MemberType[]> => {
   return accesses.map((access) => {
     return {
       id: access.user.id,
-      projectInviteId: access.projectInviteId,
-      projectInvite: access.projectInvite,
       name: access.user.name,
       email: access.user.email,
       image: access.user.image,

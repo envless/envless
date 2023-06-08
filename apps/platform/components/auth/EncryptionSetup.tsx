@@ -5,7 +5,7 @@ import { UserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import type { Keychain } from "@prisma/client";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
@@ -147,25 +147,38 @@ const EncryptionSetup = ({
   return (
     <>
       <div className="flex flex-col px-5 py-32">
-        <div className="bg-darker rounded-md px-10 py-12 sm:mx-auto sm:w-full sm:max-w-lg">
+        <div className="bg-darker rounded-md px-10 py-12 sm:mx-auto sm:w-full sm:max-w-xl">
           <EncryptionIcon className="mx-auto mb-3 h-16 w-16 text-teal-400" />
           <h2 className="mt-6 text-center text-2xl">
-            End to end encryption keys
+            End to end encryption setup
           </h2>
 
           <Hr className="my-5" />
 
           {page === "createKeychain" ? (
             <>
-              <p className="text-light mt-2 text-center text-sm">
-                Generate and download your encryption keys. Encryption keys are
-                generated on the client side and never saved on our database,
-                encrypted or otherwise. We recommend you further encrypt and
-                store this private key to your most trusted password manager(eg.
-                BitWarden) or on a safe place. Secrets cannot be decrypted
-                without this key and you will need this this key everytime you
-                login.
-              </p>
+              {/*  */}
+              <div className="rounded-md bg-teal-400/10 px-4 py-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <ShieldCheck className="h-5 w-5 text-teal-400" />
+                  </div>
+
+                  <div className="ml-3">
+                    <div className="text-sm text-teal-400">
+                      <p>
+                        If you have not already, please download your PGP
+                        private key. This key is generated on the client side
+                        and never saved on our database, encrypted or otherwise.
+                        We recommend you further encrypt and store this private
+                        key to your most trusted password manager(eg. BitWarden)
+                        or on a safe place. Secrets cannot be decrypted without
+                        this key and you will need this key everytime you login.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div className="mt-8">
                 <Button
@@ -177,8 +190,11 @@ const EncryptionSetup = ({
                     await createKeychain({ privateKey });
                   }}
                   loading={loading}
+                  rightIcon={
+                    <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                  }
                 >
-                  Generate and download encryption keys
+                  Generate and download your private key
                 </Button>
               </div>
             </>
@@ -186,7 +202,7 @@ const EncryptionSetup = ({
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mt-8">
                 <div className="text-light mb-2 text-sm">
-                  Your PGP encryption private key
+                  Paste your PGP private key
                   {session?.user?.privateKey && (
                     <span
                       onClick={() =>
@@ -205,17 +221,18 @@ const EncryptionSetup = ({
                   {...register("privateKey")}
                   autoComplete="off"
                   autoFocus={true}
-                  rows={10}
+                  rows={15}
                   required={true}
                   placeholder="-----BEGIN PGP PRIVATE KEY BLOCK-----"
                   onChange={(e) => setPrivateKey(e.target.value)}
+                  spellCheck={false}
                   className={
-                    "input-primary scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full"
+                    "scrollbar-thin scrollbar-track-dark scrollbar-thumb-darker w-full rounded border-teal-400/30 bg-teal-400/10 font-mono text-xs text-teal-400"
                   }
                 />
 
                 <Button
-                  sr={"Generate and download encryption keys"}
+                  sr={"Generate and download PGP private key"}
                   type="submit"
                   width="full"
                   disabled={loading}
@@ -225,7 +242,7 @@ const EncryptionSetup = ({
                     <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                   }
                 >
-                  Verify private key and continue
+                  Verify your private key and continue
                 </Button>
               </div>
             </form>
