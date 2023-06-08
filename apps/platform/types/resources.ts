@@ -1,8 +1,8 @@
 import { Key } from "react";
 import type {
+  Invite,
   LockedUser,
   MembershipStatus,
-  ProjectInvite,
   UserRole,
 } from "@prisma/client";
 
@@ -21,8 +21,6 @@ export interface UserType {
 
 export interface MemberType {
   id: string;
-  projectInviteId: string | null;
-  projectInvite: ProjectInvite | null;
   name: string | null;
   email: string;
   image: string | null;
