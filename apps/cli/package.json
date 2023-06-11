@@ -48,7 +48,13 @@
     "dirname": "envless",
     "commands": "./dist/commands",
     "topicSeparator": " ",
-    "topics": {}
+    "topics": {},
+    "update": {
+      "s3": {
+        "xz": true,
+        "bucket": "testingcli.envless.dev"
+      }
+    }
   },
   "scripts": {
     "cli": "yarn build && ./bin/run",
