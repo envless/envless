@@ -88,13 +88,13 @@ async function downloadTarballFromS3(
 }
 
 function getS3PublicUrl(fileName) {
-  return `https://s3.amazonaws.com/testingcli.envless.dev/channels/stable/${fileName}`;
+  return `https://s3.amazonaws.com/cli.envless.dev/channels/stable/${fileName}`;
 }
 
 async function main() {
   const template = await getEnvlessFormulaTemplate();
 
-  const stableReleasePathInS3 = `testingcli.envless.dev/channels/stable`;
+  const stableReleasePathInS3 = `cli.envless.dev/channels/stable`;
 
   const intelFileName = "envless-darwin-x64.tar.gz";
   const m1FileName = "envless-darwin-arm64.tar.gz";
