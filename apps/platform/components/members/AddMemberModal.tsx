@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
+import { generateTempKeychain } from "@/lib/encryption/crypto";
 
 interface MemberProps {
   email: string;
@@ -50,20 +51,49 @@ const AddMemberModal = ({
     ),
   });
 
-  const inviteMutation = trpc.members.invite.useMutation();
+  const createMemberMutation = trpc.members.create.useMutation();
 
   const inviteMembers = async (data: MemberProps, closeModal: () => void) => {
     const { email, role } = data;
     setLoading(true);
 
-    await inviteMutation.mutate(
+    const inviteNewUser = async (id: string, name: string, email: string) => {
+      const {
+        publicKey,
+        hashedPassword,
+        revocationCertificate,
+        tempEncryptedPrivateKey,
+      } = await generateTempKeychain(name as string, email);
+
+      debugger
+
+    };
+
+    const inviteExistingUser = async (id: string, name: string, email: string) => {
+      debugger;
+    };
+
+    createMemberMutation.mutate(
       {
         email,
         projectId,
         role: role,
       },
       {
-        onSuccess: (_data) => {
+        onSuccess: async (data) => {
+          const { member, isNewUser } = data;
+          const { id, name, email } = member as {
+            id: string;
+            name: string;
+            email: string;
+          };
+
+          if (isNewUser) {
+            await inviteNewUser(id, name, email);
+          } else {
+            await inviteExistingUser(id, name, email);
+          }
+
           setLoading(false);
           closeModal();
           router.replace(router.asPath);

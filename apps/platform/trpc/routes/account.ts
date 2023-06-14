@@ -8,7 +8,7 @@ export const account = createRouter({
     .input(
       z.object({
         name: z.string(),
-        email: z.string(),
+        email: z.string().optional(),
         marketing: z.boolean(),
         notification: z.boolean(),
       }),
