@@ -1,0 +1,43 @@
+name: Release Homebrew
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      notUsed:
+        type: string
+        description: Run this workflow from a "release-*" branch. This input does nothing.
+        required: false
+
+jobs:
+  release-homebrew:
+    runs-on: ubuntu-latest
+    environment: ReleaseHomebrew
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: yarn install
+        run: |
+          cp yarn.lock apps/cli
+          cd apps/cli
+          yarn --frozen-lockfile --network-timeout 1000000
+          yarn add @octokit/rest
+      - run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
+      - name: release homebrew
+        run: |
+          chmod +x ./scripts/homebrew/homebrew.mjs
+          ./scripts/homebrew/homebrew.mjs
+        env:
+          TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+          GITHUB_SHA_SHORT: ${{ env.GITHUB_SHA_SHORT }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
