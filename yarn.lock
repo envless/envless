@@ -1195,6 +1195,13 @@
   resolved "https://registry.npmjs.org/@jsdevtools/ono/-/ono-7.1.3.tgz"
   integrity sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==
 
+"@makepro-x/keytar@^7.10.2":
+  version "7.10.2"
+  resolved "https://registry.yarnpkg.com/@makepro-x/keytar/-/keytar-7.10.2.tgz#83d2ea21109b3410a2c69bde572c71f07564ced3"
+  integrity sha512-yJWKy5sNYKHNYaeU2R4c0yuJNtf581eT+wSOGOF0HklaDpTDlnHR7oBqXYsDzaw5lIx079j8sVd0uuElmf1/qw==
+  dependencies:
+    pkg-prebuilds "github:Julusian/pkg-prebuilds#c6782d555d035de6c25738d374207959c6719976"
+
 "@mapbox/hast-util-table-cell-style@^0.2.0":
   version "0.2.0"
   resolved "https://registry.npmjs.org/@mapbox/hast-util-table-cell-style/-/hast-util-table-cell-style-0.2.0.tgz"
@@ -11809,6 +11816,12 @@ pkg-dir@^4.2.0:
   integrity sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==
   dependencies:
     find-up "^4.0.0"
+
+"pkg-prebuilds@github:Julusian/pkg-prebuilds#c6782d555d035de6c25738d374207959c6719976":
+  version "0.2.0"
+  resolved "https://codeload.github.com/Julusian/pkg-prebuilds/tar.gz/c6782d555d035de6c25738d374207959c6719976"
+  dependencies:
+    yargs "^17.5.1"
 
 pkg-types@^1.0.2:
   version "1.0.2"
