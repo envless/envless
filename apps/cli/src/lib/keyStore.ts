@@ -1,4 +1,4 @@
-import * as keytar from "keytar";
+import * as keytar from "@makepro-x/keytar";
 
 const fs = require("fs");
 

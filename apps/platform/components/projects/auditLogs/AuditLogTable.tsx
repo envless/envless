@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import useFuse from "@/hooks/useFuse";
 import { getAvatar } from "@/utils/getAvatar";
 import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
 import {
@@ -33,6 +34,29 @@ export default function AuditLogTable({
   totalAuditLogs,
   setAuditLogDetail,
 }: AuditLogTableProps) {
+  const [auditLogList, setAuditLogs] = useState(auditLogs);
+  const [query, setQuery] = useState("");
+
+  const fuseOptions = {
+    keys: ["createdBy.name", "createdBy.email", "action"],
+    threshold: 0.2,
+    findAllMatches: true,
+  };
+  const results = useFuse(auditLogs, query, fuseOptions);
+
+  useEffect(() => {
+    setAuditLogs(auditLogs);
+  }, [auditLogs]);
+
+  useEffect(() => {
+    if (query.length === 0) {
+      setAuditLogs(auditLogs);
+    } else {
+      const collection = results.map((result) => result.item);
+      setAuditLogs(collection);
+    }
+  }, [auditLogs, query, results]);
+
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
@@ -101,7 +125,7 @@ export default function AuditLogTable({
   );
 
   const table = useReactTable({
-    data: auditLogs,
+    data: auditLogList,
     columns,
     pageCount,
     state: {
@@ -119,12 +143,13 @@ export default function AuditLogTable({
         <div className="flex w-full items-center justify-between px-4">
           <div className="group relative w-full">
             <div className="text-light group-focus-within:text-lighter pointer-events-none absolute inset-y-0 left-0 flex items-center justify-center pl-3">
-              <Search className="h-4 w-4" />
+              <Search className="h-4 w-4" aria-hidden="true" />
             </div>
             <BaseInput
               placeholder="Search"
               className="w-full max-w-xs py-1.5 !pl-9"
               full={false}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
           <div className="flex shrink-0 items-center">
@@ -133,7 +158,7 @@ export default function AuditLogTable({
               data-balloon-pos="up"
               className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
               onClick={() => {
-                const dataForCSV = auditLogs.map((auditLog: any) => {
+                const dataForCSV = auditLogList.map((auditLog: any) => {
                   return {
                     CreatedBy: auditLog.createdBy.name,
                     Action: auditLog.action,
