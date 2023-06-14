@@ -18,7 +18,7 @@ const seed = async () => {
 
     console.log("Seeding database".underline.cyan);
     return prisma.$transaction(async () => {
-      await seedUsers(10);
+      // await seedUsers(10);
     });
   } else {
     throw new Error("Seeding aborted");
@@ -32,7 +32,7 @@ const nuke = async () => {
     await prisma.project.deleteMany();
     await prisma.access.deleteMany();
     await prisma.branch.deleteMany();
-    await prisma.projectInvite.deleteMany();
+    await prisma.invite.deleteMany();
     await prisma.pullRequest.deleteMany();
     await prisma.keychain.deleteMany();
     await prisma.encryptedProjectKey.deleteMany();

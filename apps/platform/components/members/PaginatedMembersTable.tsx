@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { Fragment, useCallback, useMemo } from "react";
 import type { MemberType, UserType } from "@/types/resources";
 import { getAvatar } from "@/utils/getAvatar";
@@ -18,6 +19,7 @@ import {
   Circle,
   Lock,
   MoreVertical,
+  Pencil,
   Unlock,
 } from "lucide-react";
 import { Dropdown } from "../theme";
@@ -204,8 +206,16 @@ const PaginatedMembersTable = ({
               />
               <div>
                 <div className="text-base font-medium">
-                  {member.name}
-                  {member.email === user.email && " (Me)"}
+                  <span>{member.name}</span>
+                  {member.email === user.email && !member.name && (
+                    <Link
+                      href="/settings"
+                      className="flex text-sm text-teal-400 hover:underline"
+                    >
+                      Update your name
+                      <Pencil className="ml-2 mt-1 h-3 w-3" />
+                    </Link>
+                  )}
                 </div>
                 <div
                   className={clsx(

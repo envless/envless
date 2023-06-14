@@ -66,7 +66,7 @@ Generates a new OpenPGP key pair and revocationCertificate.
 @param email - The email address of the user thiskey pair belongs to.
 @returns An object containing the generated public key, private key, and revocation certificate.
 */
-export const generageKeyPair = async (name: string, email: string) => {
+const generageKeyPair = async (name: string, email: string) => {
   const { publicKey, privateKey, revocationCertificate } =
     await openpgp.generateKey({
       type: "ecc",
