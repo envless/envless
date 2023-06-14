@@ -21,7 +21,8 @@
     "@clack/prompts": "^0.6.3",
     "@oclif/core": "^2",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^3.0.1",
+    "@oclif/plugin-plugins": "^3.1.2",
+    "@makepro-x/keytar": "^7.10.2",
     "add": "^2.0.6",
     "axios": "^1.4.0",
     "better-opn": "^3.0.2",
@@ -44,11 +45,21 @@
     "vitest": "^0.30.0"
   },
   "oclif": {
+    "additionalVersionFlags": [
+      "-v",
+      "version"
+    ],
     "bin": "envless",
     "dirname": "envless",
     "commands": "./dist/commands",
     "topicSeparator": " ",
-    "topics": {}
+    "topics": {},
+    "update": {
+      "s3": {
+        "xz": true,
+        "bucket": "cli.envless.dev"
+      }
+    }
   },
   "scripts": {
     "cli": "yarn build && ./bin/run",
