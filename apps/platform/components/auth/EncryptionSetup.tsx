@@ -171,9 +171,10 @@ const EncryptionSetup = ({
                         private key. This key is generated on the client side
                         and never saved on our database, encrypted or otherwise.
                         We recommend you further encrypt and store this private
-                        key to your most trusted password manager(eg. BitWarden)
-                        or on a safe place. Secrets cannot be decrypted without
-                        this key and you will need this key everytime you login.
+                        key to your most trusted password manager(eg.
+                        BitWarden), your computer's keychain or on a safe place.
+                        Secrets cannot be decrypted without this key and you
+                        will need this key everytime you login.
                       </p>
                     </div>
                   </div>

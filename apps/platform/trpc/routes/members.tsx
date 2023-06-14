@@ -5,6 +5,7 @@ import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { ACCESS_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
+import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import argon2 from "argon2";
 import { randomBytes } from "crypto";
@@ -13,9 +14,6 @@ import sendMail from "emails";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
-import { generageKeyPair } from "@/lib/encryption/openpgp";
-
-const openpgp = require("openpgp");
 
 interface CheckAccessAndPermissionArgs {
   ctx: any;
@@ -118,6 +116,85 @@ const checkAccessAndPermission = async ({
 };
 
 export const members = createRouter({
+  create: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        email: z.string().email(),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let isNewUser = false;
+      const currentUser = ctx.session.user;
+      const { projectId, email, role } = input;
+
+      const selector = {
+        id: true,
+        name: true,
+        email: true,
+        access: {
+          where: {
+            AND: [{ projectId }],
+          },
+
+          select: {
+            role: true,
+            status: true,
+          },
+        },
+      };
+
+      let member = await ctx.prisma.user.findUnique({
+        where: { email },
+        select: selector,
+      });
+
+      const accessData = {
+        create: {
+          projectId,
+          role,
+          status: MembershipStatus.pending,
+        },
+      };
+
+      if (!member) {
+        member = await ctx.prisma.user.create({
+          data: { email, access: accessData },
+          select: selector,
+        });
+
+        isNewUser = true;
+      }
+
+      if (member.access.length === 0) {
+        member = await ctx.prisma.user.update({
+          where: { id: member.id },
+          data: { access: accessData },
+          select: selector,
+        });
+      }
+
+      return {
+        member,
+        isNewUser,
+      };
+    }),
+
+  invite: withAuth
+    .input(
+      z.object({
+        memberId: z.string(),
+        projectId: z.string(),
+        publicKey: z.string().optional(),
+        encryptedPrivateKey: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.session.user;
+      const { memberId, projectId, publicKey, encryptedPrivateKey } = input;
+    }),
+
   update: withAuth
     .input(
       z.object({
@@ -225,266 +302,6 @@ export const members = createRouter({
       return updatedMember;
     }),
 
-  inviteExistingUser: withAuth
-    .input(
-      z.object({
-        projectId: z.string(),
-        email: z.string().email(),
-        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      let isNewMember = false;
-      const currentUser = ctx.session.user;
-      const { projectId, email, role } = input;
-
-      let member = await ctx.prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
-
-      if (!member) {
-        member = await ctx.prisma.user.create({
-          data: {
-            email,
-          },
-        });
-
-        isNewMember = true;
-      }
-
-      let access = await ctx.prisma.access.findFirst({
-        where: {
-          projectId,
-          userId: member.id,
-        },
-      });
-
-      if (access) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User is already a member of this project",
-        });
-      }
-
-      access = await ctx.prisma.access.create({
-        data: {
-          projectId,
-          userId: member.id,
-          role,
-          status: MembershipStatus.pending,
-        },
-      });
-
-      // Create project invite record
-
-      // Send email to user
-      // Respond with success so that client cal re-encrypt project keys
-      return access;
-    }),
-
-  inviteNewUser: withAuth
-    .input(
-      z.object({
-        projectId: z.string(),
-        email: z.string().email(),
-        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
-        hashedPassword: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const user = ctx.session.user;
-      const { projectId, email, role, hashedPassword } = input;
-
-      // Create user record
-      const newUser = await ctx.prisma.user.create({
-        data: { email },
-      });
-
-      // Create access record
-      const access = await ctx.prisma.access.create({
-        data: {
-          projectId,
-          userId: newUser.id,
-          role,
-          status: MembershipStatus.pending,
-        },
-      });
-    }),
-
-  _invite: withAuth
-    .input(
-      z.object({
-        projectId: z.string(),
-        email: z.string().email(),
-        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const user = ctx.session.user;
-      const { projectId, email, role } = input;
-
-      const existingUser = await ctx.prisma.user.findFirst({
-        where: {
-          email,
-        },
-        select: {
-          id: true,
-          access: {
-            where: {
-              AND: [{ projectId }],
-            },
-          },
-        },
-      });
-
-      const invitationToken = randomBytes(32).toString("hex");
-      const password = randomBytes(32).toString("hex");
-      const hashedPassword = await argon2.hash(password);
-      const expiresAt = addHours(new Date(), 48);
-
-      // If the user already exists in the system, add an access entry for the project if they don't already have one.
-      if (existingUser) {
-        if (existingUser.access.length > 0) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "This member has already been invited to the project",
-          });
-        }
-
-        const invite = await ctx.prisma.projectInvite.create({
-          data: {
-            projectId,
-            invitationToken,
-            hashedPassword,
-            invitedById: user.id,
-            invitationTokenExpiresAt: expiresAt,
-          },
-        });
-
-        if (!invite) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Something went wrong",
-          });
-        }
-
-        await ctx.prisma.access.create({
-          data: {
-            projectId,
-            projectInviteId: invite.id,
-            role,
-            status: MembershipStatus.pending,
-            userId: existingUser.id,
-          },
-        });
-
-        await Audit.create({
-          projectId,
-          createdById: user.id,
-          action: "invite.created",
-          data: {
-            invite: {
-              id: invite.id,
-              email: email,
-              role: role,
-            },
-          },
-        });
-
-        // If there is no existing user in the system with the given email address, create a new user.
-      } else {
-        const invite = await ctx.prisma.projectInvite.create({
-          data: {
-            projectId,
-            invitationToken,
-            hashedPassword,
-            invitedById: user.id,
-            invitationTokenExpiresAt: expiresAt,
-          },
-        });
-
-        if (!invite) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Something went wrong",
-          });
-        }
-
-        const newUser = await ctx.prisma.user.create({
-          data: {
-            email,
-            access: {
-              create: [
-                {
-                  projectId: projectId,
-                  role: role,
-                  status: MembershipStatus.pending,
-                  projectInviteId: invite.id,
-                },
-              ],
-            },
-          },
-        });
-
-        if (!newUser) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Failed to create user",
-          });
-        }
-
-        await Audit.create({
-          projectId,
-          createdById: user.id,
-          action: "invite.created",
-          data: {
-            invite: {
-              id: invite.id,
-              email: email,
-              role: role,
-            },
-          },
-        });
-      }
-
-      const project = await ctx.prisma.project.findUnique({
-        where: {
-          id: projectId,
-        },
-      });
-
-      sendMail({
-        subject: `Invitation to join ${project?.name} on Envless`,
-        to: email,
-        component: (
-          <InviteLink
-            headline={
-              <Fragment>
-                Join <b>{project?.name}</b> on Envless
-              </Fragment>
-            }
-            greeting="Hi there,"
-            body={
-              <Fragment>
-                You have been invited to join the project <b>{project?.name}</b>{" "}
-                on Envless. You will need this One-time password. Please note
-                that this invitation link will expire in 48 hours.
-                <br />
-                <br />
-                <code>
-                  <pre>{password}</pre>
-                </code>
-              </Fragment>
-            }
-            subText="If you did not request this email you can safely ignore it."
-            buttonText={`Join ${project?.name}`}
-            buttonLink={`${env.BASE_URL}/auth/invite/${invitationToken}`}
-          />
-        ),
-      });
-    }),
   reInvite: withAuth
     .input(
       z.object({
@@ -589,6 +406,7 @@ export const members = createRouter({
         ),
       });
     }),
+
   deleteInvite: withAuth
     .input(
       z.object({
@@ -600,7 +418,7 @@ export const members = createRouter({
       const { projectId, projectInviteId } = input;
       const { user } = ctx.session;
 
-      const invite = await ctx.prisma.projectInvite.findFirst({
+      const invite = await ctx.prisma.invite.findFirst({
         where: {
           AND: {
             id: projectInviteId,
@@ -630,6 +448,7 @@ export const members = createRouter({
 
       return { success: true };
     }),
+
   acceptInvite: withoutAuth
     .input(
       z.object({
@@ -733,6 +552,7 @@ export const members = createRouter({
         });
       }
     }),
+
   getAll: withAuth
     .input(z.object({ page: z.number(), projectId: z.string() }))
     .query(async ({ ctx, input }) => {

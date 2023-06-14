@@ -55,6 +55,7 @@ export const secrets = createRouter({
         secrets,
       };
     }),
+
   saveSecrets: withAuth
     .input(
       z.object({

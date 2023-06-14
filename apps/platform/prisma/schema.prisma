@@ -53,9 +53,8 @@ model Keychain {
   publicKey             String
   revocationCertificate String
   verificationString    String
-
-  // This is a temporary flag to indicate that the keychain is for invited user
-  temporary             Boolean @default(false)
+  // tempEncryptedPrivateKey is encrypted using invited user's OTP and temporarily saved on the table; this record will be deleted after the invite is accepted
+  tempEncryptedPrivateKey  String?
 
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -91,8 +90,7 @@ model Invite {
   projectId           String
   createdAt           DateTime @default(now())
 
-  // Following two columns are encrypted and temporarily saved on the table; they are deleted after the invite is accepted
-  encryptedPrivateKey String
+  // hashedPassword hashed using argon2id and temporarily saved on the table; they are deleted after the invite is accepted
   hashedPassword      String
 
   // Someone who is inviting
