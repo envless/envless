@@ -103,7 +103,7 @@ const EncryptionSetup = ({
     await createKeychainMutation({
       publicKey: keypair.publicKey,
       verificationString: verificationString,
-      revocationCertificate: keypair.privateKey,
+      revocationCertificate: keypair.revocationCertificate,
     });
   };
 
@@ -166,7 +166,7 @@ const EncryptionSetup = ({
 
                   <div className="ml-3">
                     <div className="text-sm text-teal-400">
-                      <p>
+                      <p className="font-mono">
                         If you have not already, please download your PGP
                         private key. This key is generated on the client side
                         and never saved on our database, encrypted or otherwise.

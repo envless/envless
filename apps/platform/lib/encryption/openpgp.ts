@@ -6,7 +6,8 @@ Encrypts a plaintext with the given public keys using OpenPGP.
 @param publicKeys - An array of public keys to use for encryption.
 @returns The encrypted message as a string.
 */
-const encrypt = async (plaintext: string, publicKeys: string[]) => {
+
+export const encrypt = async (plaintext: string, publicKeys: string[]) => {
   const readPublicKeys = await Promise.all(
     publicKeys.map((armoredKey) => openpgp.readKey({ armoredKey })),
   );
