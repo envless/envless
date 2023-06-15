@@ -21,10 +21,11 @@ export const auth = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { name, email } = input;
+      const lowercaseEmail = email.toLowerCase();
 
       const currentUser = await prisma.user.findUnique({
         where: {
-          email,
+          email: lowercaseEmail,
         },
       });
 
@@ -41,7 +42,7 @@ export const auth = createRouter({
 
       try {
         const user = await prisma.user.create({
-          data: { name, email },
+          data: { name, email: lowercaseEmail },
         });
 
         return await sendVerificationEmail(user);

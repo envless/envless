@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
+import useAccess from "@/hooks/useAccess";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { ACCESS_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
@@ -17,12 +18,12 @@ import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 
 interface CheckAccessAndPermissionArgs {
   ctx: any;
-  projectId: string;
   userId: string;
+  projectId: string;
+  newRole?: UserRole;
   targetUserId: string;
   currentUserRole: UserRole;
   targetUserRole: UserRole;
-  newRole?: UserRole;
 }
 
 const checkAccessAndPermission = async ({
@@ -116,7 +117,7 @@ const checkAccessAndPermission = async ({
 };
 
 export const members = createRouter({
-  create: withAuth
+  initialize: withAuth
     .input(
       z.object({
         projectId: z.string(),
@@ -126,73 +127,189 @@ export const members = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       let isNewUser = false;
+      let publicKeys = [] as string[];
+      let encryptedProjectKey = "" as string;
       const currentUser = ctx.session.user;
       const { projectId, email, role } = input;
+      const hasAccess = await useAccess({
+        userId: currentUser.id,
+        projectId,
+      });
 
-      const selector = {
-        id: true,
-        name: true,
-        email: true,
-        access: {
-          where: {
-            AND: [{ projectId }],
-          },
-
-          select: {
-            role: true,
-            status: true,
-          },
-        },
-      };
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
+        });
+      }
 
       let member = await ctx.prisma.user.findUnique({
         where: { email },
-        select: selector,
       });
 
-      const accessData = {
-        create: {
-          projectId,
-          role,
-          status: MembershipStatus.pending,
-        },
-      };
-
       if (!member) {
+        isNewUser = true;
+
         member = await ctx.prisma.user.create({
-          data: { email, access: accessData },
-          select: selector,
+          data: { email },
+        });
+      } else {
+        const accesses = await ctx.prisma.access.findMany({
+          where: { projectId },
+          select: { userId: true },
         });
 
-        isNewUser = true;
+        const userIds = accesses.map((access) => access.userId);
+        const keychains = await ctx.prisma.keychain.findMany({
+          where: { userId: { in: userIds } },
+          select: { publicKey: true },
+        });
+
+        const projectKey = await ctx.prisma.encryptedProjectKey.findFirst({
+          where: { projectId },
+          select: { encryptedKey: true },
+        });
+
+        publicKeys = keychains.map((keychain) => keychain.publicKey);
+        encryptedProjectKey = projectKey?.encryptedKey as string;
       }
 
-      if (member.access.length === 0) {
-        member = await ctx.prisma.user.update({
-          where: { id: member.id },
-          data: { access: accessData },
-          select: selector,
+      const access = await ctx.prisma.access.findFirst({
+        where: {
+          projectId,
+          userId: member.id,
+        },
+      });
+
+      if (!access) {
+        await ctx.prisma.access.create({
+          data: {
+            projectId,
+            userId: member.id,
+            role,
+            status: MembershipStatus.pending,
+          },
         });
       }
 
       return {
         member,
         isNewUser,
+        publicKeys,
+        encryptedProjectKey,
+      };
+    }),
+
+  encrypt: withAuth
+    .input(
+      z.object({
+        memberId: z.string(),
+        projectId: z.string(),
+        hashedPassword: z.string().optional(),
+        publicKey: z.string().optional(),
+        verificationString: z.string().optional(),
+        revocationCertificate: z.string().optional(),
+        tempEncryptedPrivateKey: z.string().nullable(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id: userId } = ctx.session.user;
+      const hasAccess = await useAccess({ userId, projectId: input.projectId });
+
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
+        });
+      }
+
+      const {
+        memberId,
+        projectId,
+        publicKey,
+        hashedPassword,
+        verificationString,
+        tempEncryptedPrivateKey,
+        revocationCertificate,
+      } = input as {
+        memberId: string;
+        projectId: string;
+        publicKey: string;
+        hashedPassword: string;
+        verificationString: string;
+        tempEncryptedPrivateKey: string;
+        revocationCertificate: string;
+      };
+
+      await ctx.prisma.user.update({
+        where: { id: memberId },
+        data: { hashedPassword },
+      });
+
+      await ctx.prisma.keychain.upsert({
+        where: { userId: memberId },
+        update: {},
+        create: {
+          publicKey,
+          userId: memberId,
+          verificationString,
+          revocationCertificate,
+          tempEncryptedPrivateKey,
+        },
+      });
+
+      const accesses = await ctx.prisma.access.findMany({
+        where: { projectId },
+        select: { userId: true },
+      });
+
+      const userIds = accesses.map((access) => access.userId);
+      const keychains = await ctx.prisma.keychain.findMany({
+        where: { userId: { in: userIds } },
+        select: { publicKey: true },
+      });
+
+      const projectKey = await ctx.prisma.encryptedProjectKey.findUnique({
+        where: { projectId },
+        select: { encryptedKey: true },
+      });
+
+      const encryptedProjectKey = projectKey?.encryptedKey;
+      const publicKeys = keychains.map((keychain) => keychain.publicKey);
+
+      return {
+        publicKeys,
+        encryptedProjectKey,
       };
     }),
 
   invite: withAuth
     .input(
       z.object({
-        memberId: z.string(),
         projectId: z.string(),
-        publicKey: z.string().optional(),
-        encryptedPrivateKey: z.string().optional(),
+        memberId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { id: userId } = ctx.session.user;
-      const { memberId, projectId, publicKey, encryptedPrivateKey } = input;
+      const { projectId, memberId } = input;
+
+      const hasAccess = await useAccess({ userId, projectId });
+
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
+        });
+      }
+
+      console.log("*********===========>>>>>>>>>*********");
+      console.log({ projectId, memberId });
+
+      // send invite email to the member
     }),
 
   update: withAuth
@@ -315,7 +432,7 @@ export const members = createRouter({
 
       const existingAccess = await ctx.prisma.access.findFirst({
         where: {
-          AND: [{ user: { email } }, { projectId }],
+          AND: [{ user: { email: email.toLowerCase() } }, { projectId }],
         },
       });
 
@@ -358,7 +475,7 @@ export const members = createRouter({
           data: {
             invite: {
               id: invite.id,
-              email: email,
+              email: email.toLowerCase(),
               role: existingAccess.role,
             },
           },
@@ -378,7 +495,7 @@ export const members = createRouter({
 
       sendMail({
         subject: `Invitation to join ${project?.name} on Envless`,
-        to: email,
+        to: email.toLowerCase(),
         component: (
           <InviteLink
             headline={
@@ -493,7 +610,7 @@ export const members = createRouter({
       try {
         // Update the user name here
         const newUser = await ctx.prisma.user.update({
-          where: { email },
+          where: { email: email.toLowerCase() },
           data: { name },
         });
 
@@ -526,7 +643,7 @@ export const members = createRouter({
           data: {
             invite: {
               id: invite.id,
-              email: email,
+              email: email.toLowerCase(),
               role: updatedAccess.role,
             },
           },
