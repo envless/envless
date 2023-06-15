@@ -1,7 +1,7 @@
 import * as argon2 from "argon2-browser";
 import { randomBytes } from "crypto";
 import * as openpgp from "openpgp";
-import { generageKeyPair } from "@/lib/encryption/openpgp";
+import { encrypt, generageKeyPair } from "@/lib/encryption/openpgp";
 
 export const generatePassword = async (length: number) => {
   let generatedPassword = "";
@@ -23,7 +23,11 @@ export const generatePassword = async (length: number) => {
   return generatedPassword;
 };
 
-export const generateTempKeychain = async (name: string, email: string) => {
+export const generateTempKeychain = async (
+  id: string,
+  name: string,
+  email: string,
+) => {
   const keypair = await generageKeyPair(name as string, email);
   const pass = await generatePassword(24);
   const salt = randomBytes(32).toString("hex");
@@ -36,8 +40,8 @@ export const generateTempKeychain = async (name: string, email: string) => {
     type: argon2.ArgonType.Argon2id,
   });
 
+  const verificationString = (await encrypt(id, [publicKey])) as string;
   const encodedPrivateKey = new TextEncoder().encode(privateKey as string);
-
   const message = await openpgp.createMessage({ binary: encodedPrivateKey });
 
   const tempEncryptedPrivateKey = await openpgp.encrypt({
@@ -47,7 +51,9 @@ export const generateTempKeychain = async (name: string, email: string) => {
   });
 
   return {
+    pass,
     publicKey,
+    verificationString,
     revocationCertificate,
     tempEncryptedPrivateKey,
     hashedPassword: hashedPassword.encoded,

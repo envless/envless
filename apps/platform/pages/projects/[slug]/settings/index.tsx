@@ -82,6 +82,14 @@ export const SettingsPage = ({
         <div className="w-full lg:w-3/5">
           <form onSubmit={handleSubmit(submitForm)}>
             <Input
+              name="id"
+              label="Project ID"
+              defaultValue={currentProject.id}
+              register={register}
+              className="w-full"
+              disabled
+            />
+            <Input
               name="name"
               label="Project name"
               defaultValue={currentProject.name || ""}
