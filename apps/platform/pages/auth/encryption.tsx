@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
-import type { Keychain } from "@prisma/client";
+import type { Keychain, User } from "@prisma/client";
 import { getCsrfToken } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import EncryptionSetup from "@/components/auth/EncryptionSetup";
@@ -11,7 +11,7 @@ import prisma from "@/lib/prisma";
 
 type PageProps = {
   sessionId: string;
-  user: UserType;
+  currentUser: User;
   pageState: string;
   csrfToken: string;
   triggerSignout: boolean;
@@ -20,7 +20,7 @@ type PageProps = {
 
 export default function EncryptionPage({
   sessionId,
-  user,
+  currentUser,
   keychain,
   pageState,
   csrfToken,
@@ -36,10 +36,10 @@ export default function EncryptionPage({
     <Container>
       <div className="mt-16">
         {page === "verifyIdentify" ? (
-          <VerifyBrowser sessionId={sessionId} user={user} />
+          <VerifyBrowser sessionId={sessionId} user={currentUser} />
         ) : (
           <EncryptionSetup
-            user={user}
+            user={currentUser}
             page={page}
             keychain={keychain}
             setPage={setPage}
@@ -68,7 +68,11 @@ export async function getServerSideProps(context) {
 
   const currentUser = await prisma.user.findUnique({
     where: { id: user.id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      hashedPassword: true,
       keychain: {
         select: {
           publicKey: true,
@@ -78,14 +82,17 @@ export async function getServerSideProps(context) {
     },
   });
 
+  const keychain = currentUser?.keychain || null;
   const hasPrivateKey = user.privateKey !== null;
   const isPrivateKeyValid = user.isPrivateKeyValid;
-  const keychain = currentUser?.keychain || null;
+  const hasTempPrivateKey = user.tempEncryptedPrivateKey !== null;
 
   let pageState = "";
 
   if (!keychain) {
     pageState = "createKeychain";
+  } else if (keychain && hasTempPrivateKey) {
+    pageState = "verifyOneTimePassword";
   } else if (keychain && hasPrivateKey && isPrivateKeyValid) {
     pageState = "verifyIdentify";
   } else {
@@ -94,7 +101,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      user,
+      currentUser,
       pageState,
       sessionId,
       csrfToken,
