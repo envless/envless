@@ -3,6 +3,7 @@ import ProjectLayout from "@/layouts/Project";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import { MembershipStatus, Project, UserRole } from "@prisma/client";
+import { Clipboard } from "lucide-react";
 import { useForm } from "react-hook-form";
 import ProjectSettings from "@/components/projects/ProjectSettings";
 import { Button, Input, Paragraph, Toggle } from "@/components/theme";
@@ -88,7 +89,22 @@ export const SettingsPage = ({
               register={register}
               className="w-full"
               disabled
+              iconRight={
+                <Clipboard
+                  className="text-light h-4 w-4 cursor-pointer"
+                  strokeWidth={3}
+                  onClick={() => {
+                    navigator.clipboard.writeText(currentProject.id);
+                    showToast({
+                      type: "success",
+                      title: "Project ID copied",
+                      subtitle: "",
+                    });
+                  }}
+                />
+              }
             />
+
             <Input
               name="name"
               label="Project name"
