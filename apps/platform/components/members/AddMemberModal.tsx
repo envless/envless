@@ -35,7 +35,6 @@ const AddMemberModal = ({
   projectId,
   triggerRefetchMembers,
 }: AddMemberModalProps) => {
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
   const router = useRouter();
@@ -123,7 +122,7 @@ const AddMemberModal = ({
         tempEncryptedPrivateKey,
       } = await generateTempKeychain(id, name, email);
 
-      setPassword(pass);
+      const otp = pass;
       const memberId = id;
       memberEncryptionMutation.mutate(
         {
@@ -143,6 +142,7 @@ const AddMemberModal = ({
               publicKeys,
               encryptedProjectKey as string,
               closeModal,
+              otp,
             );
           },
 
@@ -166,6 +166,7 @@ const AddMemberModal = ({
     publicKeys: string[],
     encryptedProjectKey: string,
     closeModal: () => void,
+    otp?: string,
   ) => {
     const privateKey = session?.user.privateKey;
 
@@ -190,6 +191,7 @@ const AddMemberModal = ({
             {
               memberId,
               projectId,
+              otp: otp as string,
             },
             {
               onSuccess: () => {
