@@ -93,15 +93,24 @@ export const authOptions: NextAuthOptions = {
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
             isPrivateKeyValid: userInSession.isPrivateKeyValid ?? false,
+            tempEncryptedPrivateKey:
+              userInSession.tempEncryptedPrivateKey ?? null,
           };
         }
       } else if (user) {
         token.id = user.id;
+
+        const keychain = await prisma.keychain.findUnique({
+          where: { userId: user.id },
+          select: { tempEncryptedPrivateKey: true },
+        });
+
         token.user = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
           isPrivateKeyValid: session?.user?.isPrivateKeyValid ?? false,
+          tempEncryptedPrivateKey: keychain?.tempEncryptedPrivateKey ?? null,
         };
 
         // Add the locked information to the token
@@ -132,6 +141,7 @@ export const authOptions: NextAuthOptions = {
         twoFactorVerified: boolean;
         privateKey: string | null;
         isPrivateKeyValid: boolean;
+        tempEncryptedPrivateKey: string | null;
       } = token.user as any;
 
       if (user) {
@@ -149,6 +159,7 @@ export const authOptions: NextAuthOptions = {
             twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
             isPrivateKeyValid: user.isPrivateKeyValid ?? false,
+            tempEncryptedPrivateKey: user.tempEncryptedPrivateKey,
           } as any,
         };
       }
@@ -204,6 +215,7 @@ const UserSchema = z.object({
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
   isPrivateKeyValid: z.boolean().nullable(),
+  tempEncryptedPrivateKey: z.string().nullable(),
 });
 
 const SessionSchema = z.object({

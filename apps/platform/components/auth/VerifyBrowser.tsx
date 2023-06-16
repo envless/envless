@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { UserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
+import type { User } from "@prisma/client";
 import { Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { EmptyState, LoadingIcon } from "@/components/theme";
@@ -10,7 +10,7 @@ import log from "@/lib/log";
 
 type PageProps = {
   sessionId: string;
-  user: UserType;
+  user: User;
 };
 
 const VerifyBrowser = ({ sessionId, user }: PageProps) => {

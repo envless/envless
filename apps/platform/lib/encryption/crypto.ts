@@ -10,7 +10,7 @@ export const generatePassword = async (length: number) => {
     "0123456789" +
     "abcdefghijklmnopqrstuvwxyz" +
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-    "!#$%&()*+,-./:;<=>?@[\\]^_{|}~";
+    "!#$%&()*+,-.:;<=>?@[]^_{|}~";
 
   for (let i = 0; i < length; i++) {
     let randomNumber = crypto.getRandomValues(new Uint32Array(1))[0];

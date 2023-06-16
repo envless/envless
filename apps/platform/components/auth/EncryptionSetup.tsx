@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { UserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
-import type { Keychain } from "@prisma/client";
+import type { Keychain, User } from "@prisma/client";
+import * as argon2 from "argon2-browser";
+import { delay } from "lodash";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { Encryption as EncryptionIcon } from "@/components/icons";
@@ -14,9 +15,11 @@ import { Button, Hr, Input } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
 import OpenPGP from "@/lib/encryption/openpgp";
 
+const ALLOWED_RETRIES = 7;
+
 type PageProps = {
   setPage: any;
-  user: UserType;
+  user: User;
   page: string;
   keychain: Keychain;
   csrfToken: string;
@@ -42,12 +45,12 @@ const EncryptionSetup = ({
   const router = useRouter();
   const { data: session, update: updateSessionWith } = useSession();
   const [loading, setLoading] = useState(false);
+  const [retries, setRetries] = useState(0);
   const [privateKey, setPrivateKey] = useState("");
   const [publicKey, setPublicKey] = useState(keychain?.publicKey);
   const [verificationString, setVerificationString] = useState(
     keychain?.verificationString,
   );
-  const [str, setStr] = useState("hello");
 
   const { mutateAsync: createKeychainMutation, isLoading } =
     trpc.auth.keychain.useMutation({
@@ -61,7 +64,10 @@ const EncryptionSetup = ({
         };
 
         await updateSessionWith(newSession);
-        downloadAsTextFile("envless.txt", privateKey);
+        downloadAsTextFile(
+          `envless-privateKey-for-user-${user.id}.txt`,
+          privateKey,
+        );
 
         showToast({
           duration: 10000,
@@ -144,20 +150,89 @@ const EncryptionSetup = ({
     }
   };
 
+  const verifyOneTimePassword = async (data: { password: string }) => {
+    const { password } = data;
+
+    try {
+      const isValid = await argon2.verify({
+        pass: password,
+        encoded: user.hashedPassword as string,
+        type: argon2.ArgonType.Argon2id,
+      });
+    } catch (error) {
+      let message;
+
+      if (retries >= ALLOWED_RETRIES) {
+        message =
+          "You have exceeded the maximum number of allowed retries. Please ask your admin to send you a new invite.";
+        delay(() => {
+          signOut();
+        }, 4000);
+      } else if (retries >= 2) {
+        message = `You have ${
+          ALLOWED_RETRIES - retries
+        } attempts left. Please double check your password and try again.`;
+      } else {
+        message = "Please double check your password and try again.";
+      }
+
+      showToast({
+        duration: 5000,
+        type: "error",
+        title: "Password does not match!",
+        subtitle: message,
+      });
+
+      setRetries(retries + 1);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col px-5 py-32">
         <div className="bg-darker rounded-md px-10 py-12 sm:mx-auto sm:w-full sm:max-w-xl">
           <EncryptionIcon className="mx-auto mb-3 h-16 w-16 text-teal-400" />
-          <h2 className="mt-6 text-center text-2xl">
-            End to end encryption setup
-          </h2>
+          {page === "verifyOneTimePassword" ? (
+            <>
+              <h2 className="mt-6 text-center text-2xl">
+                Verify your one time password
+              </h2>
+
+              <p className="max-w mt-2 text-center text-sm text-gray-600">
+                Please enter the one time password sent to your email address.
+              </p>
+            </>
+          ) : (
+            <h2 className="mt-6 text-center text-2xl">
+              End to end encryption setup
+            </h2>
+          )}
 
           <Hr className="my-5" />
 
-          {page === "createKeychain" ? (
+          {page === "verifyOneTimePassword" && (
+            <div className="mx-auto max-w-sm">
+              <form onSubmit={handleSubmit(verifyOneTimePassword)}>
+                <Input
+                  type="password"
+                  name="password"
+                  label="One time password"
+                  required
+                  full
+                  register={register}
+                  errors={errors}
+                  autoComplete="off"
+                />
+
+                <Button type="submit" className="w-full">
+                  Verify one time password
+                </Button>
+              </form>
+            </div>
+          )}
+
+          {page === "createKeychain" && (
             <>
-              {/*  */}
               <div className="rounded-md bg-teal-400/10 px-4 py-6">
                 <div className="flex">
                   <div className="flex-shrink-0">
@@ -199,7 +274,9 @@ const EncryptionSetup = ({
                 </Button>
               </div>
             </>
-          ) : (
+          )}
+
+          {page === "verifyKeychain" && (
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mt-8">
                 <div className="text-light mb-2 text-sm">
