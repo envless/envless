@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import useAccess from "@/hooks/useAccess";
+import { sendInvitationEmail } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { ACCESS_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
@@ -288,13 +289,15 @@ export const members = createRouter({
   invite: withAuth
     .input(
       z.object({
+        otp: z.string(),
         projectId: z.string(),
         memberId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id: userId } = ctx.session.user;
-      const { projectId, memberId } = input;
+      const { user } = ctx.session;
+      const { id: userId } = user;
+      const { projectId, memberId, otp } = input;
 
       const hasAccess = await useAccess({ userId, projectId });
 
@@ -306,10 +309,14 @@ export const members = createRouter({
         });
       }
 
-      console.log("*********===========>>>>>>>>>*********");
-      console.log({ projectId, memberId });
+      const params = {
+        otp,
+        projectId,
+        toId: memberId,
+        fromId: userId,
+      };
 
-      // send invite email to the member
+      await sendInvitationEmail(params);
     }),
 
   update: withAuth
