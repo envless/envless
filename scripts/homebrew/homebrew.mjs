@@ -18,6 +18,27 @@ const __dirname = path.dirname(__filename);
 
 const { GITHUB_SHA_SHORT } = process.env;
 
+const octokit = new Octokit({
+  auth: process.env.TAP_GITHUB_TOKEN,
+});
+
+async function checkIfRepositoryEmpty() {
+  try {
+    const { data } = await octokit.repos.getContent({
+      owner: "envless",
+      repo: "homebrew",
+      path: "",
+    });
+
+    return data.length === 0;
+  } catch (error) {
+    if (error.status === 404) {
+      return true;
+    }
+    throw error;
+  }
+}
+
 async function getEnvlessFormulaTemplate() {
   const template = fs
     .readFileSync(path.join(__dirname, "envless.rb"))
@@ -27,9 +48,23 @@ async function getEnvlessFormulaTemplate() {
 }
 
 async function updateEnvlessFormula(template) {
-  const octokit = new Octokit({
-    auth: process.env.TAP_GITHUB_TOKEN,
-  });
+  const isRepositoryEmpty = await checkIfRepositoryEmpty();
+
+  if (isRepositoryEmpty) {
+    console.log("updating formula....");
+
+    await octokit.repos.createOrUpdateFileContents({
+      owner: "envless",
+      repo: "homebrew",
+      path: "Formula/envless.rb",
+      message: "Update formula",
+      content: Buffer.from(template).toString("base64"),
+      sha: sha,
+      branch: "master",
+    });
+
+    return;
+  }
 
   console.log("getting repository content...");
 
@@ -39,7 +74,7 @@ async function updateEnvlessFormula(template) {
     owner: "envless",
     repo: "homebrew",
     path: "Formula/envless.rb",
-    branch: "main",
+    branch: "master",
   });
 
   console.log("updating formula....");
@@ -51,7 +86,7 @@ async function updateEnvlessFormula(template) {
     message: "Update formula",
     content: Buffer.from(template).toString("base64"),
     sha: sha,
-    branch: "main",
+    branch: "master",
   });
 
   console.log("formula updated successfully...");
