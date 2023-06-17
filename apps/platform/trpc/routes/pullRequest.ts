@@ -7,7 +7,7 @@ import {
   PULL_REQUEST_MERGED,
   PULL_REQUEST_REOPENED,
 } from "@/types/auditActions";
-import { PullRequestStatus } from "@prisma/client";
+import { PullRequestStatus, SecretVersion } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
@@ -76,6 +76,40 @@ export const pullRequest = createRouter({
           project: true,
         },
       });
+
+      const currentBranchSecrets = await prisma.secret.findMany({
+        where: {
+          branchId: pr.currentBranchId,
+        },
+      });
+
+      for (let currentBranchSecret of currentBranchSecrets) {
+        await prisma.secretVersion.create({
+          data: {
+            encryptedKey: currentBranchSecret.encryptedKey as string,
+            encryptedValue: currentBranchSecret.encryptedValue as string,
+            pullRequestId: pr.id,
+            currentBranchId: pr.currentBranchId,
+          },
+        });
+      }
+
+      const baseBranchSecrets = await prisma.secret.findMany({
+        where: {
+          branchId: pr.baseBranchId,
+        },
+      });
+
+      for (let baseBranchSecret of baseBranchSecrets) {
+        await prisma.secretVersion.create({
+          data: {
+            encryptedKey: baseBranchSecret.encryptedKey as string,
+            encryptedValue: baseBranchSecret.encryptedValue as string,
+            pullRequestId: pr.id,
+            baseBranchId: pr.baseBranchId,
+          },
+        });
+      }
 
       await Audit.create({
         createdById: user.id,
@@ -170,9 +204,10 @@ export const pullRequest = createRouter({
       });
 
       // replace the secrets of base branch with current branch
-      const currentBranchSecrets = await ctx.prisma.secret.findMany({
+      const currentBranchSecrets = await ctx.prisma.secretVersion.findMany({
         where: {
-          branchId: pullRequest.currentBranchId,
+          currentBranchId: pullRequest.currentBranchId,
+          pullRequestId: pullRequest.id,
         },
       });
 
@@ -354,5 +389,59 @@ export const pullRequest = createRouter({
       });
 
       return updatedPr;
+    }),
+  getVersionedSecrets: withAuth
+    .input(
+      z.object({
+        pullRequestId: z.string(),
+        branchId: z.string(),
+        forCurrentBranch: z.boolean(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const branch = await ctx.prisma.branch.findUnique({
+        where: {
+          id: input.branchId,
+        },
+
+        select: {
+          id: true,
+          name: true,
+          project: {
+            select: {
+              id: true,
+              name: true,
+              encryptedProjectKey: {
+                select: {
+                  encryptedKey: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      let secretVersions: SecretVersion[] = [];
+
+      if (input.forCurrentBranch) {
+        secretVersions = await ctx.prisma.secretVersion.findMany({
+          where: {
+            pullRequestId: input.pullRequestId,
+            currentBranchId: input.branchId,
+          },
+        });
+      } else {
+        secretVersions = await ctx.prisma.secretVersion.findMany({
+          where: {
+            pullRequestId: input.pullRequestId,
+            baseBranchId: input.branchId,
+          },
+        });
+      }
+
+      return {
+        branch,
+        secrets: secretVersions,
+      };
     }),
 });
