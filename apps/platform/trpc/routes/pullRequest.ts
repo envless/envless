@@ -36,6 +36,9 @@ export const pullRequest = createRouter({
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
     }),
   create: withAuth
