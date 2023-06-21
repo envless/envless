@@ -52,4 +52,4 @@ jobs:
       - name: promote
         run: |
           SHA_SHORT=$(echo "${{ github.sha }}" | cut -c 1-7)
-          yarn oclif promote --xz --root="./apps/cli" --indexes --version=${{ inputs.version }} --sha=$SHA_SHORT --channel=${{ fromJSON(inputs.isStableRelease) && 'stable' || 'beta' }}
+          yarn oclif promote --deb --xz --root="./apps/cli" --indexes --version=${{ inputs.version }} --sha=$SHA_SHORT --channel=${{ fromJSON(inputs.isStableRelease) && 'stable' || 'beta' }}
