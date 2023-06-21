@@ -135,6 +135,7 @@ export default function PullRequestDetailPage({
                     await mergePrMutationAync({
                       pullRequest,
                     });
+                    router.replace(router.asPath);
                   }}
                   className="float-right ml-3"
                   leftIcon={
@@ -161,6 +162,7 @@ export default function PullRequestDetailPage({
                     };
 
                     await closePrMutateAsync({ pullRequest: prToClose });
+                    router.replace(router.asPath);
                   }}
                 >
                   Close pull request
@@ -186,7 +188,11 @@ export default function PullRequestDetailPage({
       </div>
 
       <div className="mt-8 w-full">
-        <EnvDiffViewer baseBranch={baseBranch} currentBranch={currentBranch} />
+        <EnvDiffViewer
+          pullRequestId={pullRequest.id}
+          baseBranch={baseBranch}
+          currentBranch={currentBranch}
+        />
       </div>
     </ProjectLayout>
   );
