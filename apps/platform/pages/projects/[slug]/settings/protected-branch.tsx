@@ -237,6 +237,7 @@ export const ProtectedBranch = ({
               icon: ShieldCheck,
               actionText: "",
             }}
+            overflow="overflow-visible"
             hasFilters={false}
           />
         </div>
