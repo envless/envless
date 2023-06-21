@@ -27,6 +27,7 @@ interface TableProps<T extends object> {
   data: T[];
   hasFilters?: boolean;
   variant?: "dark" | "darker";
+  overflow?: "overflow-visible" | "overflow-x-auto";
   columns: ColumnDef<T>[];
   visibleColumns?: VisibilityState | undefined;
   filterOptions?: FilterOptions;
@@ -43,6 +44,7 @@ export function Table<T extends object>({
   visibleColumns = {},
   hasFilters = true,
   variant = "dark",
+  overflow = "overflow-x-auto",
   data,
   columns,
   filterOptions,
@@ -115,7 +117,7 @@ export function Table<T extends object>({
             </div>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto">
+          <div className={clsx("w-full", overflow)}>
             <table className="divide-light min-w-full divide-y">
               <tbody
                 className={clsx({

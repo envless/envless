@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useSecret from "@/hooks/useSecret";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
+import useVersionedSecret from "@/hooks/useVersionedSecret";
 import { Branch } from "@prisma/client";
 import { union } from "lodash";
 import { Loader } from "lucide-react";
@@ -10,6 +10,7 @@ import BaseEmptyState from "@/components/theme/BaseEmptyState";
 interface EnvDiffViewerProps {
   baseBranch: Branch;
   currentBranch: Branch;
+  pullRequestId: string;
 }
 
 const LoadingComponent = () => (
@@ -23,12 +24,21 @@ const LoadingComponent = () => (
 export default function EnvDiffViewer({
   baseBranch,
   currentBranch,
+  pullRequestId,
 }: EnvDiffViewerProps) {
   const [loading, setLoading] = useState(true);
   const [baseEnv, setBaseEnv] = useState<string[]>([]);
   const [currentEnv, setCurrentEnv] = useState<string[]>([]);
-  const { secrets: currentSecrets } = useSecret({ branchId: currentBranch.id });
-  const { secrets: baseSecrets } = useSecret({ branchId: baseBranch.id });
+  const { secrets: currentSecrets } = useVersionedSecret({
+    branchId: currentBranch.id,
+    forCurrentBranch: true,
+    pullRequestId: pullRequestId,
+  });
+  const { secrets: baseSecrets } = useVersionedSecret({
+    branchId: baseBranch.id,
+    forCurrentBranch: false,
+    pullRequestId: pullRequestId,
+  });
 
   useUpdateEffect(() => {
     let baseSecretArray = [] as string[];
