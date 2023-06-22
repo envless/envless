@@ -1,0 +1,23 @@
+FROM node:18.16-alpine3.18
+
+RUN set -ex; \
+    \
+    apk update; \
+    apk add libc6-compat; \
+    yarn global add dotenv-cli; \
+    yarn global add turbo; \
+    rm -rf /var/cache/apt/*
+
+WORKDIR /docs
+
+COPY . .
+
+RUN set -ex; \
+    \
+    turbo prune --scope=docs --docker; \
+    cp -r out/json/ out/full/ out/yarn.lock /docs/; \
+    yarn install --immutable --immutable-cache --check-cache;
+
+EXPOSE 3001
+
+ENTRYPOINT ["deploy/entrypoint.sh"]

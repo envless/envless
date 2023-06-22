@@ -31,24 +31,42 @@ In order to not waste your time implementing a change that has already been decl
 - [Install Docker](https://docs.docker.com/get-docker/) on your machine.
 - [Install Docker Compose](https://docs.docker.com/compose/install/) on your machine.
 - [Fork the repository](https://github.com/envless/envless/fork)
+
 - Clone the repository
+
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
+
 - Copy `.env.example` to `.env`
+
   ```bash
-  cp .env.example .env
+  cp .env.example .env`
   ```
-- Run the following command to start the development environment
+
+- Run the following command to start the development environment on particular service
+
   ```bash
-  docker-compose up -d
+  # Replace ${service} with www, docs or platform
+  docker compose up ${service} --build
+
+  # Or simply run the following command if you have already built the images
+  docker compose up ${service}
   ```
-- Run the following command to migrate and seed the database
-  ```bash
-  docker-compose exec platform yarn db:migrate
-  docker-compose exec platform yarn db:seed
-  ```
-- Your server will be up and running on `http://localhost:3000`
+
+  > **Note**
+  > Database migration and seeds are run automatilly when running docker by default, to change that behaviour and speedup docker, you could change `command:` directive in `compose.yml:33` making it look like:
+
+```yaml
+command: platform
+```
+
+> so that `entrypoint.sh` will not run generate, migrate and seed commands everytime you start the server.
+
+- Running `docker compose up --build` will start all the services on their respective ports.
+  - platform: `http://localhost:3000`
+  - docs: `http://localhost:3001`
+  - www: `http://localhost:3002`
 
 ---
 
@@ -57,14 +75,19 @@ In order to not waste your time implementing a change that has already been decl
 > This has been tested on Mac OS and works really well. So, if you are on Mac this setup performs way better than docker.
 
 - [Fork the repository](https://github.com/envless/envless/fork)
+
 - Clone the repository
+
   ```bash
   git clone https://github.com/<your-github-name>/envless.git
   ```
+
 - Copy `.env.example` to `.env`
+
   ```bash
   cp .env.example .env
   ```
+
 - Install latest version of node and yarn
 - Install latest version of [postgres database](#postgres)
 - Create database `envless` in postgres database
@@ -83,13 +106,17 @@ In order to not waste your time implementing a change that has already been decl
   yarn db:seed
   ```
 
-- Run the following command to start the development server
+- Run the following command to start the development environment on particular service
 
   ```bash
-  yarn dev
+  # Replace ${service} with www, docs or platform
+  yarn dev --filter=${service}
   ```
 
-- Your server will be up and running on `http://localhost:3000`
+- Running `yarn dev` will start all the services on their respective ports.
+  - platform: `http://localhost:3000`
+  - docs: `http://localhost:3001`
+  - www: `http://localhost:3002`
 
 ---
 

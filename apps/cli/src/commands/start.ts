@@ -128,9 +128,10 @@ export default class Start extends Command {
 
   async getEncryptedSecretsAndProjectKey() {
     const config = await getCliConfigFromKeyStore();
-    const envless = await readFromDotEnvless();
+    const envless = readFromDotEnvless();
     const cliId = process.env.ENVLESS_CLI_ID || config?.id;
     const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
+
     const { projectId, branch } = envless;
 
     loader.start(`Fetching secrets...`);

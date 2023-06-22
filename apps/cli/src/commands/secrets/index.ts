@@ -60,7 +60,7 @@ export default class Secrets extends Command {
 
     const cliId = process.env.ENVLESS_CLI_ID || config?.id;
     const cliToken = process.env.ENVLESS_CLI_TOKEN || config?.token;
-    const envless = await readFromDotEnvless();
+    const envless = readFromDotEnvless();
     const { projectId, branch: branchFromKeyStore } = envless;
 
     const selectedBranch = branch || branchFromKeyStore;

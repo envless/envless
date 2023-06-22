@@ -24,7 +24,7 @@ import { FieldValues, UseFormRegister } from "react-hook-form";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
-  help?: string;
+  help?: React.ReactNode | string;
   register: UseFormRegister<FieldValues>;
   errors?: object;
   required?: boolean;

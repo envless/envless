@@ -6,6 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { LockedUser } from "@prisma/client";
 import sendMail from "emails";
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import GithubProvider from "next-auth/providers/github";
 import GitlabProvider from "next-auth/providers/gitlab";
@@ -14,6 +15,19 @@ import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { type: "text" },
+        password: { type: "password" },
+      },
+
+      async authorize(credentials, req) {
+        console.log({ credentials, req });
+        return null;
+      },
+    }),
+
     EmailProvider({
       sendVerificationRequest({ identifier, url }) {
         sendMail({
@@ -78,6 +92,7 @@ export const authOptions: NextAuthOptions = {
             ...userInSession,
             twoFactorVerified: userInSession.twoFactorVerified ?? false,
             privateKey: userInSession.privateKey ?? null,
+            isPrivateKeyValid: userInSession.isPrivateKeyValid ?? false,
           };
         }
       } else if (user) {
@@ -86,6 +101,7 @@ export const authOptions: NextAuthOptions = {
           ...user,
           twoFactorVerified: session?.user?.twoFactorVerified ?? false,
           privateKey: session?.user?.privateKey ?? null,
+          isPrivateKeyValid: session?.user?.isPrivateKeyValid ?? false,
         };
 
         // Add the locked information to the token
@@ -105,6 +121,7 @@ export const authOptions: NextAuthOptions = {
 
       return token;
     },
+
     async session({ session, token }) {
       const user: {
         id: string;
@@ -114,10 +131,12 @@ export const authOptions: NextAuthOptions = {
         locked: LockedUser | null;
         twoFactorVerified: boolean;
         privateKey: string | null;
+        isPrivateKeyValid: boolean;
       } = token.user as any;
 
       if (user) {
         const sessionId = token.sessionId as string;
+
         session = {
           ...session,
           id: sessionId,
@@ -129,6 +148,7 @@ export const authOptions: NextAuthOptions = {
             locked: user.locked,
             twoFactorVerified: user.twoFactorVerified,
             privateKey: user.privateKey,
+            isPrivateKeyValid: user.isPrivateKeyValid ?? false,
           } as any,
         };
       }
@@ -183,6 +203,7 @@ const UserSchema = z.object({
   twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
   privateKey: z.string().nullable(),
+  isPrivateKeyValid: z.boolean().nullable(),
 });
 
 const SessionSchema = z.object({

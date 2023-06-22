@@ -7,7 +7,7 @@ import log from "@/lib/log";
 export const config = {
   matcher: [
     "/auth/2fa",
-    "/auth/verify",
+    "/auth/encryption",
 
     "/projects",
     "/projects/:path*",
@@ -27,7 +27,7 @@ export default withAuth(
     const authUrl = `${origin}/login`;
     const twoFaUrl = `${origin}/auth/2fa`;
     const forbidden = `${origin}/error/forbidden`;
-    const verifyAuthUrl = `${origin}/auth/verify`;
+    const encryptionUrl = `${origin}/auth/encryption`;
 
     const sessionId = token?.sessionId as string;
     const { isBot } = userAgent(req);
@@ -41,7 +41,7 @@ export default withAuth(
       url.pathname === "/login" ||
       url.pathname === "/signup" ||
       url.pathname === "/auth/2fa" ||
-      url.pathname === "/auth/verify"
+      url.pathname === "/auth/encryption"
     ) {
       log("If current page is auth, 2fa or verify auth page, skip");
       return NextResponse.next();
@@ -52,7 +52,20 @@ export default withAuth(
       return NextResponse.redirect(authUrl);
     }
 
-    const { twoFactorEnabled, twoFactorVerified } = user;
+    const {
+      twoFactorEnabled,
+      twoFactorVerified,
+      privateKey,
+      isPrivateKeyValid,
+    } = user;
+    log("Loading user: ", user);
+
+    if (!privateKey || !isPrivateKeyValid) {
+      log(
+        "If privateKey is not present, or invalid, redirect to verify auth page",
+      );
+      return NextResponse.redirect(encryptionUrl);
+    }
 
     if (twoFactorEnabled && twoFactorVerified) {
       log("If two factor is enabled and verified, skip");

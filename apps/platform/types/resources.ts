@@ -1,3 +1,4 @@
+import { Key } from "react";
 import type {
   LockedUser,
   MembershipStatus,
@@ -10,12 +11,14 @@ export interface UserType {
   name?: string;
   email: string;
   image?: string;
-  role: UserRole;
+  role?: UserRole;
+  privateKey: string;
   twoFactorEnabled: boolean;
   twoFactorVerified: boolean;
   locked: LockedUser | null;
-  privateKey: string | null;
+  isPrivateKeyValid: boolean;
 }
+
 export interface MemberType {
   id: string;
   projectInviteId: string | null;

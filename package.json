@@ -18,6 +18,7 @@
     "test:e2e": "dotenv -- turbo run test:e2e",
     "db:generate": "dotenv -- turbo run db:generate",
     "db:migrate": "dotenv -- yarn --cwd ./apps/platform/ prisma migrate dev",
+    "docker:db:migrate": "dotenv -- yarn --cwd /platform/ prisma migrate dev",
     "db:seed": "dotenv -- turbo run db:seed",
     "db:reset": "dotenv -- turbo run db:reset",
     "db:studio": "dotenv -- turbo run db:studio"
@@ -25,7 +26,7 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "eslint-config-prettier": "^8.7.0",
-    "prettier": "^2.8.7",
+    "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "turbo": "^1.9.3"
   },

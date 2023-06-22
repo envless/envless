@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { PullRequestStatus } from "@prisma/client";
 import PullRequestStatusBadge from "./PullRequestStatusBadge";
 
@@ -19,6 +20,9 @@ export default function DetailedPrTitle({
   base,
   current,
 }: DetailedPrTitleProps) {
+  const router = useRouter();
+  const projectSlug = router.query.slug as string;
+
   return (
     <div className="w-full">
       <h1 className="text-lighter text-lg font-normal leading-relaxed">
@@ -30,11 +34,17 @@ export default function DetailedPrTitle({
         <PullRequestStatusBadge status={status} />
         <div className="text-light text-xs">
           {author} opened a pull request to merge{" "}
-          <Link href="#" className="text-teal-400 hover:underline">
+          <Link
+            href={`/projects/${projectSlug}/tree/${current}`}
+            className="text-teal-400 hover:underline"
+          >
             {current}
           </Link>{" "}
           into{" "}
-          <Link href="#" className="text-teal-400 hover:underline">
+          <Link
+            href={`/projects/${projectSlug}/tree/${base}`}
+            className="text-teal-400 hover:underline"
+          >
             {base}
           </Link>
         </div>

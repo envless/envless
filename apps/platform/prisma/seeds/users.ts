@@ -1,7 +1,13 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
-import { UserType } from "./types";
+
+type UserType = {
+  id?: string;
+  name: string;
+  email: string;
+  image?: string;
+};
 
 const prisma = new PrismaClient();
 

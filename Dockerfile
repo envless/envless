@@ -14,7 +14,7 @@ RUN turbo prune --scope=platform --docker
 FROM node:18-alpine AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
-RUN npm install -g dotenv-cli
+RUN yarn global add dotenv-cli 
 
 WORKDIR /app
 RUN mkdir -p packages/ui

@@ -4,7 +4,6 @@ import { account } from "@/trpc/routes/account";
 import { auth } from "@/trpc/routes/auth";
 import { branches } from "@/trpc/routes/branch";
 import { cli } from "@/trpc/routes/cli";
-import { keys } from "@/trpc/routes/keys";
 import { members } from "@/trpc/routes/members";
 import { projects } from "@/trpc/routes/projects";
 import { pullRequest } from "@/trpc/routes/pullRequest";
@@ -14,7 +13,6 @@ import { secrets } from "./routes/secret";
 
 export const appRouter = createRouter({
   cli,
-  keys,
   auth,
   account,
   projects,
