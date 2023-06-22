@@ -178,7 +178,7 @@ export const auth = createRouter({
           },
         });
 
-        if (!currentUser?.name) {
+        if (name && !currentUser?.name) {
           await prisma.user.update({
             where: {
               id: user.id,

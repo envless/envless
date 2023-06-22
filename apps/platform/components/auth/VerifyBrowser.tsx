@@ -4,6 +4,7 @@ import { trpc } from "@/utils/trpc";
 import type { User } from "@prisma/client";
 import { Shield } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { Container } from "@/components/theme";
 import { EmptyState, LoadingIcon } from "@/components/theme";
 import { getFingerprint } from "@/lib/client";
 import log from "@/lib/log";
@@ -48,13 +49,17 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
   });
 
   return (
-    <EmptyState
-      icon={<Shield className="m-3 mx-auto h-12 w-12" />}
-      title={`Please wait...`}
-      subtitle="While we verify your identity and your browser integrity."
-    >
-      <LoadingIcon className="h-6 w-6" />
-    </EmptyState>
+    <Container>
+      <div className="mt-16">
+        <EmptyState
+          icon={<Shield className="m-3 mx-auto h-12 w-12" />}
+          title={`Please wait...`}
+          subtitle="While we verify your identity and your browser integrity."
+        >
+          <LoadingIcon className="h-6 w-6" />
+        </EmptyState>
+      </div>
+    </Container>
   );
 };
 

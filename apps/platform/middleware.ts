@@ -6,8 +6,7 @@ import log from "@/lib/log";
 
 export const config = {
   matcher: [
-    "/auth/2fa",
-    "/auth/encryption",
+    "/auth/:path*",
 
     "/projects",
     "/projects/:path*",
@@ -24,24 +23,27 @@ export default withAuth(
     const { token } = req.nextauth;
     const { user } = token as any;
 
-    const authUrl = `${origin}/login`;
-    const twoFaUrl = `${origin}/auth/2fa`;
-    const forbidden = `${origin}/error/forbidden`;
-    const encryptionUrl = `${origin}/auth/encryption`;
+    const loginPath = `${origin}/login`;
+    const otpPath = `${origin}/auth/otp`;
+    const verifyPath = `${origin}/auth/verify`;
+    const twoFactorPath = `${origin}/auth/2fa`;
+    const forbiddenPath = `${origin}/error/forbidden`;
+    const verifyKeychainPath = `${origin}/auth/encryption/verify`;
+    const downloadKeychainPath = `${origin}/auth/encryption/download`;
 
     const sessionId = token?.sessionId as string;
     const { isBot } = userAgent(req);
 
     if (isBot) {
       log("If it's a bot, redirect to forbidden page");
-      return NextResponse.redirect(forbidden);
+      return NextResponse.redirect(forbiddenPath);
     }
 
     if (
       url.pathname === "/login" ||
       url.pathname === "/signup" ||
       url.pathname === "/auth/2fa" ||
-      url.pathname === "/auth/encryption"
+      url.pathname === "/auth/verify"
     ) {
       log("If current page is auth, 2fa or verify auth page, skip");
       return NextResponse.next();
@@ -49,22 +51,25 @@ export default withAuth(
 
     if (!token || !user || !sessionId) {
       log("If token, user or sessionId is not present, redirect to login page");
-      return NextResponse.redirect(authUrl);
+      return NextResponse.redirect(loginPath);
     }
 
     const {
+      privateKey,
       twoFactorEnabled,
       twoFactorVerified,
-      privateKey,
       isPrivateKeyValid,
     } = user;
     log("Loading user: ", user);
 
-    if (!privateKey || !isPrivateKeyValid) {
+    if (
+      (!otpPath || !verifyKeychainPath || !downloadKeychainPath) &&
+      (!privateKey || !isPrivateKeyValid)
+    ) {
       log(
         "If privateKey is not present, or invalid, redirect to verify auth page",
       );
-      return NextResponse.redirect(encryptionUrl);
+      return NextResponse.redirect(verifyPath);
     }
 
     if (twoFactorEnabled && twoFactorVerified) {
@@ -75,7 +80,7 @@ export default withAuth(
     if (twoFactorEnabled && !twoFactorVerified) {
       log("If two factor is enabled but not verified, redirect to 2fa page");
 
-      return NextResponse.redirect(twoFaUrl);
+      return NextResponse.redirect(twoFactorPath);
     }
 
     log("If two factor is not enabled, skip");
