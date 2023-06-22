@@ -50,6 +50,7 @@
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
     "date-fns": "^2.29.3",
+    "debug": "^4.3.4",
     "device-detector-js": "^3.0.3",
     "fuse.js": "^6.6.2",
     "isbot": "^3.6.10",
