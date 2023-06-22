@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Hr } from "@/components/theme";
 import TwoFactorForm from "@/components/twoFactorForm";
-import log from "@/lib/log";
+
+const debug = require("debug")("envless:client");
 
 const TwoFactorAuth = () => {
   const router = useRouter();
@@ -36,7 +37,7 @@ const TwoFactorAuth = () => {
 
           <TwoFactorForm
             onConfirm={() => {
-              log("2fa confirmed on the page, redirecting...");
+              debug("2fa confirmed on the page, redirecting...");
               router.push("/projects");
             }}
           />

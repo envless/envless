@@ -14,8 +14,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import QRCode from "react-qr-code";
 import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import AES from "@/lib/encryption/aes";
-import log from "@/lib/log";
 import prisma from "@/lib/prisma";
+
+const debug = require("debug")("envless:client");
 
 type Props = {
   user: User;
@@ -70,7 +71,7 @@ const SecuritySettings: React.FC<Props> = ({ user, twoFactor }) => {
     },
 
     onError: (error) => {
-      log("Error while disabling 2fa", error);
+      debug("Error while disabling 2fa", error);
     },
   });
 

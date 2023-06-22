@@ -7,7 +7,8 @@ import Fuse from "fuse.js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Dropdown, Hr, Logo, Popover, ScrollArea } from "@/components/theme";
-import log from "@/lib/log";
+
+const debug = require("debug")("envless:client");
 
 const Nav = ({ ...props }) => {
   const router = useRouter();
@@ -28,11 +29,11 @@ const Nav = ({ ...props }) => {
     },
     {
       title: "Documentation",
-      handleClick: () => log("Docs"),
+      handleClick: () => debug("Docs"),
     },
     {
       title: "Changelog",
-      handleClick: () => log("Changelog"),
+      handleClick: () => debug("Changelog"),
     },
     {
       title: "Sign out",

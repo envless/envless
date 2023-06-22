@@ -7,7 +7,8 @@ import { signOut } from "next-auth/react";
 import { Container } from "@/components/theme";
 import { EmptyState, LoadingIcon } from "@/components/theme";
 import { getFingerprint } from "@/lib/client";
-import log from "@/lib/log";
+
+const debug = require("debug")("envless:client");
 
 type PageProps = {
   sessionId: string;
@@ -28,7 +29,7 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
     },
 
     onError: (error) => {
-      log("Error", error);
+      debug("Error", error);
       signOut();
     },
   });

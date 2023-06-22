@@ -8,8 +8,9 @@ import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
-import log from "@/lib/log";
 import prisma from "@/lib/prisma";
+
+const debug = require("debug")("envless:trpc");
 
 export const auth = createRouter({
   signup: withoutAuth
@@ -134,7 +135,7 @@ export const auth = createRouter({
         );
 
         if (!previousSession) {
-          log("Logging in for the first time on this device");
+          debug("Logging in for the first time on this device");
 
           sendMail({
             subject: "Envless security alert: New sign-in",
