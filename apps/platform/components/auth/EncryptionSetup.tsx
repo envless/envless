@@ -8,12 +8,13 @@ import * as argon2 from "argon2-browser";
 import { delay } from "lodash";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import * as openpgp from "openpgp";
 import { useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import { Encryption as EncryptionIcon } from "@/components/icons";
 import { Button, Hr, Input } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
-import OpenPGP from "@/lib/encryption/openpgp";
+import { decrypt, encrypt, generageKeyPair } from "@/lib/encryption/openpgp";
 
 const ALLOWED_RETRIES = 7;
 
@@ -94,12 +95,9 @@ const EncryptionSetup = ({
   const createKeychain = async (data: KeychainParams) => {
     setLoading(true);
 
-    const keypair = await OpenPGP.generageKeyPair(
-      user.name as string,
-      user.email,
-    );
+    const keypair = await generageKeyPair(user.name as string, user.email);
 
-    const verificationString = (await OpenPGP.encrypt(user.id, [
+    const verificationString = (await encrypt(user.id, [
       keypair.publicKey,
     ])) as string;
 
@@ -115,7 +113,7 @@ const EncryptionSetup = ({
 
   const onSubmit = async (data: KeychainParams) => {
     try {
-      const decryptedVerificationString = await OpenPGP.decrypt(
+      const decryptedVerificationString = await decrypt(
         verificationString,
         privateKey,
       );
@@ -154,19 +152,36 @@ const EncryptionSetup = ({
     const { password } = data;
 
     try {
-      const isValid = await argon2.verify({
+      await argon2.verify({
         pass: password,
         encoded: user.hashedPassword as string,
         type: argon2.ArgonType.Argon2id,
       });
+
+      const tempEncryptedPrivateKey = session?.user
+        .tempEncryptedPrivateKey as any;
+
+      const privateKeyMessage = await openpgp.readMessage({
+        armoredMessage: tempEncryptedPrivateKey,
+      });
+
+      const { data: decrypted } = await openpgp.decrypt({
+        message: privateKeyMessage,
+        passwords: [password],
+      });
+
+      debugger;
+
+      // TODO
     } catch (error) {
+      debugger;
       let message;
 
       if (retries >= ALLOWED_RETRIES) {
         message =
           "You have exceeded the maximum number of allowed retries. Please ask your admin to send you a new invite.";
         delay(() => {
-          signOut();
+          // signOut();
         }, 4000);
       } else if (retries >= 2) {
         message = `You have ${
@@ -242,14 +257,19 @@ const EncryptionSetup = ({
                   <div className="ml-3">
                     <div className="text-sm text-teal-400">
                       <p className="font-mono">
-                        If you have not already, please download your PGP
-                        private key. This key is generated on the client side
-                        and never saved on our database, encrypted or otherwise.
-                        We recommend you further encrypt and store this private
-                        key to your most trusted password manager(eg.
-                        BitWarden), your computer's keychain or on a safe place.
-                        Secrets cannot be decrypted without this key and you
-                        will need this key everytime you login.
+                        Please download your PGP private key. We recommend you
+                        further encrypt and store this private key to your most
+                        trusted password manager(eg. BitWarden), your computer's
+                        keychain or on a safe place. Secrets cannot be decrypted
+                        without this key and you will need this key everytime
+                        you login.
+                      </p>
+
+                      <p className="mt-5 font-mono">
+                        <strong>Note:</strong> You will not see this screen
+                        again, so please make sure you download your private
+                        key. If you lose your private key, you will not be able
+                        to decrypt your secrets.
                       </p>
                     </div>
                   </div>
@@ -258,7 +278,7 @@ const EncryptionSetup = ({
 
               <div className="mt-8">
                 <Button
-                  sr={"Generate and download encryption keys"}
+                  sr={"Download your PGP private key"}
                   type="submit"
                   width="full"
                   disabled={loading}
@@ -270,7 +290,7 @@ const EncryptionSetup = ({
                     <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
                   }
                 >
-                  Generate and download your private key
+                  Download your PGP private key
                 </Button>
               </div>
             </>
