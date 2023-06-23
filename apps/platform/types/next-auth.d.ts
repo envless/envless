@@ -1,4 +1,4 @@
-import { UserType } from "@/types/resources";
+import { SessionUserType } from "@/types/resources";
 import NextAuth, { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
@@ -7,6 +7,6 @@ declare module "next-auth" {
    */
   interface Session {
     id?: string;
-    user: UserType;
+    user: SessionUserType;
   }
 }

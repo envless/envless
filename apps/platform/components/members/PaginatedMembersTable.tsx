@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { Fragment, useCallback, useMemo } from "react";
-import type { MemberType, UserType } from "@/types/resources";
+import type { MemberType, SessionUserType } from "@/types/resources";
 import { getAvatar } from "@/utils/getAvatar";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { UseMutationResult } from "@tanstack/react-query";
@@ -39,7 +39,7 @@ type PaginatedMembersTableProps = {
   currentRole: UserRole;
   totalMembers: number;
   pageCount: number;
-  user: UserType;
+  user: SessionUserType;
 };
 
 function hasExpired(timeString?: Date) {

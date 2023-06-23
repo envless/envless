@@ -25,7 +25,7 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
         return;
       }
 
-      router.push("/projects");
+      // router.push("/projects");
     },
 
     onError: (error) => {
@@ -43,7 +43,7 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
         fingerprint,
       };
 
-      verifyMutation.mutate(params);
+      // verifyMutation.mutate(params);
     };
 
     verify();
