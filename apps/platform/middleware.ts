@@ -44,7 +44,10 @@ export default withAuth(
       url.pathname === "/login" ||
       url.pathname === "/signup" ||
       url.pathname === "/auth/2fa" ||
-      url.pathname === "/auth/verify"
+      url.pathname === "/auth/verify" ||
+      url.pathname === "/auth/otp" ||
+      url.pathname === "/auth/encryption/verify" ||
+      url.pathname === "/auth/encryption/download"
     ) {
       debug("If current page is auth, 2fa or verify auth page, skip");
       return NextResponse.next();
@@ -57,30 +60,35 @@ export default withAuth(
       return NextResponse.redirect(loginPath);
     }
 
-    const {
-      privateKey,
-      twoFactorEnabled,
-      twoFactorVerified,
-      isPrivateKeyValid,
-    } = user;
-    debug("Loading user: ", user);
+    const { keychain, twoFactor } = user;
 
-    if (
-      (!otpPath || !verifyKeychainPath || !downloadKeychainPath) &&
-      (!privateKey || !isPrivateKeyValid)
-    ) {
+    if (!keychain.privateKey && keychain.temp) {
+      debug(
+        "Invited user is going through the keychain verification process, redirect to OTP page",
+      );
+      return NextResponse.redirect(otpPath);
+    }
+
+    if (!keychain.privateKey || !keychain.valid) {
       debug(
         "If privateKey is not present, or invalid, redirect to verify auth page",
       );
       return NextResponse.redirect(verifyPath);
     }
 
-    if (twoFactorEnabled && twoFactorVerified) {
+    if (keychain.privateKey && !keychain.downloaded) {
+      debug(
+        "If privateKey is present but not downloaded, redirect to download keychain page",
+      );
+      return NextResponse.redirect(downloadKeychainPath);
+    }
+
+    if (twoFactor.enabled && twoFactor.verified) {
       debug("If two factor is enabled and verified, skip");
       return NextResponse.next();
     }
 
-    if (twoFactorEnabled && !twoFactorVerified) {
+    if (twoFactor.enabled && !twoFactor.verified) {
       debug("If two factor is enabled but not verified, redirect to 2fa page");
 
       return NextResponse.redirect(twoFactorPath);

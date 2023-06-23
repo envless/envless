@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
-import { MemberType, UserType } from "@/types/resources";
+import { MemberType, SessionUserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
@@ -19,7 +19,7 @@ interface TableProps {
   pageCount: number;
   currentRole: UserRole;
   projectId: string;
-  user: UserType;
+  user: SessionUserType;
   pagination: PaginationState;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
   refetchMembersAfterUpdate: (...args: any[]) => any;

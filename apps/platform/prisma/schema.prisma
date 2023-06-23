@@ -59,9 +59,10 @@ model Keychain {
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  revokedAt DateTime?
+  downloaded  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  revokedAt   DateTime?
 
   @@index([userId])
 }
@@ -247,6 +248,7 @@ model SecretVersion {
   updatedAt DateTime @updatedAt
 
   @@index([secretId])
+  @@index([pullRequestId])
 }
 
 // Necessary for Next auth

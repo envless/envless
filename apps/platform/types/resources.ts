@@ -6,18 +6,24 @@ import type {
   UserRole,
 } from "@prisma/client";
 
-export interface UserType {
+export interface SessionUserType {
   id: string;
   name?: string;
   email: string;
   image?: string;
   role?: UserRole;
-  privateKey: string;
-  twoFactorEnabled: boolean;
-  twoFactorVerified: boolean;
   locked: LockedUser | null;
-  isPrivateKeyValid: boolean;
-  tempEncryptedPrivateKey: string | null;
+
+  twoFactor: {
+    enabled: boolean;
+    verified: boolean;
+  };
+
+  keychain: {
+    temp: boolean;
+    valid: boolean;
+    privateKey: string | null;
+  };
 }
 
 export interface MemberType {

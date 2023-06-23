@@ -1,5 +1,5 @@
 import MagicLink from "@/emails/MagicLink";
-import { UserType } from "@/types/resources";
+import { SessionUserType } from "@/types/resources";
 import { Project, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createHash, randomBytes } from "crypto";
@@ -8,7 +8,7 @@ import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
 
 type LockUserAccountAndSendEmailArgs = {
-  user: UserType;
+  user: SessionUserType;
   reason: string;
   emailSubject: string;
   emailTemplate: JSX.Element;

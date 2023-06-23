@@ -1,4 +1,4 @@
-import { UserType } from "@/types/resources";
+import { SessionUserType } from "@/types/resources";
 import { getServerSideSession } from "@/utils/session";
 import type { Keychain, User } from "@prisma/client";
 import VerifyEncryption from "@/components/auth/encryption/Verify";
@@ -15,7 +15,7 @@ const EncryptionDownloadPage = ({ currentUser, keychain }: PageProps) => {
 
 export async function getServerSideProps(context) {
   const session = await getServerSideSession(context);
-  const user = session?.user as UserType;
+  const user = session?.user as SessionUserType;
 
   if (!session || !session.user) {
     return {
