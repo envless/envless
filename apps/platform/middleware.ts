@@ -23,6 +23,7 @@ export default withAuth(
     const { origin } = url;
     const { token } = req.nextauth;
     const { user } = token as any;
+    const { keychain, twoFactor } = user;
 
     const loginPath = `${origin}/login`;
     const otpPath = `${origin}/auth/otp`;
@@ -59,8 +60,6 @@ export default withAuth(
       );
       return NextResponse.redirect(loginPath);
     }
-
-    const { keychain, twoFactor } = user;
 
     if (!keychain.privateKey && keychain.temp) {
       debug(

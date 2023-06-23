@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
         // Note, that `session` can be any arbitrary object, remember to validate it!
         if (validateSession(session)) {
           const userInSession = session.user;
-          // @ts-ignore
+
           token.user = {
             ...userInSession,
             keychain: userInSession.keychain,
@@ -110,6 +110,7 @@ export const authOptions: NextAuthOptions = {
           keychain: {
             temp: keychain?.tempEncryptedPrivateKey ? true : false,
             valid: session?.user?.keychain.valid ?? false,
+            present: keychain ? true : false,
             downloaded: keychain?.downloaded ?? false,
           },
 
@@ -144,16 +145,17 @@ export const authOptions: NextAuthOptions = {
         email: string;
         locked: LockedUser | null;
 
-        twoFactor: {
-          enabled: boolean;
-          verified: boolean;
-        };
-
         keychain: {
           temp: boolean;
           valid: boolean;
+          present: boolean;
           downloaded: boolean;
           privateKey: string | null;
+        };
+
+        twoFactor: {
+          enabled: boolean;
+          verified: boolean;
         };
       } = token.user as any;
 
@@ -169,16 +171,17 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             locked: user.locked,
 
-            twoFactor: {
-              enabled: user.twoFactor.enabled ?? false,
-              verified: user.twoFactor.verified ?? false,
-            },
-
             keychain: {
               temp: user.keychain.temp ?? false,
               valid: user.keychain.valid ?? false,
+              present: user.keychain.present ?? false,
               downloaded: user.keychain.downloaded ?? false,
               privateKey: user.keychain.privateKey ?? null,
+            },
+
+            twoFactor: {
+              enabled: user.twoFactor.enabled ?? false,
+              verified: user.twoFactor.verified ?? false,
             },
           } as any,
         };
@@ -233,6 +236,7 @@ const TwoFactorSchema = z.object({
 const KeychainSchema = z.object({
   temp: z.boolean(),
   valid: z.boolean(),
+  present: z.boolean(),
   downloaded: z.boolean(),
   privateKey: z.string().nullable(),
 });

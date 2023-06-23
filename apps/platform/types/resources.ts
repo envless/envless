@@ -22,6 +22,8 @@ export interface SessionUserType {
   keychain: {
     temp: boolean;
     valid: boolean;
+    present: boolean;
+    downloaded: boolean;
     privateKey: string | null;
   };
 }
