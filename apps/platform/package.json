@@ -86,7 +86,7 @@
     "react-qr-code": "^2.0.11",
     "react-time-ago": "^7.2.1",
     "rehype-parse": "^8.0.4",
-    "rehype-react": "^7.1.2",
+    "rehype-react": "^7.2.0",
     "remark": "^14.0.2",
     "remark-gfm": "^3.0.1",
     "remark-html": "^15.0.2",
