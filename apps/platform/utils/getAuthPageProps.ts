@@ -34,7 +34,7 @@ const getAuthPageProps = async (context: GetServerSidePropsContext) => {
     };
   }
 
-  if ((!present || temp || !downloaded) && url !== AUTH_ROUTES.download) {
+  if (!temp && !downloaded && url !== AUTH_ROUTES.download) {
     return {
       redirect: {
         destination: AUTH_ROUTES.download,
