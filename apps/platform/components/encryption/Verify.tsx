@@ -58,6 +58,7 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
             keychain: {
               ...session?.user.keychain,
               valid: true,
+              privateKey,
             },
           },
         };

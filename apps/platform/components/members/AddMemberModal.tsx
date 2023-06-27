@@ -168,7 +168,7 @@ const AddMemberModal = ({
     closeModal: () => void,
     otp?: string,
   ) => {
-    const privateKey = session?.user.privateKey;
+    const privateKey = session?.user.keychain.privateKey;
 
     const decryptedProjectKey = (await OpenPGP.decrypt(
       encryptedProjectKey as string,

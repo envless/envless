@@ -25,33 +25,33 @@ export default withAuth(
     const { user } = token as any;
     const { keychain, twoFactor } = user;
 
-    const loginPath = `${origin}/login`;
-    const otpPath = `${origin}/auth/otp`;
-    const signupPath = `${origin}/signup`;
-    const verifyPath = `${origin}/auth/verify`;
-    const twoFactorPath = `${origin}/auth/2fa`;
-    const forbiddenPath = `${origin}/error/forbidden`;
-    const verifyKeychainPath = `${origin}/encryption/verify`;
-    const downloadKeychainPath = `${origin}/encryption/download`;
+    const loginUrl = `${origin}/login`;
+    const otpUrl = `${origin}/auth/otp`;
+    const signupUrl = `${origin}/signup`;
+    const twoFactorUrl = `${origin}/auth/2fa`;
+    const verifyAuthUrl = `${origin}/auth/verify`;
+    const forbiddenUrl = `${origin}/error/forbidden`;
+    const verifyKeychainUrl = `${origin}/encryption/verify`;
+    const downloadKeychainUrl = `${origin}/encryption/download`;
 
     const sessionId = token?.sessionId as string;
     const { isBot } = userAgent(req);
 
     if (isBot) {
       debug("If it's a bot, redirect to forbidden page");
-      return NextResponse.redirect(forbiddenPath);
+      return NextResponse.redirect(forbiddenUrl);
     }
 
     if (
       [
-        otpPath,
-        loginPath,
-        signupPath,
-        verifyPath,
-        twoFactorPath,
-        forbiddenPath,
-        verifyKeychainPath,
-        downloadKeychainPath,
+        otpUrl,
+        loginUrl,
+        signupUrl,
+        twoFactorUrl,
+        verifyAuthUrl,
+        forbiddenUrl,
+        verifyKeychainUrl,
+        downloadKeychainUrl,
       ].includes(href)
     ) {
       debug("If current page is auth, 2fa or verify auth page, skip");
@@ -62,7 +62,7 @@ export default withAuth(
       debug(
         "If token, user or sessionId is not present, redirect to login page",
       );
-      return NextResponse.redirect(loginPath);
+      return NextResponse.redirect(loginUrl);
     }
 
     const { temp, valid, present, downloaded, privateKey } = keychain;
@@ -71,13 +71,14 @@ export default withAuth(
       debug(
         "If privateKey is not present, or invalid, redirect to verify auth page",
       );
-      return NextResponse.redirect(verifyPath);
+
+      return NextResponse.redirect(verifyAuthUrl);
     }
 
     if (twoFactor.enabled && !twoFactor.verified) {
       debug("If two factor is enabled but not verified, redirect to 2fa page");
 
-      return NextResponse.redirect(twoFactorPath);
+      return NextResponse.redirect(twoFactorUrl);
     }
 
     debug("If two factor is not enabled, skip");

@@ -19,7 +19,7 @@ function useVersionedSecret({
   const [secrets, setSecrets] = useState<EnvSecret[]>([]);
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const sessionUser = session?.user as any;
-  const privateKey = sessionUser.privateKey as string;
+  const privateKey = sessionUser.keychain.privateKey as string;
   const utils = trpc.useContext();
 
   useEffect(() => {
