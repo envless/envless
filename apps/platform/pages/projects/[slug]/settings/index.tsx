@@ -97,7 +97,7 @@ export const SettingsPage = ({
                     navigator.clipboard.writeText(currentProject.id);
                     showToast({
                       type: "success",
-                      title: "Project ID copied",
+                      title: "Project ID copied to clipboard.",
                       subtitle: "",
                     });
                   }}

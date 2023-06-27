@@ -16,7 +16,7 @@ import { Button, Input, Modal, Paragraph } from "@/components/theme";
 import AES from "@/lib/encryption/aes";
 import prisma from "@/lib/prisma";
 
-const debug = require("debug")("envless:client");
+const debug = require("debug")("platform:client");
 
 type Props = {
   user: User;

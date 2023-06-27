@@ -45,8 +45,8 @@ const EncryptionSetup = ({ keychain, csrfToken, currentUser }: PageProps) => {
         type: argon2.ArgonType.Argon2id,
       });
 
-      const tempEncryptedPrivateKey = session?.user
-        .tempEncryptedPrivateKey as any;
+      const tempEncryptedPrivateKey = session?.user.keychain
+        .privateKey as string;
 
       const privateKeyMessage = await openpgp.readMessage({
         armoredMessage: tempEncryptedPrivateKey,

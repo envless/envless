@@ -10,7 +10,7 @@ import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
 import prisma from "@/lib/prisma";
 
-const debug = require("debug")("envless:trpc");
+const debug = require("debug")("platform:trpc");
 
 export const auth = createRouter({
   signup: withoutAuth

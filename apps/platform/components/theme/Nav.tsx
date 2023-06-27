@@ -8,7 +8,7 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Dropdown, Hr, Logo, Popover, ScrollArea } from "@/components/theme";
 
-const debug = require("debug")("envless:client");
+const debug = require("debug")("platform:client");
 
 const Nav = ({ ...props }) => {
   const router = useRouter();

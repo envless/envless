@@ -8,7 +8,7 @@ import { Container } from "@/components/theme";
 import { EmptyState, LoadingIcon } from "@/components/theme";
 import { getFingerprint } from "@/lib/client";
 
-const debug = require("debug")("envless:client");
+const debug = require("debug")("platform:client");
 
 type PageProps = {
   sessionId: string;

@@ -5,7 +5,7 @@ import { Fragment } from "react";
 import { Hr } from "@/components/theme";
 import TwoFactorForm from "@/components/twoFactorForm";
 
-const debug = require("debug")("envless:client");
+const debug = require("debug")("platform:client");
 
 const TwoFactorAuth = () => {
   const router = useRouter();

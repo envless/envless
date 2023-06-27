@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
 
-const debug = require("debug")("envless:middleware");
+const debug = require("debug")("platform:middleware");
 
 export const config = {
   matcher: [

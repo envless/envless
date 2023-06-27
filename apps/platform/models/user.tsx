@@ -190,7 +190,7 @@ export const sendInvitationEmail = async ({
             </code>
           </>
         }
-        subText="Please note that this invitation link will expire in 7 days"
+        subText="Please note that this invitation link will expire in 7 days. If this link has expired, please contact the project owner to re-invite you."
         buttonText={`Join ${project?.name}`}
         buttonLink={url}
       />

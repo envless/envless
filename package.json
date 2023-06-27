@@ -10,6 +10,7 @@
   "scripts": {
     "envless": "yarn --cwd ./apps/cli/ run cli",
     "dev": "dotenv -- turbo run dev",
+    "dev:platform": "DEBUG=platform:* dotenv -- turbo run dev --filter=platform",
     "build": "dotenv -- turbo run build",
     "lint": "dotenv -- turbo run lint",
     "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
