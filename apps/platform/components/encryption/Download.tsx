@@ -26,25 +26,31 @@ const DownloadPrivateKey = ({ currentUser, keychain }: PageProps) => {
   const router = useRouter();
   const { data: session, update: updateSessionWith } = useSession();
   const [loading, setLoading] = useState(false);
-  const [retries, setRetries] = useState(0);
   const [privateKey, setPrivateKey] = useState("");
 
   const { mutateAsync: createKeychainMutation, isLoading } =
-    trpc.auth.keychain.useMutation({
+    trpc.auth.createKeychain.useMutation({
       onSuccess: async (_response) => {
+        downloadAsTextFile(
+          `envless-privatekey(${currentUser.email}).txt`,
+          privateKey,
+        );
+
         const newSession = {
           ...session,
           user: {
             ...session?.user,
-            privateKey,
+            keychain: {
+              temp: false,
+              valid: false,
+              present: true,
+              downloaded: true,
+              privateKey: privateKey,
+            },
           },
         };
 
         await updateSessionWith(newSession);
-        downloadAsTextFile(
-          `envless-privateKey-for-user-${currentUser.id}.txt`,
-          privateKey,
-        );
 
         showToast({
           duration: 10000,
@@ -55,14 +61,15 @@ const DownloadPrivateKey = ({ currentUser, keychain }: PageProps) => {
         });
 
         setLoading(false);
-        router.push("/auth/encryption/verify");
+        router.push("/encryption/verify");
       },
 
       onError: (error) => {
+        setLoading(false);
         showToast({
           duration: 10000,
           type: "error",
-          title: "Houston, we have a problem!",
+          title: "Oops, an error occurred!",
           subtitle: error.message,
         });
       },

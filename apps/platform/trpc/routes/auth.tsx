@@ -62,7 +62,7 @@ export const auth = createRouter({
       }
     }),
 
-  keychain: withAuth
+  createKeychain: withAuth
     .input(
       z.object({
         publicKey: z.string(),
@@ -74,11 +74,26 @@ export const auth = createRouter({
       const { user } = ctx.session;
       const { publicKey, verificationString, revocationCertificate } = input;
 
+      const _keychain = await prisma.keychain.findFirst({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (_keychain) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Keychain already exists, please reload this page and try again.",
+        });
+      }
+
       const keychain = await prisma.keychain.create({
         data: {
           publicKey,
           verificationString,
           revocationCertificate,
+          downloaded: true,
           user: {
             connect: {
               id: user.id,
@@ -104,7 +119,7 @@ export const auth = createRouter({
       const { fingerprint, sessionId, name } = input;
 
       if (sessionId !== ctx.session.id) {
-        return new TRPCError({
+        throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Session ID does not match.",
         });

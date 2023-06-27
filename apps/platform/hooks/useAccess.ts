@@ -6,7 +6,7 @@ interface Props {
   projectId: string;
 }
 
-const userAccess = async ({ userId, projectId }: Props) => {
+const useAccess = async ({ userId, projectId }: Props) => {
   const access = await prisma.access.findUnique({
     where: {
       userId_projectId: { userId, projectId },
@@ -27,4 +27,4 @@ const userAccess = async ({ userId, projectId }: Props) => {
   return hasAccess;
 };
 
-export default userAccess;
+export default useAccess;

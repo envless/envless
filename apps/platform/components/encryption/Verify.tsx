@@ -37,12 +37,13 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
   const [loading, setLoading] = useState(false);
   const [retries, setRetries] = useState(0);
   const [privateKey, setPrivateKey] = useState("");
-  const [publicKey, setPublicKey] = useState(keychain?.publicKey);
   const [verificationString, setVerificationString] = useState(
     keychain?.verificationString,
   );
 
   const onSubmit = async (data: KeychainParams) => {
+    setLoading(true);
+
     try {
       const decryptedVerificationString = await decrypt(
         verificationString,
@@ -54,8 +55,10 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
           ...session,
           user: {
             ...session?.user,
-            isPrivateKeyValid: true,
-            privateKey,
+            keychain: {
+              ...session?.user.keychain,
+              valid: true,
+            },
           },
         };
 
@@ -94,6 +97,8 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
       });
 
       setRetries(retries + 1);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,19 +123,6 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
               <div className="mt-8">
                 <div className="text-light mb-2 text-sm">
                   Paste your PGP private key
-                  {session?.user?.privateKey && (
-                    <span
-                      onClick={() =>
-                        downloadAsTextFile(
-                          "envless.txt",
-                          session?.user?.privateKey,
-                        )
-                      }
-                      className="ml-2 cursor-pointer text-xs text-teal-400 hover:text-teal-600"
-                    >
-                      download private key
-                    </span>
-                  )}
                 </div>
                 <textarea
                   {...register("privateKey")}

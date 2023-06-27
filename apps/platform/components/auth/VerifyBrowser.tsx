@@ -16,7 +16,8 @@ type PageProps = {
 };
 
 const VerifyBrowser = ({ sessionId, user }: PageProps) => {
-  const { name } = user;
+  !user && signOut();
+  const { name } = (user || {}) as any as User;
   const router = useRouter();
   const verifyMutation = trpc.auth.verify.useMutation({
     onSuccess: async (res: any) => {
@@ -25,7 +26,7 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
         return;
       }
 
-      // router.push("/projects");
+      router.push("/projects");
     },
 
     onError: (error) => {
@@ -43,7 +44,7 @@ const VerifyBrowser = ({ sessionId, user }: PageProps) => {
         fingerprint,
       };
 
-      // verifyMutation.mutate(params);
+      verifyMutation.mutate(params);
     };
 
     verify();
