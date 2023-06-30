@@ -56,38 +56,18 @@ export default function BranchDropdown({
   return (
     <Menu as="div" className="relative z-10 inline-block">
       <>
-        <Menu.Button
-          className={clsx(
-            "border-dark bg-dark hover:bg-darker inline-flex items-center truncate rounded border px-3 py-2 text-sm transition-colors duration-75",
-            full && "w-[27.599rem] justify-between",
-          )}
-        >
-          <div className="flex items-center">
-            <GitBranch className="mr-2 h-4 w-4 shrink-0" />
-            <span className="text-light mr-2 block text-xs">{label}</span>
+        <Menu.Button className="border-dark bg-dark hover:bg-darker inline-flex max-w-[24rem] items-center gap-4 truncate rounded border px-3 py-2 text-sm transition-colors duration-75">
+          <div className="flex items-center gap-2">
+            <GitBranch className="h-4 w-4 shrink-0" />
+            <span className="text-light block text-xs">{label}</span>
           </div>
 
-          {full ? (
-            <>
-              <span className="max-w-[34px] text-sm font-semibold">
-                {truncate(selectedBranch.name, 18)}
-              </span>
-              <ChevronDown
-                aria-hidden="true"
-                className="h-4 w-4 shrink-0 justify-self-end"
-              />
-            </>
-          ) : (
-            <div className="flex items-center space-x-2 justify-self-end">
-              <span className="max-w-[34px] truncate text-sm font-semibold">
-                {selectedBranch.name}
-              </span>
-              <ChevronDown
-                aria-hidden="true"
-                className="h-4 w-4 shrink-0 justify-self-end"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold">
+              {truncate(selectedBranch.name, full ? 25 : 3)}
+            </span>
+            <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0" />
+          </div>
         </Menu.Button>
       </>
       <Transition
@@ -122,13 +102,14 @@ export default function BranchDropdown({
           <ul className="flex max-h-52 w-full flex-col overflow-y-auto text-xs [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
             {searchData.map((branch) => (
               <Menu.Item as="button" key={branch.id}>
-                {({ active }) => (
+                {({ active, close }) => (
                   <Link
                     href={branchLink(branch.name)}
                     onClick={(e) => {
                       if (onClick) {
                         e.preventDefault();
                         onClick(branch);
+                        close();
                       }
                     }}
                   >
