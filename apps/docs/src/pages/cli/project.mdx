@@ -65,11 +65,15 @@ EXAMPLES
 
 </CodeGroup>
 
-When you link your project with Envless, it will create a `.envless.yml` file in your project's root directory. This directory will contain the project id and branch name. You can change the branch name in this file to point to a different branch. Its recommended to commit this file to your project's repository.
+When you link your project with Envless, it will create a `.envless` folder in your project's root directory. This folder will contain a `project.json` file which contains the project id, name, version and branch name. You can change the branch name in this file to point to a different branch. Its recommended to commit this folder to your project's repository.
 
-```yaml {{ title: '.envless.yml' }}
-branch: development
-projectId: xxxxxxxxxxxxxxxxxxxx
+```json {{ title: '.envless/project.json' }}
+{
+  "name": "xxxxxxxxxxxxxx",
+  "version": "X.X.X",
+  "projecctId": "xxxxxxxxxxxxxxxxxxxx",
+  "branch": "development"
+}
 ```
 
 <Note>
