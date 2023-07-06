@@ -113,8 +113,9 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
             <h2 className="mt-6 text-center text-2xl">Your PGP private key</h2>
 
             <p className="max-w text-light mt-2 text-center text-sm">
-              We do not store your private key. Your private key is stored on
-              this browser and is used to encrypt and decrypt your app secrets
+              Please copy/paste your previously downloaded/shared PGP private
+              key. We never store your PGP private key, encrypted or otherwise.
+              This private key is needed to encrypt and decrypt your app secrets
               on the client side.
             </p>
 
@@ -123,7 +124,7 @@ const VerifyEncryption = ({ currentUser, keychain }: PageProps) => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mt-8">
                 <div className="text-light mb-2 text-sm">
-                  Paste your PGP private key
+                  Your PGP private key
                 </div>
                 <textarea
                   {...register("privateKey")}

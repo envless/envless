@@ -41,7 +41,6 @@ const DownloadPrivateKey = ({ currentUser, keychain }: PageProps) => {
           user: {
             ...session?.user,
             keychain: {
-              temp: false,
               valid: false,
               present: true,
               downloaded: true,

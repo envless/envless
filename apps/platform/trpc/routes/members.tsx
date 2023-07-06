@@ -237,6 +237,7 @@ export const members = createRouter({
           publicKey,
           verificationString,
           userId: member.id,
+          downloaded: true,
           revocationCertificate: revocationCertificate,
         },
       });

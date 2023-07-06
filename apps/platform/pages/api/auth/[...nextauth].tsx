@@ -144,7 +144,6 @@ export const authOptions: NextAuthOptions = {
         locked: LockedUser | null;
 
         keychain: {
-          temp: boolean;
           valid: boolean;
           present: boolean;
           downloaded: boolean;
@@ -170,7 +169,6 @@ export const authOptions: NextAuthOptions = {
             locked: user.locked,
 
             keychain: {
-              temp: user.keychain.temp ?? false,
               valid: user.keychain.valid ?? false,
               present: user.keychain.present ?? false,
               downloaded: user.keychain.downloaded ?? false,
@@ -232,7 +230,6 @@ const TwoFactorSchema = z.object({
 });
 
 const KeychainSchema = z.object({
-  temp: z.boolean(),
   valid: z.boolean(),
   present: z.boolean(),
   downloaded: z.boolean(),
