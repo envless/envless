@@ -4,7 +4,7 @@ import { env } from "@/env/index.mjs";
 import useAccess from "@/hooks/useAccess";
 import { generateVerificationUrl } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
-import { ACCESS_CREATED } from "@/types/auditActions";
+import { INVITE_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
@@ -163,7 +163,7 @@ export const members = createRouter({
         });
       }
 
-      await ctx.prisma.access.upsert({
+      const access = await ctx.prisma.access.upsert({
         where: {
           userId_projectId: {
             projectId,
@@ -206,6 +206,24 @@ export const members = createRouter({
           inviteeId: member.id,
           invitorId: userId,
           expires,
+        },
+      });
+
+      await Audit.create({
+        createdById: userId,
+        createdForId: member.id,
+        projectId: projectId,
+        action: INVITE_CREATED,
+        data: {
+          member: {
+            id: member.id,
+            name: member.name,
+            email: member.email,
+          },
+          access: {
+            id: access.id,
+            role: access.role,
+          },
         },
       });
 
