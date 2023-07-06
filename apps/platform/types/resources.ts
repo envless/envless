@@ -36,4 +36,5 @@ export interface MemberType {
   twoFactorEnabled: boolean;
   role: UserRole;
   status: MembershipStatus;
+  invite: Invite | null;
 }

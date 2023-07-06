@@ -14,6 +14,7 @@ export const PULL_REQUEST_REOPENED = "pullRequest.reopened";
 export const INVITE_CREATED = "invite.created";
 export const ACCESS_CREATED = "access.created";
 export const ACCOUNT_UPDATED = "account.updated";
+export const ACCOUNT_LOCKED = "account.locked";
 export const SECRET_CREATED = "secret.created";
 export const SECRET_UPDATED = "secret.updated";
 export const SECRET_DELETED = "secret.deleted";

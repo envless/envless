@@ -2,20 +2,17 @@ import React, { Fragment } from "react";
 import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import useAccess from "@/hooks/useAccess";
-import { sendInvitationEmail } from "@/models/user";
+import { generateVerificationUrl } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
 import { ACCESS_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import argon2 from "argon2";
-import { randomBytes } from "crypto";
-import { addHours } from "date-fns";
-import sendMail from "emails";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
+import { encrypt } from "@/lib/encryption/openpgp";
 
 interface CheckAccessAndPermissionArgs {
   ctx: any;
@@ -118,186 +115,31 @@ const checkAccessAndPermission = async ({
 };
 
 export const members = createRouter({
-  initialize: withAuth
+  createInvite: withAuth
     .input(
       z.object({
-        projectId: z.string(),
-        email: z.string().email(),
+        name: z.string().optional().nullable(),
+        email: z.string(),
         role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      let isNewUser = false;
-      let publicKeys = [] as string[];
-      let encryptedProjectKey = "" as string;
-      const currentUser = ctx.session.user;
-      const { projectId, email, role } = input;
-      const hasAccess = await useAccess({
-        userId: currentUser.id,
-        projectId,
-      });
-
-      if (!hasAccess) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message:
-            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
-        });
-      }
-
-      let member = await ctx.prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!member) {
-        isNewUser = true;
-
-        member = await ctx.prisma.user.create({
-          data: { email },
-        });
-      } else {
-        const accesses = await ctx.prisma.access.findMany({
-          where: { projectId },
-          select: { userId: true },
-        });
-
-        const userIds = accesses.map((access) => access.userId);
-        const keychains = await ctx.prisma.keychain.findMany({
-          where: { userId: { in: userIds } },
-          select: { publicKey: true },
-        });
-
-        const projectKey = await ctx.prisma.encryptedProjectKey.findFirst({
-          where: { projectId },
-          select: { encryptedKey: true },
-        });
-
-        publicKeys = keychains.map((keychain) => keychain.publicKey);
-        encryptedProjectKey = projectKey?.encryptedKey as string;
-      }
-
-      const access = await ctx.prisma.access.findFirst({
-        where: {
-          projectId,
-          userId: member.id,
-        },
-      });
-
-      if (!access) {
-        await ctx.prisma.access.create({
-          data: {
-            projectId,
-            userId: member.id,
-            role,
-            status: MembershipStatus.pending,
-          },
-        });
-      }
-
-      return {
-        member,
-        isNewUser,
-        publicKeys,
-        encryptedProjectKey,
-      };
-    }),
-
-  encrypt: withAuth
-    .input(
-      z.object({
-        memberId: z.string(),
         projectId: z.string(),
-        hashedPassword: z.string().optional(),
-        publicKey: z.string().optional(),
-        verificationString: z.string().optional(),
-        revocationCertificate: z.string().optional(),
-        tempEncryptedPrivateKey: z.string().nullable(),
+        publicKey: z.string(),
+        revocationCertificate: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      let member = null as User | null;
       const { id: userId } = ctx.session.user;
-      const hasAccess = await useAccess({ userId, projectId: input.projectId });
+      const { name, email, projectId, role, publicKey, revocationCertificate } =
+        input;
 
-      if (!hasAccess) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message:
-            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
-        });
-      }
-
-      const {
-        memberId,
-        projectId,
-        publicKey,
-        hashedPassword,
-        verificationString,
-        tempEncryptedPrivateKey,
-        revocationCertificate,
-      } = input as {
-        memberId: string;
-        projectId: string;
-        publicKey: string;
-        hashedPassword: string;
-        verificationString: string;
-        tempEncryptedPrivateKey: string;
-        revocationCertificate: string;
-      };
-
-      await ctx.prisma.user.update({
-        where: { id: memberId },
-        data: { hashedPassword },
-      });
-
-      await ctx.prisma.keychain.upsert({
-        where: { userId: memberId },
-        update: {},
-        create: {
-          publicKey,
-          userId: memberId,
-          verificationString,
-          revocationCertificate,
-          tempEncryptedPrivateKey,
-        },
-      });
-
-      const accesses = await ctx.prisma.access.findMany({
-        where: { projectId },
-        select: { userId: true },
-      });
-
-      const userIds = accesses.map((access) => access.userId);
-      const keychains = await ctx.prisma.keychain.findMany({
-        where: { userId: { in: userIds } },
-        select: { publicKey: true },
-      });
-
-      const projectKey = await ctx.prisma.encryptedProjectKey.findUnique({
-        where: { projectId },
-        select: { encryptedKey: true },
-      });
-
-      const encryptedProjectKey = projectKey?.encryptedKey;
-      const publicKeys = keychains.map((keychain) => keychain.publicKey);
-
-      return {
-        publicKeys,
-        encryptedProjectKey,
-      };
-    }),
-
-  invite: withAuth
-    .input(
-      z.object({
-        otp: z.string(),
-        projectId: z.string(),
-        memberId: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { user } = ctx.session;
-      const { id: userId } = user;
-      const { projectId, memberId, otp } = input;
+      const expires = new Date(
+        Date.now() +
+          ((process.env.INVITATION_EXPIRE_DAYS || 7) as number) *
+            24 *
+            60 *
+            60 *
+            1000,
+      ) as Date; // 7 days by default
 
       const hasAccess = await useAccess({ userId, projectId });
 
@@ -309,62 +151,138 @@ export const members = createRouter({
         });
       }
 
-      const params = {
-        otp,
-        projectId,
-        toId: memberId,
-        fromId: userId,
-      };
+      const existingMember = await ctx.prisma.user.findUnique({
+        where: { email },
+      });
 
-      await sendInvitationEmail(params);
+      if (existingMember) {
+        member = existingMember;
+      } else {
+        member = await ctx.prisma.user.create({
+          data: { email, name },
+        });
+      }
+
+      await ctx.prisma.access.upsert({
+        where: {
+          userId_projectId: {
+            projectId,
+            userId: member.id,
+          },
+        },
+
+        create: {
+          projectId,
+          userId: member.id,
+          role,
+          status: MembershipStatus.pending,
+        },
+
+        update: {
+          projectId,
+          userId: member.id,
+          role,
+          status: MembershipStatus.pending,
+        },
+      });
+
+      await ctx.prisma.invite.upsert({
+        where: {
+          inviteeId_projectId: {
+            projectId,
+            inviteeId: member.id,
+          },
+        },
+
+        create: {
+          projectId,
+          inviteeId: member.id,
+          invitorId: userId,
+          expires,
+        },
+
+        update: {
+          projectId,
+          inviteeId: member.id,
+          invitorId: userId,
+          expires,
+        },
+      });
+
+      const verificationString = (await encrypt(member.id, [
+        publicKey,
+      ])) as string;
+
+      await ctx.prisma.keychain.upsert({
+        where: { userId: member.id },
+        update: {},
+        create: {
+          publicKey,
+          verificationString,
+          userId: member.id,
+          revocationCertificate: revocationCertificate,
+        },
+      });
+
+      const accesses = await ctx.prisma.access.findMany({
+        where: { projectId },
+        select: { userId: true },
+      });
+
+      const memberIds = accesses.map((access) => access.userId);
+      const keychains = await ctx.prisma.keychain.findMany({
+        where: { userId: { in: memberIds } },
+        select: { publicKey: true },
+      });
+
+      const projectKey = await ctx.prisma.encryptedProjectKey.findUnique({
+        where: { projectId },
+        select: { encryptedKey: true },
+      });
+
+      const encryptedProjectKey = projectKey?.encryptedKey;
+      const publicKeys = keychains.map((keychain) => keychain.publicKey);
+      const verificationUrl = await generateVerificationUrl(member, expires);
+      const redirect = await ctx.prisma.redirect.create({
+        data: {
+          url: verificationUrl,
+        },
+      });
+
+      return {
+        publicKeys,
+        encryptedProjectKey,
+        invitation: `${process.env.NEXTAUTH_URL}/r/invitation/${redirect.id}`,
+      };
     }),
 
-  update: withAuth
+  updateProjectKey: withAuth
     .input(
       z.object({
-        targetUserId: z.string(),
         projectId: z.string(),
-        newRole: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
-        currentUserRole: z.enum(
-          Object.values(UserRole) as [UserRole, ...UserRole[]],
-        ),
-        targetUserRole: z.enum(
-          Object.values(UserRole) as [UserRole, ...UserRole[]],
-        ),
+        encryptedProjectKey: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const {
-        targetUserId,
-        projectId,
-        newRole,
-        currentUserRole,
-        targetUserRole,
-      } = input;
       const { id: userId } = ctx.session.user;
+      const { projectId, encryptedProjectKey } = input;
+      const hasAccess = await useAccess({ userId, projectId });
 
-      await checkAccessAndPermission({
-        ctx,
-        projectId,
-        currentUserRole,
-        targetUserRole,
-        targetUserId,
-        userId,
-        newRole,
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
+        });
+      }
+
+      await ctx.prisma.encryptedProjectKey.upsert({
+        where: { projectId },
+        update: { encryptedKey: encryptedProjectKey },
+        create: { encryptedKey: encryptedProjectKey, projectId },
       });
 
-      const updatedMember = await ctx.prisma.access.update({
-        where: {
-          userId_projectId: {
-            userId: targetUserId,
-            projectId,
-          },
-        },
-        data: {
-          role: newRole,
-        },
-      });
-      return updatedMember;
+      return { success: true };
     }),
 
   updateUserAccessStatus: withAuth
@@ -426,128 +344,23 @@ export const members = createRouter({
       return updatedMember;
     }),
 
-  reInvite: withAuth
-    .input(
-      z.object({
-        projectId: z.string(),
-        email: z.string().email(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const user = ctx.session.user;
-      const { projectId, email } = input;
-
-      const existingAccess = await ctx.prisma.access.findFirst({
-        where: {
-          AND: [{ user: { email: email.toLowerCase() } }, { projectId }],
-        },
-      });
-
-      if (!existingAccess?.projectInviteId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invite not found",
-        });
-      }
-
-      if (existingAccess.status !== MembershipStatus.pending) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "This member has already accepted the invitation",
-        });
-      }
-
-      const invitationToken = randomBytes(32).toString("hex");
-      const password = randomBytes(32).toString("hex");
-      const hashedPassword = await argon2.hash(password);
-      const expiresAt = addHours(new Date(), 48);
-
-      const invite = await ctx.prisma.projectInvite.update({
-        where: {
-          id: existingAccess.projectInviteId,
-        },
-        data: {
-          invitationToken,
-          invitedById: user.id,
-          hashedPassword,
-          invitationTokenExpiresAt: expiresAt,
-        },
-      });
-
-      if (invite) {
-        await Audit.create({
-          projectId,
-          createdById: user.id,
-          action: "invite.recreated",
-          data: {
-            invite: {
-              id: invite.id,
-              email: email.toLowerCase(),
-              role: existingAccess.role,
-            },
-          },
-        });
-      } else {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Something went wrong",
-        });
-      }
-
-      const project = await ctx.prisma.project.findUnique({
-        where: {
-          id: projectId,
-        },
-      });
-
-      sendMail({
-        subject: `Invitation to join ${project?.name} on Envless`,
-        to: email.toLowerCase(),
-        component: (
-          <InviteLink
-            headline={
-              <Fragment>
-                Join <b>{project?.name}</b> on Envless
-              </Fragment>
-            }
-            greeting="Hi there,"
-            body={
-              <Fragment>
-                You have been invited to join the project <b>{project?.name}</b>{" "}
-                on Envless. You will need this One-time password. Please note
-                that this invitation link will expire in 48 hours.
-                <br />
-                <br />
-                <code>
-                  <pre>{password}</pre>
-                </code>
-              </Fragment>
-            }
-            subText="If you did not request this email you can safely ignore it."
-            buttonText={`Join ${project?.name}`}
-            buttonLink={`${env.BASE_URL}/auth/invite/${invitationToken}`}
-          />
-        ),
-      });
-    }),
-
   deleteInvite: withAuth
     .input(
       z.object({
         projectId: z.string(),
-        projectInviteId: z.string(),
+        inviteId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { projectId, projectInviteId } = input;
+      const { projectId, inviteId } = input;
       const { user } = ctx.session;
 
       const invite = await ctx.prisma.invite.findFirst({
         where: {
           AND: {
-            id: projectInviteId,
+            id: inviteId,
             projectId,
-            invitationTokenExpiresAt: {
+            expires: {
               gt: new Date(), // Only allow deletion if the invite link has not expired yet
             },
           },
@@ -566,115 +379,11 @@ export const members = createRouter({
 
       await ctx.prisma.access.delete({
         where: {
-          projectInviteId,
+          inviteId,
         },
       });
 
       return { success: true };
-    }),
-
-  acceptInvite: withoutAuth
-    .input(
-      z.object({
-        token: z.string(),
-        name: z.string(),
-        email: z.string().email(),
-        password: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { token, email, name, password } = input;
-
-      const invite = await ctx.prisma.projectInvite.findFirst({
-        where: {
-          AND: [
-            { invitationToken: token },
-            {
-              invitationTokenExpiresAt: {
-                gt: new Date(), // Only allow acceptance if the invite link has not expired yet
-              },
-            },
-          ],
-        },
-      });
-
-      if (!invite) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid or expired invitation link",
-        });
-      }
-
-      const valid = await argon2.verify(invite.hashedPassword, password);
-
-      if (!valid) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid One-time password",
-        });
-      }
-
-      try {
-        // Update the user name here
-        const newUser = await ctx.prisma.user.update({
-          where: { email: email.toLowerCase() },
-          data: { name },
-        });
-
-        // update access.status to "active"
-        const updatedAccess = await ctx.prisma.access.update({
-          where: {
-            projectInviteId: invite.id,
-          },
-          data: {
-            status: MembershipStatus.active,
-            projectInvite: {
-              update: {
-                invitationTokenExpiresAt: new Date(), // expire the token
-              },
-            },
-          },
-        });
-
-        if (!updatedAccess) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Failed to accept invite",
-          });
-        }
-
-        await Audit.create({
-          projectId: invite.projectId,
-          createdById: newUser.id,
-          action: "invite.accepted",
-          data: {
-            invite: {
-              id: invite.id,
-              email: email.toLowerCase(),
-              role: updatedAccess.role,
-            },
-          },
-        });
-
-        await Audit.create({
-          createdById: invite.invitedById as string,
-          createdForId: newUser.id,
-          projectId: invite.projectId,
-          action: ACCESS_CREATED,
-          data: {
-            access: {
-              id: updatedAccess.id,
-              role: updatedAccess.role,
-            },
-          },
-        });
-      } catch (error) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "Failed to accept invite, invalid or expired invitation link",
-        });
-      }
     }),
 
   getAll: withAuth

@@ -101,14 +101,12 @@ export const authOptions: NextAuthOptions = {
           where: { userId: user.id },
           select: {
             downloaded: true,
-            tempEncryptedPrivateKey: true,
           },
         });
 
         token.user = {
           ...user,
           keychain: {
-            temp: keychain?.tempEncryptedPrivateKey ? true : false,
             valid: session?.user?.keychain.valid ?? false,
             present: keychain ? true : false,
             downloaded: keychain?.downloaded ?? false,

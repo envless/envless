@@ -83,9 +83,7 @@ const PaginatedMembersTable = ({
       );
 
       if (member.status === MembershipStatus.pending) {
-        const expired = hasExpired(
-          member.projectInvite?.invitationTokenExpiresAt,
-        );
+        const expired = hasExpired(member.invite?.invitationTokenExpiresAt);
 
         const handleReInvite = async () => {
           setFetching(true);
@@ -96,11 +94,11 @@ const PaginatedMembersTable = ({
         };
 
         const handleDeleteInvite = () => {
-          if (member.projectInviteId) {
+          if (member.inviteId) {
             setFetching(true);
             memberDeleteInviteMutation.mutate({
               projectId,
-              projectInviteId: member.projectInviteId,
+              inviteId: member.inviteId,
             });
           }
         };
@@ -148,7 +146,7 @@ const PaginatedMembersTable = ({
 
       if (member.status === MembershipStatus.active) {
         const action = {
-          title: `De-activate ${member.name}`,
+          title: `Remove access`,
           handleClick: () => {
             handleUpdateMemberStatus(
               {

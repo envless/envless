@@ -59,7 +59,6 @@ const getAuthPageProps = async (context: GetServerSidePropsContext) => {
       email: true,
       name: true,
       image: true,
-      hashedPassword: true,
     },
   });
 
@@ -70,7 +69,6 @@ const getAuthPageProps = async (context: GetServerSidePropsContext) => {
       publicKey: true,
       revocationCertificate: true,
       verificationString: true,
-      tempEncryptedPrivateKey: true,
       downloaded: true,
     },
   });

@@ -53,8 +53,6 @@ model Keychain {
   publicKey             String
   revocationCertificate String
   verificationString    String
-  // tempEncryptedPrivateKey is encrypted using invited user's OTP and temporarily saved on the table; this record will be deleted after the invite is accepted
-  tempEncryptedPrivateKey  String?
 
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -66,7 +64,6 @@ model Keychain {
 
   @@index([userId])
 }
-
 model EncryptedProjectKey {
   id           String @id @default(cuid())
   encryptedKey String
@@ -86,13 +83,11 @@ enum UserRole {
 
 model Invite {
   id                  String   @id @default(cuid())
-  userId              String
   project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId           String
   createdAt           DateTime @default(now())
-
-  // hashedPassword hashed using argon2id and temporarily saved on the table; they are deleted after the invite is accepted
-  hashedPassword      String
+  updatedAt           DateTime @updatedAt
+  expires             DateTime
 
   // Someone who is inviting
   invitor   User   @relation(name: "invitor", fields: [invitorId], references: [id], onDelete: Cascade)
@@ -102,9 +97,8 @@ model Invite {
   invitee   User   @relation(name: "invitee", fields: [inviteeId], references: [id], onDelete: Cascade)
   inviteeId String
 
-  @@unique([userId, projectId])
+  @@unique([inviteeId, projectId])
   @@index([invitorId])
-  @@index([inviteeId])
   @@index([projectId])
 }
 
@@ -309,7 +303,6 @@ model User {
   name              String?
   email             String           @unique
   emailVerified     DateTime?
-  hashedPassword    String?
   image             String?
   cliId             String?          @unique
   accounts          Account[]
@@ -371,4 +364,9 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Redirect {
+  id        String   @id @default(cuid())
+  url       String
 }
