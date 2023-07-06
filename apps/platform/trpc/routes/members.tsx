@@ -1,5 +1,4 @@
 import React, { Fragment } from "react";
-import InviteLink from "@/emails/InviteLink";
 import { env } from "@/env/index.mjs";
 import useAccess from "@/hooks/useAccess";
 import { generateVerificationUrl } from "@/models/user";

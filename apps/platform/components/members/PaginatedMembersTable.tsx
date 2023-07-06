@@ -83,7 +83,7 @@ const PaginatedMembersTable = ({
       );
 
       if (member.status === MembershipStatus.pending) {
-        const expired = hasExpired(member.invite?.invitationTokenExpiresAt);
+        const expired = hasExpired(member.invite?.expires);
 
         const handleReInvite = async () => {
           setFetching(true);
@@ -106,7 +106,7 @@ const PaginatedMembersTable = ({
         const action = {
           title: expired
             ? `Re-invite ${member.name || member.email}`
-            : `Delete invite for ${member.name || member.email}`,
+            : `Remove access`,
           handleClick: expired ? handleReInvite : handleDeleteInvite,
           disabled: fetching || member.id === user.id,
         };

@@ -91,7 +91,7 @@ export function Table<T extends object>({
         {data.length === 0 ? (
           <div
             className={clsx(
-              "bg-darker mx-auto w-full max-w-screen-xl px-5 py-8 transition duration-300 lg:py-12 xl:px-16",
+              "bg-darker mx-auto w-full max-w-screen-xl rounded px-5 py-8 transition duration-300 lg:py-12 xl:px-16",
               hasFilters && "border-dark border-t",
             )}
           >
