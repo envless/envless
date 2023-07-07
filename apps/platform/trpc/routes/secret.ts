@@ -40,7 +40,6 @@ export const secrets = createRouter({
       const secrets = await ctx.prisma.secret.findMany({
         where: {
           branchId,
-          userId: user.id,
         },
         select: {
           id: true,

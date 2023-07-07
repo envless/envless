@@ -66,6 +66,9 @@ const AddMemberModal = ({
   ) => {
     setLoading(true);
     const { name, email, role } = data;
+    const keychain = session?.user.keychain;
+    const currentUserPrivateKey = keychain?.privateKey;
+
     const keypair = await generageKeyPair(name as string, email);
     const { publicKey, privateKey, revocationCertificate } = keypair;
 
@@ -81,9 +84,10 @@ const AddMemberModal = ({
       {
         onSuccess: async (data) => {
           const { publicKeys, invitation, encryptedProjectKey } = data;
+
           const decryptedProjectKey = (await decrypt(
             encryptedProjectKey as string,
-            privateKey as string,
+            currentUserPrivateKey as string,
           )) as string;
 
           const encryptedKey = (await encrypt(
