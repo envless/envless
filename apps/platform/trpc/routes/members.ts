@@ -1,5 +1,3 @@
-import React, { Fragment } from "react";
-import { env } from "@/env/index.mjs";
 import useAccess from "@/hooks/useAccess";
 import { generateVerificationUrl } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";

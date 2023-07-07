@@ -127,10 +127,8 @@ export const projects = createRouter({
           },
         });
 
-        // @ts-ignore
         const access = newProject.access[0];
-        // @ts-ignore
-        const branch = newProject.branches[0];
+        const branches = newProject.branches;
 
         await Audit.create({
           createdById: user.id,
@@ -145,16 +143,18 @@ export const projects = createRouter({
           },
         });
 
-        await Audit.create({
-          createdById: user.id,
-          projectId: newProject.id,
-          action: BRANCH_CREATED,
-          data: {
-            branch: {
-              id: branch.id,
-              name: branch.name,
+        branches.forEach(async (branch) => {
+          await Audit.create({
+            createdById: user.id,
+            projectId: newProject.id,
+            action: BRANCH_CREATED,
+            data: {
+              branch: {
+                id: branch.id,
+                name: branch.name,
+              },
             },
-          },
+          });
         });
       }
 

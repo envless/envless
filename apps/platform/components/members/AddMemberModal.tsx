@@ -58,6 +58,7 @@ const AddMemberModal = ({
   });
 
   const createMemberMutation = trpc.members.createInvite.useMutation();
+  const updateProjectKeyMutation = trpc.projectKey.update.useMutation();
 
   const createTeamMember = async (
     data: MemberProps,
@@ -80,28 +81,17 @@ const AddMemberModal = ({
       {
         onSuccess: async (data) => {
           const { publicKeys, invitation, encryptedProjectKey } = data;
-          const csvData = [
-            {
-              Name: name || "",
-              Email: email,
-              "Invitation Link": invitation,
-              "PGP Private Key": privateKey,
-            },
-          ];
+          const decryptedProjectKey = (await decrypt(
+            encryptedProjectKey as string,
+            privateKey as string,
+          )) as string;
 
-          const csv = await csvParser.unparse(csvData);
-          downloadAsTextFile(`envless-invitation-(${email}).csv`, csv);
+          const encryptedKey = (await encrypt(
+            decryptedProjectKey,
+            publicKeys,
+          )) as string;
 
-          showToast({
-            duration: 10000,
-            type: "success",
-            title: "Successfully added a team member",
-            subtitle:
-              "You have successfully added a team member to your project. Please securely share the downloaded file so they can access the project.",
-          });
-
-          triggerRefetchMembers();
-          closeModal();
+          await updateProjectKey(projectId, invitation, encryptedKey);
         },
         onError: (error) => {
           setError("email", { message: error.message });
@@ -112,6 +102,52 @@ const AddMemberModal = ({
         },
       },
     );
+
+    const updateProjectKey = async (
+      projectId: string,
+      invitation: string,
+      encryptedKey: string,
+    ) => {
+      updateProjectKeyMutation.mutate(
+        {
+          projectId,
+          encryptedKey,
+        },
+
+        {
+          onSuccess: async () => {
+            const csvData = [
+              {
+                Name: name || "",
+                Email: email,
+                "Invitation Link": invitation,
+                "PGP Private Key": privateKey,
+              },
+            ];
+
+            const csv = await csvParser.unparse(csvData);
+            downloadAsTextFile(`envless-invitation-(${email}).csv`, csv);
+
+            showToast({
+              duration: 10000,
+              type: "success",
+              title: "Successfully added a team member",
+              subtitle:
+                "You have successfully added a team member to your project. Please securely share the downloaded file so they can access the project.",
+            });
+
+            triggerRefetchMembers();
+            closeModal();
+          },
+          onError: (error) => {
+            setError("email", { message: error.message });
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        },
+      );
+    };
   };
 
   const submitHandler = (data: any, cb: () => void) => {

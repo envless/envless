@@ -3,7 +3,6 @@ import { clsx } from "clsx";
 import {
   GitBranchPlus,
   MailCheck,
-  MailPlus,
   Settings2,
   Shield,
   ShieldCheck,
@@ -42,7 +41,7 @@ const actions = [
   },
   {
     type: "invite.created",
-    icon: MailPlus,
+    icon: UserPlus,
     bg: "bg-emerald-100",
     color: "text-emerald-500",
   },
@@ -89,22 +88,31 @@ export default function AuditLogs({ logs, user }) {
       </Link>
     );
 
+    const branchLink = (branch: string) => (
+      <Link
+        className="text-xs text-teal-300 hover:underline"
+        href={`/projects/${project.slug}/tree/${branch}`}
+      >
+        {branch}
+      </Link>
+    );
+
     switch (log.action) {
       case "project.created":
         return <>created {projectLink()} project</>;
       case "branch.created":
+        const branch = log.data.branch.name;
+
         return (
           <>
-            created a{" "}
-            <span className="font-semibold">{log.data.branch.name}</span> branch
-            on {projectLink()} project
+            created a {branchLink(branch)} branch on {projectLink()} project
           </>
         );
       case "access.created":
         const role = log.data.access.role;
         const name =
           createdFor.id === user.id
-            ? "you"
+            ? "yourself"
             : createdFor.name || createdFor.email;
 
         return (
@@ -126,7 +134,15 @@ export default function AuditLogs({ logs, user }) {
           </>
         );
       case "invite.created":
-        return <>invited bla to join {projectLink()} project</>;
+        return (
+          <>
+            invited{" "}
+            {createdFor.id === user.id
+              ? "you"
+              : createdFor.name || createdFor.email}{" "}
+            to join {projectLink()} project
+          </>
+        );
       default:
         return null;
     }
