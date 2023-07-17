@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { getAvatar } from "@/utils/getAvatar";
 import {
@@ -48,6 +48,12 @@ export default function AuditLogTable({
   };
   const results = useFuse(auditLogs, query, fuseOptions);
 
+  const resultsRef = useRef(results);
+
+  useEffect(() => {
+    resultsRef.current = results;
+  }, [results]);
+
   useEffect(() => {
     setAuditLogs(auditLogs);
   }, [auditLogs]);
@@ -56,10 +62,10 @@ export default function AuditLogTable({
     if (query.length === 0) {
       setAuditLogs(auditLogs);
     } else {
-      const collection = results.map((result) => result.item);
+      const collection = resultsRef.current.map((result) => result.item);
       setAuditLogs(collection);
     }
-  }, [auditLogs, query, results]);
+  }, [auditLogs, query]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
