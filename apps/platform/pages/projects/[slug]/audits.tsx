@@ -118,7 +118,11 @@ const _getServerSideProps = async (context: GetServerSidePropsContext) => {
     take: 25,
   });
 
-  const totalAuditLogs = await prisma?.audit.count();
+  const totalAuditLogs = await prisma?.audit.count({
+    where: {
+      projectId: selectedProject?.id,
+    },
+  });
 
   return {
     props: {
