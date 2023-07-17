@@ -32,6 +32,9 @@ export const AuditLogsPage = ({
   totalAuditLogs,
 }: Props) => {
   const [open, setOpen] = useState(false);
+  const [allAuditLogs, setAllAuditLogs] = useState(
+    Object.values(initialAuditLogs),
+  );
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 25,
@@ -45,12 +48,13 @@ export const AuditLogsPage = ({
     [pageIndex, pageSize],
   );
 
-  const pageCount = Math.ceil(totalAuditLogs / pagination.pageSize);
+  const pageCount = Math.ceil(allAuditLogs.length / pagination.pageSize);
 
   const { data: auditLogs } = trpc.auditLogs.getAll.useQuery(
     {
       ...pagination,
       projectId: currentProject.id,
+      auditIds: [...allAuditLogs.map((log: any) => log.id)],
     },
     {
       initialData: initialAuditLogs,
@@ -59,6 +63,9 @@ export const AuditLogsPage = ({
       refetchOnWindowFocus: false,
     },
   );
+
+  const resetAllAuditLogs = () =>
+    setAllAuditLogs([...Object.values(initialAuditLogs)]);
 
   const [auditLogDetail, setAuditLogDetail] = useState();
   const memoizedAuditLogs = useMemo(() => auditLogs, [auditLogs]);
@@ -81,8 +88,10 @@ export const AuditLogsPage = ({
         pagination={pagination}
         setPagination={setPagination}
         auditLogs={memoizedAuditLogs}
+        allAuditLogs={allAuditLogs}
+        setAllAuditLogs={setAllAuditLogs}
+        resetAllAuditLogs={resetAllAuditLogs}
         pageCount={pageCount}
-        totalAuditLogs={totalAuditLogs}
         setSlideOverOpen={setOpen}
         setAuditLogDetail={setAuditLogDetail}
       />

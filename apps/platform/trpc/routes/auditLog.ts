@@ -8,12 +8,14 @@ export const auditLogs = createRouter({
         pageIndex: z.number(),
         pageSize: z.number(),
         projectId: z.string(),
+        auditIds: z.string().array(),
       }),
     )
     .query(async ({ ctx, input }) => {
       const auditLogs = await ctx.prisma.audit.findMany({
         where: {
           projectId: input.projectId,
+          id: { in: input.auditIds.length == 0 ? undefined : input.auditIds },
         },
         orderBy: {
           createdAt: "desc",

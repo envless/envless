@@ -21,24 +21,27 @@ import { BaseInput } from "@/components/theme";
 
 type AuditLogTableProps = {
   auditLogs: any;
+  allAuditLogs: any;
+  setAllAuditLogs: (auditLogs: any) => void;
+  resetAllAuditLogs: () => void;
   setSlideOverOpen: (open: boolean) => void;
   pagination: PaginationState;
   setPagination: (pagination: PaginationState) => void;
   pageCount: number;
-  totalAuditLogs: number;
   setAuditLogDetail: (auditLog: any) => void;
 };
 
 export default function AuditLogTable({
   auditLogs,
+  allAuditLogs,
+  setAllAuditLogs,
+  resetAllAuditLogs,
   setSlideOverOpen,
   pagination,
   setPagination,
   pageCount,
-  totalAuditLogs,
   setAuditLogDetail,
 }: AuditLogTableProps) {
-  const [auditLogList, setAuditLogs] = useState(auditLogs);
   const [query, setQuery] = useState("");
 
   const fuseOptions = {
@@ -46,8 +49,9 @@ export default function AuditLogTable({
     threshold: 0.2,
     findAllMatches: true,
   };
-  const results = useFuse(auditLogs, query, fuseOptions);
+  const results = useFuse(allAuditLogs, query, fuseOptions);
 
+  // this useRef is used to prevent infinite loop of updates of the page
   const resultsRef = useRef(results);
 
   useEffect(() => {
@@ -55,17 +59,15 @@ export default function AuditLogTable({
   }, [results]);
 
   useEffect(() => {
-    setAuditLogs(auditLogs);
-  }, [auditLogs]);
-
-  useEffect(() => {
     if (query.length === 0) {
-      setAuditLogs(auditLogs);
+      resetAllAuditLogs();
     } else {
       const collection = resultsRef.current.map((result) => result.item);
-      setAuditLogs(collection);
+      setAllAuditLogs(collection);
+      setPagination({ ...pagination, pageIndex: 0 });
     }
-  }, [auditLogs, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
@@ -135,7 +137,7 @@ export default function AuditLogTable({
   );
 
   const table = useReactTable({
-    data: auditLogList,
+    data: auditLogs,
     columns,
     pageCount,
     state: {
@@ -168,7 +170,7 @@ export default function AuditLogTable({
               data-balloon-pos="up"
               className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-white/25"
               onClick={() => {
-                const dataForCSV = auditLogList.map((auditLog: any) => {
+                const dataForCSV = allAuditLogs.map((auditLog: any) => {
                   return {
                     CreatedBy: auditLog.createdBy.name,
                     Action: auditLog.action,
@@ -227,7 +229,7 @@ export default function AuditLogTable({
 
       <div className="flex items-center justify-between px-4 py-3 font-medium">
         <p className="text-xs">
-          {getPaginationText(pagination, totalAuditLogs)}
+          {getPaginationText(pagination, allAuditLogs.length)}
         </p>
         <div className="flex items-center gap-3 text-xs">
           <button
