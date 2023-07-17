@@ -1,15 +1,20 @@
 import { createRouter, withAuth } from "@/trpc/router";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import Audit from "@/lib/audit";
 
 export const auditLogs = createRouter({
   getAll: withAuth
-    .input(z.object({ page: z.number() }))
+    .input(
+      z.object({
+        pageIndex: z.number(),
+        pageSize: z.number(),
+        projectId: z.string(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const ITEMS_PER_PAGE = 25;
-
       const auditLogs = await ctx.prisma.audit.findMany({
+        where: {
+          projectId: input.projectId,
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -25,8 +30,8 @@ export const auditLogs = createRouter({
             },
           },
         },
-        take: ITEMS_PER_PAGE,
-        skip: (input.page - 1) * ITEMS_PER_PAGE,
+        take: input.pageSize,
+        skip: input.pageIndex * input.pageSize,
       });
 
       return auditLogs;

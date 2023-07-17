@@ -49,7 +49,8 @@ export const AuditLogsPage = ({
 
   const { data: auditLogs } = trpc.auditLogs.getAll.useQuery(
     {
-      page: pagination.pageIndex + 1,
+      ...pagination,
+      projectId: currentProject.id,
     },
     {
       initialData: initialAuditLogs,
