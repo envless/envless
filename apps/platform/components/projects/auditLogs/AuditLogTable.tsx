@@ -2,7 +2,11 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { getAvatar } from "@/utils/getAvatar";
-import { downloadAsTextFile, formatDateTime } from "@/utils/helpers";
+import {
+  downloadAsTextFile,
+  formatDateTime,
+  getPaginationText,
+} from "@/utils/helpers";
 import {
   ColumnDef,
   PaginationState,
@@ -217,11 +221,7 @@ export default function AuditLogTable({
 
       <div className="flex items-center justify-between px-4 py-3 font-medium">
         <p className="text-xs">
-          Showing {pagination.pageIndex * pagination.pageSize + 1} to{" "}
-          {(pagination.pageIndex + 1) * pagination.pageSize > totalAuditLogs
-            ? totalAuditLogs
-            : (pagination.pageIndex + 1) * pagination.pageSize}{" "}
-          of {totalAuditLogs}{" "}
+          {getPaginationText(pagination, totalAuditLogs)}
         </p>
         <div className="flex items-center gap-3 text-xs">
           <button
