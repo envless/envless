@@ -55,7 +55,7 @@ export const AuditLogsPage = ({
     {
       initialData: initialAuditLogs,
       keepPreviousData: true,
-      refetchOnMount: false,
+      refetchOnMount: true,
       refetchOnWindowFocus: false,
     },
   );
