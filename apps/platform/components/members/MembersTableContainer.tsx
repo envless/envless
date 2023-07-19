@@ -7,8 +7,10 @@ import { trpc } from "@/utils/trpc";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
 import { Download, Search, UserX } from "lucide-react";
+import { useSession } from "next-auth/react";
 import * as csvParser from "papaparse";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
+import { decrypt, encrypt } from "@/lib/encryption/openpgp";
 import { BaseInput } from "../theme";
 import { showToast } from "../theme/showToast";
 import PaginatedMembersTable from "./PaginatedMembersTable";
@@ -49,6 +51,10 @@ const MembersTableContainer = ({
   const fuseOptions = { keys: ["name", "email"], threshold: 0.2 };
   const results = useFuse(members, query, fuseOptions);
   const router = useRouter();
+  const { data: session } = useSession();
+  const keychain = session?.user.keychain;
+  const currentUserPrivateKey = keychain?.privateKey;
+  const updateProjectKeyMutation = trpc.projectKey.update.useMutation();
 
   useEffect(() => {
     if (query.length === 0) {
@@ -58,27 +64,6 @@ const MembersTableContainer = ({
       setTeam(collection);
     }
   }, [members, query, results]);
-
-  const memberStatusMutation = trpc.members.updateUserAccessStatus.useMutation({
-    onSuccess: (data) => {
-      showToast({
-        type: "success",
-        title: "Access successfully updated",
-        subtitle: "",
-      });
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-    },
-    onError: (error) => {
-      showToast({
-        type: "error",
-        title: "Access update failed",
-        subtitle: error.message,
-      });
-      setFetching(false);
-    },
-  });
 
   const memberUpdateMutation = trpc.members.update.useMutation({
     onSuccess: (data) => {
@@ -122,24 +107,64 @@ const MembersTableContainer = ({
     },
   });
 
+  const updateProjectKey = async (encryptedKey: string) => {
+    updateProjectKeyMutation.mutate(
+      {
+        projectId,
+        encryptedKey,
+      },
+
+      {
+        onSuccess: async () => {
+          router.replace(router.asPath);
+          refetchMembersAfterUpdate();
+          showToast({
+            type: "success",
+            title: "Access removed",
+            subtitle: "You have succefully removed access.",
+          });
+        },
+        onError: (error) => {
+          showToast({
+            type: "error",
+            title: "Error removing access",
+            subtitle:
+              "There was an error removing access. Please try again later.",
+          });
+        },
+        onSettled: () => {
+          setFetching(false);
+        },
+      },
+    );
+  };
+
   const memberRemoveAccessMutation = trpc.members.removeAccess.useMutation({
-    onSuccess: (data) => {
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-      showToast({
-        type: "success",
-        title: "Access removed",
-        subtitle: "You have succefully removed access.",
-      });
+    onSuccess: async (data) => {
+      const { publicKeys, encryptedProjectKey } = data;
+
+      const decryptedProjectKey = (await decrypt(
+        encryptedProjectKey as string,
+        currentUserPrivateKey as string,
+      )) as string;
+
+      const encryptedKey = (await encrypt(
+        decryptedProjectKey,
+        publicKeys as string[],
+      )) as string;
+
+      await updateProjectKey(encryptedKey);
     },
     onError: (error) => {
-      setFetching(false);
       showToast({
         type: "error",
         title: "Error removing access",
         subtitle: "There was an error removing access. Please try again later.",
       });
+    },
+
+    onSettled: () => {
+      setFetching(false);
     },
   });
 

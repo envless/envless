@@ -6,109 +6,34 @@ import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { get } from "lodash";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption/openpgp";
+import prisma from "@/lib/prisma";
 
-interface CheckAccessAndPermissionArgs {
-  ctx: any;
-  userId: string;
-  projectId: string;
-  newRole?: UserRole;
-  targetUserId: string;
-  currentUserRole: UserRole;
-  targetUserRole: UserRole;
-}
-
-const checkAccessAndPermission = async ({
-  ctx,
-  projectId,
-  currentUserRole,
-  targetUserId,
-  targetUserRole,
-  newRole,
-}: CheckAccessAndPermissionArgs) => {
-  const { id: userId } = ctx.session.user;
-
-  const UNAUTHORIZED_ERROR: { code: TRPCError["code"]; message: string } = {
-    code: "UNAUTHORIZED",
-    message:
-      "You do not have the required permission to perform this action. Please contact the project owner to request permission",
-  };
-
-  // Check if user is owner or maintainer
-  if (
-    !(
-      currentUserRole === UserRole.maintainer ||
-      currentUserRole === UserRole.owner
-    )
-  ) {
-    throw new TRPCError(UNAUTHORIZED_ERROR);
-  }
-  if (
-    currentUserRole === UserRole.maintainer &&
-    targetUserRole === UserRole.owner
-  ) {
-    // Check if maintainer is trying to update an owner
-    throw new TRPCError(UNAUTHORIZED_ERROR);
-  }
-
-  // Check if trying to update an owner's role
-  if (newRole === UserRole.owner) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "The owner role cannot be updated",
-    });
-  }
-
-  // Check if user is trying to perform the action on their account
-  if (targetUserId === userId) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "You cannot perform this action on yourself",
-    });
-  }
-
-  // Fetch access records for current user and target user
-  const access: Access[] = await ctx.prisma.access.findMany({
-    where: {
-      projectId: projectId,
-      userId: {
-        in: [userId, targetUserId],
-      },
-      role: {
-        in: [currentUserRole, targetUserRole],
-      },
-    },
-    orderBy: {
-      role: "asc",
-    },
+const getEncryptionDetails = async ({ projectId }: { projectId: string }) => {
+  const accesses = await prisma.access.findMany({
+    where: { projectId },
+    select: { userId: true },
   });
 
-  if (access.length !== 2) {
-    throw new TRPCError(UNAUTHORIZED_ERROR);
-  }
-
-  // Sort access records so that the current user comes first
-  const [firstUser, secondUser] = access.sort((a, b) => {
-    if (a.userId === userId) {
-      return -1;
-    } else if (b.userId === userId) {
-      return 1;
-    }
-    return 0;
+  const memberIds = accesses.map((access) => access.userId);
+  const keychains = await prisma.keychain.findMany({
+    where: { userId: { in: memberIds } },
+    select: { publicKey: true },
   });
 
-  // Assign current user and target user based on the sorted order
-  const [currentUser, targetUser] =
-    firstUser.userId === userId
-      ? [firstUser, secondUser]
-      : [secondUser, firstUser];
+  const projectKey = await prisma.encryptedProjectKey.findUnique({
+    where: { projectId },
+    select: { encryptedKey: true },
+  });
 
-  if (currentUser.userId !== userId || targetUser.userId !== targetUserId) {
-    throw new TRPCError(UNAUTHORIZED_ERROR);
-  }
+  const encryptedProjectKey = projectKey?.encryptedKey;
+  const publicKeys = keychains.map((keychain) => keychain.publicKey);
+
+  return [publicKeys, encryptedProjectKey];
 };
 
 export const members = createRouter({
@@ -149,7 +74,7 @@ export const members = createRouter({
         });
       }
 
-      const existingMember = await ctx.prisma.user.findUnique({
+      const existingMember = await prisma.user.findUnique({
         where: { email },
       });
 
@@ -157,7 +82,7 @@ export const members = createRouter({
         hasUserAccount = true;
         member = existingMember;
       } else {
-        member = await ctx.prisma.user.create({
+        member = await prisma.user.create({
           data: { email, name },
         });
 
@@ -165,7 +90,7 @@ export const members = createRouter({
           publicKey,
         ])) as string;
 
-        await ctx.prisma.keychain.upsert({
+        await prisma.keychain.upsert({
           where: { userId: member.id },
           update: {},
           create: {
@@ -178,7 +103,7 @@ export const members = createRouter({
         });
       }
 
-      const access = await ctx.prisma.access.upsert({
+      const access = await prisma.access.upsert({
         where: {
           userId_projectId: {
             projectId,
@@ -201,7 +126,7 @@ export const members = createRouter({
         },
       });
 
-      await ctx.prisma.invite.upsert({
+      await prisma.invite.upsert({
         where: {
           inviteeId_projectId: {
             projectId,
@@ -244,26 +169,12 @@ export const members = createRouter({
         },
       });
 
-      const accesses = await ctx.prisma.access.findMany({
-        where: { projectId },
-        select: { userId: true },
+      const [publicKeys, encryptedProjectKey] = await getEncryptionDetails({
+        projectId,
       });
 
-      const memberIds = accesses.map((access) => access.userId);
-      const keychains = await ctx.prisma.keychain.findMany({
-        where: { userId: { in: memberIds } },
-        select: { publicKey: true },
-      });
-
-      const projectKey = await ctx.prisma.encryptedProjectKey.findUnique({
-        where: { projectId },
-        select: { encryptedKey: true },
-      });
-
-      const encryptedProjectKey = projectKey?.encryptedKey;
-      const publicKeys = keychains.map((keychain) => keychain.publicKey);
       const verificationUrl = await generateVerificationUrl(member, expires);
-      const redirect = await ctx.prisma.redirect.create({
+      const redirect = await prisma.redirect.create({
         data: { url: verificationUrl },
       });
 
@@ -297,7 +208,7 @@ export const members = createRouter({
         });
       }
 
-      const access = await ctx.prisma.access.findFirst({
+      const access = await prisma.access.findFirst({
         where: {
           AND: {
             projectId,
@@ -313,13 +224,13 @@ export const members = createRouter({
         });
       }
 
-      await ctx.prisma.access.delete({
+      await prisma.access.delete({
         where: {
           id: access.id,
         },
       });
 
-      const member = await ctx.prisma.user.findUnique({
+      const member = await prisma.user.findUnique({
         where: { id: memberId },
       });
 
@@ -336,13 +247,20 @@ export const members = createRouter({
         },
       });
 
-      return { success: true };
+      const [publicKeys, encryptedProjectKey] = await getEncryptionDetails({
+        projectId,
+      });
+
+      return {
+        publicKeys,
+        encryptedProjectKey,
+      };
     }),
 
   getAll: withAuth
     .input(z.object({ page: z.number(), projectId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const accesses = await ctx.prisma.access.findMany({
+      const accesses = await prisma.access.findMany({
         where: {
           projectId: input.projectId,
         },

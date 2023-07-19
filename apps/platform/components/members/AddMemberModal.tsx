@@ -41,6 +41,8 @@ const AddMemberModal = ({
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
   const router = useRouter();
   const { data: session } = useSession();
+  const keychain = session?.user.keychain;
+  const currentUserPrivateKey = keychain?.privateKey;
 
   const {
     reset,
@@ -66,9 +68,6 @@ const AddMemberModal = ({
   ) => {
     setLoading(true);
     const { name, email, role } = data;
-    const keychain = session?.user.keychain;
-    const currentUserPrivateKey = keychain?.privateKey;
-
     const keypair = await generageKeyPair(name as string, email);
     const { publicKey, privateKey, revocationCertificate } = keypair;
 
@@ -97,7 +96,7 @@ const AddMemberModal = ({
 
           const encryptedKey = (await encrypt(
             decryptedProjectKey,
-            publicKeys,
+            publicKeys as string[],
           )) as string;
 
           await updateProjectKey(
