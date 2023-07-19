@@ -74,6 +74,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } else {
+    const pendingAccess = await prisma.access.findMany({
+      where: {
+        userId: userId,
+        status: MembershipStatus.pending,
+      },
+
+      select: { id: true },
+    });
+
+    // If there are pending access requests, auto-approve them
+    if (pendingAccess.length > 0) {
+      await prisma.access.updateMany({
+        where: {
+          id: {
+            in: pendingAccess.map((a) => a.id),
+          },
+        },
+        data: {
+          status: MembershipStatus.active,
+        },
+      });
+    }
+
     const userRecord = await prisma.user.findUnique({
       where: {
         id: userId,

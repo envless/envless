@@ -8,8 +8,9 @@ import { TRPCError } from "@trpc/server";
 import sendMail from "emails";
 import { z } from "zod";
 import { getClientDetails } from "@/lib/client";
-import log from "@/lib/log";
 import prisma from "@/lib/prisma";
+
+const debug = require("debug")("platform:trpc");
 
 export const auth = createRouter({
   signup: withoutAuth
@@ -21,10 +22,11 @@ export const auth = createRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { name, email } = input;
+      const lowercaseEmail = email.toLowerCase();
 
       const currentUser = await prisma.user.findUnique({
         where: {
-          email,
+          email: lowercaseEmail,
         },
       });
 
@@ -41,7 +43,7 @@ export const auth = createRouter({
 
       try {
         const user = await prisma.user.create({
-          data: { name, email },
+          data: { name, email: lowercaseEmail },
         });
 
         return await sendVerificationEmail(user);
@@ -60,7 +62,7 @@ export const auth = createRouter({
       }
     }),
 
-  keychain: withAuth
+  createKeychain: withAuth
     .input(
       z.object({
         publicKey: z.string(),
@@ -72,11 +74,26 @@ export const auth = createRouter({
       const { user } = ctx.session;
       const { publicKey, verificationString, revocationCertificate } = input;
 
+      const _keychain = await prisma.keychain.findFirst({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (_keychain) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Keychain already exists, please reload this page and try again.",
+        });
+      }
+
       const keychain = await prisma.keychain.create({
         data: {
           publicKey,
           verificationString,
           revocationCertificate,
+          downloaded: true,
           user: {
             connect: {
               id: user.id,
@@ -102,7 +119,7 @@ export const auth = createRouter({
       const { fingerprint, sessionId, name } = input;
 
       if (sessionId !== ctx.session.id) {
-        return new TRPCError({
+        throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Session ID does not match.",
         });
@@ -133,7 +150,7 @@ export const auth = createRouter({
         );
 
         if (!previousSession) {
-          log("Logging in for the first time on this device");
+          debug("Logging in for the first time on this device");
 
           sendMail({
             subject: "Envless security alert: New sign-in",
@@ -177,7 +194,7 @@ export const auth = createRouter({
           },
         });
 
-        if (!currentUser?.name) {
+        if (name && !currentUser?.name) {
           await prisma.user.update({
             where: {
               id: user.id,

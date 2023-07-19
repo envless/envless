@@ -49,7 +49,10 @@ const TwoFactorModal = ({ open, setOpen, onConfirm }: Props) => {
           ...session,
           user: {
             ...session?.user,
-            twoFactorVerified: true,
+            twoFactor: {
+              ...session?.user?.twoFactor,
+              verified: true,
+            },
           },
         };
 
@@ -202,11 +205,12 @@ export const useTwoFactorModal = () => {
   const withTwoFactorAuth = useCallback(
     async (fn: Function) => {
       const user = session?.user;
+      const twoFactor = user?.twoFactor;
 
-      if (user?.twoFactorEnabled && !user?.twoFactorVerified) {
+      if (twoFactor?.enabled && !twoFactor?.verified) {
         setOriginalFunction(() => fn);
         setOpenModal(true);
-      } else if (user?.twoFactorVerified) {
+      } else if (twoFactor?.verified) {
         // Two-factor auth already verified, execute the original function
         await fn();
         setOpenModal(false);

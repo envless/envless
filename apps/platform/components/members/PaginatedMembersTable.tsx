@@ -1,6 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import React, { Fragment, useCallback, useMemo } from "react";
-import type { MemberType, UserType } from "@/types/resources";
+import type { MemberType, SessionUserType } from "@/types/resources";
 import { getAvatar } from "@/utils/getAvatar";
 import { MembershipStatus, UserRole } from "@prisma/client";
 import { UseMutationResult } from "@tanstack/react-query";
@@ -12,57 +13,48 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
+import { remove } from "lodash";
 import {
   ChevronLeft,
   ChevronRight,
   Circle,
   Lock,
   MoreVertical,
+  Pencil,
   Unlock,
 } from "lucide-react";
 import { Dropdown } from "../theme";
-import MemberDropDown from "./MemberDropDown";
+import RoleDropDown from "./RoleDropDown";
 
 type PaginatedMembersTableProps = {
   members: MemberType[];
   pagination: PaginationState;
-  handleUpdateMemberAccess: (user: any) => void;
-  handleUpdateMemberStatus: (...user: any[]) => void;
   fetching: boolean;
   setFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
-  memberReinviteMutation: UseMutationResult;
-  memberDeleteInviteMutation: UseMutationResult;
+  removeAccessMutation: UseMutationResult;
+  updateAccessMutation: UseMutationResult;
   projectId: string;
   currentRole: UserRole;
   totalMembers: number;
   pageCount: number;
-  user: UserType;
+  user: SessionUserType;
 };
 
-function hasExpired(timeString?: Date) {
-  if (!timeString) {
-    return false;
-  }
-
-  const now = Date.now();
-  const inviteTime = new Date(timeString).getTime();
-
-  return now > inviteTime;
-}
-
 const roles: UserRole[] = Object.values(UserRole);
+const restrictedRoles: UserRole[] = remove(
+  roles,
+  (role) => role != UserRole.owner,
+);
 
 const PaginatedMembersTable = ({
   members,
   pagination,
   setPagination,
-  handleUpdateMemberAccess,
-  handleUpdateMemberStatus,
   fetching,
   setFetching,
-  memberReinviteMutation,
-  memberDeleteInviteMutation,
+  updateAccessMutation,
+  removeAccessMutation,
   projectId,
   currentRole,
   totalMembers,
@@ -80,109 +72,56 @@ const PaginatedMembersTable = ({
         </button>
       );
 
-      if (member.status === MembershipStatus.pending) {
-        const expired = hasExpired(
-          member.projectInvite?.invitationTokenExpiresAt,
+      const handleRemoveAccess = () => {
+        const confirm = window.confirm(
+          `Are you sure you want to remove ${
+            member.name || member.email
+          } from this project?`,
         );
 
-        const handleReInvite = async () => {
-          setFetching(true);
-          memberReinviteMutation.mutate({
-            email: member.email,
-            projectId,
-          });
-        };
+        if (!confirm) {
+          return;
+        }
 
-        const handleDeleteInvite = () => {
-          if (member.projectInviteId) {
-            setFetching(true);
-            memberDeleteInviteMutation.mutate({
-              projectId,
-              projectInviteId: member.projectInviteId,
-            });
-          }
-        };
+        setFetching(true);
+        removeAccessMutation.mutate({
+          projectId,
+          memberId: member.id,
+        });
+      };
 
-        const action = {
-          title: expired
-            ? `Re-invite ${member.name || member.email}`
-            : `Delete invite for ${member.name || member.email}`,
-          handleClick: expired ? handleReInvite : handleDeleteInvite,
-          disabled: fetching || member.id === user.id,
-        };
+      const action = {
+        title: `Remove access`,
+        handleClick: handleRemoveAccess,
+        disabled: fetching || member.id === user.id,
+      };
 
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
-        );
-      }
-
-      if (member.status === MembershipStatus.inactive) {
-        const action = {
-          title: `Re-activate ${member.name}`,
-          handleClick: () => {
-            handleUpdateMemberStatus(
-              {
-                currentRole: member.role,
-                newRole: member.role,
-                userId: member.id,
-              },
-              MembershipStatus.active,
-            );
-          },
-          disabled: fetching || member.id === user.id,
-        };
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
-        );
-      }
-
-      if (member.status === MembershipStatus.active) {
-        const action = {
-          title: `De-activate ${member.name}`,
-          handleClick: () => {
-            handleUpdateMemberStatus(
-              {
-                currentRole: member.role,
-                newRole: member.role,
-                userId: member.id,
-              },
-              MembershipStatus.inactive,
-            );
-          },
-          disabled:
-            fetching ||
-            member.id === user.id ||
-            (currentRole === UserRole.maintainer &&
-              member.role === UserRole.owner),
-        };
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
-        );
-      }
+      return (
+        <Dropdown
+          button={<MoreIconButton />}
+          items={[action]}
+          itemsPosition="right-0 top-3/4"
+        />
+      );
     },
     [
       fetching,
       user.id,
       setFetching,
-      memberReinviteMutation,
       projectId,
-      memberDeleteInviteMutation,
-      handleUpdateMemberStatus,
+      removeAccessMutation,
       currentRole,
     ],
   );
+
+  const handleUpdateAccess = (role: UserRole, memberId: string) => {
+    setFetching(true);
+    updateAccessMutation.mutate({
+      projectId,
+      role,
+      memberId,
+    });
+  };
 
   const columns = useMemo<ColumnDef<MemberType>[]>(
     () => [
@@ -204,8 +143,16 @@ const PaginatedMembersTable = ({
               />
               <div>
                 <div className="text-base font-medium">
-                  {member.name}
-                  {member.email === user.email && " (Me)"}
+                  <span>{member.name}</span>
+                  {member.email === user.email && !member.name && (
+                    <Link
+                      href="/settings"
+                      className="flex text-sm text-teal-400 hover:underline"
+                    >
+                      Update your name
+                      <Pencil className="ml-2 mt-1 h-3 w-3" />
+                    </Link>
+                  )}
                 </div>
                 <div
                   className={clsx(
@@ -233,17 +180,11 @@ const PaginatedMembersTable = ({
         cell: (info) => {
           const member = info.row.original;
           return (
-            <MemberDropDown
-              roles={roles}
-              setSelectedRole={(role) =>
-                handleUpdateMemberAccess({
-                  currentRole: member.role,
-                  newRole: role,
-                  userId: member.id,
-                })
-              }
+            <RoleDropDown
+              roles={restrictedRoles}
+              setSelectedRole={(role) => handleUpdateAccess(role, member.id)}
               selectedRole={member.role}
-              disabled={fetching}
+              disabled={fetching || member.id === user.id}
             />
           );
         },
@@ -280,7 +221,7 @@ const PaginatedMembersTable = ({
         ),
       },
     ],
-    [fetching, handleUpdateMemberAccess, renderSettingsButton, user.email],
+    [fetching, renderSettingsButton, user.email],
   );
 
   const table = useReactTable({
@@ -412,7 +353,7 @@ const StatusChip = ({ status }: StatusChipProps) => {
         borderColor,
       )}
     >
-      <Circle size={16} fill={iconFillColor} color={iconFillColor} />
+      <Circle size={12} fill={iconFillColor} color={iconFillColor} />
       <span className={`text-xs font-medium ${textColor && textColor}`}>
         {status}
       </span>

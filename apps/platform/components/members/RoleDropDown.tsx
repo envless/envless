@@ -4,19 +4,19 @@ import { UserRole } from "@prisma/client";
 import clsx from "clsx";
 import { Check, ChevronDown } from "lucide-react";
 
-interface MemberDropdownProps {
+interface RoleDropdownProps {
   roles: UserRole[];
   setSelectedRole: (role: UserRole) => void;
   selectedRole: UserRole;
   disabled: boolean;
 }
 
-export default function MemberDropDown({
+export default function RoleDropDown({
   roles,
   selectedRole,
   setSelectedRole,
   disabled,
-}: MemberDropdownProps) {
+}: RoleDropdownProps) {
   const handleSelectRoleClick = (role: UserRole) => {
     setSelectedRole(role);
   };

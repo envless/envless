@@ -38,7 +38,7 @@ export default function Dropdown(props: Props) {
   return (
     <div className="relative">
       <Menu as="div" className="z-10 inline-block text-left">
-        <Menu.Button>{button}</Menu.Button>
+        <Menu.Button as="div">{button}</Menu.Button>
 
         <Transition
           as={Fragment}

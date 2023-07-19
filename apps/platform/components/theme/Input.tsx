@@ -31,6 +31,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   full?: boolean;
   defaultValue?: string;
   validationSchema?: object;
+  iconRight?: React.ReactNode;
 }
 
 const Input = ({ ...props }: InputProps) => {
@@ -48,6 +49,7 @@ const Input = ({ ...props }: InputProps) => {
     placeholder,
     defaultValue,
     className,
+    iconRight,
     validationSchema,
     ...restProps
   } = props;
@@ -61,23 +63,31 @@ const Input = ({ ...props }: InputProps) => {
       )}
 
       <div className="my-2">
-        <input
-          {...restProps}
-          id={name}
-          type={type}
-          inputMode={inputMode}
-          required={required}
-          disabled={disabled}
-          placeholder={placeholder}
-          defaultValue={defaultValue}
-          {...register(name, validationSchema)}
-          className={clsx(
-            className,
-            disabled && "bg-light/40 cursor-not-allowed",
-            full && "w-full",
-            "input-primary",
+        <div className="relative">
+          <input
+            {...restProps}
+            id={name}
+            type={type}
+            inputMode={inputMode}
+            required={required}
+            disabled={disabled}
+            placeholder={placeholder}
+            defaultValue={defaultValue}
+            {...register(name, validationSchema)}
+            className={clsx(
+              className,
+              full && "w-full",
+              " placeholder-light block appearance-none rounded border px-3 shadow-sm ring-1 focus:outline-none sm:text-sm",
+              disabled
+                ? "bg-light/30 ring-light/40 cursor-not-allowed"
+                : "border-dark bg-darker ring-light/50 focus:border-dark focus:ring-light",
+            )}
+          />
+
+          {iconRight && (
+            <div className="absolute right-3 top-3">{iconRight}</div>
           )}
-        />
+        </div>
 
         {help && <p className="text-light pt-1 text-xs">{help}</p>}
 

@@ -1,7 +1,8 @@
-import { env } from "@/env/index.mjs";
-
 const log = (...args) => {
-  if (env.NEXT_PUBLIC_DEV_LOG) console.debug(args);
+  if (process.env.NODE_ENV === "development") {
+    const json = JSON.stringify(args);
+    console.debug(`[ENVLESS DEV LOG]: ${json}`);
+  }
 };
 
 export default log;

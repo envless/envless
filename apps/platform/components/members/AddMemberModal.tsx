@@ -2,20 +2,25 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
+import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@prisma/client";
 import { capitalize } from "lodash";
 import { ArrowRight, UserPlus } from "lucide-react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
+import * as csvParser from "papaparse";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button, Input, Modal, Select } from "@/components/theme";
 import { showToast } from "@/components/theme/showToast";
+import { decrypt, encrypt, generageKeyPair } from "@/lib/encryption/openpgp";
 
 interface MemberProps {
   email: string;
   userId: string;
   role: UserRole;
+  name?: string;
 }
 
 interface AddMemberModalProps {
@@ -32,11 +37,14 @@ const AddMemberModal = ({
   triggerRefetchMembers,
 }: AddMemberModalProps) => {
   const [loading, setLoading] = useState(false);
-
   const { withTwoFactorAuth, TwoFactorModal } = useTwoFactorModal();
   const router = useRouter();
+  const { data: session } = useSession();
+  const keychain = session?.user.keychain;
+  const currentUserPrivateKey = keychain?.privateKey;
 
   const {
+    reset,
     register,
     setError,
     handleSubmit,
@@ -50,41 +58,116 @@ const AddMemberModal = ({
     ),
   });
 
-  const inviteMutation = trpc.members.invite.useMutation();
+  const createMemberMutation = trpc.members.create.useMutation();
+  const updateProjectKeyMutation = trpc.projectKey.update.useMutation();
 
-  const inviteMembers = async (data: MemberProps, closeModal: () => void) => {
-    const { email, role } = data;
+  const createTeamMember = async (
+    data: MemberProps,
+    closeModal: () => void,
+  ) => {
     setLoading(true);
+    const { name, email, role } = data;
+    const keypair = await generageKeyPair(name as string, email);
+    const { publicKey, privateKey, revocationCertificate } = keypair;
 
-    await inviteMutation.mutate(
+    createMemberMutation.mutate(
       {
+        name,
         email,
+        publicKey,
         projectId,
         role: role,
+        revocationCertificate,
       },
       {
-        onSuccess: (_data) => {
-          setLoading(false);
-          closeModal();
-          router.replace(router.asPath);
-          triggerRefetchMembers();
-          showToast({
-            type: "success",
-            title: "Invitation sent",
-            subtitle: "You have succefully sent an invitation.",
-          });
+        onSuccess: async (data) => {
+          const {
+            publicKeys,
+            invitation,
+            encryptedProjectKey,
+            hasUserAccount,
+          } = data;
+
+          const decryptedProjectKey = (await decrypt(
+            encryptedProjectKey as string,
+            currentUserPrivateKey as string,
+          )) as string;
+
+          const encryptedKey = (await encrypt(
+            decryptedProjectKey,
+            publicKeys as string[],
+          )) as string;
+
+          await updateProjectKey(
+            projectId,
+            invitation,
+            encryptedKey,
+            hasUserAccount,
+          );
         },
         onError: (error) => {
-          setLoading(false);
           setError("email", { message: error.message });
+        },
+
+        onSettled: () => {
+          setLoading(false);
         },
       },
     );
+
+    const updateProjectKey = async (
+      projectId: string,
+      invitation: string,
+      encryptedKey: string,
+      hasUserAccount: boolean,
+    ) => {
+      updateProjectKeyMutation.mutate(
+        {
+          projectId,
+          encryptedKey,
+        },
+
+        {
+          onSuccess: async () => {
+            const csvData = [
+              {
+                Name: name || "",
+                Email: email,
+                "Invitation Link": invitation,
+                "PGP Private Key": hasUserAccount
+                  ? "Please use your existing PGP private key"
+                  : privateKey,
+              },
+            ];
+
+            const csv = await csvParser.unparse(csvData);
+            downloadAsTextFile(`envless-invitation-(${email}).csv`, csv);
+
+            showToast({
+              duration: 10000,
+              type: "success",
+              title: "Successfully added a team member",
+              subtitle:
+                "You have successfully added a team member to your project. Please securely share the downloaded file so they can access the project.",
+            });
+
+            triggerRefetchMembers();
+            closeModal();
+          },
+          onError: (error) => {
+            setError("email", { message: error.message });
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        },
+      );
+    };
   };
 
   const submitHandler = (data: any, cb: () => void) => {
     withTwoFactorAuth(() => {
-      inviteMembers(data as MemberProps, cb);
+      createTeamMember(data as MemberProps, cb);
     });
   };
 
@@ -96,10 +179,10 @@ const AddMemberModal = ({
           type="button"
           className="float-right"
         >
-          Invite team member
+          Add team member
         </Button>
       }
-      title="Invite team member"
+      title="Add a team member"
     >
       {({ closeModal }) => (
         <Fragment>
@@ -108,6 +191,16 @@ const AddMemberModal = ({
             onSubmit={handleSubmit((data) => submitHandler(data, closeModal))}
           >
             <Input
+              type="text"
+              name="name"
+              label="Full name (optional)"
+              full
+              register={register}
+              errors={errors}
+              autoCapitalize="off"
+            />
+
+            <Input
               type="email"
               name="email"
               label="Email"
@@ -115,6 +208,7 @@ const AddMemberModal = ({
               full
               register={register}
               errors={errors}
+              autoCapitalize="off"
             />
 
             <div className="mb-6">
@@ -125,6 +219,7 @@ const AddMemberModal = ({
                 className="w-full"
                 required
                 options={selectOptions}
+                defaultValue={UserRole.developer}
                 help={
                   <p className="text-light pt-2 text-xs">
                     Learn more about the{" "}
@@ -139,16 +234,24 @@ const AddMemberModal = ({
                     >
                       Envless CLI
                     </Link>{" "}
-                    commands.
+                    commands. Clicking on the button below will download the
+                    login credentials for the invited member. Please share it
+                    with the member most secure way possible.
                   </p>
                 }
                 register={register}
                 errors={errors}
               />
             </div>
-            <Button className="float-right" type="submit" disabled={loading}>
-              Send an invite
-              <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+            <Button
+              className="float-right"
+              type="submit"
+              disabled={loading}
+              rightIcon={
+                <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+              }
+            >
+              Add member and download credentials
             </Button>
           </form>
         </Fragment>
