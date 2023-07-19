@@ -79,6 +79,7 @@ const MembersTableContainer = ({
       setFetching(false);
     },
   });
+
   const memberUpdateMutation = trpc.members.update.useMutation({
     onSuccess: (data) => {
       showToast({
@@ -121,24 +122,23 @@ const MembersTableContainer = ({
     },
   });
 
-  const memberDeleteInviteMutation = trpc.members.deleteInvite.useMutation({
+  const memberRemoveAccessMutation = trpc.members.removeAccess.useMutation({
     onSuccess: (data) => {
       setFetching(false);
       router.replace(router.asPath);
       refetchMembersAfterUpdate();
       showToast({
         type: "success",
-        title: "Invitation deleted",
-        subtitle: "The invitation has been successfully deleted.",
+        title: "Access removed",
+        subtitle: "You have succefully removed access.",
       });
     },
     onError: (error) => {
       setFetching(false);
       showToast({
         type: "error",
-        title: "Error deleting invitation",
-        subtitle:
-          "An error occurred while deleting the invitation. Please try again later.",
+        title: "Error removing access",
+        subtitle: "There was an error removing access. Please try again later.",
       });
     },
   });
@@ -157,27 +157,6 @@ const MembersTableContainer = ({
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [projectId, currentRole],
-  );
-
-  const onUpdateMemberStatus = useCallback(
-    (user: SelectedMember, status: MembershipStatus) => {
-      const confirmed = confirm(
-        `Are you sure you want to ${
-          status === MembershipStatus.active ? "re-activate" : "de-activate"
-        } change this user?`,
-      );
-      if (confirmed) {
-        setFetching(true);
-        memberStatusMutation.mutate({
-          projectId,
-          status,
-          currentUserRole: currentRole,
-          targetUserId: user.userId,
-          targetUserRole: user.currentRole,
-        });
-      }
-    },
-    [memberStatusMutation, projectId, currentRole],
   );
 
   return (
@@ -234,9 +213,8 @@ const MembersTableContainer = ({
             pagination={pagination}
             setPagination={setPagination}
             handleUpdateMemberAccess={onUpdateMemberAccess}
-            handleUpdateMemberStatus={onUpdateMemberStatus}
             memberReinviteMutation={memberReinviteMutation}
-            memberDeleteInviteMutation={memberDeleteInviteMutation}
+            memberRemoveAccessMutation={memberRemoveAccessMutation}
             fetching={fetching}
             currentRole={currentRole}
             projectId={projectId}

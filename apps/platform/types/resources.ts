@@ -36,4 +36,5 @@ export interface MemberType {
   role: UserRole;
   status: MembershipStatus;
   inviteId: string | null;
+  invite: Invite | null;
 }

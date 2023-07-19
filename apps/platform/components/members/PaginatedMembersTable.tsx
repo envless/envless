@@ -34,7 +34,7 @@ type PaginatedMembersTableProps = {
   setFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
   memberReinviteMutation: UseMutationResult;
-  memberDeleteInviteMutation: UseMutationResult;
+  memberRemoveAccessMutation: UseMutationResult;
   projectId: string;
   currentRole: UserRole;
   totalMembers: number;
@@ -42,16 +42,19 @@ type PaginatedMembersTableProps = {
   user: SessionUserType;
 };
 
-function hasExpired(timeString?: Date) {
-  if (!timeString) {
+const inviteHasExpired = (member: MemberType) => {
+  const expires = member.invite?.expires;
+  const status = member.status;
+
+  if (!expires) {
     return false;
   }
 
   const now = Date.now();
-  const inviteTime = new Date(timeString).getTime();
+  const expiryTime = new Date(expires).getTime();
 
-  return now > inviteTime;
-}
+  return now > expiryTime && status === MembershipStatus.pending;
+};
 
 const roles: UserRole[] = Object.values(UserRole);
 
@@ -64,7 +67,7 @@ const PaginatedMembersTable = ({
   fetching,
   setFetching,
   memberReinviteMutation,
-  memberDeleteInviteMutation,
+  memberRemoveAccessMutation,
   projectId,
   currentRole,
   totalMembers,
@@ -82,95 +85,49 @@ const PaginatedMembersTable = ({
         </button>
       );
 
-      if (member.status === MembershipStatus.pending) {
-        const expired = hasExpired(member.invite?.expires);
+      const expired = inviteHasExpired(member);
 
-        const handleReInvite = async () => {
-          setFetching(true);
-          memberReinviteMutation.mutate({
-            email: member.email,
-            projectId,
-          });
-        };
+      const handleReInvite = async () => {
+        setFetching(true);
+        memberReinviteMutation.mutate({
+          email: member.email,
+          projectId,
+        });
+      };
 
-        const handleDeleteInvite = () => {
-          if (member.inviteId) {
-            setFetching(true);
-            memberDeleteInviteMutation.mutate({
-              projectId,
-              inviteId: member.inviteId,
-            });
-          }
-        };
-
-        const action = {
-          title: expired
-            ? `Re-invite ${member.name || member.email}`
-            : `Remove access`,
-          handleClick: expired ? handleReInvite : handleDeleteInvite,
-          disabled: fetching || member.id === user.id,
-        };
-
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
+      const handleRemoveAccess = () => {
+        const confirm = window.confirm(
+          `Are you sure you want to remove ${
+            member.name || member.email
+          } from this project?`,
         );
-      }
 
-      if (member.status === MembershipStatus.inactive) {
-        const action = {
-          title: `Re-activate ${member.name}`,
-          handleClick: () => {
-            handleUpdateMemberStatus(
-              {
-                currentRole: member.role,
-                newRole: member.role,
-                userId: member.id,
-              },
-              MembershipStatus.active,
-            );
-          },
-          disabled: fetching || member.id === user.id,
-        };
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
-        );
-      }
+        if (!confirm) {
+          return;
+        }
 
-      if (member.status === MembershipStatus.active) {
-        const action = {
-          title: `Remove access`,
-          handleClick: () => {
-            handleUpdateMemberStatus(
-              {
-                currentRole: member.role,
-                newRole: member.role,
-                userId: member.id,
-              },
-              MembershipStatus.inactive,
-            );
-          },
-          disabled:
-            fetching ||
-            member.id === user.id ||
-            (currentRole === UserRole.maintainer &&
-              member.role === UserRole.owner),
-        };
-        return (
-          <Dropdown
-            button={<MoreIconButton />}
-            items={[action]}
-            itemsPosition="right-0 top-3/4"
-          />
-        );
-      }
+        setFetching(true);
+        memberRemoveAccessMutation.mutate({
+          projectId,
+          memberId: member.id,
+        });
+      };
+
+      const action = {
+        title: expired
+          ? `Re-invite ${member.name || member.email}`
+          : `Remove access`,
+        handleClick: expired ? handleReInvite : handleRemoveAccess,
+        disabled: fetching || member.id === user.id,
+      };
+
+      return (
+        <Dropdown
+          button={<MoreIconButton />}
+          items={[action]}
+          itemsPosition="right-0 top-3/4"
+        />
+      );
     },
     [
       fetching,
@@ -178,7 +135,7 @@ const PaginatedMembersTable = ({
       setFetching,
       memberReinviteMutation,
       projectId,
-      memberDeleteInviteMutation,
+      memberRemoveAccessMutation,
       handleUpdateMemberStatus,
       currentRole,
     ],

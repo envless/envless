@@ -57,13 +57,14 @@ model Keychain {
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  downloaded  Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  revokedAt   DateTime?
+  downloaded Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  revokedAt  DateTime?
 
   @@index([userId])
 }
+
 model EncryptedProjectKey {
   id           String @id @default(cuid())
   encryptedKey String
@@ -82,12 +83,12 @@ enum UserRole {
 }
 
 model Invite {
-  id                  String   @id @default(cuid())
-  project             Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId           String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  expires             DateTime
+  id        String   @id @default(cuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expires   DateTime
 
   // Someone who is inviting
   invitor   User   @relation(name: "invitor", fields: [invitorId], references: [id], onDelete: Cascade)
@@ -97,9 +98,13 @@ model Invite {
   invitee   User   @relation(name: "invitee", fields: [inviteeId], references: [id], onDelete: Cascade)
   inviteeId String
 
+  accessId String? @unique
+  access   Access? @relation(fields: [accessId], references: [id], onDelete: Cascade)
+
   @@unique([inviteeId, projectId])
   @@index([invitorId])
   @@index([projectId])
+  @@index([accessId])
 }
 
 enum MembershipStatus {
@@ -118,6 +123,7 @@ model Access {
   status    MembershipStatus @default(pending)
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invite    Invite?
 
   @@unique([userId, projectId])
   @@index([userId])
@@ -224,7 +230,7 @@ model Secret {
 }
 
 model SecretVersion {
-  id             String @id @default(cuid())
+  id             String  @id @default(cuid())
   encryptedKey   String
   encryptedValue String
   secretId       String?
@@ -232,11 +238,11 @@ model SecretVersion {
   baseBranchId    String?
   currentBranchId String?
 
-  pullRequestId   String?
+  pullRequestId String?
 
-  secret    Secret?   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
+  secret Secret? @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
 
-  pullRequest   PullRequest? @relation(name: "pullRequestVersions", fields: [pullRequestId], references: [id], onDelete: Cascade)
+  pullRequest PullRequest? @relation(name: "pullRequestVersions", fields: [pullRequestId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -367,6 +373,6 @@ model VerificationToken {
 }
 
 model Redirect {
-  id        String   @id @default(cuid())
-  url       String
+  id  String @id @default(cuid())
+  url String
 }

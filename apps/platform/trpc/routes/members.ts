@@ -1,7 +1,7 @@
 import useAccess from "@/hooks/useAccess";
 import { generateVerificationUrl } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
-import { INVITE_CREATED } from "@/types/auditActions";
+import { ACCESS_DELETED, INVITE_CREATED } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
 import { type Access, MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
@@ -124,6 +124,7 @@ export const members = createRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      let hasUserAccount = false as boolean;
       let member = null as User | null;
       const { id: userId } = ctx.session.user;
       const { name, email, projectId, role, publicKey, revocationCertificate } =
@@ -153,10 +154,27 @@ export const members = createRouter({
       });
 
       if (existingMember) {
+        hasUserAccount = true;
         member = existingMember;
       } else {
         member = await ctx.prisma.user.create({
           data: { email, name },
+        });
+
+        const verificationString = (await encrypt(member.id, [
+          publicKey,
+        ])) as string;
+
+        await ctx.prisma.keychain.upsert({
+          where: { userId: member.id },
+          update: {},
+          create: {
+            publicKey,
+            verificationString,
+            userId: member.id,
+            downloaded: true,
+            revocationCertificate: revocationCertificate,
+          },
         });
       }
 
@@ -195,6 +213,7 @@ export const members = createRouter({
           projectId,
           inviteeId: member.id,
           invitorId: userId,
+          accessId: access.id,
           expires,
         },
 
@@ -202,6 +221,7 @@ export const members = createRouter({
           projectId,
           inviteeId: member.id,
           invitorId: userId,
+          accessId: access.id,
           expires,
         },
       });
@@ -221,22 +241,6 @@ export const members = createRouter({
             id: access.id,
             role: access.role,
           },
-        },
-      });
-
-      const verificationString = (await encrypt(member.id, [
-        publicKey,
-      ])) as string;
-
-      await ctx.prisma.keychain.upsert({
-        where: { userId: member.id },
-        update: {},
-        create: {
-          publicKey,
-          verificationString,
-          userId: member.id,
-          downloaded: true,
-          revocationCertificate: revocationCertificate,
         },
       });
 
@@ -260,28 +264,29 @@ export const members = createRouter({
       const publicKeys = keychains.map((keychain) => keychain.publicKey);
       const verificationUrl = await generateVerificationUrl(member, expires);
       const redirect = await ctx.prisma.redirect.create({
-        data: {
-          url: verificationUrl,
-        },
+        data: { url: verificationUrl },
       });
 
       return {
         publicKeys,
+        hasUserAccount,
         encryptedProjectKey,
         invitation: `${process.env.NEXTAUTH_URL}/r/invitation/${redirect.id}`,
       };
     }),
 
-  updateProjectKey: withAuth
+  removeAccess: withAuth
     .input(
       z.object({
         projectId: z.string(),
-        encryptedProjectKey: z.string(),
+        memberId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id: userId } = ctx.session.user;
-      const { projectId, encryptedProjectKey } = input;
+      const { projectId, memberId } = input;
+      const { user } = ctx.session;
+      const { id: userId } = user;
+
       const hasAccess = await useAccess({ userId, projectId });
 
       if (!hasAccess) {
@@ -292,110 +297,42 @@ export const members = createRouter({
         });
       }
 
-      await ctx.prisma.encryptedProjectKey.upsert({
-        where: { projectId },
-        update: { encryptedKey: encryptedProjectKey },
-        create: { encryptedKey: encryptedProjectKey, projectId },
-      });
-
-      return { success: true };
-    }),
-
-  updateUserAccessStatus: withAuth
-    .input(
-      z.object({
-        targetUserId: z.string(),
-        projectId: z.string(),
-        currentUserRole: z.enum(
-          Object.values(UserRole) as [UserRole, ...UserRole[]],
-        ),
-        targetUserRole: z.enum(
-          Object.values(UserRole) as [UserRole, ...UserRole[]],
-        ),
-        status: z.enum(
-          Object.values(MembershipStatus) as [
-            MembershipStatus,
-            ...MembershipStatus[],
-          ],
-        ),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const {
-        targetUserId,
-        projectId,
-        currentUserRole,
-        targetUserRole,
-        status,
-      } = input;
-      const { id: userId } = ctx.session.user;
-
-      // Check if owner is being removed from project
-      if (targetUserRole === UserRole.owner && !status) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "The project owner cannot be removed from the project",
-        });
-      }
-      await checkAccessAndPermission({
-        ctx,
-        projectId,
-        currentUserRole,
-        targetUserRole,
-        targetUserId,
-        userId,
-      });
-
-      const updatedMember = await ctx.prisma.access.update({
-        where: {
-          userId_projectId: {
-            userId: targetUserId,
-            projectId,
-          },
-        },
-        data: {
-          status,
-        },
-      });
-      return updatedMember;
-    }),
-
-  deleteInvite: withAuth
-    .input(
-      z.object({
-        projectId: z.string(),
-        inviteId: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { projectId, inviteId } = input;
-      const { user } = ctx.session;
-
-      const invite = await ctx.prisma.invite.findFirst({
+      const access = await ctx.prisma.access.findFirst({
         where: {
           AND: {
-            id: inviteId,
             projectId,
-            expires: {
-              gt: new Date(), // Only allow deletion if the invite link has not expired yet
-            },
+            userId: memberId,
           },
-        },
-        include: {
-          access: true,
         },
       });
 
-      if (!invite) {
+      if (!access) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid or expired invitation link",
+          code: "NOT_FOUND",
+          message: "Member not found",
         });
       }
 
       await ctx.prisma.access.delete({
         where: {
-          inviteId,
+          id: access.id,
+        },
+      });
+
+      const member = await ctx.prisma.user.findUnique({
+        where: { id: memberId },
+      });
+
+      await Audit.create({
+        createdById: userId,
+        createdForId: memberId,
+        projectId: projectId,
+        action: ACCESS_DELETED,
+        data: {
+          member: {
+            id: memberId,
+            email: member?.email,
+          },
         },
       });
 
@@ -414,6 +351,7 @@ export const members = createRouter({
         },
         include: {
           user: true,
+          invite: true,
         },
         take: QUERY_ITEMS_PER_PAGE,
         skip: (input.page - 1) * QUERY_ITEMS_PER_PAGE,
@@ -428,6 +366,7 @@ export const members = createRouter({
           twoFactorEnabled: access.user.twoFactorEnabled,
           role: access.role,
           status: access.status,
+          invite: access.invite,
         } as MemberType;
       });
     }),

@@ -83,7 +83,12 @@ const AddMemberModal = ({
       },
       {
         onSuccess: async (data) => {
-          const { publicKeys, invitation, encryptedProjectKey } = data;
+          const {
+            publicKeys,
+            invitation,
+            encryptedProjectKey,
+            hasUserAccount,
+          } = data;
 
           const decryptedProjectKey = (await decrypt(
             encryptedProjectKey as string,
@@ -95,7 +100,12 @@ const AddMemberModal = ({
             publicKeys,
           )) as string;
 
-          await updateProjectKey(projectId, invitation, encryptedKey);
+          await updateProjectKey(
+            projectId,
+            invitation,
+            encryptedKey,
+            hasUserAccount,
+          );
         },
         onError: (error) => {
           setError("email", { message: error.message });
@@ -111,6 +121,7 @@ const AddMemberModal = ({
       projectId: string,
       invitation: string,
       encryptedKey: string,
+      hasUserAccount: boolean,
     ) => {
       updateProjectKeyMutation.mutate(
         {
@@ -125,7 +136,9 @@ const AddMemberModal = ({
                 Name: name || "",
                 Email: email,
                 "Invitation Link": invitation,
-                "PGP Private Key": privateKey,
+                "PGP Private Key": hasUserAccount
+                  ? "Please use your existing PGP private key"
+                  : privateKey,
               },
             ];
 
@@ -241,7 +254,7 @@ const AddMemberModal = ({
                 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               }
             >
-              Invite and download login credentials
+              Add member and download credentials
             </Button>
           </form>
         </Fragment>
