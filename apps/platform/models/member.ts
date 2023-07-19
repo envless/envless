@@ -17,6 +17,7 @@ const getMany = async (projectId: string): Promise<MemberType[]> => {
     },
     include: {
       user: true,
+      invite: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -33,7 +34,8 @@ const getMany = async (projectId: string): Promise<MemberType[]> => {
       twoFactorEnabled: access.user.twoFactorEnabled,
       role: access.role,
       status: access.status,
-    };
+      invite: access.invite,
+    } as MemberType;
   });
 };
 

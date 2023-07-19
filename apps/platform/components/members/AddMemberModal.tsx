@@ -59,7 +59,7 @@ const AddMemberModal = ({
     ),
   });
 
-  const createMemberMutation = trpc.members.createInvite.useMutation();
+  const createMemberMutation = trpc.members.create.useMutation();
   const updateProjectKeyMutation = trpc.projectKey.update.useMutation();
 
   const createTeamMember = async (

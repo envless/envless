@@ -13,6 +13,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
+import { remove } from "lodash";
 import {
   ChevronLeft,
   ChevronRight,
@@ -23,18 +24,16 @@ import {
   Unlock,
 } from "lucide-react";
 import { Dropdown } from "../theme";
-import MemberDropDown from "./MemberDropDown";
+import RoleDropDown from "./RoleDropDown";
 
 type PaginatedMembersTableProps = {
   members: MemberType[];
   pagination: PaginationState;
-  handleUpdateMemberAccess: (user: any) => void;
-  handleUpdateMemberStatus: (...user: any[]) => void;
   fetching: boolean;
   setFetching: React.Dispatch<React.SetStateAction<boolean>>;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
-  memberReinviteMutation: UseMutationResult;
-  memberRemoveAccessMutation: UseMutationResult;
+  removeAccessMutation: UseMutationResult;
+  updateAccessMutation: UseMutationResult;
   projectId: string;
   currentRole: UserRole;
   totalMembers: number;
@@ -42,32 +41,20 @@ type PaginatedMembersTableProps = {
   user: SessionUserType;
 };
 
-const inviteHasExpired = (member: MemberType) => {
-  const expires = member.invite?.expires;
-  const status = member.status;
-
-  if (!expires) {
-    return false;
-  }
-
-  const now = Date.now();
-  const expiryTime = new Date(expires).getTime();
-
-  return now > expiryTime && status === MembershipStatus.pending;
-};
-
 const roles: UserRole[] = Object.values(UserRole);
+const restrictedRoles: UserRole[] = remove(
+  roles,
+  (role) => role != UserRole.owner,
+);
 
 const PaginatedMembersTable = ({
   members,
   pagination,
   setPagination,
-  handleUpdateMemberAccess,
-  handleUpdateMemberStatus,
   fetching,
   setFetching,
-  memberReinviteMutation,
-  memberRemoveAccessMutation,
+  updateAccessMutation,
+  removeAccessMutation,
   projectId,
   currentRole,
   totalMembers,
@@ -85,16 +72,6 @@ const PaginatedMembersTable = ({
         </button>
       );
 
-      const expired = inviteHasExpired(member);
-
-      const handleReInvite = async () => {
-        setFetching(true);
-        memberReinviteMutation.mutate({
-          email: member.email,
-          projectId,
-        });
-      };
-
       const handleRemoveAccess = () => {
         const confirm = window.confirm(
           `Are you sure you want to remove ${
@@ -107,17 +84,15 @@ const PaginatedMembersTable = ({
         }
 
         setFetching(true);
-        memberRemoveAccessMutation.mutate({
+        removeAccessMutation.mutate({
           projectId,
           memberId: member.id,
         });
       };
 
       const action = {
-        title: expired
-          ? `Re-invite ${member.name || member.email}`
-          : `Remove access`,
-        handleClick: expired ? handleReInvite : handleRemoveAccess,
+        title: `Remove access`,
+        handleClick: handleRemoveAccess,
         disabled: fetching || member.id === user.id,
       };
 
@@ -133,13 +108,20 @@ const PaginatedMembersTable = ({
       fetching,
       user.id,
       setFetching,
-      memberReinviteMutation,
       projectId,
-      memberRemoveAccessMutation,
-      handleUpdateMemberStatus,
+      removeAccessMutation,
       currentRole,
     ],
   );
+
+  const handleUpdateAccess = (role: UserRole, memberId: string) => {
+    setFetching(true);
+    updateAccessMutation.mutate({
+      projectId,
+      role,
+      memberId,
+    });
+  };
 
   const columns = useMemo<ColumnDef<MemberType>[]>(
     () => [
@@ -198,17 +180,11 @@ const PaginatedMembersTable = ({
         cell: (info) => {
           const member = info.row.original;
           return (
-            <MemberDropDown
-              roles={roles}
-              setSelectedRole={(role) =>
-                handleUpdateMemberAccess({
-                  currentRole: member.role,
-                  newRole: role,
-                  userId: member.id,
-                })
-              }
+            <RoleDropDown
+              roles={restrictedRoles}
+              setSelectedRole={(role) => handleUpdateAccess(role, member.id)}
               selectedRole={member.role}
-              disabled={fetching}
+              disabled={fetching || member.id === user.id}
             />
           );
         },
@@ -245,7 +221,7 @@ const PaginatedMembersTable = ({
         ),
       },
     ],
-    [fetching, handleUpdateMemberAccess, renderSettingsButton, user.email],
+    [fetching, renderSettingsButton, user.email],
   );
 
   const table = useReactTable({
@@ -377,7 +353,7 @@ const StatusChip = ({ status }: StatusChipProps) => {
         borderColor,
       )}
     >
-      <Circle size={16} fill={iconFillColor} color={iconFillColor} />
+      <Circle size={12} fill={iconFillColor} color={iconFillColor} />
       <span className={`text-xs font-medium ${textColor && textColor}`}>
         {status}
       </span>

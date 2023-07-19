@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
 import { MemberType, SessionUserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
-import { MembershipStatus, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
 import { Download, Search, UserX } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -25,12 +25,6 @@ interface TableProps {
   pagination: PaginationState;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
   refetchMembersAfterUpdate: (...args: any[]) => any;
-}
-
-interface SelectedMember {
-  userId: string;
-  newRole: UserRole;
-  currentRole: UserRole;
 }
 
 const MembersTableContainer = ({
@@ -65,48 +59,6 @@ const MembersTableContainer = ({
     }
   }, [members, query, results]);
 
-  const memberUpdateMutation = trpc.members.update.useMutation({
-    onSuccess: (data) => {
-      showToast({
-        type: "success",
-        title: "Access successfully updated",
-        subtitle: "",
-      });
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-    },
-    onError: (error) => {
-      showToast({
-        type: "error",
-        title: "Access update failed",
-        subtitle: error.message,
-      });
-      setFetching(false);
-    },
-  });
-
-  const memberReinviteMutation = trpc.members.reInvite.useMutation({
-    onSuccess: (data) => {
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-      showToast({
-        type: "success",
-        title: "Invitation sent",
-        subtitle: "You have succefully sent an invitation.",
-      });
-    },
-    onError: (error) => {
-      setFetching(false);
-      showToast({
-        type: "error",
-        title: "Invitation not sent",
-        subtitle: error.message,
-      });
-    },
-  });
-
   const updateProjectKey = async (encryptedKey: string) => {
     updateProjectKeyMutation.mutate(
       {
@@ -139,7 +91,7 @@ const MembersTableContainer = ({
     );
   };
 
-  const memberRemoveAccessMutation = trpc.members.removeAccess.useMutation({
+  const removeAccessMutation = trpc.members.removeAccess.useMutation({
     onSuccess: async (data) => {
       const { publicKeys, encryptedProjectKey } = data;
 
@@ -168,21 +120,26 @@ const MembersTableContainer = ({
     },
   });
 
-  const onUpdateMemberAccess = useCallback(
-    (user: SelectedMember) => {
-      setFetching(true);
-
-      memberUpdateMutation.mutate({
-        projectId,
-        newRole: user.newRole,
-        currentUserRole: currentRole,
-        targetUserId: user.userId,
-        targetUserRole: user.currentRole,
+  const updateAccessMutation = trpc.members.updateAccess.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      router.replace(router.asPath);
+      refetchMembersAfterUpdate();
+      showToast({
+        type: "success",
+        title: "Access updated",
+        subtitle: "You have succefully updated access.",
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [projectId, currentRole],
-  );
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Error updating access",
+        subtitle: "There was an error updating access. Please try again later.",
+      });
+    },
+  });
 
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
@@ -237,9 +194,8 @@ const MembersTableContainer = ({
             totalMembers={totalMembers}
             pagination={pagination}
             setPagination={setPagination}
-            handleUpdateMemberAccess={onUpdateMemberAccess}
-            memberReinviteMutation={memberReinviteMutation}
-            memberRemoveAccessMutation={memberRemoveAccessMutation}
+            updateAccessMutation={updateAccessMutation}
+            removeAccessMutation={removeAccessMutation}
             fetching={fetching}
             currentRole={currentRole}
             projectId={projectId}

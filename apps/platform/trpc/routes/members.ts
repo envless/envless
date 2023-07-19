@@ -1,12 +1,15 @@
 import useAccess from "@/hooks/useAccess";
 import { generateVerificationUrl } from "@/models/user";
 import { createRouter, withAuth, withoutAuth } from "@/trpc/router";
-import { ACCESS_DELETED, INVITE_CREATED } from "@/types/auditActions";
+import {
+  ACCESS_DELETED,
+  ACCESS_UPDATED,
+  INVITE_CREATED,
+} from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
-import { type Access, MembershipStatus, UserRole } from "@prisma/client";
+import { type MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { get } from "lodash";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 import { QUERY_ITEMS_PER_PAGE } from "@/lib/constants";
@@ -37,7 +40,7 @@ const getEncryptionDetails = async ({ projectId }: { projectId: string }) => {
 };
 
 export const members = createRouter({
-  createInvite: withAuth
+  create: withAuth
     .input(
       z.object({
         name: z.string().optional().nullable(),
@@ -184,6 +187,80 @@ export const members = createRouter({
         encryptedProjectKey,
         invitation: `${process.env.NEXTAUTH_URL}/r/invitation/${redirect.id}`,
       };
+    }),
+
+  updateAccess: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+        memberId: z.string(),
+        role: z.enum(Object.values(UserRole) as [UserRole, ...UserRole[]]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { projectId, memberId, role } = input;
+      const { user: currentUser } = ctx.session;
+
+      const hasAccess = await useAccess({ userId: currentUser.id, projectId });
+
+      if (!hasAccess) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "You do not have the required permission to perform this action. Please contact the project owner to request permission.",
+        });
+      }
+
+      const currentMemberAccess = await prisma.access.findFirst({
+        where: {
+          AND: {
+            projectId,
+            userId: memberId,
+          },
+        },
+      });
+
+      if (!currentMemberAccess) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Member not found",
+        });
+      }
+
+      await prisma.access.update({
+        where: {
+          id: currentMemberAccess.id,
+        },
+        data: {
+          role,
+        },
+      });
+
+      const member = await prisma.user.findUnique({
+        where: {
+          id: memberId,
+        },
+
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      await Audit.create({
+        createdById: currentUser.id,
+        createdForId: memberId,
+        projectId: projectId,
+        action: ACCESS_UPDATED,
+        data: {
+          member,
+          access: {
+            id: currentMemberAccess.id,
+            role: role,
+          },
+        },
+      });
     }),
 
   removeAccess: withAuth
