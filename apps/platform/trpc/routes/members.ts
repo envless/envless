@@ -7,7 +7,7 @@ import {
   INVITE_CREATED,
 } from "@/types/auditActions";
 import { type MemberType } from "@/types/resources";
-import { type MembershipStatus, UserRole } from "@prisma/client";
+import { MembershipStatus, UserRole } from "@prisma/client";
 import { User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";

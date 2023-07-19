@@ -4,7 +4,6 @@ import { Fragment, useState } from "react";
 import { useTwoFactorModal } from "@/hooks/useTwoFactorModal";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
-import { faker } from "@faker-js/faker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@prisma/client";
 import { capitalize } from "lodash";
@@ -209,7 +208,6 @@ const AddMemberModal = ({
               full
               register={register}
               errors={errors}
-              defaultValue={faker.internet.email().toLowerCase()}
               autoCapitalize="off"
             />
 

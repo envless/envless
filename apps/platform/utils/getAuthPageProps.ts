@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import { getServerSideSession } from "./session";
 
 const AUTH_ROUTES = {
-  otp: "/auth/otp",
   root: "/auth/verify",
   download: "/encryption/download",
   verify: "/encryption/verify",
@@ -23,18 +22,9 @@ const getAuthPageProps = async (context: GetServerSidePropsContext) => {
     };
   }
 
-  const { temp, valid, present, downloaded } = user.keychain;
+  const { valid, present, downloaded } = user.keychain;
 
-  if (present && temp && url !== AUTH_ROUTES.otp) {
-    return {
-      redirect: {
-        destination: AUTH_ROUTES.otp,
-        permanent: false,
-      },
-    };
-  }
-
-  if (!temp && !downloaded && url !== AUTH_ROUTES.download) {
+  if (!downloaded && url !== AUTH_ROUTES.download) {
     return {
       redirect: {
         destination: AUTH_ROUTES.download,

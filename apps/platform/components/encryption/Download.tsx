@@ -117,12 +117,12 @@ const DownloadPrivateKey = ({ currentUser, keychain }: PageProps) => {
                 <div className="ml-3">
                   <div className="text-sm text-teal-400">
                     <p className="font-mono">
-                      Please download your PGP private key. We recommend you
+                      {`Please download your PGP private key. We recommend you
                       further encrypt and store this private key to your most
                       trusted password manager(eg. BitWarden), your computer's
                       keychain or on a safe place. Secrets cannot be decrypted
                       without this key and you will need this key everytime you
-                      login.
+                      login.`}
                     </p>
 
                     <p className="mt-5 font-mono">

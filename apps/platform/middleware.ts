@@ -26,7 +26,6 @@ export default withAuth(
     const { keychain, twoFactor } = user;
 
     const loginUrl = `${origin}/login`;
-    const otpUrl = `${origin}/auth/otp`;
     const signupUrl = `${origin}/signup`;
     const twoFactorUrl = `${origin}/auth/2fa`;
     const verifyAuthUrl = `${origin}/auth/verify`;
@@ -44,7 +43,6 @@ export default withAuth(
 
     if (
       [
-        otpUrl,
         loginUrl,
         signupUrl,
         twoFactorUrl,
