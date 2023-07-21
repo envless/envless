@@ -72,20 +72,20 @@ export default function AuditLogTable({
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
       {
-        header: "Created By",
+        header: "Created by",
         id: "createdBy",
         accessorFn: (row) => row.createdBy.name,
         cell: (info) => (
           <div className="flex items-center gap-x-3">
             <Image
-              className="h-10 w-10 rounded-full"
+              className="h-8 w-8 rounded-full"
               src={getAvatar(info.row.original.createdBy)}
               alt={`${
                 info.row.original.createdBy.name ||
                 info.row.original.createdBy.email
               } picture`}
-              width={40}
-              height={40}
+              width={32}
+              height={32}
             />
 
             <div>
@@ -100,7 +100,7 @@ export default function AuditLogTable({
         ),
       },
       {
-        header: "Action Performed",
+        header: "Action",
         id: "action",
         accessorFn: (row) => row.action,
         cell: (info) => (
@@ -111,7 +111,7 @@ export default function AuditLogTable({
       },
 
       {
-        header: "Created At",
+        header: "Timestamp",
         id: "createdAt",
         accessorFn: (row) => new Date(row.createdAt).toDateString(),
         cell: (info) => info.getValue(),

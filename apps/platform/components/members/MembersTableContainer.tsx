@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import useFuse from "@/hooks/useFuse";
-import { MemberType, UserType } from "@/types/resources";
+import { MemberType, SessionUserType } from "@/types/resources";
 import { downloadAsTextFile } from "@/utils/helpers";
 import { trpc } from "@/utils/trpc";
-import { MembershipStatus, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { PaginationState } from "@tanstack/react-table";
 import { Download, Search, UserX } from "lucide-react";
+import { useSession } from "next-auth/react";
 import * as csvParser from "papaparse";
 import BaseEmptyState from "@/components/theme/BaseEmptyState";
+import { decrypt, encrypt } from "@/lib/encryption/openpgp";
 import { BaseInput } from "../theme";
 import { showToast } from "../theme/showToast";
 import PaginatedMembersTable from "./PaginatedMembersTable";
@@ -19,16 +21,10 @@ interface TableProps {
   pageCount: number;
   currentRole: UserRole;
   projectId: string;
-  user: UserType;
+  user: SessionUserType;
   pagination: PaginationState;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
   refetchMembersAfterUpdate: (...args: any[]) => any;
-}
-
-interface SelectedMember {
-  userId: string;
-  newRole: UserRole;
-  currentRole: UserRole;
 }
 
 const MembersTableContainer = ({
@@ -49,6 +45,10 @@ const MembersTableContainer = ({
   const fuseOptions = { keys: ["name", "email"], threshold: 0.2 };
   const results = useFuse(members, query, fuseOptions);
   const router = useRouter();
+  const { data: session } = useSession();
+  const keychain = session?.user.keychain;
+  const currentUserPrivateKey = keychain?.privateKey;
+  const updateProjectKeyMutation = trpc.projectKey.update.useMutation();
 
   useEffect(() => {
     if (query.length === 0) {
@@ -59,126 +59,87 @@ const MembersTableContainer = ({
     }
   }, [members, query, results]);
 
-  const memberStatusMutation = trpc.members.updateUserAccessStatus.useMutation({
-    onSuccess: (data) => {
-      showToast({
-        type: "success",
-        title: "Access successfully updated",
-        subtitle: "",
-      });
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-    },
-    onError: (error) => {
-      showToast({
-        type: "error",
-        title: "Access update failed",
-        subtitle: error.message,
-      });
-      setFetching(false);
-    },
-  });
-  const memberUpdateMutation = trpc.members.update.useMutation({
-    onSuccess: (data) => {
-      showToast({
-        type: "success",
-        title: "Access successfully updated",
-        subtitle: "",
-      });
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-    },
-    onError: (error) => {
-      showToast({
-        type: "error",
-        title: "Access update failed",
-        subtitle: error.message,
-      });
-      setFetching(false);
-    },
-  });
-
-  const memberReinviteMutation = trpc.members.reInvite.useMutation({
-    onSuccess: (data) => {
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-      showToast({
-        type: "success",
-        title: "Invitation sent",
-        subtitle: "You have succefully sent an invitation.",
-      });
-    },
-    onError: (error) => {
-      setFetching(false);
-      showToast({
-        type: "error",
-        title: "Invitation not sent",
-        subtitle: error.message,
-      });
-    },
-  });
-
-  const memberDeleteInviteMutation = trpc.members.deleteInvite.useMutation({
-    onSuccess: (data) => {
-      setFetching(false);
-      router.replace(router.asPath);
-      refetchMembersAfterUpdate();
-      showToast({
-        type: "success",
-        title: "Invitation deleted",
-        subtitle: "The invitation has been successfully deleted.",
-      });
-    },
-    onError: (error) => {
-      setFetching(false);
-      showToast({
-        type: "error",
-        title: "Error deleting invitation",
-        subtitle:
-          "An error occurred while deleting the invitation. Please try again later.",
-      });
-    },
-  });
-
-  const onUpdateMemberAccess = useCallback(
-    (user: SelectedMember) => {
-      setFetching(true);
-
-      memberUpdateMutation.mutate({
+  const updateProjectKey = async (encryptedKey: string) => {
+    updateProjectKeyMutation.mutate(
+      {
         projectId,
-        newRole: user.newRole,
-        currentUserRole: currentRole,
-        targetUserId: user.userId,
-        targetUserRole: user.currentRole,
+        encryptedKey,
+      },
+
+      {
+        onSuccess: async () => {
+          router.replace(router.asPath);
+          refetchMembersAfterUpdate();
+          showToast({
+            type: "success",
+            title: "Access removed",
+            subtitle: "You have succefully removed access.",
+          });
+        },
+        onError: (error) => {
+          showToast({
+            type: "error",
+            title: "Error removing access",
+            subtitle:
+              "There was an error removing access. Please try again later.",
+          });
+        },
+        onSettled: () => {
+          setFetching(false);
+        },
+      },
+    );
+  };
+
+  const removeAccessMutation = trpc.members.removeAccess.useMutation({
+    onSuccess: async (data) => {
+      const { publicKeys, encryptedProjectKey } = data;
+
+      const decryptedProjectKey = (await decrypt(
+        encryptedProjectKey as string,
+        currentUserPrivateKey as string,
+      )) as string;
+
+      const encryptedKey = (await encrypt(
+        decryptedProjectKey,
+        publicKeys as string[],
+      )) as string;
+
+      await updateProjectKey(encryptedKey);
+    },
+    onError: (error) => {
+      showToast({
+        type: "error",
+        title: "Error removing access",
+        subtitle: "There was an error removing access. Please try again later.",
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [projectId, currentRole],
-  );
 
-  const onUpdateMemberStatus = useCallback(
-    (user: SelectedMember, status: MembershipStatus) => {
-      const confirmed = confirm(
-        `Are you sure you want to ${
-          status === MembershipStatus.active ? "re-activate" : "de-activate"
-        } change this user?`,
-      );
-      if (confirmed) {
-        setFetching(true);
-        memberStatusMutation.mutate({
-          projectId,
-          status,
-          currentUserRole: currentRole,
-          targetUserId: user.userId,
-          targetUserRole: user.currentRole,
-        });
-      }
+    onSettled: () => {
+      setFetching(false);
     },
-    [memberStatusMutation, projectId, currentRole],
-  );
+  });
+
+  const updateAccessMutation = trpc.members.updateAccess.useMutation({
+    onSuccess: (data) => {
+      setFetching(false);
+      router.replace(router.asPath);
+      refetchMembersAfterUpdate();
+      showToast({
+        type: "success",
+        title: "Access updated",
+        subtitle: "You have succefully updated access.",
+      });
+    },
+    onError: (error) => {
+      setFetching(false);
+      showToast({
+        type: "error",
+        title: "Error updating access",
+        subtitle: "There was an error updating access. Please try again later.",
+      });
+    },
+  });
 
   return (
     <div className="border-dark mt-12 w-full rounded-md border-2 shadow-sm">
@@ -233,10 +194,8 @@ const MembersTableContainer = ({
             totalMembers={totalMembers}
             pagination={pagination}
             setPagination={setPagination}
-            handleUpdateMemberAccess={onUpdateMemberAccess}
-            handleUpdateMemberStatus={onUpdateMemberStatus}
-            memberReinviteMutation={memberReinviteMutation}
-            memberDeleteInviteMutation={memberDeleteInviteMutation}
+            updateAccessMutation={updateAccessMutation}
+            removeAccessMutation={removeAccessMutation}
             fetching={fetching}
             currentRole={currentRole}
             projectId={projectId}

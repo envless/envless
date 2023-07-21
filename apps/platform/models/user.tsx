@@ -1,12 +1,14 @@
 import MagicLink from "@/emails/MagicLink";
-import { UserType } from "@/types/resources";
+import { ACCOUNT_LOCKED } from "@/types/auditActions";
+import { SessionUserType } from "@/types/resources";
 import { User } from "@prisma/client";
 import { createHash, randomBytes } from "crypto";
 import sendMail from "emails";
+import Audit from "@/lib/audit";
 import prisma from "@/lib/prisma";
 
 type LockUserAccountAndSendEmailArgs = {
-  user: UserType;
+  user: SessionUserType;
   reason: string;
   emailSubject: string;
   emailTemplate: JSX.Element;
@@ -29,6 +31,16 @@ export const lockUserAccountAndSendEmail = async ({
     },
   });
 
+  await Audit.create({
+    createdById: user.id,
+    createdForId: user.id,
+    action: ACCOUNT_LOCKED,
+    data: {
+      user: { id: user.id },
+      reason: reason,
+    },
+  });
+
   await sendMail({
     subject: emailSubject,
     to: user.email,
@@ -44,11 +56,8 @@ export const hashToken = (token: string) => {
     .digest("hex");
 };
 
-export const sendVerificationEmail = async (user: User) => {
-  const firstName = user.name?.split(" ")[0];
+export const generateVerificationUrl = async (user: User, expires: Date) => {
   const token = randomBytes(32).toString("hex");
-  const TWENTY_FOUR_HOURS_IN_SECONDS = 60 * 60 * 24;
-  const expires = new Date(Date.now() + TWENTY_FOUR_HOURS_IN_SECONDS * 1000);
 
   await prisma.verificationToken.create({
     data: {
@@ -64,7 +73,13 @@ export const sendVerificationEmail = async (user: User) => {
     token,
   });
 
-  const url = `${process.env.NEXTAUTH_URL}/api/auth/callback/email?${params}`;
+  return `${process.env.NEXTAUTH_URL}/api/auth/callback/email?${params}`;
+};
+
+export const sendVerificationEmail = async (user: User) => {
+  const firstName = user.name?.split(" ")[0];
+  const expires = new Date(Date.now() + 1 * 60 * 60 * 1000) as Date; // 1 hour
+  const url = await generateVerificationUrl(user, expires);
 
   await sendMail({
     subject: "Verify your email address",

@@ -1,32 +1,40 @@
 import { Key } from "react";
 import type {
+  Invite,
   LockedUser,
   MembershipStatus,
-  ProjectInvite,
   UserRole,
 } from "@prisma/client";
 
-export interface UserType {
+export interface SessionUserType {
   id: string;
   name?: string;
   email: string;
   image?: string;
   role?: UserRole;
-  privateKey: string;
-  twoFactorEnabled: boolean;
-  twoFactorVerified: boolean;
   locked: LockedUser | null;
-  isPrivateKeyValid: boolean;
+
+  twoFactor: {
+    enabled: boolean;
+    verified: boolean;
+  };
+
+  keychain: {
+    valid: boolean;
+    present: boolean;
+    downloaded: boolean;
+    privateKey: string | null;
+  };
 }
 
 export interface MemberType {
   id: string;
-  projectInviteId: string | null;
-  projectInvite: ProjectInvite | null;
   name: string | null;
   email: string;
   image: string | null;
   twoFactorEnabled: boolean;
   role: UserRole;
   status: MembershipStatus;
+  inviteId: string | null;
+  invite: Invite | null;
 }

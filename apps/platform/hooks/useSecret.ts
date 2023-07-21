@@ -3,7 +3,7 @@ import { decryptString } from "@47ng/cloak";
 import { trpc } from "@/utils/trpc";
 import { repeat } from "lodash";
 import { useSession } from "next-auth/react";
-import OpenPGP from "@/lib/encryption/openpgp";
+import { decrypt } from "@/lib/encryption/openpgp";
 import { EnvSecret } from "../types";
 
 function useSecret({ branchId }: { branchId: string }) {
@@ -12,7 +12,7 @@ function useSecret({ branchId }: { branchId: string }) {
   const [secrets, setSecrets] = useState<EnvSecret[]>([]);
   const [decryptedProjectKey, setDecryptedProjectKey] = useState("");
   const sessionUser = session?.user as any;
-  const privateKey = sessionUser.privateKey as string;
+  const privateKey = sessionUser.keychain.privateKey as string;
   const utils = trpc.useContext();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function useSecret({ branchId }: { branchId: string }) {
       const _encryptedProjectKey =
         branch?.project.encryptedProjectKey?.encryptedKey;
 
-      const _decryptedProjectKey = (await OpenPGP.decrypt(
+      const _decryptedProjectKey = (await decrypt(
         _encryptedProjectKey as string,
         privateKey as string,
       )) as string;

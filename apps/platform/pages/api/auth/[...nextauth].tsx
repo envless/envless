@@ -87,21 +87,35 @@ export const authOptions: NextAuthOptions = {
         // Note, that `session` can be any arbitrary object, remember to validate it!
         if (validateSession(session)) {
           const userInSession = session.user;
-          // @ts-ignore
+
           token.user = {
             ...userInSession,
-            twoFactorVerified: userInSession.twoFactorVerified ?? false,
-            privateKey: userInSession.privateKey ?? null,
-            isPrivateKeyValid: userInSession.isPrivateKeyValid ?? false,
+            keychain: userInSession.keychain,
+            twoFactor: userInSession.twoFactor,
           };
         }
       } else if (user) {
         token.id = user.id;
+
+        const keychain = await prisma.keychain.findUnique({
+          where: { userId: user.id },
+          select: {
+            downloaded: true,
+          },
+        });
+
         token.user = {
           ...user,
-          twoFactorVerified: session?.user?.twoFactorVerified ?? false,
-          privateKey: session?.user?.privateKey ?? null,
-          isPrivateKeyValid: session?.user?.isPrivateKeyValid ?? false,
+          keychain: {
+            valid: session?.user?.keychain.valid ?? false,
+            present: keychain ? true : false,
+            downloaded: keychain?.downloaded ?? false,
+          },
+
+          twoFactor: {
+            enabled: session?.user?.twoFactor.enabled ?? false,
+            verified: session?.user?.twoFactor.verified ?? false,
+          },
         };
 
         // Add the locked information to the token
@@ -127,11 +141,19 @@ export const authOptions: NextAuthOptions = {
         id: string;
         name: string;
         email: string;
-        twoFactorEnabled: boolean;
         locked: LockedUser | null;
-        twoFactorVerified: boolean;
-        privateKey: string | null;
-        isPrivateKeyValid: boolean;
+
+        keychain: {
+          valid: boolean;
+          present: boolean;
+          downloaded: boolean;
+          privateKey: string | null;
+        };
+
+        twoFactor: {
+          enabled: boolean;
+          verified: boolean;
+        };
       } = token.user as any;
 
       if (user) {
@@ -144,11 +166,19 @@ export const authOptions: NextAuthOptions = {
             id: user.id,
             name: user.name,
             email: user.email,
-            twoFactorEnabled: user.twoFactorEnabled,
             locked: user.locked,
-            twoFactorVerified: user.twoFactorVerified,
-            privateKey: user.privateKey,
-            isPrivateKeyValid: user.isPrivateKeyValid ?? false,
+
+            keychain: {
+              valid: user.keychain.valid ?? false,
+              present: user.keychain.present ?? false,
+              downloaded: user.keychain.downloaded ?? false,
+              privateKey: user.keychain.privateKey ?? null,
+            },
+
+            twoFactor: {
+              enabled: user.twoFactor.enabled ?? false,
+              verified: user.twoFactor.verified ?? false,
+            },
           } as any,
         };
       }
@@ -194,16 +224,26 @@ const LockedUserSchema = z.object({
   lockedAt: z.date(),
 });
 
+const TwoFactorSchema = z.object({
+  enabled: z.boolean(),
+  verified: z.boolean(),
+});
+
+const KeychainSchema = z.object({
+  valid: z.boolean(),
+  present: z.boolean(),
+  downloaded: z.boolean(),
+  privateKey: z.string().nullable(),
+});
+
 const UserSchema = z.object({
   id: z.string(),
   name: z.string().nullable(),
   email: z.string().email(),
   image: z.string().optional(),
-  twoFactorEnabled: z.boolean(),
-  twoFactorVerified: z.boolean(),
   locked: LockedUserSchema.nullable(),
-  privateKey: z.string().nullable(),
-  isPrivateKeyValid: z.boolean().nullable(),
+  keychain: KeychainSchema,
+  twoFactor: TwoFactorSchema,
 });
 
 const SessionSchema = z.object({
@@ -211,30 +251,6 @@ const SessionSchema = z.object({
   expires: z.string(),
   id: z.string(),
 });
-
-/**
- * Validates the session object against the `SessionSchema` using `zod`.
- *
- * @param {any} session - The session object to be validated.
- * @returns {boolean} `true` if the session object is valid, otherwise `false`.
- * @throws {Error} If the session object does not match the `SessionSchema` structure.
- *
- * @example
- * // Validating the session object
- * const session = { user: { id: 1, name: "John" }, createdAt: "2022-04-01T14:45:00Z" };
- * if (validateSession(session)) {
- *   // Do something if the session is valid
- * } else {
- *   // Do something if the session is invalid
- * }
- *
- * // Updating the SessionSchema
- * // If you introduce any new value to the session object, make sure to update the SessionSchema accordingly.
- * const SessionSchema = z.object({
- *   user: UserType,
- *   createdAt: z.string().optional(),
- * });
- */
 
 function validateSession(session: any): boolean {
   try {

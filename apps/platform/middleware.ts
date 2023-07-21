@@ -2,12 +2,12 @@ import { userAgent } from "next/server";
 import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { type NextRequestWithAuth } from "next-auth/middleware";
-import log from "@/lib/log";
+
+const debug = require("debug")("platform:middleware");
 
 export const config = {
   matcher: [
-    "/auth/2fa",
-    "/auth/encryption",
+    "/auth/:path*",
 
     "/projects",
     "/projects/:path*",
@@ -20,65 +20,66 @@ export const config = {
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const { nextUrl: url } = req;
-    const { origin } = url;
+    const { origin, href } = url;
     const { token } = req.nextauth;
     const { user } = token as any;
+    const { keychain, twoFactor } = user;
 
-    const authUrl = `${origin}/login`;
-    const twoFaUrl = `${origin}/auth/2fa`;
-    const forbidden = `${origin}/error/forbidden`;
-    const encryptionUrl = `${origin}/auth/encryption`;
+    const loginUrl = `${origin}/login`;
+    const signupUrl = `${origin}/signup`;
+    const twoFactorUrl = `${origin}/auth/2fa`;
+    const verifyAuthUrl = `${origin}/auth/verify`;
+    const forbiddenUrl = `${origin}/error/forbidden`;
+    const verifyKeychainUrl = `${origin}/encryption/verify`;
+    const downloadKeychainUrl = `${origin}/encryption/download`;
 
     const sessionId = token?.sessionId as string;
     const { isBot } = userAgent(req);
 
     if (isBot) {
-      log("If it's a bot, redirect to forbidden page");
-      return NextResponse.redirect(forbidden);
+      debug("If it's a bot, redirect to forbidden page");
+      return NextResponse.redirect(forbiddenUrl);
     }
 
     if (
-      url.pathname === "/login" ||
-      url.pathname === "/signup" ||
-      url.pathname === "/auth/2fa" ||
-      url.pathname === "/auth/encryption"
+      [
+        loginUrl,
+        signupUrl,
+        twoFactorUrl,
+        verifyAuthUrl,
+        forbiddenUrl,
+        verifyKeychainUrl,
+        downloadKeychainUrl,
+      ].includes(href)
     ) {
-      log("If current page is auth, 2fa or verify auth page, skip");
+      debug("If current page is auth, 2fa or verify auth page, skip");
       return NextResponse.next();
     }
 
-    if (!token || !user || !sessionId) {
-      log("If token, user or sessionId is not present, redirect to login page");
-      return NextResponse.redirect(authUrl);
+    if (!token || !user || !sessionId || !keychain) {
+      debug(
+        "If token, user or sessionId is not present, redirect to login page",
+      );
+      return NextResponse.redirect(loginUrl);
     }
 
-    const {
-      twoFactorEnabled,
-      twoFactorVerified,
-      privateKey,
-      isPrivateKeyValid,
-    } = user;
-    log("Loading user: ", user);
+    const { temp, valid, present, downloaded, privateKey } = keychain;
 
-    if (!privateKey || !isPrivateKeyValid) {
-      log(
+    if (!present || !privateKey || !valid || temp || !downloaded) {
+      debug(
         "If privateKey is not present, or invalid, redirect to verify auth page",
       );
-      return NextResponse.redirect(encryptionUrl);
+
+      return NextResponse.redirect(verifyAuthUrl);
     }
 
-    if (twoFactorEnabled && twoFactorVerified) {
-      log("If two factor is enabled and verified, skip");
-      return NextResponse.next();
+    if (twoFactor.enabled && !twoFactor.verified) {
+      debug("If two factor is enabled but not verified, redirect to 2fa page");
+
+      return NextResponse.redirect(twoFactorUrl);
     }
 
-    if (twoFactorEnabled && !twoFactorVerified) {
-      log("If two factor is enabled but not verified, redirect to 2fa page");
-
-      return NextResponse.redirect(twoFaUrl);
-    }
-
-    log("If two factor is not enabled, skip");
+    debug("If two factor is not enabled, skip");
     return NextResponse.next();
   },
 

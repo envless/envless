@@ -70,8 +70,8 @@ const CreateBranchModal = ({
     onSuccess: (data: Branch) => {
       showToast({
         type: "success",
-        title: "Branch successfully created",
-        subtitle: `You have now created and switched to ${data.name} branch`,
+        title: "Branch created!",
+        subtitle: `You have successfully created a branch ${data.name}`,
       });
       setIsOpen(false);
       reset();

@@ -10,9 +10,12 @@
   "scripts": {
     "envless": "yarn --cwd ./apps/cli/ run cli",
     "dev": "dotenv -- turbo run dev",
+    "dev:platform": "DEBUG=platform:* dotenv -- turbo run dev --filter=platform",
     "build": "dotenv -- turbo run build",
     "lint": "dotenv -- turbo run lint",
-    "format": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
+    "format": "yarn format:prettier && yarn format:prisma",
+    "format:prisma": "dotenv -- yarn --cwd ./apps/platform/ prisma format",
+    "format:prettier": "prettier --write \"**/*.{css,js,jsx,mjs,ts,tsx,md,mdx,json,yml}\"",
     "build:ui": "dotenv -- turbo run build:ui",
     "test": "dotenv -- turbo run test",
     "test:e2e": "dotenv -- turbo run test:e2e",

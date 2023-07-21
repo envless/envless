@@ -8,7 +8,7 @@ jobs:
   pack_deb:
     runs-on: ubuntu-20.04
     env:
-      ENVLESS_AUTHOR: 'envless'
+      ENVLESS_AUTHOR: "envless"
     steps:
       - uses: actions/checkout@v3
       - name: Install system deps
@@ -49,7 +49,6 @@ jobs:
         with:
           name: packed-tarballs
           path: /home/runner/work/envless/envless/apps/cli/dist
-
 
   upload-deb-and-tarballs:
     needs: [pack_deb, pack_tarballs]

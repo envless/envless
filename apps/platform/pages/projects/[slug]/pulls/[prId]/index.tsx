@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import ProjectLayout from "@/layouts/Project";
 import Project from "@/models/projects";
 import { getOne as getSinglePr } from "@/models/pullRequest";
-import { UserType } from "@/types/resources";
+import { SessionUserType } from "@/types/resources";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -32,7 +32,7 @@ import { showToast } from "@/components/theme/showToast";
 interface Props {
   projects: ProjectType[];
   pullRequest: PullRequest & {
-    createdBy: UserType;
+    createdBy: SessionUserType;
   };
   currentProject: ProjectType;
   currentRole: UserRole;
