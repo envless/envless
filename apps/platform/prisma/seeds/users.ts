@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 import colors from "colors";
 
-type UserType = {
+type SessionUserType = {
   id?: string;
   name: string;
   email: string;
@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 colors.enable();
 
 const seedUsers = async (count: number = 10) => {
-  const users: UserType[] = [
+  const users: SessionUserType[] = [
     {
       name: faker.name.fullName(),
       email: "envless@example.com",

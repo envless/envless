@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Access" ALTER COLUMN "role" DROP DEFAULT;

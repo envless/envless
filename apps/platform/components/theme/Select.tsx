@@ -12,6 +12,7 @@ interface SelectProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  defaultValue?: string;
   options: {
     value: string;
     label: string;
@@ -29,6 +30,7 @@ const Select = ({
   required,
   className,
   disabled,
+  defaultValue,
   validationSchema,
 }: SelectProps) => {
   return (
@@ -40,6 +42,7 @@ const Select = ({
       )}
 
       <select
+        defaultValue={defaultValue}
         id={id}
         name={name}
         required={required}

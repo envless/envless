@@ -41,7 +41,7 @@ model Project {
   branches            Branch[]
   access              Access[]
   audits              Audit[]
-  invites             ProjectInvite[]
+  invites             Invite[]
   pullRequests        PullRequest[]
   encryptedProjectKey EncryptedProjectKey?
 
@@ -57,9 +57,10 @@ model Keychain {
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  revokedAt DateTime?
+  downloaded Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  revokedAt  DateTime?
 
   @@index([userId])
 }
@@ -81,21 +82,29 @@ enum UserRole {
   guest
 }
 
-model ProjectInvite {
-  id                       String   @id @default(cuid())
-  project                  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId                String
-  createdAt                DateTime @default(now())
-  invitationToken          String
-  invitationTokenExpiresAt DateTime @default(now())
-  hashedPassword           String
-  retryCount               Int      @default(0)
-  invitedById              String?
-  access                   Access[]
+model Invite {
+  id        String   @id @default(cuid())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expires   DateTime
 
-  @@unique([invitationToken])
+  // Someone who is inviting
+  invitor   User   @relation(name: "invitor", fields: [invitorId], references: [id], onDelete: Cascade)
+  invitorId String
+
+  // Someone who is being invited
+  invitee   User   @relation(name: "invitee", fields: [inviteeId], references: [id], onDelete: Cascade)
+  inviteeId String
+
+  accessId String? @unique
+  access   Access? @relation(fields: [accessId], references: [id], onDelete: Cascade)
+
+  @@unique([inviteeId, projectId])
+  @@index([invitorId])
   @@index([projectId])
-  @@index([invitationToken])
+  @@index([accessId])
 }
 
 enum MembershipStatus {
@@ -105,22 +114,20 @@ enum MembershipStatus {
 }
 
 model Access {
-  id              String           @id @default(cuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  userId          String
-  projectId       String
-  role            UserRole         @default(guest)
-  status          MembershipStatus @default(pending)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectInviteId String?          @unique
-  projectInvite   ProjectInvite?   @relation(fields: [projectInviteId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  userId    String
+  projectId String
+  role      UserRole         @default(guest)
+  status    MembershipStatus @default(pending)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invite    Invite?
 
   @@unique([userId, projectId])
   @@index([userId])
   @@index([projectId])
-  @@index([projectInviteId])
 }
 
 model Branch {
@@ -223,7 +230,7 @@ model Secret {
 }
 
 model SecretVersion {
-  id             String @id @default(cuid())
+  id             String  @id @default(cuid())
   encryptedKey   String
   encryptedValue String
   secretId       String?
@@ -231,16 +238,17 @@ model SecretVersion {
   baseBranchId    String?
   currentBranchId String?
 
-  pullRequestId   String?
+  pullRequestId String?
 
-  secret    Secret?   @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
+  secret Secret? @relation(name: "versions", fields: [secretId], references: [id], onDelete: Cascade)
 
-  pullRequest   PullRequest? @relation(name: "pullRequestVersions", fields: [pullRequestId], references: [id], onDelete: Cascade)
+  pullRequest PullRequest? @relation(name: "pullRequestVersions", fields: [pullRequestId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([secretId])
+  @@index([pullRequestId])
 }
 
 // Necessary for Next auth
@@ -301,7 +309,6 @@ model User {
   name              String?
   email             String           @unique
   emailVerified     DateTime?
-  hashedPassword    String?
   image             String?
   cliId             String?          @unique
   accounts          Account[]
@@ -316,6 +323,9 @@ model User {
   mergedPRs         PullRequest[]    @relation(name: "mergedBy")
   closedPRs         PullRequest[]    @relation(name: "closedBy")
   reOpenedPRs       PullRequest[]    @relation(name: "reOpenedBy")
+
+  sentInvites     Invite[] @relation(name: "invitor")
+  receivedInvites Invite[] @relation(name: "invitee")
 
   locked   LockedUser?
   keychain Keychain?
@@ -360,4 +370,9 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Redirect {
+  id  String @id @default(cuid())
+  url String
 }

@@ -21,11 +21,13 @@ export const projects = createRouter({
     // return ctx.prisma.projects.findMany();
     return [];
   }),
+
   getOne: withAuth.input(z.object({ id: z.number() })).query(({ input }) => {
     const { id } = input;
 
     return { id };
   }),
+
   checkSlugOrNameAvailability: withAuth
     .input(
       z.object({
@@ -125,10 +127,8 @@ export const projects = createRouter({
           },
         });
 
-        // @ts-ignore
         const access = newProject.access[0];
-        // @ts-ignore
-        const branch = newProject.branches[0];
+        const branches = newProject.branches;
 
         await Audit.create({
           createdById: user.id,
@@ -143,21 +143,24 @@ export const projects = createRouter({
           },
         });
 
-        await Audit.create({
-          createdById: user.id,
-          projectId: newProject.id,
-          action: BRANCH_CREATED,
-          data: {
-            branch: {
-              id: branch.id,
-              name: branch.name,
+        branches.forEach(async (branch) => {
+          await Audit.create({
+            createdById: user.id,
+            projectId: newProject.id,
+            action: BRANCH_CREATED,
+            data: {
+              branch: {
+                id: branch.id,
+                name: branch.name,
+              },
             },
-          },
+          });
         });
       }
 
       return newProject;
     }),
+
   update: withAuth
     .input(
       z.object({
@@ -250,6 +253,7 @@ export const projects = createRouter({
 
       return softDeletedProject;
     }),
+
   restoreProject: withAuth
     .input(
       z.object({
@@ -313,5 +317,50 @@ export const projects = createRouter({
           </>
         ),
       });
+    }),
+
+  getEncryptionKeys: withAuth
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+
+    .query(async ({ ctx, input }) => {
+      const { projectId } = input;
+      const user = ctx.session.user;
+
+      const project = await ctx.prisma.project.findFirst({
+        where: {
+          id: projectId,
+        },
+
+        select: {
+          encryptedProjectKey: true,
+
+          access: {
+            select: {
+              user: {
+                select: {
+                  keychain: {
+                    select: {
+                      publicKey: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const publicKeys = project?.access.map(
+        (access) => access?.user?.keychain?.publicKey,
+      );
+
+      return {
+        publicKeys,
+        encryptedProjectKey: project?.encryptedProjectKey,
+      };
     }),
 });

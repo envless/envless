@@ -6,7 +6,6 @@ import { z } from "zod";
  */
 const server = z.object({
   BASE_URL: z.string().url(),
-  DEV_LOG: z.boolean().default(false),
 });
 
 /**
@@ -15,7 +14,6 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-  NEXT_PUBLIC_DEV_LOG: z.boolean().default(false),
 });
 
 /**
@@ -25,7 +23,6 @@ const client = z.object({
  * @type {Record<keyof z.infer<typeof server> | keyof z.infer<typeof client>, string | undefined>}
  */
 const processEnv = {
-  DEV_LOG: process.env.DEV_LOG,
   BASE_URL: process.env.BASE_URL,
 };
 
