@@ -1,6 +1,8 @@
 import { createRouter, withAuth } from "@/trpc/router";
 import { SECRET_DELETED } from "@/types/auditActions";
+import { PullRequestStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { flatMap } from "lodash";
 import { z } from "zod";
 import Audit from "@/lib/audit";
 
@@ -134,6 +136,58 @@ export const secrets = createRouter({
             });
 
             secretsInsertCount++;
+          }
+        }
+
+        const currentBranchPRs = await prisma.pullRequest.findMany({
+          where: {
+            currentBranchId: secrets[0].branchId,
+            status: PullRequestStatus.open,
+          },
+          select: {
+            secretVersions: {
+              where: {
+                currentBranchId: secrets[0].branchId,
+              },
+            },
+          },
+        });
+
+        if (currentBranchPRs && currentBranchPRs.length > 0) {
+          const secretVersions = flatMap(currentBranchPRs, "secretVersions");
+
+          const currentBranchSecrets = await prisma.secret.findMany({
+            where: {
+              branchId: secrets[0].branchId,
+            },
+          });
+
+          let index = 0;
+          const secretVersionIds = secretVersions.map(
+            (secretVersion) => secretVersion.id,
+          );
+
+          const pullRequestIds = secretVersions.map(
+            (secretVersion) => secretVersion.pullRequestId,
+          );
+
+          for (let secret of currentBranchSecrets) {
+            await prisma.secretVersion.upsert({
+              update: {
+                encryptedKey: secret.encryptedKey,
+                encryptedValue: secret.encryptedValue,
+              },
+              create: {
+                currentBranchId: secret.branchId,
+                encryptedKey: secret.encryptedKey,
+                encryptedValue: secret.encryptedValue,
+                pullRequestId: pullRequestIds[index],
+              },
+              where: {
+                id: secretVersionIds[index],
+              },
+            });
+            index++;
           }
         }
       } catch (err) {}
