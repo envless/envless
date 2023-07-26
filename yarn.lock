@@ -12677,10 +12677,10 @@ rehype-parse@^8.0.4:
     parse5 "^6.0.0"
     unified "^10.0.0"
 
-rehype-react@^7.1.2:
-  version "7.1.2"
-  resolved "https://registry.npmjs.org/rehype-react/-/rehype-react-7.1.2.tgz"
-  integrity sha512-IWsFMS2M4NTbvWzumBBKhdb39ElV+r5YQHA2HafDDRrH84bEryJA2YPPNbF9he4QzAFOssaMJ9buSC6cDcJTLw==
+rehype-react@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/rehype-react/-/rehype-react-7.2.0.tgz#9d891f41f4f7ab8e7d95d31b6c0be9021261d33f"
+  integrity sha512-MHYyCHka+3TtzBMKtcuvVOBAbI1HrfoYA+XH9m7/rlrQQATCPwtJnPdkxKKcIGF8vc9mxqQja9r9f+FHItQeWg==
   dependencies:
     "@mapbox/hast-util-table-cell-style" "^0.2.0"
     "@types/hast" "^2.0.0"
