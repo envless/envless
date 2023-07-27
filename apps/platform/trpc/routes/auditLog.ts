@@ -28,6 +28,8 @@ export const auditLogs = createRouter({
           },
           createdBy: {
             select: {
+              email: true,
+              image: true,
               name: true,
             },
           },
