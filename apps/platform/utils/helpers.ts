@@ -178,3 +178,16 @@ export const parseDotEnvContents = (contents: string) => {
 
   return obj;
 };
+
+export const getPaginationText = (
+  pagination: { pageIndex; pageSize },
+  totalItems: number,
+) => {
+  return `Showing ${
+    totalItems > 0 ? pagination.pageIndex * pagination.pageSize + 1 : 0
+  } to ${
+    (pagination.pageIndex + 1) * pagination.pageSize > totalItems
+      ? totalItems
+      : (pagination.pageIndex + 1) * pagination.pageSize
+  } of ${totalItems} `;
+};
