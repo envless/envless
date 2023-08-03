@@ -1,8 +1,9 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectLayout from "@/layouts/Project";
+import { useBranchesStore } from "@/store/Branches";
 import { trpc } from "@/utils/trpc";
 import { withAccessControl } from "@/utils/withAccessControl";
 import {
@@ -14,19 +15,14 @@ import {
   UserRole,
 } from "@prisma/client";
 import { Branch } from "@prisma/client";
-import * as HoverCard from "@radix-ui/react-hover-card";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowLeft,
-  GitMerge,
-  GitPullRequest,
-  GitPullRequestClosed,
-} from "lucide-react";
+import { GitMerge, GitPullRequest, GitPullRequestClosed } from "lucide-react";
 import DateTimeAgo from "@/components/DateTimeAgo";
 import CreatePullRequestModal from "@/components/pulls/CreatePullRequestModal";
 import PullRequestTitleHoverCard from "@/components/pulls/PullRequestTitleHoverCard";
 import { Badge, Button, Label } from "@/components/theme";
 import { FilterOptions, Table } from "@/components/theme/Table/Table";
+import prisma from "@/lib/prisma";
 
 /**
  * A functional component that represents a project.
@@ -40,14 +36,17 @@ interface Props {
   projects: Project[];
   currentProject: Project;
   currentRole: UserRole;
+  branches: Branch[];
 }
 
 export const PullRequestPage = ({
   projects,
   currentProject,
   currentRole,
+  branches,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { setBranches } = useBranchesStore();
   const router = useRouter();
   const pullRequestQuery = trpc.pullRequest.getAll.useQuery(
     {
@@ -165,6 +164,10 @@ export const PullRequestPage = ({
     ],
   };
 
+  useEffect(() => {
+    setBranches(branches);
+  }, [branches, setBranches]);
+
   return (
     <ProjectLayout
       tab="pr"
@@ -235,6 +238,30 @@ export const getServerSideProps = withAccessControl({
       UserRole.owner,
     ],
     statuses: [MembershipStatus.active],
+  },
+  getServerSideProps: async (context) => {
+    // @ts-ignore
+    const { slug } = context.params;
+
+    const currentProject = await prisma.project.findUnique({
+      where: { slug: slug as string },
+      select: {
+        branches: {
+          select: {
+            id: true,
+            name: true,
+            protected: true,
+          },
+        },
+      },
+    });
+
+    const branches = currentProject?.branches;
+    return {
+      props: {
+        branches,
+      },
+    };
   },
 });
 
