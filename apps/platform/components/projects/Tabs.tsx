@@ -28,7 +28,7 @@ export default function Tabs({ active, projectSlug, currentRole }: Props) {
 
         <Container>
           <select
-            id="tabs"
+            id="navigation-tabs"
             name="tabs"
             className="border-dark bg-dark block rounded text-sm"
             // @ts-ignore
