@@ -1,40 +1,48 @@
-FROM node:18-alpine AS builder
-
-RUN apk add --no-cache libc6-compat
-RUN apk update
-
-# Set working directory
+# setting base image
+FROM node:18.16-alpine3.18 AS base
 WORKDIR /app
-RUN yarn global add turbo
+ENTRYPOINT ["yarn"]
+
+# turbo cleanup
+FROM base AS builder
 COPY . .
-RUN rm -rf apps/cli apps/docs apps/www
-RUN turbo prune --scope=platform --docker
+RUN set ex; \
+    \
+    apk update; \
+    apk add libc6-compat; \
+    yarn global add turbo; \
+    rm -rf \
+       /var/cache/apt/* \
+       apps/cli \
+       apps/docs \
+       apps/www \
+    ; \
+    turbo prune --scope=platform --docker
 
-# Add lockfile and package.json's of isolated subworkspace
-FROM node:18-alpine AS installer
-RUN apk add --no-cache libc6-compat
-RUN apk update
-RUN yarn global add dotenv-cli 
+# production image setup
+FROM base
+RUN set ex; \
+    \
+    apk update; \
+    apk add libc6-compat; \
+    yarn global add dotenv-cli; \
+    mkdir -p packages/ui; \
+    rm -rf /var/cache/apt/*
 
-WORKDIR /app
-RUN mkdir -p packages/ui
-COPY --from=builder /app/packages/ui packages/ui
+COPY --from=builder --chown=node:node ["/app/packages/ui", "packages/ui"]
+COPY --from=builder --chown=node:node ["/app/out/json/", "/app/out/yarn.lock", "./"]
 
-# First install the dependencies (as they change less often)
-COPY apps/platform/.gitignore .gitignore
-COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock
-RUN yarn install
- 
-# Build the project
-COPY --from=builder /app/out/full/ .
+RUN set ex; \
+  \
+  yarn install --immutable --immutable-cache --check-cache; \
+  yarn cache clean --all;
 
+COPY --from=builder --chown=node:node ["/app/out/full/", "."]
+
+ENV NODE_ENV production
 ENV SKIP_ENV_VALIDATION true
 ENV EMAIL_FROM envless@example.com
-RUN npx turbo run db:generate
 
-# RUN yarn turbo run build --filter=platform...
+USER node
 
-EXPOSE 3000 3883
-
-CMD ["yarn","dev", "--filter=platform"]
+CMD ["start", "--filter=platform"]
