@@ -32,7 +32,7 @@
     "js-yaml": "^4.1.0",
     "keytar": "^7.9.0",
     "kleur": "^4.1.5",
-    "openpgp": "^5.7.0",
+    "openpgp": "^5.10.1",
     "yarn": "^1.22.19"
   },
   "devDependencies": {

@@ -70,7 +70,7 @@
     "node-html-parser": "^6.1.5",
     "nodemailer": "^6.9.1",
     "octokit": "^2.0.14",
-    "openpgp": "^5.7.0",
+    "openpgp": "^5.10.1",
     "otplib": "^12.0.1",
     "papaparse": "^5.4.1",
     "react": "18.2.0",
