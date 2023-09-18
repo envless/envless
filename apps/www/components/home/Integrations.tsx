@@ -170,7 +170,7 @@ export const Integrations = () => {
           Build anything, deploy anywhere
         </h2>
         <p className="text-light mx-auto mt-2 max-w-md">
-          Envless is programming language, framework and platform agnostic.
+          Envless is language, framework and platform agnostic.
         </p>
       </div>
       <div className="grid w-full grid-cols-2 gap-4 sm:grid-cols-4">

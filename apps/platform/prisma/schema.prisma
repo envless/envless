@@ -43,6 +43,7 @@ model Project {
   audits              Audit[]
   invites             Invite[]
   pullRequests        PullRequest[]
+  serviceAccounts     ServiceAccount[]
   encryptedProjectKey EncryptedProjectKey?
 
   @@unique([slug])
@@ -310,7 +311,7 @@ model User {
   email             String           @unique
   emailVerified     DateTime?
   image             String?
-  cliId             String?          @unique
+  serviceAccountId  String?          @unique
   accounts          Account[]
   sessions          Session[]
   sessionHistories  SessionHistory[]
@@ -335,23 +336,30 @@ model User {
   twoFactorEnabled         Boolean @default(false)
   failedAuthAttempts       Int     @default(0)
 
-  marketing    Boolean @default(true)
-  notification Boolean @default(true)
-  cli          Cli?
+  marketing       Boolean          @default(true)
+  notification    Boolean          @default(true)
+  serviceAccounts ServiceAccount[] @relation(name: "createdBy")
 }
 
 // Personal CLI configuration
-model Cli {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model ServiceAccount {
+  id          String @id @default(cuid())
+  integration String
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(name: "createdBy", fields: [createdById], references: [id], onDelete: Cascade)
+
   hashedToken String
   active      Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([userId])
-  @@index([userId, active])
+  @@index([projectId])
+  @@index([createdById])
+  @@index([integration, projectId])
 }
 
 model LockedUser {

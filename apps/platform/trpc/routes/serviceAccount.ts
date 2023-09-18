@@ -2,39 +2,41 @@ import { createRouter, withAuth } from "@/trpc/router";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-export const cli = createRouter({
+export const serviceAccount = createRouter({
   getOne: withAuth.query(async ({ ctx }) => {
     const { prisma } = ctx;
     const { user } = ctx.session;
 
-    const cli = await prisma.cli.findUnique({
+    const serviceAccount = await prisma.serviceAccount.findUnique({
       where: {
         userId: user.id,
       },
     });
 
-    return { cli };
+    return { serviceAccount };
   }),
 
   create: withAuth
     .input(
       z.object({
         hashedToken: z.string().trim(),
+        integration: z.string().trim(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { prisma } = ctx;
       const { user } = ctx.session;
-      const { hashedToken } = input;
+      const { hashedToken, integration } = input;
 
-      const cli = await prisma.cli.create({
+      const serviceAccount = await prisma.serviceAccount.create({
         data: {
           userId: user.id,
+          integration,
           hashedToken,
         },
       });
 
-      return { cli };
+      return { serviceAccount };
     }),
 
   update: withAuth
@@ -56,7 +58,7 @@ export const cli = createRouter({
         });
       }
 
-      const cli = await prisma.cli.update({
+      const serviceAccount = await prisma.serviceAccount.update({
         where: {
           userId: user.id,
         },
@@ -66,6 +68,6 @@ export const cli = createRouter({
         },
       });
 
-      return { cli };
+      return { serviceAccount };
     }),
 });
