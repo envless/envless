@@ -21,7 +21,7 @@
     "@clack/prompts": "^0.6.3",
     "@oclif/core": "^2",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^3.1.2",
+    "@oclif/plugin-plugins": "^3.7.0",
     "@makepro-x/keytar": "^7.10.2",
     "add": "^2.0.6",
     "axios": "^1.4.0",
