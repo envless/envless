@@ -417,7 +417,7 @@ export const NuxtJsIcon = ({ className }: Props) => {
   );
 };
 
-export const LaravalIcon = ({ className }: Props) => {
+export const LaravelIcon = ({ className }: Props) => {
   return (
     <svg
       className={className}

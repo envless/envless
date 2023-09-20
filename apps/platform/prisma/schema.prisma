@@ -343,7 +343,8 @@ model User {
 
 // Personal CLI configuration
 model ServiceAccount {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
+
   integration String
 
   projectId String
@@ -357,9 +358,12 @@ model ServiceAccount {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  @@unique([projectId, integration])
+  @@unique([projectId, createdById, integration])
   @@index([projectId])
   @@index([createdById])
-  @@index([integration, projectId])
+  @@index([projectId, integration])
+  @@index([projectId, createdById, integration])
 }
 
 model LockedUser {
