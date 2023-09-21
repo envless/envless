@@ -11,7 +11,7 @@ import {
   GitlabIcon,
   HerokuIcon,
   KubernetesIcon,
-  LaravalIcon,
+  LaravelIcon,
   NetlifyIcon,
   NextJsIcon,
   NuxtJsIcon,
@@ -161,7 +161,7 @@ const integrations = [
   {
     name: "Laraval",
     slug: "laraval",
-    icon: LaravalIcon,
+    icon: LaravelIcon,
     category: "Framework",
     isActive: true,
   },
