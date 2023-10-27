@@ -1,5 +1,5 @@
 <a href="https://envless.dev">
-  <img alt="Frictionless and secure way to share and manage app secrets across team." src="https://envless.dev/og.png" />
+  <img alt="Frictionless and secure way to share and manage app secrets across teams." src="https://envless.dev/og.png" />
   <h1 align="center">.envless</h1>
 </a>
 
@@ -9,10 +9,10 @@
 
 <p align="center">
   <a href="https://github.com/envless/envless/stargazers">
-    <img src="https://img.shields.io/github/stars/envless/envless??style=flat&label=%40envless/envless&logo=github&color=2dd4bf&logoColor=fff" alt="Github" />
+    <img src="https://img.shields.io/github/stars/envless/envless?style=flat&label=%40envless/envless&logo=github&color=2dd4bf&logoColor=fff" alt="Github" />
   </a>
   <a href="https://twitter.com/envless">
-    <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt="Twitter" />
+    <img src="https://img.shields.io/twitter/follow/envless?style=flat&label=%40envless&logo=twitter&color=0bf&logoColor=fff" alt "Twitter" />
   </a>
   <a href="https://github.com/envless/envless/actions/workflows/ci.yml">
     <img src="https://github.com/envless/envless/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
@@ -36,7 +36,7 @@
 - <a href="#Contributing">Contributing</a>
 - <a href="#License">License</a>
 
-<h2 id="about">💡 About </h2>
+<h2 id="about">💡 About</h2>
 
 - **What is `Envless` ?** It is an open-source tool that provides a frictionless and secure way to share and manage app secrets across teams.
 - With **`Envless`**, you can easily store and share sensitive data like API keys, passwords, and certificates without compromising security.
@@ -48,19 +48,19 @@
 
 <h2 id="community">🚀 Community</h2>
 
-- We have Slack and Discord where we discuss about out updates, features, requests, best practices, contributions and everything.
+- We have Slack and Discord where we discuss our updates, features, requests, best practices, contributions, and everything.
 - **Please click on the banners below and join us.**
   .
   .
 
 <table>
   <tr>
-     <td style="text-align: center;">
+    <td style="text-align: center;">
       <a href="https://dub.sh/envless-discord">
         <img src="./.github/images/discord-banner.png" width="380" alt="Discord invite banner">
       </a>
     </td>
-     <td style="text-align: center;">
+    <td style="text-align: center;">
       <a href="https://dub.sh/envless-slack">
         <img src="./.github/images/slack-banner.png" width="380" alt="Slack invite banner">
       </a>
@@ -95,4 +95,4 @@ Envless is licensed under the GNU Affero General Public License v3.0 License - s
 <p>
 Don't forget to leave a star ⭐️
 </p>
-<image src=".github/images/envless.gif">
+<image src="./.github/images/envless.gif">
