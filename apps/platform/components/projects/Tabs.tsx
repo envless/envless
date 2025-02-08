@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { generateRandomString, getNavigationTabs } from "@/utils/helpers";
+import { getNavigationTabs } from "@/utils/helpers";
 import type { UserRole } from "@prisma/client";
 import { Container } from "@/components/theme";
 import { uniqueId } from "lodash";
