@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { generateRandomString, getNavigationTabs } from "@/utils/helpers";
 import type { UserRole } from "@prisma/client";
 import { Container } from "@/components/theme";
+import { uniqueId } from "lodash";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -29,7 +30,7 @@ export default function Tabs({ active, projectSlug, currentRole }: Props) {
 
         <Container>
           <select
-            id={`navigation-tabs-${generateRandomString(16)}`}
+            id={`${uniqueId("navigation-tabs")}`}
             name="tabs"
             className="border-dark bg-dark block rounded text-sm"
             // @ts-ignore

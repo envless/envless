@@ -191,8 +191,3 @@ export const getPaginationText = (
       : (pagination.pageIndex + 1) * pagination.pageSize
   } of ${totalItems} `;
 };
-
-export const generateRandomString = (length: number) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
-}
