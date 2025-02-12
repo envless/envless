@@ -1,3 +1,7 @@
+> [!WARNING]  
+> We currently are not actively maintaining this project. We may pick this back up in the future. We recommend using [Dotenv](https://www.dotenv.org/) instead.
+
+
 <a href="https://envless.dev">
   <img alt="Frictionless and secure way to share and manage app secrets across team." src="https://envless.dev/og.png" />
   <h1 align="center">.envless</h1>
