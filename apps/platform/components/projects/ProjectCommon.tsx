@@ -36,10 +36,6 @@ export const ProjectCommon = ({
     setBranches(branches);
   }, [branches, setBranches]);
 
-  useEffect(() => {
-    setBranches(branches);
-  }, [branches, setBranches]);
-
   return (
     <ProjectLayout
       projects={projects}
