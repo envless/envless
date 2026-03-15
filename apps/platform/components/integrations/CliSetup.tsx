@@ -13,7 +13,7 @@ interface CliProps {
 }
 
 const CliSetup = ({ currentProject }: CliProps) => {
-  const { cli: cliQuery } = trpc.useContext();
+  const { serviceAccount } = trpc.useContext();
 
   const [cli, setCli] = useState<{
     id: string;
@@ -23,7 +23,7 @@ const CliSetup = ({ currentProject }: CliProps) => {
   useUpdateEffect(() => {
     const fetchCliSetup = async () => {
       if (!cli.id || !cli.token) {
-        const { cli: record } = await cliQuery.getOne.fetch();
+        const { cli: record } = await serviceAccount.getOne.fetch();
         if (record) {
           setCli({ ...cli, id: record.id });
         }
@@ -133,11 +133,11 @@ const CliSetup = ({ currentProject }: CliProps) => {
             <span className="text-darker mr-4 inline-flex h-7 w-7 items-center justify-center rounded-full bg-teal-300">
               2
             </span>
-            Initialize CLI
+            Initialize service account
           </h3>
           <div className="text-light mt-2 text-sm">
-            You may skip this step if you have already Initialized the Envless
-            CLI.
+            You may skip this step if you have already Initialized the service
+            account for Envless CLI.
             {cli && cli.id && cli.token ? (
               <CodeWithTabs
                 tabs={[
@@ -163,8 +163,8 @@ const CliSetup = ({ currentProject }: CliProps) => {
                   await createOrUpdateCLiToken();
                 }}
               >
-                {cli.id ? "Rotate " : "Generate "}
-                CLI token
+                {cli.id ? "Rotate token for " : "Generate "}
+                service account
               </Button>
             )}
           </div>
